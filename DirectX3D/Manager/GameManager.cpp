@@ -50,12 +50,12 @@ GameManager::GameManager()
     //SceneManager::Get()->Create("Game", new GameScene());
     //SceneManager::Get()->Create("RenderTarget", new RenderTargetScene());
     //SceneManager::Get()->Create("GeometryBuffer", new GBufferScene());
-    SceneManager::Get()->Create("ShadowScene", new ShadowScene());
+//SceneManager::Get()->Create("ShadowScene", new ShadowScene());
     //SceneManager::Get()->Create("AStar", new AStarScene());
     //SceneManager::Get()->Create("LightTest", new LightScene());
     //SceneManager::Get()->Create("Billboard", new BillboardScene());
-    //SceneManager::Get()->Create("Particle", new ParticleScene());
-    //SceneManager::Get()->Create("ParticleConfig", new ParticleConfigScene());
+    SceneManager::Get()->Create("Particle", new ParticleScene());
+//    SceneManager::Get()->Create("ParticleConfig", new ParticleConfigScene());
     // *ÀÛ¾÷Áß // SceneManager::Get()->Create("MirrorScene", new MirrorScene());
     //SceneManager::Get()->Create("WaterScene", new WaterScene());
     //SceneManager::Get()->Create("QuadTree", new QuadTreeScene());
@@ -72,13 +72,13 @@ GameManager::GameManager()
     //SceneManager::Get()->Add("AStar");
     //SceneManager::Get()->Add("LightTest");
     //SceneManager::Get()->Add("Billboard");
-    //SceneManager::Get()->Add("Particle");
-    //SceneManager::Get()->Add("ParticleConfig");
+    SceneManager::Get()->Add("Particle");
+//    SceneManager::Get()->Add("ParticleConfig");
     //SceneManager::Get()->Add("MirrorScene");
     //SceneManager::Get()->Add("WaterScene");
     //SceneManager::Get()->Add("QuadTree");
     //SceneManager::Get()->Add("Tessellation");
-    SceneManager::Get()->Add("ShadowScene");
+//SceneManager::Get()->Add("ShadowScene");
 }
 
 GameManager::~GameManager()

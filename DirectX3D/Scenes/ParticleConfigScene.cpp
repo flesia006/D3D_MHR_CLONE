@@ -94,16 +94,16 @@ void ParticleConfigScene::GUIRender()
     ImGui::ColorEdit4("EndColor", (float*)&data.endColor);
     ImGui::SliderFloat3("MinVelocity", (float*)&data.minVelocity, -1, 1);
     ImGui::SliderFloat3("MaxVelocity", (float*)&data.maxVelocity, -1, 1);
-    ImGui::SliderFloat3("MinAccelation", (float*)&data.minAccelation, -5, 5);
-    ImGui::SliderFloat3("MaxAccelation", (float*)&data.maxAccelation, -5, 5);
-    ImGui::SliderFloat3("MinStartScale", (float*)&data.minStartScale, 0, 5);
-    ImGui::SliderFloat3("MaxStartScale", (float*)&data.maxStartScale, 0, 5);
-    ImGui::SliderFloat3("MinEndScale", (float*)&data.minEndScale, 0, 5);
-    ImGui::SliderFloat3("MaxEndScale", (float*)&data.maxEndScale, 0, 5);
+    ImGui::SliderFloat3("MinAccelation", (float*)&data.minAccelation, -50, 50);
+    ImGui::SliderFloat3("MaxAccelation", (float*)&data.maxAccelation, -50, 50);
+    ImGui::SliderFloat3("MinStartScale", (float*)&data.minStartScale, 0, 100);
+    ImGui::SliderFloat3("MaxStartScale", (float*)&data.maxStartScale, 0, 100);
+    ImGui::SliderFloat3("MinEndScale", (float*)&data.minEndScale, 0, 100);
+    ImGui::SliderFloat3("MaxEndScale", (float*)&data.maxEndScale, 0, 100);
     ImGui::SliderFloat("MinAngularVelocity", (float*)&data.minAngularVelocity, -10, 10);
     ImGui::SliderFloat("MaxAngularVelocity", (float*)&data.maxAngularVelocity, -10, 10);
     ImGui::SliderFloat("MinSpeed", (float*)&data.minSpeed, 0, data.maxSpeed);
-    ImGui::SliderFloat("MaxSpeed", (float*)&data.maxSpeed, data.minSpeed, 200);
+    ImGui::SliderFloat("MaxSpeed", (float*)&data.maxSpeed, data.minSpeed, 20000);
     ImGui::SliderFloat("MinStartTime", (float*)&data.minStartTime, 0.0f, data.maxStartTime);
     ImGui::SliderFloat("MaxStartTime", (float*)&data.maxStartTime, data.minStartTime, data.duration);
 

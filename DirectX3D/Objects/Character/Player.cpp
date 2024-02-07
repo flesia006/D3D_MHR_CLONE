@@ -21,6 +21,8 @@ Player::Player() : ModelAnimator("Player")
 	swordStart = new Transform();
 	swordEnd = new Transform();
 	trail = new Trail(L"Textures/Effect/Snow.png", swordStart, swordEnd, 20, 70);
+	hitParticle = new HitParticle();
+	
 
 	longSword = new Model("longSwd");
 	longSword->SetParent(mainHand);
@@ -31,8 +33,6 @@ Player::Player() : ModelAnimator("Player")
 
 	tmpCollider = new SphereCollider();
 	tmpCollider->Scale() *= 6.0f;
-
-
 
 	//	tmpCollider->SetParent(head);
 	//	tmpCollider->SetParent(back);
@@ -52,6 +52,7 @@ Player::~Player()
 	delete realPos;
 	delete tmpCollider;
 	delete particle;
+	delete hitParticle;
 }
 
 void Player::Update()
@@ -69,6 +70,8 @@ void Player::Update()
 	head->Pos() = realPos->Pos() + Vector3::Up() * 200;
 
 	back->SetWorld(GetTransformByNode(node));
+	
+	lastSwordEnd = swordStart->Pos();
 
 	swordStart->Pos() = longSword->GlobalPos() + longSword->Back() * 271.0f; // 20.0f : 10% 크기 반영
 	swordEnd->Pos() = longSword->GlobalPos() + longSword->Back() * 260.0f;
@@ -76,7 +79,10 @@ void Player::Update()
 	swordStart->UpdateWorld();
 	swordEnd->UpdateWorld();
 
+	swordSwingDir = lastSwordEnd - swordStart->GlobalPos();
+
 	trail->Update();
+	hitParticle->Update();
 
 	tmpCollider->Pos() = GetTranslationByNode(node);
 
@@ -137,18 +143,22 @@ void Player::Render()
 {
 	ModelAnimator::Render();
 	tmpCollider->Render();
-	//	swordCollider->Render();
+	swordCollider->Render();
 	longSword->Render();
 
 	particle->Render();
 	trail->Render();
+	hitParticle->Render();
 }
 
 void Player::GUIRender()
 {
 	//	ModelAnimator::GUIRender();
+
 	particle->GUIRender();
 	trail->GetMaterial()->GUIRender();
+	hitParticle->GUIRender();
+
 	//particle->GetMaterial()->GUIRender();
 
 //	Vector3 Forward = root->Forward();
@@ -579,15 +589,16 @@ void Player::Rotate()
 
 void Player::Attack() // 충돌판정 함수
 {
-//	Valphalk* val =
-//		dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("shadow"))->GetValphalk();
-//
-//	Contact contact;
-//
-//	if (swordCollider->IsSphereCollision(val->GetHead(), &contact))
-//	{
-//		particle->Play(contact.hitPoint);
-//	}
+	Valphalk* val =
+		dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetValphalk();
+
+	Contact contact;
+
+	if (swordCollider->IsSphereCollision(val->GetHead(), &contact) && !attackOnlyOncePerMotion)
+	{
+		hitParticle->Play(contact.hitPoint, Vector3::Right());
+		attackOnlyOncePerMotion = true;
+	}
 }
 
 void Player::SetAnimation()
@@ -664,6 +675,7 @@ void Player::SetState(State state)
 	Pos() = realPos->Pos();
 	preState = curState;
 	curState = state;
+	attackOnlyOncePerMotion = false;
 	//	PlayClip(state);
 }
 

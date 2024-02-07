@@ -14,7 +14,8 @@ public:
 private:
     // 테스트용 파티클
     //ParticleSystem* particle; // 범용 파티클
-    Particle* particle;         // 특수 파티클(의 범용 인터페이스)
+    //Particle* particle;         // 특수 파티클(의 범용 인터페이스)
+    HitParticle* particle;
 
     //-----------------------------------
     SphereCollider* collider; // 클릭용 표적

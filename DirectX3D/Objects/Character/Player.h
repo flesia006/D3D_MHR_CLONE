@@ -104,6 +104,9 @@ private:
 
 	Transform* swordStart = nullptr;
 	Transform* swordEnd = nullptr;
+	
+	Vector3 lastSwordEnd = {0, 0, 0};
+	Vector3 swordSwingDir;
 
 	SphereCollider* tmpCollider = nullptr;
 	CapsuleCollider* swordCollider = nullptr;
@@ -114,6 +117,7 @@ private:
 	Particle* particle;
 	LightBuffer::Light* light;
 	Trail* trail;
+	HitParticle* hitParticle;
 
 	State curState = L_101;
 	State preState = L_101;
@@ -151,6 +155,8 @@ private:
 
 	bool cure = false;
 	bool Lcure = false;
+
+	bool attackOnlyOncePerMotion = false;
 
 };
 

@@ -187,6 +187,7 @@ using namespace GameMath;
 #include "Objects/Particle/Sprite.h"
 #include "Objects/Particle/Spark.h"
 #include "Objects/Particle/Trail.h"
+#include "Objects/Particle/HitParticle.h"
 
 #include "Objects/Algorithm/Node.h"
 #include "Objects/Algorithm/Heap.h"
