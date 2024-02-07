@@ -96,9 +96,9 @@ void ParticleSystem::Play(Vector3 pos, Vector3 rot)
     quad->SetActive(true);
 
     quad->Pos() = pos;
-    quad->Rot() = rot;
+//    quad->Rot() = rot;
 
-    Init();
+    Init(rot);
 }
 
 void ParticleSystem::Stop()
@@ -216,6 +216,39 @@ void ParticleSystem::Init()
     //이 반복문이 끝나면 개수에 따른 각 개별 파티클에 각자 다른 설정값 대입
     //->나중에 이 설정값이 다른 파티클을 부르기만 해도 다양한 느낌이 나는 파티클 구현 가능
     //-> 미리 파티클을 만들면 최적화에는 도움이 되고, 눈썰미 좋은 사람에게는 큰 흥미를 주지 못한다
+}
+
+void ParticleSystem::Init(Vector3 rot)
+{
+    if (data.isAdditive) blendState[1]->Additive(); 
+    else blendState[1]->Alpha(true);             
+
+    lifeSpan = 0; 
+    drawCount = 0; 
+    data.count = particleCount; 
+
+    instances.resize(data.count);
+    particleInfos.resize(data.count);
+
+    Vector3 Rot = rot.GetNormalized();
+
+    for (ParticleInfo& info : particleInfos) //위의 개별 정보 벡터 활용
+    {
+        info.transform.Pos() = {}; //일단 대기 상태. 트랜스폼이 있기는 있음
+
+        //파티클로서의 옵션 설정
+        info.velocity = Random(Rot - Vector3(0.3, 0.3, 0.3), Rot + Vector3(0.3, 0.3, 0.3));
+        info.acceleration = Random(Vector3(0, 0, 0), Vector3(0.5, 0.5, 0.5));
+        info.angularVelocity = Random(data.minAngularVelocity, data.maxAngularVelocity);
+        info.speed = Random(data.minSpeed, data.maxSpeed * 3);
+        info.startTime = Random(data.minStartTime, data.maxStartTime);
+        info.startScale = Random(data.minStartScale*1.2, data.maxStartScale*1.2);
+        info.endScale = Random(data.minEndScale, data.maxEndScale);
+
+        //파티클에서 속력을 정규화한다면 아래 코드까지
+        info.velocity.Normalize();
+    }
+
 }
 
 void ParticleSystem::LoadData(string file)
