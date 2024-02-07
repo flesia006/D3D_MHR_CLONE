@@ -368,8 +368,6 @@ void Player::Move()
 	bool isMoveZ = false; // 전후 이동 중 아님
 	bool isMoveX = false; // 좌우 이동 중 아님
 
-
-
 	if (KEY_PRESS('W'))
 	{
 		//Pos() += Back() * moveSpeed * DELTA;
@@ -731,7 +729,7 @@ void Player::RecordLastPos()
 	Pos() = GetTranslationByNode(1);
 }
 
-void Player::S003()
+void Player::S003() // 납도상태 달리기
 {
 	PLAY;
 	Move();
@@ -756,12 +754,12 @@ void Player::S003()
 		Roll();
 }
 
-void Player::S008()
+void Player::S008() // 서서 납도
 {
 	PLAY;
 }
 
-void Player::S009()
+void Player::S009() // 걸으면서 납도
 {
 	PLAY;
 	Move();
@@ -807,7 +805,7 @@ void Player::L001() // 발도상태 대기
 		return;
 	}
 	if (KEY_PRESS(VK_LSHIFT))
-		SetState(L_003);
+		SetState(S_008);
 	if (KEY_DOWN(VK_SPACE))
 		Roll();
 }
@@ -820,6 +818,8 @@ void Player::L002() // 발도
 void Player::L003() // 서서 납도
 {
 	PLAY;
+	Move();
+	Rotate();
 }
 
 void Player::L004() // 발도상태 걷기 중
