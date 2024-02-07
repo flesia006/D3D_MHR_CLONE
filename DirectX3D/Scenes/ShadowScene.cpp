@@ -18,7 +18,7 @@ ShadowScene::ShadowScene()
     UIManager::Get();
 
     // 같이 알아보는 활용법 : 빛 호출 혹은 만들기 (<-빛 사용 방법)
-
+    // 헤헹
     light = Environment::Get()->GetLight(0);
 
     light->type = 0;
