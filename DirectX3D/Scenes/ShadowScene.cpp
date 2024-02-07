@@ -33,8 +33,9 @@ ShadowScene::ShadowScene()
     light->outer;   //조명 외곽 범위 (빛이 흩어져서 비치는 범위...의 비중)
 
     skyBox = new SkyBox(L"Textures/Landscape/BlueSky.dds");
-//  Sounds::Get()->AddSound("Valphalk_Thema", SoundPath + L"Valphalk_Thema.mp3");
-//  Sounds::Get()->Play("Valphalk_Thema", 0.3f);
+    Sounds::Get()->AddSound("Valphalk_Thema", SoundPath + L"Valphalk_Thema.mp3");
+    Sounds::Get()->Play("Valphalk_Thema", 0.03f);
+
 
 }
 

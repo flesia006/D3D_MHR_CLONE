@@ -98,6 +98,8 @@ typedef function<void(int)> IntParamEvent;
 #include "Framework/Utilities/Utility.h"
 #include "Framework/Utilities/Font.h"
 #include "Framework/Utilities/Audio.h"
+#include "Framework/Utilities/String.h"
+#include "Framework/System/Sounds.h"
 
 using namespace Utility;
 
@@ -215,3 +217,5 @@ using namespace GameMath;
 
 extern HWND hWnd;
 extern Vector3 mousePos;
+
+const wstring SoundPath = L"../DirectX3D/Sounds/";
