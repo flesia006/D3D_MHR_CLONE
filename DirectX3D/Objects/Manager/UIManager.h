@@ -10,6 +10,9 @@ public:
 
     void Update();
     void PostRender();
+    void Hit(float damage);
+    void HealthPotion();
+    void LargeHealthPotion();    
 
 private:
     Quad* clockFrame;
@@ -25,5 +28,12 @@ private:
     Quad* quickSlot;
     Quad* slingerBug;
     Quad* staminarBar;
+
+    //액터의 UI
+    ProgressBar* hp;
+    Vector3 hpPos; //체력바의 위치를 수치화한 것 (진짜 위치를 위한 중간계산용)
+
+    float curHP = 100;
+    float maxHP = 100;
 };
 

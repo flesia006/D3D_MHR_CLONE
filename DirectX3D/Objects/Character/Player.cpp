@@ -40,6 +40,9 @@ Player::Player() : ModelAnimator("Player")
 	ReadClips();
 
 	CAM->SetTarget(head);
+
+	//캐릭터용 UI 추가
+
 }
 
 Player::~Player()
@@ -86,6 +89,48 @@ void Player::Update()
 	back->UpdateWorld();
 	tmpCollider->UpdateWorld();
 	swordCollider->UpdateWorld();
+
+
+	time += DELTA;
+
+	if (KEY_DOWN('E'))
+	{
+		cure = true;
+		time = 0;
+	}
+	if (cure == true)
+	{
+		if (time < 3)
+		{
+			UIManager::Get()->HealthPotion();
+		}
+		else if(time>=3)
+		{
+			cure = false;
+			return;
+		}
+	}
+
+	if (KEY_DOWN('R'))
+	{
+		Lcure = true;
+		time = 0;
+	}
+	if(Lcure==true)
+	{	
+		if (time < 5)
+		{
+			UIManager::Get()->HealthPotion();
+		}
+		else if (time >= 5)
+		{
+			Lcure = false;
+			return;
+		}
+	}
+
+	UIManager::Get()->Update();
+	
 }
 
 void Player::Render()

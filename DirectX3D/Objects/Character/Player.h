@@ -37,6 +37,7 @@ public:
 	void GUIRender();
 	void PostRender();
 
+	SphereCollider* getCollider() { return tmpCollider; }
 
 private:
 	void Control();
@@ -146,7 +147,10 @@ private:
 
 	int loopApply = 334;
 
+	float time = 0;
 
+	bool cure = false;
+	bool Lcure = false;
 
 };
 

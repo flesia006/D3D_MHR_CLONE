@@ -13,8 +13,8 @@ UIManager::UIManager()
 	durability_gauge = new Quad(L"Textures/UI/Durability_Gauge.png");
 	durability_gauge->Pos() = { 200,600,0 };
 
-	hpBar = new Quad(L"Textures/UI/HpBar.png");
-	hpBar->Pos() = { 140,650,0 };
+	hpBar = new Quad(L"Textures/UI/HpBar_noColor1.png");
+	hpBar->Pos() = { 360,650,0 };
 
 	idBar = new Quad(L"Textures/UI/IDBar.png");
 	idBar->Pos() = { 220,680,0 };
@@ -46,6 +46,17 @@ UIManager::UIManager()
 
 	staminarBar = new Quad(L"Textures/UI/StaminaBar.png");
 	staminarBar->Pos() = { 140,630,0 };
+
+	//캐릭터용 UI 추가
+	hp = new ProgressBar(
+		L"Textures/Color/Green.png",
+		L"Textures/Color/Red.png"
+	);
+	hp->Scale() = { 1.75f,0.02f,0 };
+	hp->Pos() = hpBar->Pos();
+	hp->Pos().x -= 0.1f;
+	curHP = maxHP;
+
 }
 
 UIManager::~UIManager()
@@ -63,10 +74,12 @@ UIManager::~UIManager()
 	delete quickSlot;
 	delete slingerBug;
 	delete staminarBar;
+	delete hp;
 }
 
 void UIManager::Update()
 {
+	hp->UpdateWorld();
 	durability_gauge->UpdateWorld();
 	hpBar->UpdateWorld();
 	lsCoting->UpdateWorld();
@@ -74,10 +87,13 @@ void UIManager::Update()
 	lsGauge2->UpdateWorld();
 	slingerBug->UpdateWorld();
 	staminarBar->UpdateWorld();
+
+	hp->SetAmount(curHP / maxHP);
 }
 
 void UIManager::PostRender()
 {
+	hp->Render();
 	clockFrame->Render();
 	durability->Render();
 	durability_gauge->Render();
@@ -91,4 +107,20 @@ void UIManager::PostRender()
 	quickSlot->Render();
 	slingerBug->Render();
 	staminarBar->Render();
+}
+
+void UIManager::Hit(float damage)
+{
+	curHP = curHP - damage;
+	hp->SetAmount(curHP / maxHP);
+}
+
+void UIManager::HealthPotion()
+{
+	curHP += 0.02f;
+}
+
+void UIManager::LargeHealthPotion()
+{
+	curHP += 0.04f;
 }
