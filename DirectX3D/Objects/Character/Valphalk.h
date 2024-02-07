@@ -1,10 +1,57 @@
 #pragma once
 class Valphalk : public ModelAnimator
 {
+private:
+	enum State
+	{
+		// 애니메이션 클립들이 들어가는거에 따라서 바뀔예정
+		// 예를 들면
+		STUN
+	};
+
+	enum Type // 어디가 색이 변할건지 
+	{
+		// 예를 든거임
+		TypeA, // 이건 머리만 빨간색
+		TypeB, // 이건 날개 빨간색
+		TypeC // 이건 둘다 빨간색
+	};
+
+	enum ColliderName // 콜리더의 내용
+	{
+		// 머리부분
+		HEAD,
+
+		// 몸통부분
+		BODY,
+
+		// 왼쪽 날개
+		LWING,
+
+		// 오른쪽 날개
+		RWING,
+
+		// 왼쪽 다리 (앞)
+		LLEG1,
+
+		// 왼쪽 다리 (뒤)
+		LLEG2,
+
+		// 오른쪽 다리 (앞)
+		RLEG1,
+
+		// 오른쪽 다리 (뒤)
+		RLEG2,
+
+		// 꼬리
+		TAIL
+	};
+
+	UINT Index = 9;
+
 public:
 	Valphalk();
 	~Valphalk();
-
 
 	void Update();
 	void PreRender();
@@ -12,14 +59,56 @@ public:
 	void GUIRender();
 	void PostRender();
 
-	SphereCollider* GetHead() { return headCollider; }
+	void Hit(); // 맞았을때 나오는 모션들
+	void Spawn(Vector3 pos); // 스폰위치
+	void SetTarget(Transform* target); // 타겟 설정
+
+	//Transform* GetTransform(int index) { return transforms[index]; }
+	CapsuleCollider* GetCollider(int index) { return colliders[index]; }
+
+	//ColliderName GetName() { return colliderName; }
 	float damage = 0.1f;
 
 private:
-	SphereCollider* headCollider = nullptr;
-	Transform* head = nullptr;
+	void SetEvent(int clip, Event event, float timeRatio);
+	void ExecuteEvent();
 
-	int node = 14;
+	// 전환 되는 이벤트들 인데 아직 잘 모름
+	//===============
+
+	//===============
+
+	void SetState(State state);
+	void SetType(Type type);
+
+	void Move();
+	void UpdateUI(); //캐릭터 UI가 있으면 이후 업데이트
+
+private:
+	//vector<Transform*> transforms;
+	vector<CapsuleCollider*> colliders;
+
+	ModelAnimatorInstancing* instancing;
+	ModelAnimatorInstancing::Motion* motion;
+
+	Transform* target;
+
+	// 샘플 무조건 바뀜
+	//float speed = 50; //속력 : 기본 스탯
+	//float maxHP = 100;
+	//float curHP = 100;
+
+	Vector3 velocity; //속력 : 실제 움직임
+
+	State curState = STUN; //= 기본 스테이트;
+	Type curType; //= 기본 타입;
+
+	//스테이트 혹은 움직임에 따른 이벤트 지정
+	vector<map<float, Event>> totalEvent;
+	vector<map<float, Event>::iterator> eventIters;
+
+	//ColliderName colliderName;
+
+	// 파티클 부분
+
 };
-
-
