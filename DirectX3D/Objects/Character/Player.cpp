@@ -593,9 +593,9 @@ void Player::Attack() // 충돌판정 함수
 
 	Contact contact;
 
-	if (swordCollider->IsSphereCollision(val->GetHead(), &contact) && !attackOnlyOncePerMotion)
+	if (swordCollider->IsCapsuleCollision(val->GetCollider(0)) && !attackOnlyOncePerMotion)
 	{
-		hitParticle->Play(contact.hitPoint, Vector3::Right());
+		hitParticle->Play(contact.hitPoint, Vector3::Right()); // 포지션 수정 필요
 		attackOnlyOncePerMotion = true;
 	}
 }
