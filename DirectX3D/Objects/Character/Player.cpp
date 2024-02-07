@@ -62,7 +62,7 @@ void Player::Update()
 	if (curState != S_003)
 	mainHand->SetWorld(GetTransformByNode(108));
 	if (curState == S_003)
-		mainHand->SetWorld(GetTransformByNode(90));
+		mainHand->SetWorld(GetTransformByNode(70));
 
 	realPos->Pos() = GetTranslationByNode(1);
 
@@ -141,6 +141,8 @@ void Player::Render()
 
 	particle->Render();
 	trail->Render();
+		
+		
 }
 
 void Player::GUIRender()
@@ -234,8 +236,8 @@ void Player::PostRender()
 	strStatus.push_back("S_008 제자리 납도");
 	strStatus.push_back("S_009 걸으면서 납도");
 
-	string fps = "Status : " + strStatus.at((UINT)curState);
-	Font::Get()->RenderText(fps, { 150, WIN_HEIGHT - 30 });
+	//string fps = "Status : " + strStatus.at((UINT)curState);
+	//Font::Get()->RenderText(fps, { 150, WIN_HEIGHT - 30 });
 
 
 }
@@ -757,6 +759,20 @@ void Player::S003() // 납도상태 달리기
 void Player::S008() // 서서 납도
 {
 	PLAY;
+	//Move();
+	Rotate();
+
+	if (RATIO > 0.94 && (KEY_PRESS('W') || KEY_PRESS('S') || KEY_PRESS('A') || KEY_PRESS('D')))
+	{
+		SetState(S_003);
+		return;
+	}
+
+	if (RATIO > 0.98)
+	{
+		ReturnIdle();
+	}
+
 }
 
 void Player::S009() // 걸으면서 납도
