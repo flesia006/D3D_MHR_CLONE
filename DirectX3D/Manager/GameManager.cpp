@@ -35,9 +35,15 @@
 GameManager::GameManager()
 {
     Create();
+    SceneManager::Get()->Create("ShadowScene", new ShadowScene());
+    SceneManager::Get()->Add("ShadowScene");
+
+    //SceneManager::Get()->Create("ModelExport", new ModelExportScene());
+    //SceneManager::Get()->Add("ModelExport");
+
+
 
     SceneManager::Get()->Create("Grid", new GridScene());
-    //SceneManager::Get()->Create("ModelExport", new ModelExportScene());
 
     //SceneManager::Get()->Create("Cube", new CubeScene());
     //SceneManager::Get()->Create("Sphere", new SphereScene());
@@ -50,7 +56,7 @@ GameManager::GameManager()
     //SceneManager::Get()->Create("Game", new GameScene());
     //SceneManager::Get()->Create("RenderTarget", new RenderTargetScene());
     //SceneManager::Get()->Create("GeometryBuffer", new GBufferScene());
-//SceneManager::Get()->Create("ShadowScene", new ShadowScene());
+    //SceneManager::Get()->Create("ShadowScene", new ShadowScene());
     //SceneManager::Get()->Create("AStar", new AStarScene());
     //SceneManager::Get()->Create("LightTest", new LightScene());
     //SceneManager::Get()->Create("Billboard", new BillboardScene());
@@ -63,7 +69,6 @@ GameManager::GameManager()
     //SceneManager::Get()->Create("LOD", new TerrainLODScene());
 
     SceneManager::Get()->Add("Grid");
-    //SceneManager::Get()->Add("ModelExport");
     //SceneManager::Get()->Add("HumanTest");
     //SceneManager::Get()->Add("Game");
     //SceneManager::Get()->Add("RenderTarget");
@@ -78,7 +83,8 @@ GameManager::GameManager()
     //SceneManager::Get()->Add("WaterScene");
     //SceneManager::Get()->Add("QuadTree");
     //SceneManager::Get()->Add("Tessellation");
-//SceneManager::Get()->Add("ShadowScene");
+
+
 }
 
 GameManager::~GameManager()

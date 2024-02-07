@@ -63,7 +63,7 @@ void Player::Update()
 	if (curState != S_003)
 	mainHand->SetWorld(GetTransformByNode(108));
 	if (curState == S_003)
-		mainHand->SetWorld(GetTransformByNode(90));
+		mainHand->SetWorld(GetTransformByNode(70));
 
 	realPos->Pos() = GetTranslationByNode(1);
 
@@ -95,7 +95,6 @@ void Player::Update()
 	back->UpdateWorld();
 	tmpCollider->UpdateWorld();
 	swordCollider->UpdateWorld();
-
 
 	time += DELTA;
 
@@ -149,6 +148,8 @@ void Player::Render()
 	particle->Render();
 	trail->Render();
 	hitParticle->Render();
+		
+		
 }
 
 void Player::GUIRender()
@@ -245,8 +246,8 @@ void Player::PostRender()
 	strStatus.push_back("S_008 제자리 납도");
 	strStatus.push_back("S_009 걸으면서 납도");
 
-	string fps = "Status : " + strStatus.at((UINT)curState);
-	Font::Get()->RenderText(fps, { 150, WIN_HEIGHT - 30 });
+	//string fps = "Status : " + strStatus.at((UINT)curState);
+	//Font::Get()->RenderText(fps, { 150, WIN_HEIGHT - 30 });
 
 
 }
@@ -378,8 +379,6 @@ void Player::Move()
 {
 	bool isMoveZ = false; // 전후 이동 중 아님
 	bool isMoveX = false; // 좌우 이동 중 아님
-
-
 
 	if (KEY_PRESS('W'))
 	{
@@ -744,7 +743,7 @@ void Player::RecordLastPos()
 	Pos() = GetTranslationByNode(1);
 }
 
-void Player::S003()
+void Player::S003() // 납도상태 달리기
 {
 	PLAY;
 	Move();
@@ -769,12 +768,26 @@ void Player::S003()
 		Roll();
 }
 
-void Player::S008()
+void Player::S008() // 서서 납도
 {
 	PLAY;
+	//Move();
+	Rotate();
+
+	if (RATIO > 0.94 && (KEY_PRESS('W') || KEY_PRESS('S') || KEY_PRESS('A') || KEY_PRESS('D')))
+	{
+		SetState(S_003);
+		return;
+	}
+
+	if (RATIO > 0.98)
+	{
+		ReturnIdle();
+	}
+
 }
 
-void Player::S009()
+void Player::S009() // 걸으면서 납도
 {
 	PLAY;
 	Move();
@@ -820,7 +833,7 @@ void Player::L001() // 발도상태 대기
 		return;
 	}
 	if (KEY_PRESS(VK_LSHIFT))
-		SetState(L_003);
+		SetState(S_008);
 	if (KEY_DOWN(VK_SPACE))
 		Roll();
 }
@@ -833,6 +846,8 @@ void Player::L002() // 발도
 void Player::L003() // 서서 납도
 {
 	PLAY;
+	Move();
+	Rotate();
 }
 
 void Player::L004() // 발도상태 걷기 중
