@@ -90,7 +90,6 @@ void Player::Update()
 	tmpCollider->UpdateWorld();
 	swordCollider->UpdateWorld();
 
-
 	time += DELTA;
 
 	if (KEY_DOWN('E'))

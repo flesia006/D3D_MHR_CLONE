@@ -50,12 +50,20 @@ UIManager::UIManager()
 	//캐릭터용 UI 추가
 	hp = new ProgressBar(
 		L"Textures/Color/Green.png",
-		L"Textures/Color/Red.png"
+		L"Textures/UI/HpBar_noColor1.png"
 	);
+	recover = new ProgressBar(
+		L"Textures/Color/Red.png",
+		L"Textures/Color/Black.png"
+	);
+
 	hp->Scale() = { 1.75f,0.02f,0 };
 	hp->Pos() = hpBar->Pos();
 	hp->Pos().x -= 0.1f;
 	curHP = maxHP;
+	recover->Scale() = hp->Scale();
+	recover->Pos() = hp->Pos();
+	
 
 }
 
@@ -75,10 +83,12 @@ UIManager::~UIManager()
 	delete slingerBug;
 	delete staminarBar;
 	delete hp;
+	delete recover;
 }
 
 void UIManager::Update()
 {
+	recover->UpdateWorld();
 	hp->UpdateWorld();
 	durability_gauge->UpdateWorld();
 	hpBar->UpdateWorld();
@@ -89,10 +99,18 @@ void UIManager::Update()
 	staminarBar->UpdateWorld();
 
 	hp->SetAmount(curHP / maxHP);
+	recover->SetAmount(recoverHP / maxHP);
+
+	if(curHP<recoverHP)
+	curHP += 0.001f;
+
+	if (curHP > recoverHP)
+		recoverHP = curHP;
 }
 
 void UIManager::PostRender()
 {
+	recover->Render();
 	hp->Render();
 	clockFrame->Render();
 	durability->Render();
@@ -111,8 +129,11 @@ void UIManager::PostRender()
 
 void UIManager::Hit(float damage)
 {
-	curHP = curHP - damage;
+	curHP = curHP - damage;	
 	hp->SetAmount(curHP / maxHP);
+
+	recoverHP = recoverHP - damage / 2;
+	recover->SetAmount(recoverHP / maxHP);
 }
 
 void UIManager::HealthPotion()
