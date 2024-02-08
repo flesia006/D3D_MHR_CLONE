@@ -1,7 +1,7 @@
 #pragma once
 class Valphalk : public ModelAnimator
 {
-private:
+public:
 	enum State
 	{
 		// 애니메이션 클립들이 들어가는거에 따라서 바뀔예정
@@ -64,7 +64,7 @@ public:
 	void SetTarget(Transform* target); // 타겟 설정
 
 	//Transform* GetTransform(int index) { return transforms[index]; }
-	CapsuleCollider* GetCollider(int index) { return colliders[index]; }
+	vector<CapsuleCollider*> GetCollider() { return colliders; }
 
 	//ColliderName GetName() { return colliderName; }
 	float damage = 0.1f;

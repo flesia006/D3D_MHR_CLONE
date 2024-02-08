@@ -29,8 +29,6 @@ Player::Player() : ModelAnimator("Player")
 
 	//	longSword->Rot().x -= XM_PIDIV2;	
 
-	particle = new Spark(L"Textures/Effect/Rain.png", true);
-
 	tmpCollider = new SphereCollider();
 	tmpCollider->Scale() *= 6.0f;
 
@@ -51,7 +49,6 @@ Player::~Player()
 	delete head;
 	delete realPos;
 	delete tmpCollider;
-	delete particle;
 	delete hitParticle;
 }
 
@@ -152,7 +149,6 @@ void Player::Render()
 	//swordCollider->Render();
 	longSword->Render();
 
-	particle->Render();
 	trail->Render();
 	hitParticle->Render();
 		
@@ -163,7 +159,6 @@ void Player::GUIRender()
 {
 	//	ModelAnimator::GUIRender();
 
-	particle->GUIRender();
 	trail->GetMaterial()->GUIRender();
 	hitParticle->GUIRender();
 
@@ -600,9 +595,9 @@ void Player::Attack() // 충돌판정 함수
 
 	Contact contact;
 
-	if (swordCollider->IsCapsuleCollision(val->GetCollider(0)) && !attackOnlyOncePerMotion)
+	if (swordCollider->IsCapsuleCollision(val->GetCollider()[Valphalk::HEAD], &contact) && !attackOnlyOncePerMotion)
 	{
-		hitParticle->Play(contact.hitPoint, Vector3::Right()); // 포지션 수정 필요
+		hitParticle->Play(contact.hitPoint, swordSwingDir);
 		attackOnlyOncePerMotion = true;
 	}
 }

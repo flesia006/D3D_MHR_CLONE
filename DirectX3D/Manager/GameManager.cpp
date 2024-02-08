@@ -41,9 +41,12 @@ GameManager::GameManager()
     //SceneManager::Get()->Create("ModelExport", new ModelExportScene());
     //SceneManager::Get()->Add("ModelExport");
 
+//  SceneManager::Get()->Create("ParticleConfig", new ParticleConfigScene());
+//  SceneManager::Get()->Add("ParticleConfig");
 
 
     SceneManager::Get()->Create("Grid", new GridScene());
+    SceneManager::Get()->Add("Grid");
 
     //SceneManager::Get()->Create("Cube", new CubeScene());
     //SceneManager::Get()->Create("Sphere", new SphereScene());
@@ -60,15 +63,13 @@ GameManager::GameManager()
     //SceneManager::Get()->Create("AStar", new AStarScene());
     //SceneManager::Get()->Create("LightTest", new LightScene());
     //SceneManager::Get()->Create("Billboard", new BillboardScene());
-    SceneManager::Get()->Create("Particle", new ParticleScene());
-//    SceneManager::Get()->Create("ParticleConfig", new ParticleConfigScene());
+//    SceneManager::Get()->Create("Particle", new ParticleScene());
     // *ÀÛ¾÷Áß // SceneManager::Get()->Create("MirrorScene", new MirrorScene());
     //SceneManager::Get()->Create("WaterScene", new WaterScene());
     //SceneManager::Get()->Create("QuadTree", new QuadTreeScene());
     //SceneManager::Get()->Create("Tessellation", new TessellationScene());
     //SceneManager::Get()->Create("LOD", new TerrainLODScene());
 
-    SceneManager::Get()->Add("Grid");
     //SceneManager::Get()->Add("HumanTest");
     //SceneManager::Get()->Add("Game");
     //SceneManager::Get()->Add("RenderTarget");
@@ -78,7 +79,6 @@ GameManager::GameManager()
     //SceneManager::Get()->Add("LightTest");
     //SceneManager::Get()->Add("Billboard");
     SceneManager::Get()->Add("Particle");
-//    SceneManager::Get()->Add("ParticleConfig");
     //SceneManager::Get()->Add("MirrorScene");
     //SceneManager::Get()->Add("WaterScene");
     //SceneManager::Get()->Add("QuadTree");

@@ -114,7 +114,6 @@ private:
 	Model* longSword = nullptr;
 
 	Shadow* shadow;
-	Particle* particle;
 	LightBuffer::Light* light;
 	Trail* trail;
 	HitParticle* hitParticle;
