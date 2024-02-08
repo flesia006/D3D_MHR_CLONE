@@ -81,11 +81,11 @@ void Valphalk::Render()
 
 void Valphalk::GUIRender()
 {
-	ModelAnimator::GUIRender();
-	for (CapsuleCollider* capsulCollider : colliders)
-	{
-		capsulCollider->GUIRender();
-	}
+	//ModelAnimator::GUIRender();
+	//for (CapsuleCollider* capsulCollider : colliders)
+	//{
+	//	capsulCollider->GUIRender();
+	//}
 }
 
 void Valphalk::PostRender()

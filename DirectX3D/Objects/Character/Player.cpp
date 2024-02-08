@@ -61,10 +61,17 @@ void Player::Update()
 	ResetPlayTime();
 
 	if (curState != S_003)
-	mainHand->SetWorld(GetTransformByNode(108));
+	{
+		mainHand->SetWorld(GetTransformByNode(108));
+		longSword->Pos() = {};
+		longSword->Rot() = {};
+	}
 	if (curState == S_003)
-		mainHand->SetWorld(GetTransformByNode(70));
-
+	{
+		mainHand->SetWorld(GetTransformByNode(190));
+		longSword->Pos() = { -32,32,23 };
+		longSword->Rot() = { -0.86f,-1.2f,+1.46f };
+	}
 	realPos->Pos() = GetTranslationByNode(1);
 
 	head->Pos() = realPos->Pos() + Vector3::Up() * 200;
@@ -142,7 +149,7 @@ void Player::Render()
 {
 	ModelAnimator::Render();
 	tmpCollider->Render();
-	swordCollider->Render();
+	//swordCollider->Render();
 	longSword->Render();
 
 	particle->Render();
@@ -180,9 +187,9 @@ void Player::GUIRender()
 	//
 	//
 	ImGui::SliderInt("node", &node, 100, 300);
+
 	ImGui::SliderFloat("rotation", &rotation, 0, 20.0f);
-
-
+		
 	longSword->GUIRender();
 
 
