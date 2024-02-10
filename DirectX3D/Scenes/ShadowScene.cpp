@@ -21,7 +21,7 @@ ShadowScene::ShadowScene()
     light = Environment::Get()->GetLight(0);
 
     light->type = 0;
-    light->pos = { 0, 2000, -500 };
+    light->pos = { 0, 2000, +1000 };
     light->range = 3000;
 
     light->direction = { 0, -1, 1 };

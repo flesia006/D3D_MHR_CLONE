@@ -73,7 +73,7 @@ void Valphalk::Render()
 {
 	for (CapsuleCollider* capsulCollider : colliders)
 	{
-		capsulCollider->Render();;
+//		capsulCollider->Render();;
 	}
 
 	ModelAnimator::Render();
