@@ -149,9 +149,11 @@ void Player::Render()
 	//swordCollider->Render();
 	longSword->Render();
 
-	trail->Render();
-	hitParticle->Render();
-		
+	if (renderEffect)
+	{
+		trail->Render();
+		hitParticle->Render();
+	}		
 		
 }
 
@@ -588,8 +590,10 @@ void Player::Rotate()
 
 }
 
-void Player::Attack() // 충돌판정 함수
+void Player::Attack(float power) // 충돌판정 함수
 {
+	renderEffect = true;
+
 	Valphalk* val =
 		dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetValphalk();
 
@@ -680,12 +684,19 @@ void Player::SetState(State state)
 	//	PlayClip(state);
 }
 
-void Player::Throw()
+void Player::EndEffect()
 {
-}
+	if (!renderEffect)
+		return;
 
-void Player::EndThrow()
-{
+	effectTimer += DELTA;
+
+	if (effectTimer > 0.2f)
+	{
+		renderEffect = false;
+		effectTimer = 0;
+	}
+
 }
 
 void Player::ReadClips()
@@ -1007,29 +1018,40 @@ void Player::L101() // 내디뎌베기
 	if (RATIO < 0.3)
 		Rot().y = Lerp(Rot().y, rad, 0.001f);
 
-	Attack();
 
-	// 해당 클립이 60% 이상 재생됐으면 if 조건 충족
-	if (RATIO > 0.6)
+	// 공격판정 프레임
 	{
-		if (KEY_FRONT(Keyboard::LMB))
-		{
-			SetState(L_102);
-		}
-		else if (KEY_FRONT(Keyboard::RMB))
-		{
-			SetState(L_104);
-		}
-		else if (KEY_FRONT(Keyboard::LMBRMB))
-		{
-			SetState(L_103);
-		}
-		else if (KEY_FRONT(Keyboard::SPACE))
-		{
-			Roll();
-		}
+		if (RATIO > 0.264 && RATIO < 0.44)
+			Attack(26);
+		else
+			EndEffect();
 	}
 
+	// 캔슬 가능 프레임
+	if (RATIO > 0.6)
+	{
+		if (KEY_FRONT(Keyboard::LMB))		
+			SetState(L_102);
+
+		
+		else if (KEY_FRONT(Keyboard::RMB))		
+			SetState(L_104);
+
+		
+		else if (KEY_FRONT(Keyboard::LMBRMB))		
+			SetState(L_103);
+
+		// 기인베기1
+		else if (KEY_FRONT(Keyboard::CTRL))
+			SetState(L_106);
+
+
+		else if (KEY_FRONT(Keyboard::SPACE))		
+			Roll();
+		
+	}
+
+	// 복귀 프레임
 	if (RATIO > 0.98)
 	{
 		ReturnIdle();
@@ -1045,29 +1067,39 @@ void Player::L102() // 세로베기
 		MotionRotate(30);
 	}
 
-	Attack();
+	// 방향 조정 가능 프레임
+	{
+		if (RATIO < 0.3)
+			Rot().y = Lerp(Rot().y, rad, 0.001f);
+	}
 
-	if (RATIO < 0.3)
-		Rot().y = Lerp(Rot().y, rad, 0.001f);
 
+	// 공격판정 프레임
+	{
+		if (RATIO > 0.3 && RATIO < 0.375)
+			Attack(26);
+		else
+			EndEffect();
+	}
+
+	// 파생 연계 프레임
 	if (RATIO > 0.5)
 	{
-		if (KEY_FRONT(Keyboard::LMB))
-		{
+		// 찌르기
+		if (KEY_FRONT(Keyboard::LMB) || KEY_FRONT(Keyboard::RMB))
 			SetState(L_104);
-		}
-		else if (KEY_FRONT(Keyboard::RMB))
-		{
-			SetState(L_104);
-		}
+
+		// 베어내리기
 		else if (KEY_FRONT(Keyboard::LMBRMB))
-		{
 			SetState(L_103);
-		}
+
+		// 기인베기1
+		else if (KEY_FRONT(Keyboard::CTRL))
+			SetState(L_106);
+
+		// 구르기
 		else if (KEY_FRONT(Keyboard::SPACE))
-		{
 			Roll();
-		}
 	}
 
 	if (RATIO > 0.98)
@@ -1084,17 +1116,27 @@ void Player::L103() // 베어내리기
 		MotionRotate(30);
 	}
 
-	Attack();
-
-	if (RATIO < 0.3) // 30%
+	if (RATIO < 0.272)
 		Rot().y = Lerp(Rot().y, rad, 0.001f);
+
+	// 공격판정 프레임
+	{
+		if (RATIO > 0.272 && RATIO < 0.456)
+			Attack(24);
+		else
+			EndEffect();
+	}
 
 	if (RATIO > 0.95)
 	{
 		if (KEY_FRONT(Keyboard::RMB))
-		{
 			SetState(L_104);
-		}
+
+		// 기인베기1
+		else if (KEY_FRONT(Keyboard::CTRL))
+			SetState(L_106);
+
+
 		else if (KEY_FRONT(Keyboard::SPACE))
 		{
 			Roll();
@@ -1111,26 +1153,35 @@ void Player::L104() // 찌르기
 {
 	PLAY;
 
-	Attack();
+	// 공격판정 프레임
+	{
+		if (RATIO > 0.1 && RATIO < 0.213)
+			Attack(14);
+		else
+			EndEffect();
+	}
 
-	if (RATIO > 0.45)
+	if (RATIO > 0.40)
 	{
 		if (KEY_FRONT(Keyboard::LMB))
-		{
 			SetState(L_105);
-		}
+		
+
 		else if (KEY_FRONT(Keyboard::RMB))
-		{
-			SetState(L_105);
-		}
+			SetState(L_105);		
+
+
 		else if (KEY_FRONT(Keyboard::LMBRMB))
-		{
 			SetState(L_103);
-		}
-		else if (KEY_FRONT(Keyboard::SPACE))
-		{
+
+		// 기인베기1
+		else if (KEY_FRONT(Keyboard::CTRL))
+			SetState(L_106);
+
+
+		else if (KEY_FRONT(Keyboard::SPACE))		
 			Roll();
-		}
+		
 	}
 
 	if (RATIO > 0.98)
@@ -1143,7 +1194,13 @@ void Player::L105() // 베어 올리기
 {
 	PLAY;
 
-	Attack();
+	// 공격판정 프레임
+	{
+		if (RATIO > 0.1 && RATIO < 0.2)
+			Attack(18);
+		else
+			EndEffect();
+	}
 
 	if (RATIO > 0.6)
 	{
@@ -1159,6 +1216,11 @@ void Player::L105() // 베어 올리기
 		else if (KEY_FRONT(Keyboard::LMBRMB))
 			SetState(L_103);
 
+		// 기인베기1
+		else if (KEY_FRONT(Keyboard::CTRL))
+			SetState(L_106);
+
+
 		else if (KEY_FRONT(Keyboard::SPACE))
 			Roll();
 	}
@@ -1171,45 +1233,145 @@ void Player::L106() // 기인 베기 1
 {
 	PLAY;
 
-	Attack();
+	// 공격판정 프레임
+	{
+		if (RATIO > 0.33 && RATIO < 0.416)
+			Attack(31);
+		else
+			EndEffect();
+	}
 
-	if (RATIO > 0.6)
+	if (RATIO > 0.43)
 	{
 		// 찌르기
-		if (KEY_FRONT(Keyboard::RMB) || KEY_FRONT(Keyboard::LMB))
-		{
+		if (KEY_FRONT(Keyboard::RMB))		
 			SetState(L_104);
-		}
+				
 		// 베어내리기
-		else if (KEY_FRONT(Keyboard::LMBRMB))
-		{
+		else if (KEY_FRONT(Keyboard::LMBRMB))		
 			SetState(L_103);
-		}
+		
 		// 기인 베기2
 		else if (KEY_FRONT(Keyboard::CTRL))
-		{
 			SetState(L_107);
-		}
+		
+		// 구르기
 		else if (KEY_FRONT(Keyboard::SPACE))
-		{
-			Roll();
-		}
+			Roll();		
 	}
 
 	if (RATIO > 0.98)
 		ReturnIdle();
 }
 
-void Player::L107()
+void Player::L107() // 기인베기 2
 {
+	PLAY;
+
+	// 공격판정 프레임
+	{
+		if (RATIO > 0.26 && RATIO < 0.38)
+			Attack(33);
+		else
+			EndEffect();
+	}
+
+	// 캔슬 가능 프레임
+	{
+		if (RATIO > 0.41)
+		{
+			// 베어 올리기
+			if (KEY_FRONT(Keyboard::RMB) || KEY_FRONT(Keyboard::LMB))
+				SetState(L_105);
+
+			// 베어내리기
+			else if (KEY_FRONT(Keyboard::LMBRMB))
+				SetState(L_103);
+
+			// 기인 베기3
+			else if (KEY_FRONT(Keyboard::CTRL))
+				SetState(L_108);
+
+			// 구르기
+			else if (KEY_FRONT(Keyboard::SPACE))
+				Roll();
+		}
+	}
+
+
+	if (RATIO > 0.98)
+		ReturnIdle();
 }
 
 void Player::L108()
 {
+	PLAY;
+
+	// 공격판정 프레임 (이 모션은 3번 베기 동작이 있음)
+	{
+		if (RATIO > 0.05 && RATIO < 0.12)
+		{
+			Attack(13);
+			attackOnlyOncePerMotion = false;
+		}
+		else if (RATIO > 0.14 && RATIO < 0.22)
+		{
+			Attack(15);
+			attackOnlyOncePerMotion = false;
+		}
+		else if(RATIO > 0.43 && RATIO < 0.47)
+			Attack(37);
+		else
+			EndEffect();
+	}
+
+	if (RATIO > 0.50)
+	{
+		// 찌르기
+		if (KEY_FRONT(Keyboard::RMB) || KEY_FRONT(Keyboard::LMB))		
+			SetState(L_104);
+		
+		// 베어내리기
+		else if (KEY_FRONT(Keyboard::LMBRMB))		
+			SetState(L_103);
+		
+		// 기인 베기3
+		else if (KEY_FRONT(Keyboard::CTRL))		
+			SetState(L_109);
+
+		
+		else if (KEY_FRONT(Keyboard::SPACE))		
+			Roll();
+		
+	}
+
+	if (RATIO > 0.98)
+		ReturnIdle();
 }
 
 void Player::L109()
 {
+	PLAY;
+
+	// 공격판정 프레임 (이 모션은 3번 베기 동작이 있음)
+	{
+		if (RATIO > 0.16 && RATIO < 0.24)
+			Attack(42);
+		else
+			EndEffect();
+	}
+
+	if (RATIO > 0.50) // 특납 연계 가능 타이밍 언제?
+	{
+		// 찌르기
+		if (KEY_FRONT(Keyboard::CTRLSPACE))
+		{
+		//	SetState(L_104);
+		}
+	}
+
+	if (RATIO > 0.98)
+		ReturnIdle();
 }
 
 void Player::L110()

@@ -45,13 +45,12 @@ private:
 	void ResetPlayTime();
 
 	void Rotate();
-	void Attack(); // TODO :  인자로 모션 배율 넣기
+	void Attack(float power = 0); // TODO : 데미지 계산 넣어야함
 	void SetAnimation();
 	void Roll();
 
-	void SetState(State state);
-	void Throw();
-	void EndThrow();
+	void SetState(State state);	
+	void EndEffect();
 
 	void SetIdle() { SetState((State)1); }
 
@@ -62,7 +61,6 @@ private:
 	void RecordLastPos();
 	void ReturnIdle()
 	{
-		Pos() = realPos->Pos();
 		GetClip(L_001)->ResetPlayTime();
 		SetState(L_001);
 	}
@@ -144,9 +142,9 @@ private:
 
 	int node = 197;
 	float rotation = -1.5;
-
 	float camRot;
 	float rad;
+	float effectTimer = 0.0f;
 
 	int loopApply = 334;
 
@@ -156,6 +154,8 @@ private:
 	bool Lcure = false;
 
 	bool attackOnlyOncePerMotion = false;
+
+	bool renderEffect = false;
 
 };
 
