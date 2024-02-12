@@ -260,122 +260,55 @@ void Player::Control()
 {
 	switch (curState)
 	{
-	case Player::S_003:
-		S003();
-		break;
-	case Player::S_008:
-		S008();
-		break;
-	case Player::S_009:
-		S009();
-		break;
+	case Player::S_003:		S003();		break;
+	case Player::S_008:		S008();		break;
+	case Player::S_009:		S009();		break;
 		// 이동 모션
-	case Player::L_001:
-		L001();
-		break;
-	case Player::L_002:
-		break;
-	case Player::L_003:
-		break;
-	case Player::L_004:
-		L004();
-		break;
-	case Player::L_005:
-		L005();
-		break;
-	case Player::L_006:
-		break;
-	case Player::L_007:
-		break;
-	case Player::L_008:
-		L008();
-		break;
-	case Player::L_009:
-		break;
-	case Player::L_010:
-		L010();
-		break;
-	case Player::L_011:
-		break;
-	case Player::L_012:
-		break;
-	case Player::L_013:
-		break;
-	case Player::L_014:
-		break;
-	case Player::L_015:
-		break;
-	case Player::L_071:
-		break;
-	case Player::L_072:
-		break;
-	case Player::L_073:
-		break;
-	case Player::L_077:
-		break;
-	case Player::L_078:
-		break;
-	case Player::L_079:
-		break;
+	case Player::L_001:		L001();		break;
+	case Player::L_002:		break;
+	case Player::L_003:		break;
+	case Player::L_004:		L004();		break;
+	case Player::L_005:		L005();		break;
+	case Player::L_006:		break;
+	case Player::L_007:		break;
+	case Player::L_008:		L008();		break;
+	case Player::L_009:		break;
+	case Player::L_010:		L010();		break;
+	case Player::L_011:		break;
+	case Player::L_012:		break;
+	case Player::L_013:		break;
+	case Player::L_014:		break;
+	case Player::L_015:		break;
+	case Player::L_071:		break;
+	case Player::L_072:		break;
+	case Player::L_073:		break;
+	case Player::L_077:		break;
+	case Player::L_078:		break;
+	case Player::L_079:		break;
 		// 공격 모션
-	case Player::L_101:
-		L101();
-		break;
-	case Player::L_102:
-		L102();
-		break;
-	case Player::L_103:
-		L103();
-		break;
-	case Player::L_104:
-		L104();
-		break;
-	case Player::L_105:
-		L105();
-		break;
-	case Player::L_106:
-		L106();
-		break;
-	case Player::L_107:
-		L107();
-		break;
-	case Player::L_108:
-		L108();
-		break;
-	case Player::L_109:
-		L109();
-		break;
-	case Player::L_110:
-		L110();
-		break;
-	case Player::L_111:
-		break;
-	case Player::L_112:
-		break;
-	case Player::L_113:
-		break;
-	case Player::L_114:
-		break;
-	case Player::L_115:
-		break;
-	case Player::L_116:
-		break;
-	case Player::L_117:
-		break;
-	case Player::L_118:
-		break;
-	case Player::L_119:
-		break;
-	case Player::L_120:
-		break;
-	case Player::L_121:
-		break;
-	case Player::L_122:
-		break;
-	case Player::L_123:
-		break;
-	default:
-		break;
+	case Player::L_101:		L101();		break;
+	case Player::L_102:		L102();		break;
+	case Player::L_103:		L103();		break;
+	case Player::L_104:		L104();		break;
+	case Player::L_105:		L105();		break;
+	case Player::L_106:		L106();		break;
+	case Player::L_107:		L107();		break;
+	case Player::L_108:		L108();		break;
+	case Player::L_109:		L109();		break;
+	case Player::L_110:		L110();		break;
+	case Player::L_111:		break;
+	case Player::L_112:		break;
+	case Player::L_113:		break;
+	case Player::L_114:		break;
+	case Player::L_115:		break;
+	case Player::L_116:		break;
+	case Player::L_117:		break;
+	case Player::L_118:		break;
+	case Player::L_119:		break;
+	case Player::L_120:		break;
+	case Player::L_121:		break;
+	case Player::L_122:		break;
+	case Player::L_123:		break;
 	}
 }
 
@@ -1272,8 +1205,8 @@ void Player::L107() // 기인베기 2
 	{
 		if (RATIO > 0.26 && RATIO < 0.38)
 			Attack(33);
-		else
-			EndEffect();
+		else // 
+			EndEffect(); 
 	}
 
 	// 캔슬 가능 프레임
@@ -1371,7 +1304,7 @@ void Player::L109()
 	}
 
 	if (RATIO > 0.98)
-		ReturnIdle();
+		SetState(S_003);
 }
 
 void Player::L110()
