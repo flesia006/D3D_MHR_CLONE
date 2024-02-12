@@ -22,8 +22,17 @@
 #define KEY_DOWN(k) Keyboard::Get()->Down(k)
 #define KEY_UP(k) Keyboard::Get()->Up(k)
 #define KEY_PRESS(k) Keyboard::Get()->Press(k)
-
 #define KEY_FRONT(k) Keyboard::Get()->IsInputBufferFront(k)
+
+#define	K_RMB			  Keyboard::Get()->IsInputBufferFront(Keyboard::RMB)
+#define	K_LMB			  Keyboard::Get()->IsInputBufferFront(Keyboard::LMB)
+#define	K_CTRL		  Keyboard::Get()->IsInputBufferFront(Keyboard::CTRL)
+#define	K_CTRLRMB		  Keyboard::Get()->IsInputBufferFront(Keyboard::CTRLRMB)
+#define	K_CTRLSPACE     Keyboard::Get()->IsInputBufferFront(Keyboard::CTRLSPACE)
+#define	K_LMBRMB		  Keyboard::Get()->IsInputBufferFront(Keyboard::LMBRMB)
+#define	K_SHIFT		  Keyboard::Get()->IsInputBufferFront(Keyboard::SHIFT)
+#define	K_SPACE		  Keyboard::Get()->IsInputBufferFront(Keyboard::SPACE)
+
 
 
 #define CAM Environment::Get()->GetMainCamera()
