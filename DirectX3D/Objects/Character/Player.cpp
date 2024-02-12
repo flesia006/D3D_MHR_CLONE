@@ -20,7 +20,7 @@ Player::Player() : ModelAnimator("Player")
 
 	swordStart = new Transform();
 	swordEnd = new Transform();
-	trail = new Trail(L"Textures/Effect/Snow.png", swordStart, swordEnd, 20, 70);
+	trail = new Trail(L"Textures/Effect/Snow.png", swordStart, swordEnd, 20, 85);
 	hitParticle = new HitParticle();
 	
 
@@ -109,7 +109,7 @@ void Player::GUIRender()
 	//
 	ImGui::SliderInt("node", &node, 100, 300);
 
-	ImGui::SliderFloat("rotation", &rotation, 0, 20.0f);
+	ImGui::SliderInt("temp", &temp, 100, 200.0f);
 		
 	longSword->GUIRender();
 
@@ -904,6 +904,12 @@ void Player::L001() // 발도상태 대기
 		SetState(L_103);
 		return;
 	}
+	// 106 기인베기
+	if (KEY_FRONT(Keyboard::CTRL))
+	{
+		SetState(L_106);
+		return;
+	}
 	if (KEY_PRESS(VK_LSHIFT))
 		SetState(S_008);
 	if (KEY_DOWN(VK_SPACE))
@@ -1104,6 +1110,11 @@ void Player::L101() // 내디뎌베기
 		else if (KEY_FRONT(Keyboard::CTRL))
 			SetState(L_106);
 
+		// 간파 베기
+		else if (KEY_FRONT(Keyboard::CTRLRMB))
+			SetState(L_147);
+
+		else if (K_CTRLSPACE)	SetState(L_151);	// 특수 납도
 
 		else if (KEY_FRONT(Keyboard::SPACE))		
 			Roll();
@@ -1156,6 +1167,12 @@ void Player::L102() // 세로베기
 		else if (KEY_FRONT(Keyboard::CTRL))
 			SetState(L_106);
 
+		// 간파 베기
+		else if (KEY_FRONT(Keyboard::CTRLRMB))
+			SetState(L_147);
+
+		else if (K_CTRLSPACE)	SetState(L_151);	// 특수 납도
+
 		// 구르기
 		else if (KEY_FRONT(Keyboard::SPACE))
 			Roll();
@@ -1195,11 +1212,14 @@ void Player::L103() // 베어내리기
 		else if (KEY_FRONT(Keyboard::CTRL))
 			SetState(L_106);
 
+		// 간파 베기
+		else if (KEY_FRONT(Keyboard::CTRLRMB))
+			SetState(L_147);
+
+		else if (K_CTRLSPACE)	SetState(L_151);	// 특수 납도
 
 		else if (KEY_FRONT(Keyboard::SPACE))
-		{
 			Roll();
-		}
 	}
 
 	if (RATIO > 0.98)
@@ -1237,6 +1257,11 @@ void Player::L104() // 찌르기
 		else if (KEY_FRONT(Keyboard::CTRL))
 			SetState(L_106);
 
+		// 간파 베기
+		else if (KEY_FRONT(Keyboard::CTRLRMB))
+			SetState(L_147);
+
+		else if (K_CTRLSPACE)	SetState(L_151);	// 특수 납도
 
 		else if (KEY_FRONT(Keyboard::SPACE))		
 			Roll();
@@ -1261,7 +1286,7 @@ void Player::L105() // 베어 올리기
 			EndEffect();
 	}
 
-	if (RATIO > 0.6)
+	if (RATIO > 0.4)
 	{
 		// 세로베기
 		if (KEY_FRONT(Keyboard::LMB))
@@ -1279,6 +1304,11 @@ void Player::L105() // 베어 올리기
 		else if (KEY_FRONT(Keyboard::CTRL))
 			SetState(L_106);
 
+		// 간파 베기
+		else if (KEY_FRONT(Keyboard::CTRLRMB))
+			SetState(L_147);
+
+		else if (K_CTRLSPACE)	SetState(L_151);	// 특수 납도
 
 		else if (KEY_FRONT(Keyboard::SPACE))
 			Roll();
@@ -1313,7 +1343,13 @@ void Player::L106() // 기인 베기 1
 		// 기인 베기2
 		else if (KEY_FRONT(Keyboard::CTRL))
 			SetState(L_107);
+
+		// 간파 베기
+		else if (KEY_FRONT(Keyboard::CTRLRMB))
+			SetState(L_147);
 		
+		else if (K_CTRLSPACE)	SetState(L_151);	// 특수 납도
+
 		// 구르기
 		else if (KEY_FRONT(Keyboard::SPACE))
 			Roll();		
@@ -1351,6 +1387,12 @@ void Player::L107() // 기인베기 2
 			else if (KEY_FRONT(Keyboard::CTRL))
 				SetState(L_108);
 
+			// 간파 베기
+			else if (KEY_FRONT(Keyboard::CTRLRMB))
+				SetState(L_147);
+
+			else if (K_CTRLSPACE)	SetState(L_151);	// 특수 납도
+
 			// 구르기
 			else if (KEY_FRONT(Keyboard::SPACE))
 				Roll();
@@ -1362,7 +1404,7 @@ void Player::L107() // 기인베기 2
 		ReturnIdle();
 }
 
-void Player::L108()
+void Player::L108() // 기인베기 3
 {
 	PLAY;
 
@@ -1398,6 +1440,14 @@ void Player::L108()
 		else if (KEY_FRONT(Keyboard::CTRL))		
 			SetState(L_109);
 
+
+		// 간파 베기
+		else if (KEY_FRONT(Keyboard::CTRLRMB))
+			SetState(L_147);
+
+		
+		else if (K_CTRLSPACE)	SetState(L_151);	// 특수 납도
+
 		
 		else if (KEY_FRONT(Keyboard::SPACE))		
 			Roll();
@@ -1408,7 +1458,7 @@ void Player::L108()
 		ReturnIdle();
 }
 
-void Player::L109()
+void Player::L109() // 기인 큰회전베기
 {
 	PLAY;
 
@@ -1438,45 +1488,148 @@ void Player::L109()
 	}
 
 
-	if (RATIO > 0.50) // 특납 연계 가능 타이밍 언제?
+	if (RATIO > 0.30) // 특납 연계 가능 타이밍 언제?
 	{
-		// 찌르기
-		if (KEY_FRONT(Keyboard::CTRLSPACE))
-		{
-		//	SetState(L_104);
-		}
+		 if (K_CTRLSPACE)	SetState(L_151);	// 특수 납도
 	}
 
 	if (RATIO > 0.98)
 		SetState(S_003);
 }
 
-void Player::L110()
+void Player::L110() // 기인 내디뎌베기
 {
+
 }
 
-void Player::L147()
+void Player::L147() // 간파베기
 {
+	PLAY;
+
+	// 줌아웃 && 회피 판정 프레임
+	{
+		if (RATIO > 0 && RATIO < 0.30)
+			CAM->Zoom(450);
+	}
+
+
+	// 공격판정 프레임 
+	{
+		if (RATIO > 0.33 && RATIO < 0.43)
+			Attack(27);
+		else
+			EndEffect();
+	}
+
+	// 줌 정상화
+	{
+		if (RATIO > 0.33 && RATIO < 0.56)
+			CAM->Zoom(300);
+	}
+
+	if (RATIO > 0.56) // 캔슬 가능 타이밍
+	{
+		if		(K_LMB)		SetState(L_101);    // 세로베기		
+		else if (K_RMB)		SetState(L_104);	// 찌르기		
+		else if (K_LMBRMB)	SetState(L_103);	// 베어내리기		
+		else if (K_CTRL)	SetState(L_109);	// 기인큰회전베기 (TODO :: 이건 조건 따져야함)		
+		else if (K_SPACE)	Roll();				// 구르기
+	}
+
+	if (RATIO > 0.98)
+		ReturnIdle();
 }
 
-void Player::L151()
+void Player::L151() // 특수 납도
 {
+	PLAY;
+
+	// 줌 정상화 (기인 큰회전 베기에서 넘어온 경우)
+	{
+		if (RATIO > 0 && RATIO < 0.45)
+			CAM->Zoom(300, 5);
+	}
+
+	// 캔슬 가능 프레임
+	{
+		if (RATIO > 0.72)
+		{
+			if		(K_LMB)		SetState(L_154); // 앉아발도베기					
+			else if (K_CTRL)	SetState(L_155); // 앉아발도기인베기
+		}
+	}
+
+	if (RATIO > 0.98)
+	{
+		SetState(L_152);
+		Pos() = realPos->Pos() + Back() * temp;
+	}
 }
 
-void Player::L152()
+void Player::L152() // 특수납도대기
 {
+	PLAY;
+
+	if		(K_LMB)		SetState(L_154); // 앉아발도베기					
+	else if (K_CTRL)	SetState(L_155); // 앉아발도기인베기
+	else if (K_SPACE)   Roll();
+
+
+	L152Timer += DELTA;
+	if (L152Timer >= 3.0)
+	{
+		L152Timer = 0.0f;
+		SetState(L_153);
+		Pos() = realPos->Pos() + Back() * temp;
+	}
 }
 
-void Player::L153()
+void Player::L153() // 특수납도 취소 동작
 {
+	PLAY;
+
+	if (RATIO > 0.98)
+		SetState(S_003);
 }
 
-void Player::L154()
+void Player::L154() // 앉아발도 베기
 {
+	PLAY;
+
+	// 공격판정 프레임 (이 모션은 2번 베기 동작이 있음)
+	{
+		if (RATIO > 0.04 && RATIO < 0.17)
+		{
+			Attack(25);
+			attackOnlyOncePerMotion = false;
+		}
+		else if (RATIO > 0.2 && RATIO < 0.3)
+			Attack(30);
+		else
+			EndEffect();
+	}
+
+	// 캔슬 가능 프레임
+	{
+		if (RATIO > 0.43)
+		{
+			if		(K_LMB)			SetState(L_102); // 세로베기
+			else if (K_RMB)			SetState(L_104); // 찌르기
+			else if (K_CTRL)		SetState(L_106); // 기인 베기 1		
+			else if (K_CTRLRMB)		SetState(L_147); // 간파 베기
+			else if (K_SPACE)		Roll();			 // 구르기
+		}
+	}
+
+	if (RATIO > 0.98)
+		ReturnIdle();
+
 }
 
-void Player::L155()
+void Player::L155() // 앉아발도 기인베기
 {
+
+
 }
 
 void Player::L156()

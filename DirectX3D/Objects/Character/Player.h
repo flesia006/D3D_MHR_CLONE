@@ -168,6 +168,8 @@ private:
 	float camRot;
 	float rad;
 	float effectTimer = 0.0f;
+	float L152Timer = 0.0f;
+	int temp = 175;
 
 	int loopApply = 334;
 
