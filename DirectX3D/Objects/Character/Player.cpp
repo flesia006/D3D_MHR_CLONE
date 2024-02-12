@@ -56,90 +56,14 @@ void Player::Update()
 {
 	Control();
 	ResetPlayTime();
-
-	if (curState != S_003)
-	{
-		mainHand->SetWorld(GetTransformByNode(108));
-		longSword->Pos() = {};
-		longSword->Rot() = {};
-	}
-	if (curState == S_003)
-	{
-		mainHand->SetWorld(GetTransformByNode(190));
-		longSword->Pos() = { -32,32,23 };
-		longSword->Rot() = { -0.86f,-1.2f,+1.46f };
-	}
-	realPos->Pos() = GetTranslationByNode(1);
-
-	head->Pos() = realPos->Pos() + Vector3::Up() * 200;
-
-	back->SetWorld(GetTransformByNode(node));
-	
-	lastSwordEnd = swordStart->Pos();
-
-	swordStart->Pos() = longSword->GlobalPos() + longSword->Back() * 271.0f; // 20.0f : 10% 크기 반영
-	swordEnd->Pos() = longSword->GlobalPos() + longSword->Back() * 260.0f;
-
-	swordStart->UpdateWorld();
-	swordEnd->UpdateWorld();
-
-	swordSwingDir = lastSwordEnd - swordStart->GlobalPos();
+	UpdateWorlds();
 
 	trail->Update();
 	hitParticle->Update();
 
-	tmpCollider->Pos() = GetTranslationByNode(node);
-
 	ModelAnimator::Update();
-	root->UpdateWorld();
-	realPos->UpdateWorld();
-	lastPos->UpdateWorld();
-	longSword->UpdateWorld();
-	head->UpdateWorld();
-	back->UpdateWorld();
-	tmpCollider->UpdateWorld();
-	swordCollider->UpdateWorld();
-
-	time += DELTA;
-
-	if (KEY_DOWN('E'))
-	{
-		cure = true;
-		time = 0;
-	}
-	if (cure == true)
-	{
-		if (time < 3)
-		{
-			UIManager::Get()->HealthPotion();
-		}
-		else if(time>=3)
-		{
-			cure = false;
-			return;
-		}
-	}
-
-	if (KEY_DOWN('R'))
-	{
-		Lcure = true;
-		time = 0;
-	}
-	if(Lcure==true)
-	{	
-		if (time < 5)
-		{
-			UIManager::Get()->HealthPotion();
-		}
-		else if (time >= 5)
-		{
-			Lcure = false;
-			return;
-		}
-	}
-
 	UIManager::Get()->Update();
-	
+	Potion();	
 }
 
 void Player::Render()
@@ -260,122 +184,62 @@ void Player::Control()
 {
 	switch (curState)
 	{
-	case Player::S_003:
-		S003();
-		break;
-	case Player::S_008:
-		S008();
-		break;
-	case Player::S_009:
-		S009();
-		break;
-		// 이동 모션
-	case Player::L_001:
-		L001();
-		break;
-	case Player::L_002:
-		break;
-	case Player::L_003:
-		break;
-	case Player::L_004:
-		L004();
-		break;
-	case Player::L_005:
-		L005();
-		break;
-	case Player::L_006:
-		break;
-	case Player::L_007:
-		break;
-	case Player::L_008:
-		L008();
-		break;
-	case Player::L_009:
-		break;
-	case Player::L_010:
-		L010();
-		break;
-	case Player::L_011:
-		break;
-	case Player::L_012:
-		break;
-	case Player::L_013:
-		break;
-	case Player::L_014:
-		break;
-	case Player::L_015:
-		break;
-	case Player::L_071:
-		break;
-	case Player::L_072:
-		break;
-	case Player::L_073:
-		break;
-	case Player::L_077:
-		break;
-	case Player::L_078:
-		break;
-	case Player::L_079:
-		break;
-		// 공격 모션
-	case Player::L_101:
-		L101();
-		break;
-	case Player::L_102:
-		L102();
-		break;
-	case Player::L_103:
-		L103();
-		break;
-	case Player::L_104:
-		L104();
-		break;
-	case Player::L_105:
-		L105();
-		break;
-	case Player::L_106:
-		L106();
-		break;
-	case Player::L_107:
-		L107();
-		break;
-	case Player::L_108:
-		L108();
-		break;
-	case Player::L_109:
-		L109();
-		break;
-	case Player::L_110:
-		L110();
-		break;
-	case Player::L_111:
-		break;
-	case Player::L_112:
-		break;
-	case Player::L_113:
-		break;
-	case Player::L_114:
-		break;
-	case Player::L_115:
-		break;
-	case Player::L_116:
-		break;
-	case Player::L_117:
-		break;
-	case Player::L_118:
-		break;
-	case Player::L_119:
-		break;
-	case Player::L_120:
-		break;
-	case Player::L_121:
-		break;
-	case Player::L_122:
-		break;
-	case Player::L_123:
-		break;
-	default:
-		break;
+	case Player::S_003:		S003();		break;
+	case Player::S_008:		S008();		break;
+	case Player::S_009:		S009();		break;
+	// 이동 모션
+	case Player::L_001:		L001();		break;
+	case Player::L_002:					break;
+	case Player::L_003:					break;
+	case Player::L_004:		L004();		break;
+	case Player::L_005:		L005();		break;
+	case Player::L_006:					break;
+	case Player::L_007:					break;
+	case Player::L_008:		L008();		break;
+	case Player::L_009:					break;
+	case Player::L_010:		L010();		break;
+	case Player::L_011:					break;
+	case Player::L_012:					break;
+	case Player::L_013:					break;
+	case Player::L_014:					break;
+	case Player::L_015:					break;
+	case Player::L_071:					break;
+	case Player::L_072:					break;
+	case Player::L_073:					break;
+	case Player::L_077:					break;
+	case Player::L_078:					break;
+	case Player::L_079:					break;
+	// 공격 모션
+	case Player::L_101:		L101();		break;
+	case Player::L_102:		L102();		break;
+	case Player::L_103:		L103();		break;
+	case Player::L_104:		L104();		break;
+	case Player::L_105:		L105();		break;
+	case Player::L_106:		L106();		break;
+	case Player::L_107:		L107();		break;
+	case Player::L_108:		L108();		break;
+	case Player::L_109:		L109();		break;
+	case Player::L_110:		L110();		break;
+	case Player::L_111:					break;
+	case Player::L_112:					break;
+	case Player::L_113:					break;
+	case Player::L_114:					break;
+	case Player::L_115:					break;
+	case Player::L_116:					break;
+	case Player::L_117:					break;
+	case Player::L_118:					break;
+	case Player::L_119:					break;
+	case Player::L_120:					break;
+	case Player::L_121:					break;
+	case Player::L_122:					break;
+	case Player::L_123:					break;
+	case Player::L_147:		L147();		break;
+	case Player::L_151:		L151();		break;
+	case Player::L_152:		L152();		break;
+	case Player::L_153:		L153();		break;
+	case Player::L_154:		L154();		break;
+	case Player::L_155:		L155();		break;
+	case Player::L_156:		L156();		break;
 	}
 }
 
@@ -576,6 +440,87 @@ void Player::ResetPlayTime()
 		GetClip(preState)->ResetPlayTime();
 }
 
+void Player::UpdateWorlds()
+{
+	if (curState != S_003)
+	{
+		mainHand->SetWorld(GetTransformByNode(108));
+		longSword->Pos() = {};
+		longSword->Rot() = {};
+	}
+	if (curState == S_003)
+	{
+		mainHand->SetWorld(GetTransformByNode(190));
+		longSword->Pos() = { -32,32,23 };
+		longSword->Rot() = { -0.86f,-1.2f,+1.46f };
+	}
+	realPos->Pos() = GetTranslationByNode(1);
+
+	head->Pos() = realPos->Pos() + Vector3::Up() * 200;
+
+	back->SetWorld(GetTransformByNode(node));
+
+	lastSwordEnd = swordStart->Pos();
+
+	swordStart->Pos() = longSword->GlobalPos() + longSword->Back() * 271.0f; // 20.0f : 10% 크기 반영
+	swordEnd->Pos() = longSword->GlobalPos() + longSword->Back() * 260.0f;
+
+	swordStart->UpdateWorld();
+	swordEnd->UpdateWorld();
+
+	swordSwingDir = lastSwordEnd - swordStart->GlobalPos();
+	tmpCollider->Pos() = GetTranslationByNode(node);
+	root->UpdateWorld();
+	realPos->UpdateWorld();
+	lastPos->UpdateWorld();
+	longSword->UpdateWorld();
+	head->UpdateWorld();
+	back->UpdateWorld();
+	tmpCollider->UpdateWorld();
+	swordCollider->UpdateWorld();
+}
+
+void Player::Potion()
+{
+	time += DELTA;
+
+	if (KEY_DOWN('E'))
+	{
+		cure = true;
+		time = 0;
+	}
+	if (cure == true)
+	{
+		if (time < 3)
+		{
+			UIManager::Get()->HealthPotion();
+		}
+		else if (time >= 3)
+		{
+			cure = false;
+			return;
+		}
+	}
+
+	if (KEY_DOWN('R'))
+	{
+		Lcure = true;
+		time = 0;
+	}
+	if (Lcure == true)
+	{
+		if (time < 5)
+		{
+			UIManager::Get()->HealthPotion();
+		}
+		else if (time >= 5)
+		{
+			Lcure = false;
+			return;
+		}
+	}
+}
+
 void Player::Rotate()
 {
 	Vector3 newForward;
@@ -701,6 +646,8 @@ void Player::EndEffect()
 
 void Player::ReadClips()
 {
+	// 빈클립 만들고 싶으면 알파벳 지우면 됨!! 아니면 "" << 이렇게
+
 	ReadClip("L_001");
 	ReadClip("L_002");
 	ReadClip("L_003");
@@ -711,17 +658,17 @@ void Player::ReadClips()
 	ReadClip("L_008");
 	ReadClip("L_009");
 	ReadClip("L_010");
-	ReadClip("L_011");
-	ReadClip("L_012");
-	ReadClip("L_013");
-	ReadClip("L_014");
-	ReadClip("L_015");
-	ReadClip("");
-	ReadClip("");
-	ReadClip("");
-	ReadClip("");
-	ReadClip("");
-	ReadClip("");
+	ReadClip(" _011");
+	ReadClip(" _012");
+	ReadClip(" _013");
+	ReadClip(" _014");
+	ReadClip(" _015");
+	ReadClip(" _071");
+	ReadClip(" _072");
+	ReadClip(" _073");
+	ReadClip(" _077");
+	ReadClip(" _078");
+	ReadClip(" _079");
 	ReadClip("L_101");
 	ReadClip("L_102");
 	ReadClip("L_103");
@@ -732,19 +679,28 @@ void Player::ReadClips()
 	ReadClip("L_108");
 	ReadClip("L_109");
 	ReadClip("L_110");
-	ReadClip("L_111");
-	ReadClip("L_112");
-	ReadClip("L_113");
-	ReadClip("L_114");
-	ReadClip("L_115");
-	ReadClip("L_116");
-	ReadClip("L_117");
-	ReadClip("L_118");
-	ReadClip("L_119");
-	ReadClip("L_120");
-	ReadClip("L_121");
-	ReadClip("L_122");
-	ReadClip("L_123");
+	ReadClip(" _111");
+	ReadClip(" _112");
+	ReadClip(" _113");
+	ReadClip(" _114");
+	ReadClip(" _115");
+	ReadClip(" _116");
+	ReadClip(" _117");
+	ReadClip(" _118");
+	ReadClip(" _119");
+	ReadClip(" _120");
+	ReadClip(" _121");
+	ReadClip(" _122");
+	ReadClip(" _123");
+
+	ReadClip("L_147");
+	ReadClip("L_151");
+	ReadClip("L_152");
+	ReadClip("L_153");
+	ReadClip("L_154");
+	ReadClip("L_155");
+	ReadClip("L_156");
+
 	ReadClip("S_003");
 	ReadClip("S_008");
 	ReadClip("S_009");
@@ -1272,8 +1228,8 @@ void Player::L107() // 기인베기 2
 	{
 		if (RATIO > 0.26 && RATIO < 0.38)
 			Attack(33);
-		else
-			EndEffect();
+		else // 
+			EndEffect(); 
 	}
 
 	// 캔슬 가능 프레임
@@ -1353,13 +1309,31 @@ void Player::L109()
 {
 	PLAY;
 
-	// 공격판정 프레임 (이 모션은 3번 베기 동작이 있음)
+	// 줌인
+	{
+		if (RATIO > 0 && RATIO < 0.16)
+			CAM->Zoom(150);
+	}
+
+
+	// 공격판정 프레임 
 	{
 		if (RATIO > 0.16 && RATIO < 0.24)
+		{
 			Attack(42);
+			// 줌아웃
+			CAM->Zoom(650);
+		}
 		else
 			EndEffect();
 	}
+
+	// 줌 정상화
+	{
+		if (RATIO > 0.47 && RATIO < 0.84)
+			CAM->Zoom(300, 5);
+	}
+
 
 	if (RATIO > 0.50) // 특납 연계 가능 타이밍 언제?
 	{
@@ -1371,10 +1345,38 @@ void Player::L109()
 	}
 
 	if (RATIO > 0.98)
-		ReturnIdle();
+		SetState(S_003);
 }
 
 void Player::L110()
+{
+}
+
+void Player::L147()
+{
+}
+
+void Player::L151()
+{
+}
+
+void Player::L152()
+{
+}
+
+void Player::L153()
+{
+}
+
+void Player::L154()
+{
+}
+
+void Player::L155()
+{
+}
+
+void Player::L156()
 {
 }
 

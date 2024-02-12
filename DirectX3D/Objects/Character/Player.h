@@ -15,8 +15,12 @@ private:
 		L_105, L_106, L_107, L_108, L_109,
 		L_110, L_111, L_112, L_113, L_114,
 		L_115, L_116, L_117, L_118, L_119,
-		L_120, L_121, L_122, L_123, S_003,
-		S_008, S_009
+		L_120, L_121, L_122, L_123, 
+		L_147, L_151, L_152, L_153, L_154,
+		L_155, L_156,
+
+
+		S_003, S_008, S_009
 	};
 
 	enum Rotation
@@ -31,7 +35,6 @@ public:
 
 
 	void Update();
-	void UpdateWorlds();
 	void PreRender();
 	void Render();
 	void GUIRender();
@@ -43,6 +46,9 @@ private:
 	void Control();
 	void Move();
 	void ResetPlayTime();
+
+	void UpdateWorlds();
+	void Potion();
 
 	void Rotate();
 	void Attack(float power = 0); // TODO : 데미지 계산 넣어야함
@@ -84,12 +90,21 @@ private:
 	void L103();
 	void L104();
 	void L105();
-
 	void L106();
 	void L107();
 	void L108();
 	void L109();
 	void L110();
+
+
+	void L147();
+	void L151();
+	void L152();
+	void L153();
+	void L154();
+	void L155();
+	void L156();
+
 
 	void LRunning();
 private:
