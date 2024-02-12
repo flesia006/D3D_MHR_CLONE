@@ -28,6 +28,11 @@ public:
 
     ViewBuffer* GetViewBuffer() { return viewBuffer; }
 
+    void Zoom(float dist , float damping = 15.0f)
+    {
+        distance = Lerp(distance, dist, damping * DELTA);
+    }
+
 private:
     void FreeMode();
     void FollowMode();    

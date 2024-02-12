@@ -263,29 +263,29 @@ void Player::Control()
 	case Player::S_003:		S003();		break;
 	case Player::S_008:		S008();		break;
 	case Player::S_009:		S009();		break;
-		// 이동 모션
+	// 이동 모션
 	case Player::L_001:		L001();		break;
-	case Player::L_002:		break;
-	case Player::L_003:		break;
+	case Player::L_002:					break;
+	case Player::L_003:					break;
 	case Player::L_004:		L004();		break;
 	case Player::L_005:		L005();		break;
-	case Player::L_006:		break;
-	case Player::L_007:		break;
+	case Player::L_006:					break;
+	case Player::L_007:					break;
 	case Player::L_008:		L008();		break;
-	case Player::L_009:		break;
+	case Player::L_009:					break;
 	case Player::L_010:		L010();		break;
-	case Player::L_011:		break;
-	case Player::L_012:		break;
-	case Player::L_013:		break;
-	case Player::L_014:		break;
-	case Player::L_015:		break;
-	case Player::L_071:		break;
-	case Player::L_072:		break;
-	case Player::L_073:		break;
-	case Player::L_077:		break;
-	case Player::L_078:		break;
-	case Player::L_079:		break;
-		// 공격 모션
+	case Player::L_011:					break;
+	case Player::L_012:					break;
+	case Player::L_013:					break;
+	case Player::L_014:					break;
+	case Player::L_015:					break;
+	case Player::L_071:					break;
+	case Player::L_072:					break;
+	case Player::L_073:					break;
+	case Player::L_077:					break;
+	case Player::L_078:					break;
+	case Player::L_079:					break;
+	// 공격 모션
 	case Player::L_101:		L101();		break;
 	case Player::L_102:		L102();		break;
 	case Player::L_103:		L103();		break;
@@ -296,19 +296,19 @@ void Player::Control()
 	case Player::L_108:		L108();		break;
 	case Player::L_109:		L109();		break;
 	case Player::L_110:		L110();		break;
-	case Player::L_111:		break;
-	case Player::L_112:		break;
-	case Player::L_113:		break;
-	case Player::L_114:		break;
-	case Player::L_115:		break;
-	case Player::L_116:		break;
-	case Player::L_117:		break;
-	case Player::L_118:		break;
-	case Player::L_119:		break;
-	case Player::L_120:		break;
-	case Player::L_121:		break;
-	case Player::L_122:		break;
-	case Player::L_123:		break;
+	case Player::L_111:					break;
+	case Player::L_112:					break;
+	case Player::L_113:					break;
+	case Player::L_114:					break;
+	case Player::L_115:					break;
+	case Player::L_116:					break;
+	case Player::L_117:					break;
+	case Player::L_118:					break;
+	case Player::L_119:					break;
+	case Player::L_120:					break;
+	case Player::L_121:					break;
+	case Player::L_122:					break;
+	case Player::L_123:					break;
 	}
 }
 
@@ -665,19 +665,19 @@ void Player::ReadClips()
 	ReadClip("L_108");
 	ReadClip("L_109");
 	ReadClip("L_110");
-	ReadClip("L_111");
-	ReadClip("L_112");
-	ReadClip("L_113");
-	ReadClip("L_114");
-	ReadClip("L_115");
-	ReadClip("L_116");
-	ReadClip("L_117");
-	ReadClip("L_118");
-	ReadClip("L_119");
-	ReadClip("L_120");
-	ReadClip("L_121");
-	ReadClip("L_122");
-	ReadClip("L_123");
+	ReadClip("");
+	ReadClip("");
+	ReadClip("");
+	ReadClip("");
+	ReadClip("");
+	ReadClip("");
+	ReadClip("");
+	ReadClip("");
+	ReadClip("");
+	ReadClip("");
+	ReadClip("");
+	ReadClip("");
+	ReadClip("");
 	ReadClip("S_003");
 	ReadClip("S_008");
 	ReadClip("S_009");
@@ -1286,13 +1286,30 @@ void Player::L109()
 {
 	PLAY;
 
-	// 공격판정 프레임 (이 모션은 3번 베기 동작이 있음)
+	// 줌인
+	{
+		if (RATIO > 0 && RATIO < 0.16)
+			CAM->Zoom(150);
+	}
+
+
+	// 공격판정 프레임 
 	{
 		if (RATIO > 0.16 && RATIO < 0.24)
+		{
 			Attack(42);
+			CAM->Zoom(650);
+		}
 		else
 			EndEffect();
 	}
+
+	// 줌 정상화
+	{
+		if (RATIO > 0.47 && RATIO < 0.84)
+			CAM->Zoom(300, 5);
+	}
+
 
 	if (RATIO > 0.50) // 특납 연계 가능 타이밍 언제?
 	{
