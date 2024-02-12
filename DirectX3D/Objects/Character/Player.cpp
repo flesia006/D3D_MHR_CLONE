@@ -184,9 +184,17 @@ void Player::Control()
 {
 	switch (curState)
 	{
+	case Player::S_001:		S001();		break;
 	case Player::S_003:		S003();		break;
+	case Player::S_005:		S005();		break;
 	case Player::S_008:		S008();		break;
 	case Player::S_009:		S009();		break;
+	case Player::S_014:		S014();		break;
+	case Player::S_017:		S017();		break;
+	case Player::S_018:		S018();		break;
+	case Player::S_026:		S026();		break;
+	case Player::S_029:		S029();		break;
+
 	// 이동 모션
 	case Player::L_001:		L001();		break;
 	case Player::L_002:					break;
@@ -448,7 +456,7 @@ void Player::UpdateWorlds()
 		longSword->Pos() = {};
 		longSword->Rot() = {};
 	}
-	if (curState == S_003)
+	if (curState == S_001 || curState == S_003 || curState == S_005 || curState == S_014)
 	{
 		mainHand->SetWorld(GetTransformByNode(190));
 		longSword->Pos() = { -32,32,23 };
@@ -488,6 +496,8 @@ void Player::Potion()
 	{
 		cure = true;
 		time = 0;
+		Sounds::Get()->Play("health_potion", 0.3f);
+
 	}
 	if (cure == true)
 	{
@@ -506,6 +516,8 @@ void Player::Potion()
 	{
 		Lcure = true;
 		time = 0;
+		Sounds::Get()->Play("health_potion", 0.3f);
+
 	}
 	if (Lcure == true)
 	{
@@ -701,15 +713,30 @@ void Player::ReadClips()
 	ReadClip("L_155");
 	ReadClip("L_156");
 
+	ReadClip("S_001");
 	ReadClip("S_003");
+	ReadClip("S_005");
 	ReadClip("S_008");
 	ReadClip("S_009");
+	ReadClip("S_014");
+	ReadClip("S_017");
+	ReadClip("S_018");
+	ReadClip("S_026");
+	ReadClip("S_029");
 }
 
 void Player::RecordLastPos()
 {
 	//Pos() = root->GlobalPos();
 	Pos() = GetTranslationByNode(1);
+}
+
+void Player::S001() // 납도 Idle
+{
+	PLAY;
+	if (KEY_PRESS('W') || KEY_PRESS('A') || KEY_PRESS('S') || KEY_PRESS('D'))
+		SetState(S_005);
+	moveSpeed = 0;
 }
 
 void Player::S003() // 납도상태 달리기
@@ -723,7 +750,7 @@ void Player::S003() // 납도상태 달리기
 		if (KEY_PRESS('W') || KEY_PRESS('A') || KEY_PRESS('S') || KEY_PRESS('D')) // 다른 키가 아직 눌려있으면 돌아간다.
 			return;
 		// 모든 이동키가 입력되지 않을 시 멈춤
-		SetState(L_008);
+		SetState(S_014);
 		return;
 	}
 
@@ -733,6 +760,48 @@ void Player::S003() // 납도상태 달리기
 		return;
 	}
 
+	if (KEY_DOWN(VK_SPACE))
+		Roll();
+}
+
+void Player::S005() // 대기중 달리기
+{
+	PLAY;
+	Move();
+	
+	if (moveSpeed <= 500)
+		moveSpeed++;
+
+	if (RATIO > 0.97)
+		moveSpeed++;
+	
+	//Rotate();
+	if (RATIO > 0.97 && (KEY_PRESS('W') || KEY_PRESS('S') || KEY_PRESS('A') || KEY_PRESS('D')))
+	{
+		SetState(S_003);
+		moveSpeed = 500;
+		return;
+	}
+
+	if (KEY_UP('W') || KEY_UP('S') || KEY_UP('A') || KEY_UP('D'))
+	{
+		if (KEY_PRESS('W') || KEY_PRESS('A') || KEY_PRESS('S') || KEY_PRESS('D'))
+			return;
+
+		SetState(S_014);
+		return;
+	}
+
+
+	// 101 내디뎌 베기
+	if (KEY_FRONT(Keyboard::LMB))
+	{
+		SetState(L_101);
+		return;
+	}
+	
+	//if (KEY_PRESS(VK_LSHIFT))
+	//	SetState(S_008);
 	if (KEY_DOWN(VK_SPACE))
 		Roll();
 }
@@ -751,7 +820,8 @@ void Player::S008() // 서서 납도
 
 	if (RATIO > 0.98)
 	{
-		ReturnIdle();
+		//ReturnIdle();
+		SetState(S_001);
 	}
 
 }
@@ -774,6 +844,39 @@ void Player::S009() // 걸으면서 납도
 	}
 
 
+}
+
+void Player::S014() // 달리다 멈춤
+{
+	PLAY;
+	Move();
+	if (preState == S_001)
+		moveSpeed = 500;
+
+	if (moveSpeed >= 0)
+		moveSpeed-=2;
+
+	//Rotate();
+	if (RATIO > 0.97)
+	{
+		SetState(S_001);
+	}
+}
+
+void Player::S017() // 구르기 후 제자리
+{
+}
+
+void Player::S018() // 구르기 후 달리기
+{
+}
+
+void Player::S026() // 대기중 걷기시작
+{
+}
+
+void Player::S029() // 걷는중
+{
 }
 
 void Player::L001() // 발도상태 대기

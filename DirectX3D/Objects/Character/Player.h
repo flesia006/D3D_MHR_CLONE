@@ -20,7 +20,8 @@ private:
 		L_155, L_156,
 
 
-		S_003, S_008, S_009
+		S_001, S_003, S_005, S_008, S_009,
+		S_014, S_017, S_018, S_026, S_029
 	};
 
 	enum Rotation
@@ -70,9 +71,16 @@ private:
 		GetClip(L_001)->ResetPlayTime();
 		SetState(L_001);
 	}
+	void S001();
 	void S003();
+	void S005();
 	void S008();
 	void S009();
+	void S014();
+	void S017();
+	void S018();
+	void S026();
+	void S029();
 
 	void L001();
 	void L002();

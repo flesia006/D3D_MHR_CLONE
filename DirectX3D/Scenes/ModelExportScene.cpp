@@ -13,18 +13,49 @@ ModelExportScene::ModelExportScene()
     //exporter->ExportMesh();
     //delete exporter;    
     
-    //clipName = "S_003";
+    //clipName = "S_001";
     //file = "Models/Animations/" + name + "/" + clipName + ".fbx";
     //exporter = new ModelExporter(name, file);
     //exporter->ExportClip(clipName);    
     //delete exporter;
-    
-    clipName = "S_008";
+    //
+    clipName = "S_005";
     file = "Models/Animations/" + name + "/" + clipName + ".fbx";
     exporter = new ModelExporter(name, file);
     exporter->ExportClip(clipName);
     delete exporter;
     
+    clipName = "S_014";
+    file = "Models/Animations/" + name + "/" + clipName + ".fbx";
+    exporter = new ModelExporter(name, file);
+    exporter->ExportClip(clipName);
+    delete exporter;
+
+    //clipName = "S_017";
+    //file = "Models/Animations/" + name + "/" + clipName + ".fbx";
+    //exporter = new ModelExporter(name, file);
+    //exporter->ExportClip(clipName);
+    //delete exporter;
+    //
+    //clipName = "S_018";
+    //file = "Models/Animations/" + name + "/" + clipName + ".fbx";
+    //exporter = new ModelExporter(name, file);
+    //exporter->ExportClip(clipName);
+    //delete exporter;
+    //
+    //clipName = "S_026";
+    //file = "Models/Animations/" + name + "/" + clipName + ".fbx";
+    //exporter = new ModelExporter(name, file);
+    //exporter->ExportClip(clipName);
+    //delete exporter;
+    //
+    //clipName = "S_029";
+    //file = "Models/Animations/" + name + "/" + clipName + ".fbx";
+    //exporter = new ModelExporter(name, file);
+    //exporter->ExportClip(clipName);
+    //delete exporter;
+
+
     //clipName = "Walk";
     //file = "Models/Animations/" + name + "/" + clipName + ".fbx";
     //exporter = new ModelExporter(name, file);
