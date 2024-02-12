@@ -28,7 +28,9 @@ public:
 
     ViewBuffer* GetViewBuffer() { return viewBuffer; }
 
-    void Zoom(float dist , float damping = 15.0f)
+    void Zoom(float dist , float damping = 15.0f) 
+        // 카메라 거리랑 줌인 줌아웃 되는 속도를 인자로. 속도 너무 느리게 넣으면 
+        // 목표 거리까리 도달하지 않으니 주의
     {
         distance = Lerp(distance, dist, damping * DELTA);
     }

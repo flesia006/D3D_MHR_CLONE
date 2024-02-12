@@ -55,7 +55,7 @@ void ModelAnimator::GUIRender()
 void ModelAnimator::ReadClip(string clipName, UINT clipNum, string lockBone)
 {
 
-    if (clipName == "")
+    if (clipName == "" || clipName.front() == ' ')
     {
         ModelClip* clip = new ModelClip();
         clips.push_back(clip);
