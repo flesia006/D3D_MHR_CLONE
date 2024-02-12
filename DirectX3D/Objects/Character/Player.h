@@ -21,7 +21,8 @@ private:
 
 
 		S_001, S_003, S_005, S_008, S_009,
-		S_014, S_017, S_018, S_026, S_029
+		S_014, S_017, S_018, S_026, S_029,
+		S_038
 	};
 
 	enum Rotation
@@ -81,7 +82,7 @@ private:
 	void S018();
 	void S026();
 	void S029();
-
+	void S038();
 	void L001();
 	void L002();
 	void L003();
@@ -142,7 +143,7 @@ private:
 	State curState = L_101;
 	State preState = L_101;
 
-	float moveSpeed = 500;
+	float moveSpeed = 400;
 	float rotSpeed = 10.0f;
 	float deceleration = 5;
 

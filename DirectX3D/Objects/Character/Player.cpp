@@ -194,6 +194,7 @@ void Player::Control()
 	case Player::S_018:		S018();		break;
 	case Player::S_026:		S026();		break;
 	case Player::S_029:		S029();		break;
+	case Player::S_038:		S038();		break;
 
 	// 이동 모션
 	case Player::L_001:		L001();		break;
@@ -435,6 +436,11 @@ void Player::Move()
 		}
 	}
 
+	if (KEY_FRONT(Keyboard::CTRL))
+	{
+		SetState(L_106);
+		return;
+	}
 	//if (!isMoveZ) // 전후 이동 중이 아니면
 	//	velocity.z = Lerp(velocity.z, 0, deceleration * DELTA); //보간에 의해 감속
 	//
@@ -456,7 +462,7 @@ void Player::UpdateWorlds()
 		longSword->Pos() = {};
 		longSword->Rot() = {};
 	}
-	if (curState == S_001 || curState == S_003 || curState == S_005 || curState == S_014)
+	if (curState == S_001 || curState == S_003 || curState == S_005 || curState == S_014 || curState == S_038)
 	{
 		mainHand->SetWorld(GetTransformByNode(190));
 		longSword->Pos() = { -32,32,23 };
@@ -723,6 +729,7 @@ void Player::ReadClips()
 	ReadClip("S_018");
 	ReadClip("S_026");
 	ReadClip("S_029");
+	ReadClip("S_038");
 }
 
 void Player::RecordLastPos()
@@ -736,7 +743,7 @@ void Player::S001() // 납도 Idle
 	PLAY;
 	if (KEY_PRESS('W') || KEY_PRESS('A') || KEY_PRESS('S') || KEY_PRESS('D'))
 		SetState(S_005);
-	moveSpeed = 0;
+	moveSpeed = 10;
 }
 
 void Player::S003() // 납도상태 달리기
@@ -751,6 +758,12 @@ void Player::S003() // 납도상태 달리기
 			return;
 		// 모든 이동키가 입력되지 않을 시 멈춤
 		SetState(S_014);
+		return;
+	}
+
+	if (KEY_PRESS(VK_LSHIFT)) // 시프트 누르면 전력질주
+	{
+		SetState(S_038);
 		return;
 	}
 
@@ -769,7 +782,7 @@ void Player::S005() // 대기중 달리기
 	PLAY;
 	Move();
 	
-	if (moveSpeed <= 500)
+	if (moveSpeed <= 400)
 		moveSpeed++;
 
 	if (RATIO > 0.97)
@@ -779,7 +792,7 @@ void Player::S005() // 대기중 달리기
 	if (RATIO > 0.97 && (KEY_PRESS('W') || KEY_PRESS('S') || KEY_PRESS('A') || KEY_PRESS('D')))
 	{
 		SetState(S_003);
-		moveSpeed = 500;
+		moveSpeed = 400;
 		return;
 	}
 
@@ -851,7 +864,7 @@ void Player::S014() // 달리다 멈춤
 	PLAY;
 	Move();
 	if (preState == S_001)
-		moveSpeed = 500;
+		moveSpeed = 400;
 
 	if (moveSpeed >= 0)
 		moveSpeed-=2;
@@ -879,10 +892,60 @@ void Player::S029() // 걷는중
 {
 }
 
+void Player::S038()
+{
+	PLAY;
+	Move();
+	Rotate();
+	if (moveSpeed <= 650)
+		moveSpeed++;
+
+	/*if (RATIO > 0.97)
+		moveSpeed++;*/
+
+	if (KEY_UP(VK_LSHIFT))
+	{
+		moveSpeed = 400;
+		SetState(S_003);
+		return;
+	}
+
+	//Rotate();
+	/*if (RATIO > 0.97 && (KEY_PRESS('W') || KEY_PRESS('S') || KEY_PRESS('A') || KEY_PRESS('D')))
+	{
+		SetState(S_003);
+		moveSpeed = 500;
+		return;
+	}*/
+
+	if (KEY_UP('W') || KEY_UP('S') || KEY_UP('A') || KEY_UP('D'))
+	{
+		if (KEY_PRESS('W') || KEY_PRESS('A') || KEY_PRESS('S') || KEY_PRESS('D'))
+			return;
+
+		moveSpeed = 400;
+		SetState(S_014);
+		return;
+	}
+
+
+	// 101 내디뎌 베기
+	if (KEY_FRONT(Keyboard::LMB))
+	{
+		SetState(L_101);
+		return;
+	}
+
+	//if (KEY_PRESS(VK_LSHIFT))
+	//	SetState(S_008);
+	if (KEY_DOWN(VK_SPACE))
+		Roll();
+}
+
 void Player::L001() // 발도상태 대기
 {
 	PLAY;
-
+	moveSpeed = 400;
 	if (KEY_PRESS('W') || KEY_PRESS('A') || KEY_PRESS('S') || KEY_PRESS('D'))
 		SetState(L_005);
 
