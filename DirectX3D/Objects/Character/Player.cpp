@@ -1589,7 +1589,7 @@ void Player::L153() // 특수납도 취소 동작
 	PLAY;
 
 	if (RATIO > 0.98)
-		SetState(S_003);
+		SetState(S_001);
 }
 
 void Player::L154() // 앉아발도 베기
