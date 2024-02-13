@@ -98,13 +98,13 @@ void Player::Render()
 
 void Player::UpdateWorlds()
 {
-	if (curState != S_003)
+	if (!State_S())
 	{
 		mainHand->SetWorld(GetTransformByNode(rightHandNode));
 		longSword->Pos() = {};
 		longSword->Rot() = {};
 	}
-	if (curState == S_003)
+	if (State_S())
 	{
 		mainHand->SetWorld(GetTransformByNode(backSwdNode));
 		longSword->Pos() = { -32,32,23 };
