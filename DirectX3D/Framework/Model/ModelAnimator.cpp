@@ -6,7 +6,7 @@ ModelAnimator::ModelAnimator(string name)
     SetShader(L"Model/ModelAnimation.hlsl");
 
     frameBuffer = new FrameBuffer();
-
+    clips.reserve(60);
     worldBuffer->SetType(1);
 }
 

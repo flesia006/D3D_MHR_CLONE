@@ -18,8 +18,6 @@ private:
 		L_120, L_121, L_122, L_123,*/ 
 		L_147, L_151, L_152, L_153, L_154,
 		L_155, L_156,
-
-
 		S_001, S_003, S_005, S_008, S_009,
 		S_014, S_017, S_018, S_026, S_029,
 		S_038, S_118, S_119, S_120
@@ -42,8 +40,7 @@ public:
 	void GUIRender();
 	void PostRender();
 
-
-	SphereCollider* getCollider() { return tmpCollider; }
+	SphereCollider* getCollider() { return tmpCollider; }	
 
 private:
 	void Control();

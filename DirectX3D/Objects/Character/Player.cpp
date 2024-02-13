@@ -576,7 +576,6 @@ void Player::ResetPlayTime()
 		GetClip(preState)->ResetPlayTime();
 }
 
-
 void Player::Rotate()
 {
 	Vector3 newForward;
@@ -1107,6 +1106,7 @@ void Player::L004() // 발도상태 걷기 중
 
 	Move();
 	Rotate();
+
 	if (KEY_PRESS(VK_LSHIFT))
 		SetState(S_009);
 	// 101 내디뎌 베기
@@ -1734,9 +1734,8 @@ void Player::L151() // 특수 납도
 		PlayClip(curState);
 		initForward = Forward();
 		holdingSword = true;
+		EndEffect();
 	}
-
-
 
 	// 줌 정상화 (기인 큰회전 베기에서 넘어온 경우)
 	{

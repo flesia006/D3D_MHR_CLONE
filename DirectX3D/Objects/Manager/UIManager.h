@@ -12,23 +12,23 @@ public:
     void PostRender();
     void Hit(float damage);
     void HealthPotion();
-    void LargeHealthPotion();    
+    void LargeHealthPotion();
     void Running();
     void Roll();
+    void ReduceDurability();
+    void SharpeningStone();
+    void GaugeBonus();
 
-    float getcurStamina() { return curStamina; }
+    float curStamina = 100;//임시로 public에 올려둠
 
 private:
     Quad* clockFrame;
     Quad* durability;
-    Quad* durability_gauge;
+    Quad* durability_back;
     Quad* hpBar;
     Quad* idBar;
     Quad* itemSlot;
-    Quad* lsCoting;
-    Quad* lsCoting2;
     Quad* lsGauge;
-    Quad* lsGauge2;
     Quad* quickSlot;
     Quad* slingerBug;
     Quad* staminarBar;
@@ -48,11 +48,32 @@ private:
     Vector3 staminaPos; //체력바의 위치를 수치화한 것 (진짜 위치를 위한 중간계산용)
     ProgressBar* staminaRecover;
 
-public:
-    float curStamina = 100;
     float maxStamina = 100;
 
     float recoverStamina = 100;
 
+    //예리도 UI
+    ProgressBar* durability_gauge;
+
+    float curDurability = 80;
+    float maxDurability = 80;
+
+    //기인게이지 UI
+    ProgressBar* lsGauge2;
+
+    bool isBonus = false;
+
+    float curGauge = 0;
+    float maxGauge = 100;
+    float bonusTime = 0;
+    float limitTime = 50;
+
+    //코팅 UI
+    ProgressBar* lsCoting;
+
+    float curCoting = 100;
+    float maxCoting = 100;
+
+    UINT cotingLevel = 0;
 };
 
