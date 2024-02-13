@@ -16,6 +16,8 @@ public:
     void Running();
     void Roll();
 
+    float getcurStamina() { return curStamina; }
+
 private:
     Quad* clockFrame;
     Quad* durability;
@@ -46,6 +48,7 @@ private:
     Vector3 staminaPos; //체력바의 위치를 수치화한 것 (진짜 위치를 위한 중간계산용)
     ProgressBar* staminaRecover;
 
+public:
     float curStamina = 100;
     float maxStamina = 100;
 
