@@ -64,6 +64,8 @@ private:
 
 	void MotionRotate(float degree);
 
+	bool State_S();
+
 private:
 	void ReadClips();
 	void RecordLastPos();
@@ -71,6 +73,11 @@ private:
 	{
 		GetClip(L_001)->ResetPlayTime();
 		SetState(L_001);
+	}
+	void ReturnIdle2()
+	{
+		GetClip(S_001)->ResetPlayTime();
+		SetState(S_001);
 	}
 	void S001();
 	void S003();

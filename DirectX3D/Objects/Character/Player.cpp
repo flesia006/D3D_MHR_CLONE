@@ -459,13 +459,13 @@ void Player::ResetPlayTime()
 
 void Player::UpdateWorlds()
 {
-	if (curState != S_003)
+	if (!State_S())
 	{
 		mainHand->SetWorld(GetTransformByNode(108));
 		longSword->Pos() = {};
 		longSword->Rot() = {};
 	}
-	if (curState == S_001 || curState == S_003 || curState == S_005 || curState == S_014 || curState == S_038 || curState == S_118|| curState == S_119 || curState == S_120)
+	if(State_S())
 	{
 		mainHand->SetWorld(GetTransformByNode(190));
 		longSword->Pos() = { -32,32,23 };
@@ -506,7 +506,6 @@ void Player::Potion()
 		cure = true;
 		time = 0;
 		Sounds::Get()->Play("health_potion", 0.3f);
-
 	}
 	if (cure == true)
 	{
@@ -540,6 +539,7 @@ void Player::Potion()
 			return;
 		}
 	}
+
 }
 
 void Player::Rotate()
@@ -636,8 +636,10 @@ void Player::Roll()
 		float rot = atan2(newForward.x, newForward.z);
 		Rot().y = rot;
 	}
-
-	SetState(L_010);
+	if (State_S())
+		SetState(S_017);
+	else if (!State_S())
+		SetState(L_010);
 }
 
 void Player::SetState(State state)
@@ -897,6 +899,12 @@ void Player::S014() // 달리다 멈춤
 
 void Player::S017() // 구르기 후 제자리
 {
+	PLAY;
+
+	if (GetClip(S_017)->GetRatio() > 0.98)
+	{
+		ReturnIdle2();
+	}
 }
 
 void Player::S018() // 구르기 후 달리기
@@ -1801,4 +1809,14 @@ void Player::MotionRotate(float degree)
 			Rot().y - radian : camRot;
 	}
 
+}
+
+bool Player::State_S() // 납도 스테이트 목록
+{
+	if (curState == S_001 || curState == S_003 || curState == S_005 ||
+		curState == S_014 || curState == S_017 || curState == S_038 ||
+		curState == S_118 || curState == S_119 || curState == S_120)
+		return true;
+
+	else return false;
 }
