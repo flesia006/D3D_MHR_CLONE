@@ -44,8 +44,8 @@ UIManager::UIManager()
 	slingerBug = new Quad(L"Textures/UI/SlingerBug.png");
 	slingerBug->Pos() = { 640,120,0 };
 
-	staminarBar = new Quad(L"Textures/UI/StaminaBar.png");
-	staminarBar->Pos() = { 140,630,0 };
+	staminarBar = new Quad(L"Textures/UI/StaminaBar_noColor.png");
+	staminarBar->Pos() = { 360,630,0 };
 
 	//캐릭터용 UI 추가
 	hp = new ProgressBar(
@@ -56,7 +56,11 @@ UIManager::UIManager()
 		L"Textures/Color/Red.png",
 		L"Textures/Color/Black.png"
 	);
-
+	stamina = new ProgressBar(
+		L"Textures/Color/Yellow.png",
+		L"Textures/UI/StaminaBar_noColor.png"
+	);
+	// hp bar ui
 	hp->Scale() = { 1.75f,0.02f,0 };
 	hp->Pos() = hpBar->Pos();
 	hp->Pos().x -= 0.1f;
@@ -64,7 +68,11 @@ UIManager::UIManager()
 	recover->Scale() = hp->Scale();
 	recover->Pos() = hp->Pos();
 	
-
+	// stamina bar ui
+	stamina->Scale() = { 1.75f,0.02f,0 };
+	stamina->Pos() = staminarBar->Pos();
+	stamina->Pos().x -= 0.1f;
+	curStamina = maxStamina;
 }
 
 UIManager::~UIManager()
@@ -84,10 +92,13 @@ UIManager::~UIManager()
 	delete staminarBar;
 	delete hp;
 	delete recover;
+	delete stamina;
+
 }
 
 void UIManager::Update()
 {
+	stamina->UpdateWorld();
 	recover->UpdateWorld();
 	hp->UpdateWorld();
 	durability_gauge->UpdateWorld();
@@ -100,9 +111,11 @@ void UIManager::Update()
 
 	hp->SetAmount(curHP / maxHP);
 	recover->SetAmount(recoverHP / maxHP);
-
+	stamina->SetAmount(curStamina / maxStamina);
 	if(curHP<recoverHP)
 	curHP += 0.001f;
+
+	curStamina += 0.001f;
 
 	if (curHP > recoverHP)
 		recoverHP = curHP;
@@ -112,6 +125,7 @@ void UIManager::PostRender()
 {
 	recover->Render();
 	hp->Render();
+	stamina->Render();
 	clockFrame->Render();
 	durability->Render();
 	durability_gauge->Render();
@@ -144,4 +158,14 @@ void UIManager::HealthPotion()
 void UIManager::LargeHealthPotion()
 {
 	curHP += 0.04f;
+}
+
+void UIManager::Running()
+{
+	curStamina -= 0.01f;
+}
+
+void UIManager::Roll()
+{
+	curStamina -= 20.f;
 }

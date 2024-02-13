@@ -32,8 +32,9 @@ ShadowScene::ShadowScene()
     light->outer;   //조명 외곽 범위 (빛이 흩어져서 비치는 범위...의 비중)
 
     skyBox = new SkyBox(L"Textures/Landscape/BlueSky.dds");
-    Sounds::Get()->AddSound("Valphalk_Thema", SoundPath + L"Valphalk_Thema.mp3");
+    Sounds::Get()->AddSound("Valphalk_Thema", SoundPath + L"Valphalk_Thema.mp3",true);
     Sounds::Get()->Play("Valphalk_Thema", 0.03f);
+    Sounds::Get()->AddSound("health_potion", SoundPath + L"health_potion.mp3");
 
 
 }
@@ -49,20 +50,20 @@ ShadowScene::~ShadowScene()
 
 void ShadowScene::Update()
 {
-    if (KEY_DOWN('1')) light->type = 0;
-    if (KEY_DOWN('2')) light->type = 1;
-    if (KEY_DOWN('3')) light->type = 2;
-    if (KEY_DOWN('4')) light->type = 3;
+    //if (KEY_DOWN('1')) light->type = 0;
+    //if (KEY_DOWN('2')) light->type = 1;
+    //if (KEY_DOWN('3')) light->type = 2;
+    //if (KEY_DOWN('4')) light->type = 3;
 
     forest->UpdateWorld();
     player->Update();
     valphalk->Update();
     UIManager::Get()->Update();
 
-    //if (player->getCollider()->IsCapsuleCollision(valphalk->GetCollider(0)))
-    //{
-    //    UIManager::Get()->Hit(valphalk->damage);
-    //}
+    if (player->getCollider()->IsCapsuleCollision(valphalk->GetCollider()[Valphalk::HEAD]))
+    {
+        UIManager::Get()->Hit(valphalk->damage);
+    }
 
 }
 

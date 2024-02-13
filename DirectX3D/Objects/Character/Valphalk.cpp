@@ -1,8 +1,10 @@
 #include "Framework.h"
+#include "Scenes/ShadowScene.h"
 
 Valphalk::Valphalk() : ModelAnimator("Valphalk")
 {
 	ReadClip("stun");
+	ReadClip("E_2005");
 
 	FOR(Index)
 	{
@@ -34,6 +36,7 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 	colliders[TAIL]->Scale().y *= 3.0f; // 꼬리
 	colliders[TAIL]->Rot().x += 4.8f;
 
+	colliders[TARGETDOME]->Scale() *= 8.0f;
 }
 
 Valphalk::~Valphalk()
@@ -46,6 +49,7 @@ Valphalk::~Valphalk()
 
 void Valphalk::Update()
 {
+
 	for (CapsuleCollider* capsulCollider : colliders)
 	{
 		capsulCollider->UpdateWorld();;
@@ -62,6 +66,29 @@ void Valphalk::Update()
 	colliders[TAIL]->Pos() = GetTranslationByNode(127); // 꼬리
 
 	ModelAnimator::Update();
+
+	// Test 샘플 코드
+	//===================================
+	if (Count <= 1)
+	{
+		colliders[TARGETDOME]->Pos() = GetTranslationByNode(4); // 타겟 보는 범위
+		StartRora();
+	}
+
+	// 잘 들어갔나 확인하기 용 코드
+	if (KEY_DOWN('1'))
+	{
+		SetState(STUN);
+		//PlayClip(0);
+	}
+	if (KEY_DOWN('2'))
+	{
+		SetState(E_2005);
+		//PlayClip(1);
+	}
+
+
+	//===================================
 }
 
 void Valphalk::PreRender()
@@ -73,7 +100,12 @@ void Valphalk::Render()
 {
 	for (CapsuleCollider* capsulCollider : colliders)
 	{
-//		capsulCollider->Render();;
+		//capsulCollider->Render();;
+	}
+
+	if (Count <= 1)
+	{
+		colliders[TARGETDOME]->Render();
 	}
 
 	ModelAnimator::Render();
@@ -100,16 +132,64 @@ void Valphalk::Spawn(Vector3 pos)
 {
 }
 
-void Valphalk::SetTarget(Transform* target)
-{
-}
-
 void Valphalk::SetEvent(int clip, Event event, float timeRatio)
 {
+	if (totalEvents[clip].count(timeRatio) > 0)
+		return;
+
+	totalEvents[clip][timeRatio] = event;
 }
 
 void Valphalk::ExecuteEvent()
 {
+
+	int index = curState;
+
+	if (totalEvents[index].empty()) return; 
+	if (eventIters[index] == totalEvents[index].end()) return;
+
+	float ratio = motion->runningTime / motion->duration; 
+
+	if (eventIters[index]->first > ratio) return; 
+
+	
+	eventIters[index]->second();
+	eventIters[index]++;
+}
+
+void Valphalk::EndRora() // 포효 끝나고 원래 모션으로 돌아옴
+{
+	SetState(STUN);
+	Count += 1;
+
+	if (Count <= 1)
+	{
+		LookatPlayer = false;
+	}
+}
+
+void Valphalk::StartRora()
+{
+	// 플레이어 필요해서 임시로 불러옴
+	Player* player =
+		dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetPlayer();
+	
+	if (!LookatPlayer && Count <= 1)
+	{
+		if (player->getCollider()->IsCapsuleCollision(colliders[TARGETDOME])) // 플레이어가 영역안에 들어오면
+		{
+			LookatPlayer = true; // 플레이어를 타겟으로 잡게됨
+			SetState(E_2005);
+			//PlayClip(1);
+		}
+	}
+	if (LookatPlayer)
+	{
+		if (RATIO > 0.98)
+		{
+			EndRora();
+		}
+	}
 }
 
 void Valphalk::SetState(State state)
@@ -117,6 +197,7 @@ void Valphalk::SetState(State state)
 	if (state == curState)
 		return;
 	curState = state;
+	PlayClip(state);
 }
 
 void Valphalk::SetType(Type type)
@@ -128,7 +209,7 @@ void Valphalk::SetType(Type type)
 	// 예를 들면 (*여기서 안할수도 있지만)
 	if (curType == TypeA)
 	{
-
+		
 	}
 	if (curType == TypeB)
 	{
