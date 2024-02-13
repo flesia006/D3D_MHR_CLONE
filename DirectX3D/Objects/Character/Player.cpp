@@ -163,6 +163,7 @@ void Player::Potion()
 
 	if (KEY_DOWN('E'))
 	{
+		Sounds::Get()->Play("health_potion", 0.3f);
 		cure = true;
 		time = 0;
 	}
@@ -181,6 +182,7 @@ void Player::Potion()
 
 	if (KEY_DOWN('R'))
 	{
+		Sounds::Get()->Play("health_potion", 0.3f);
 		Lcure = true;
 		time = 0;
 	}
