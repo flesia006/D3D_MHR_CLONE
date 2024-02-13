@@ -744,6 +744,13 @@ void Player::S001() // 납도 Idle
 	if (KEY_PRESS('W') || KEY_PRESS('A') || KEY_PRESS('S') || KEY_PRESS('D'))
 		SetState(S_005);
 	moveSpeed = 10;
+
+	// 왼 클릭 으로 공격 하는거 추가
+	if (KEY_FRONT(Keyboard::LMB))
+	{
+		SetState(L_101);
+		return;
+	}
 }
 
 void Player::S003() // 납도상태 달리기
@@ -853,7 +860,8 @@ void Player::S009() // 걸으면서 납도
 
 	if (RATIO > 0.98)
 	{
-		ReturnIdle();
+		//ReturnIdle();
+		SetState(S_001);
 	}
 
 
