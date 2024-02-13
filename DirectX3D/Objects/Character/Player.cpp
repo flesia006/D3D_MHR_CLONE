@@ -712,15 +712,15 @@ void Player::ReadClips()
 	// 빈클립 만들고 싶으면 알파벳 지우면 됨!! 아니면 "" << 이렇게
 
 	ReadClip("L_001");
-	ReadClip("L_002");
+	ReadClip(" _002");
 	ReadClip("L_003");
-	ReadClip("L_004");
+	ReadClip(" _004");
 	ReadClip("L_005");
-	ReadClip("L_006");
-	ReadClip("L_007");
+	ReadClip(" _006");
+	ReadClip(" _007");
 	ReadClip("L_008");
 	ReadClip("L_009");
-	ReadClip("L_010");
+	ReadClip(" _010");
 	ReadClip(" _011");
 	ReadClip(" _012");
 	ReadClip(" _013");
@@ -1096,6 +1096,7 @@ void Player::L004() // 발도상태 걷기 중
 
 	Move();
 	Rotate();
+
 	if (KEY_PRESS(VK_LSHIFT))
 		SetState(S_009);
 	// 101 내디뎌 베기
@@ -1723,9 +1724,8 @@ void Player::L151() // 특수 납도
 		PlayClip(curState);
 		initForward = Forward();
 		holdingSword = true;
+		EndEffect();
 	}
-
-
 
 	// 줌 정상화 (기인 큰회전 베기에서 넘어온 경우)
 	{
