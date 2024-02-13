@@ -13,6 +13,8 @@ public:
     void Hit(float damage);
     void HealthPotion();
     void LargeHealthPotion();    
+    void Running();
+    void Roll();
 
 private:
     Quad* clockFrame;
@@ -38,5 +40,16 @@ private:
     float maxHP = 100;
 
     float recoverHP = 100;
+
+    // 스태미너 UI
+    ProgressBar* stamina;
+    Vector3 staminaPos; //체력바의 위치를 수치화한 것 (진짜 위치를 위한 중간계산용)
+    ProgressBar* staminaRecover;
+
+    float curStamina = 100;
+    float maxStamina = 100;
+
+    float recoverStamina = 100;
+
 };
 

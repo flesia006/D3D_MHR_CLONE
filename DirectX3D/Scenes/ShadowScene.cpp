@@ -60,7 +60,7 @@ void ShadowScene::Update()
     valphalk->Update();
     UIManager::Get()->Update();
 
-    if (player->getCollider()->IsCapsuleCollision(valphalk->GetCollider() [0]))
+    if (player->getCollider()->IsCapsuleCollision(valphalk->GetCollider()[Valphalk::HEAD]))
     {
         UIManager::Get()->Hit(valphalk->damage);
     }

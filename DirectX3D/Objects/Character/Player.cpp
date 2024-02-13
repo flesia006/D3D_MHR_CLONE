@@ -579,7 +579,7 @@ void Player::Roll()
 	Vector3 CAMRightForward = CAM->Back() + CAM->Left();
 	Vector3 CAMLeftBack = CAM->Right() + CAM->Forward();
 	Vector3 CAMRightBack = CAM->Left() + CAM->Forward();
-
+	UIManager::Get()->Roll();
 	Vector3 forward = Back();
 	Vector3 newForward;
 
@@ -899,7 +899,7 @@ void Player::S038()
 	Rotate();
 	if (moveSpeed <= 650)
 		moveSpeed++;
-
+	UIManager::Get()->Running();
 	/*if (RATIO > 0.97)
 		moveSpeed++;*/
 
