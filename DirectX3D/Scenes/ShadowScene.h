@@ -13,7 +13,7 @@ public:
     virtual void GUIRender() override;
 
     Valphalk* GetValphalk() { return valphalk; }
-
+    Player* GetPlayer() { return player; }
 private:
 
     Model* forest;

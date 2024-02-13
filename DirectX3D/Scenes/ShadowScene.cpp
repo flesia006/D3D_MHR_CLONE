@@ -50,10 +50,10 @@ ShadowScene::~ShadowScene()
 
 void ShadowScene::Update()
 {
-    if (KEY_DOWN('1')) light->type = 0;
-    if (KEY_DOWN('2')) light->type = 1;
-    if (KEY_DOWN('3')) light->type = 2;
-    if (KEY_DOWN('4')) light->type = 3;
+    //if (KEY_DOWN('1')) light->type = 0;
+    //if (KEY_DOWN('2')) light->type = 1;
+    //if (KEY_DOWN('3')) light->type = 2;
+    //if (KEY_DOWN('4')) light->type = 3;
 
     forest->UpdateWorld();
     player->Update();

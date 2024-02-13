@@ -6,7 +6,7 @@ public:
 	{
 		// 애니메이션 클립들이 들어가는거에 따라서 바뀔예정
 		// 예를 들면
-		STUN
+		STUN, E_2005 /*포효 자세*/
 	};
 
 	enum Type // 어디가 색이 변할건지 
@@ -44,10 +44,13 @@ public:
 		RLEG2,
 
 		// 꼬리
-		TAIL
+		TAIL,
+
+		// 타겟을 보때의 거리
+		TARGETDOME
 	};
 
-	UINT Index = 9;
+	UINT Index = 10;
 
 public:
 	Valphalk();
@@ -61,7 +64,7 @@ public:
 
 	void Hit(); // 맞았을때 나오는 모션들
 	void Spawn(Vector3 pos); // 스폰위치
-	void SetTarget(Transform* target); // 타겟 설정
+	void SetTarget(Transform* target) { this->target = target; } // 타겟 설정
 
 	//Transform* GetTransform(int index) { return transforms[index]; }
 	vector<CapsuleCollider*> GetCollider() { return colliders; }
@@ -75,7 +78,12 @@ private:
 
 	// 전환 되는 이벤트들 인데 아직 잘 모름
 	//===============
+	void EndRora(); // 포효 끝
+	//===============
 
+	// 이벤트 실행 될때 내용인데 위에 전환이랑 합칠수도
+	//===============
+	void StartRora(); // 포효 시작
 	//===============
 
 	void SetState(State state);
@@ -83,6 +91,10 @@ private:
 
 	void Move();
 	void UpdateUI(); //캐릭터 UI가 있으면 이후 업데이트
+
+private: // 이벤트 혹은 함수에서 조건이 필요할거 같을때
+	bool LookatPlayer = false;
+	int Count = 0;
 
 private:
 	//vector<Transform*> transforms;
@@ -104,11 +116,10 @@ private:
 	Type curType; //= 기본 타입;
 
 	//스테이트 혹은 움직임에 따른 이벤트 지정
-	vector<map<float, Event>> totalEvent;
+	vector<map<float, Event>> totalEvents;
 	vector<map<float, Event>::iterator> eventIters;
 
 	//ColliderName colliderName;
 
 	// 파티클 부분
-
 };
