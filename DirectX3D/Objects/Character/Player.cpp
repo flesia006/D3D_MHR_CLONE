@@ -5,20 +5,22 @@
 
 Player::Player() : ModelAnimator("Player")
 {
-	mainHand = new Transform();
-	swordCollider = new CapsuleCollider(2.0f, 100.0f);
+	head			= new Transform();
+	realPos			= new Transform();
+	backPos			= new Transform();
+	forwardPos		= new Transform();
+	swordStart		= new Transform();
+	swordEnd		= new Transform();
+	mainHand		= new Transform();
+	backSwd			= new Transform();
+
+	swordCollider	= new CapsuleCollider(2.0f, 100.0f);
 	swordCollider->Rot().x += XM_PIDIV2;
 	swordCollider->SetParent(mainHand);
 	swordCollider->Pos().z -= 100.0f;
 	swordCollider->Scale() *= 3.0f;
 
-	head = new Transform();
-	realPos = new Transform();
-	backPos = new Transform();
-	forwardPos = new Transform();
 
-	swordStart = new Transform();
-	swordEnd = new Transform();
 	trail = new Trail(L"Textures/Effect/Snow.png", swordStart, swordEnd, 20, 85);
 	hitParticle = new HitParticle();	
 
@@ -26,7 +28,7 @@ Player::Player() : ModelAnimator("Player")
 	longSword->SetParent(mainHand);
 
 	kalzip = new Model("kalzip");
-	kalzip->SetParent(mainHand);
+	kalzip->SetParent(backSwd);
 
 	//	longSword->Rot().x -= XM_PIDIV2;	
 
@@ -98,20 +100,29 @@ void Player::UpdateWorlds()
 {
 	if (curState != S_003)
 	{
-		mainHand->SetWorld(GetTransformByNode(108));		
+		mainHand->SetWorld(GetTransformByNode(rightHandNode));
 		longSword->Pos() = {};
 		longSword->Rot() = {};
 	}
 	if (curState == S_003)
 	{
-		mainHand->SetWorld(GetTransformByNode(190));
+		mainHand->SetWorld(GetTransformByNode(backSwdNode));
 		longSword->Pos() = { -32,32,23 };
 		longSword->Rot() = { -0.86f,-1.2f,+1.46f };
 	}
-	kalzip->SetWorld(GetTransformByNode(190));
-	kalzip->Pos() = { -32,32,23 };
-	kalzip->Rot() = { -0.86f,-1.2f,+1.46f };
 
+	if (holdingSword)
+	{
+		backSwd->SetWorld(GetTransformByNode(lefeHandNode));
+		kalzip->Pos() = { };
+		kalzip->Rot() = { };
+	}
+	else
+	{
+		backSwd->SetWorld(GetTransformByNode(backSwdNode));
+		kalzip->Pos() = { -32,32,23 };
+		kalzip->Rot() = { -0.86f,-1.2f,+1.46f };
+	}
 
 	realPos->Pos() = GetTranslationByNode(1);
 
@@ -190,10 +201,10 @@ void Player::Potion()
 
 void Player::GUIRender()
 {
-	//	ModelAnimator::GUIRender();
+//	ModelAnimator::GUIRender();
 
-	trail->GetMaterial()->GUIRender();
-	hitParticle->GUIRender();
+//	trail->GetMaterial()->GUIRender();
+//	hitParticle->GUIRender();
 
 	//particle->GetMaterial()->GUIRender();
 
@@ -215,11 +226,10 @@ void Player::GUIRender()
 	//
 	//
 	ImGui::SliderInt("node", &node, 100, 300);
-
 	ImGui::SliderInt("temp", &temp, 100, 200.0f);
 		
-	longSword->GUIRender();
-
+	//longSword->GUIRender();
+	//kalzip->GUIRender();
 
 	// t = GetClip(1)->GetRatio();
 	// ImGui::DragFloat("ratio_1", &t);
@@ -559,91 +569,6 @@ void Player::ResetPlayTime()
 {
 	if (preState != curState)
 		GetClip(preState)->ResetPlayTime();
-}
-
-void Player::UpdateWorlds()
-{
-	if (curState != S_003)
-	{
-		mainHand->SetWorld(GetTransformByNode(108));
-		longSword->Pos() = {};
-		longSword->Rot() = {};
-	}
-	if (curState == S_001 || curState == S_003 || curState == S_005 || curState == S_014 || curState == S_038)
-	{
-		mainHand->SetWorld(GetTransformByNode(190));
-		longSword->Pos() = { -32,32,23 };
-		longSword->Rot() = { -0.86f,-1.2f,+1.46f };
-	}
-	realPos->Pos() = GetTranslationByNode(1);
-
-	head->Pos() = realPos->Pos() + Vector3::Up() * 200;
-
-	back->SetWorld(GetTransformByNode(node));
-
-	lastSwordEnd = swordStart->Pos();
-
-	swordStart->Pos() = longSword->GlobalPos() + longSword->Back() * 271.0f; // 20.0f : 10% 크기 반영
-	swordEnd->Pos() = longSword->GlobalPos() + longSword->Back() * 260.0f;
-
-	swordStart->UpdateWorld();
-	swordEnd->UpdateWorld();
-
-	swordSwingDir = lastSwordEnd - swordStart->GlobalPos();
-	tmpCollider->Pos() = GetTranslationByNode(node);
-	root->UpdateWorld();
-	realPos->UpdateWorld();
-	lastPos->UpdateWorld();
-	longSword->UpdateWorld();
-	head->UpdateWorld();
-	back->UpdateWorld();
-	tmpCollider->UpdateWorld();
-	swordCollider->UpdateWorld();
-}
-
-void Player::Potion()
-{
-	time += DELTA;
-
-	if (KEY_DOWN('E'))
-	{
-		cure = true;
-		time = 0;
-		Sounds::Get()->Play("health_potion", 0.3f);
-
-	}
-	if (cure == true)
-	{
-		if (time < 3)
-		{
-			UIManager::Get()->HealthPotion();
-		}
-		else if (time >= 3)
-		{
-			cure = false;
-			return;
-		}
-	}
-
-	if (KEY_DOWN('R'))
-	{
-		Lcure = true;
-		time = 0;
-		Sounds::Get()->Play("health_potion", 0.3f);
-
-	}
-	if (Lcure == true)
-	{
-		if (time < 5)
-		{
-			UIManager::Get()->HealthPotion();
-		}
-		else if (time >= 5)
-		{
-			Lcure = false;
-			return;
-		}
-	}
 }
 
 void Player::Rotate()
@@ -1737,11 +1662,12 @@ void Player::L147() // 간파베기
 
 	if (RATIO > 0.56) // 캔슬 가능 타이밍
 	{
-		if		(K_LMB)		SetState(L_101);    // 세로베기		
-		else if (K_RMB)		SetState(L_104);	// 찌르기		
-		else if (K_LMBRMB)	SetState(L_103);	// 베어내리기		
-		else if (K_CTRL)	SetState(L_109);	// 기인큰회전베기 (TODO :: 이건 조건 따져야함)		
-		else if (K_SPACE)	Roll();				// 구르기
+		if		(K_LMB)			SetState(L_101);    // 세로베기		
+		else if (K_RMB)			SetState(L_104);	// 찌르기		
+		else if (K_LMBRMB)		SetState(L_103);	// 베어내리기		
+		else if (K_CTRLSPACE)	SetState(L_151);	// 특수 납도
+		else if (K_CTRL)		SetState(L_109);	// 기인큰회전베기 (TODO :: 이건 조건 따져야함)		
+		else if (K_SPACE)		Roll();				// 구르기
 	}
 
 	if (RATIO > 0.98)
@@ -1750,7 +1676,14 @@ void Player::L147() // 간파베기
 
 void Player::L151() // 특수 납도
 {
-	PLAY;
+	if (GetClip(curState)->isFirstPlay()) 
+	{
+		PlayClip(curState);
+		initForward = Forward();
+		holdingSword = true;
+	}
+
+
 
 	// 줌 정상화 (기인 큰회전 베기에서 넘어온 경우)
 	{
@@ -1808,6 +1741,7 @@ void Player::L154() // 앉아발도 베기
 	{
 		if (RATIO > 0.04 && RATIO < 0.17)
 		{
+			holdingSword = false;
 			Attack(25);
 			attackOnlyOncePerMotion = false;
 		}
@@ -1848,6 +1782,7 @@ void Player::L155() // 앉아발도 기인베기
 	{
 		if (RATIO > 0.1 && RATIO < 0.36)
 		{
+			holdingSword = false;
 			Attack(35+17+17+17);
 		}
 		else

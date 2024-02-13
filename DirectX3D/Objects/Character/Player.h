@@ -120,6 +120,8 @@ private:
 	void LRunning();
 private:
 	Transform* mainHand = nullptr;
+	Transform* backSwd = nullptr;
+
 	Transform* realPos = nullptr;
 	Transform* backPos = nullptr;
 	Transform* forwardPos = nullptr;
@@ -168,9 +170,12 @@ private:
 	Quad* crosshair = nullptr;
 
 	int kunaiIndex = 0;
-
-
 	int node = 197;
+
+	const int lefeHandNode = 108;
+	const int rightHandNode = 150;
+	const int backSwdNode = 190;
+
 	float rotation = -1.5;
 	float camRot;
 	float rad;
@@ -186,8 +191,8 @@ private:
 	bool Lcure = false;
 
 	bool attackOnlyOncePerMotion = false;
-
 	bool renderEffect = false;
+	bool holdingSword = false;
 
 	Vector3 initForward = Vector3::Zero();
 
