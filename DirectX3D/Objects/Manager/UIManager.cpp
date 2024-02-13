@@ -162,7 +162,10 @@ void UIManager::LargeHealthPotion()
 
 void UIManager::Running()
 {
-	curStamina -= 0.01f;
+	if (curStamina > 0.01f)
+		curStamina -= 0.01f;
+	else
+		return;
 }
 
 void UIManager::Roll()

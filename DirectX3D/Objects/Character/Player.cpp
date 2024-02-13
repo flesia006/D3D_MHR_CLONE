@@ -579,9 +579,11 @@ void Player::Roll()
 	Vector3 CAMRightForward = CAM->Back() + CAM->Left();
 	Vector3 CAMLeftBack = CAM->Right() + CAM->Forward();
 	Vector3 CAMRightBack = CAM->Left() + CAM->Forward();
-	UIManager::Get()->Roll();
 	Vector3 forward = Back();
 	Vector3 newForward;
+	if (UIManager::Get()->curStamina < 20) // 스태미나 일정수치 미만에서는 구르기 막기
+		return;
+	UIManager::Get()->Roll();
 
 	if (KEY_PRESS('W'))
 	{
@@ -907,6 +909,11 @@ void Player::S038()
 	Rotate();
 	if (moveSpeed <= 650)
 		moveSpeed++;
+	if (UIManager::Get()->curStamina < 0.1f) // 스태미나 일정수치 미만에서는 달리기 막기
+	{
+		SetState(S_001);
+		return;
+	}
 	UIManager::Get()->Running();
 	/*if (RATIO > 0.97)
 		moveSpeed++;*/
