@@ -195,6 +195,9 @@ void Player::Control()
 	case Player::S_026:		S026();		break;
 	case Player::S_029:		S029();		break;
 	case Player::S_038:		S038();		break;
+	case Player::S_118:		S118();		break;
+	case Player::S_119:		S119();		break;
+	case Player::S_120:		S120();		break;
 
 	// 이동 모션
 	case Player::L_001:		L001();		break;
@@ -234,14 +237,14 @@ void Player::Control()
 	case Player::L_113:					break;
 	case Player::L_114:					break;
 	case Player::L_115:					break;
-	case Player::L_116:					break;
-	case Player::L_117:					break;
-	case Player::L_118:					break;
-	case Player::L_119:					break;
-	case Player::L_120:					break;
-	case Player::L_121:					break;
-	case Player::L_122:					break;
-	case Player::L_123:					break;
+	//case Player::L_116:					break;
+	//case Player::L_117:					break;
+	//case Player::L_118:					break;
+	//case Player::L_119:					break;
+	//case Player::L_120:					break;
+	//case Player::L_121:					break;
+	//case Player::L_122:					break;
+	//case Player::L_123:					break;
 	case Player::L_147:		L147();		break;
 	case Player::L_151:		L151();		break;
 	case Player::L_152:		L152();		break;
@@ -462,7 +465,7 @@ void Player::UpdateWorlds()
 		longSword->Pos() = {};
 		longSword->Rot() = {};
 	}
-	if (curState == S_001 || curState == S_003 || curState == S_005 || curState == S_014 || curState == S_038)
+	if (curState == S_001 || curState == S_003 || curState == S_005 || curState == S_014 || curState == S_038 || curState == S_118|| curState == S_119 || curState == S_120)
 	{
 		mainHand->SetWorld(GetTransformByNode(190));
 		longSword->Pos() = { -32,32,23 };
@@ -704,14 +707,14 @@ void Player::ReadClips()
 	ReadClip(" _113");
 	ReadClip(" _114");
 	ReadClip(" _115");
-	ReadClip(" _116");
+	/*ReadClip(" _116");
 	ReadClip(" _117");
 	ReadClip(" _118");
 	ReadClip(" _119");
 	ReadClip(" _120");
 	ReadClip(" _121");
 	ReadClip(" _122");
-	ReadClip(" _123");
+	ReadClip(" _123");*/
 
 	ReadClip("L_147");
 	ReadClip("L_151");
@@ -732,6 +735,9 @@ void Player::ReadClips()
 	ReadClip("S_026");
 	ReadClip("S_029");
 	ReadClip("S_038");
+	ReadClip("S_118");
+	ReadClip("S_119");
+	ReadClip("S_120");
 }
 
 void Player::RecordLastPos()
@@ -760,6 +766,9 @@ void Player::S003() // 납도상태 달리기
 	PLAY;
 	Move();
 	Rotate();
+
+	if (UIManager::Get()->curStamina < 0.1f)
+		SetState(S_118);
 
 	if (KEY_UP('W') || KEY_UP('S') || KEY_UP('A') || KEY_UP('D')) // 이동 중 키를 뗄 때
 	{
@@ -911,7 +920,7 @@ void Player::S038()
 		moveSpeed++;
 	if (UIManager::Get()->curStamina < 0.1f) // 스태미나 일정수치 미만에서는 달리기 막기
 	{
-		SetState(S_001);
+		SetState(S_118);
 		return;
 	}
 	UIManager::Get()->Running();
@@ -955,6 +964,32 @@ void Player::S038()
 	//	SetState(S_008);
 	if (KEY_DOWN(VK_SPACE))
 		Roll();
+}
+
+void Player::S118()
+{
+	PLAY;
+	if (RATIO > 0.98f)
+		SetState(S_120);
+}
+
+void Player::S119()
+{	
+	PLAY;
+	if (RATIO > 0.98f)
+	{
+		SetState(S_001);
+		return;
+	}
+	
+}
+
+void Player::S120()
+{
+	PLAY;
+	UIManager::Get()->curStamina += 0.01f;
+	if (UIManager::Get()->curStamina > 30)
+		SetState(S_119);
 }
 
 void Player::L001() // 발도상태 대기
