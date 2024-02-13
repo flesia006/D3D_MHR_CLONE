@@ -14,23 +14,32 @@ Player::Player() : ModelAnimator("Player")
 
 	head = new Transform();
 	realPos = new Transform();
-	lastPos = new Transform();
-	root = new Transform();
-	back = new Transform();
+	backPos = new Transform();
+	forwardPos = new Transform();
 
 	swordStart = new Transform();
 	swordEnd = new Transform();
 	trail = new Trail(L"Textures/Effect/Snow.png", swordStart, swordEnd, 20, 85);
-	hitParticle = new HitParticle();
-	
+	hitParticle = new HitParticle();	
 
-	longSword = new Model("longSwd");
+	longSword = new Model("kal");
 	longSword->SetParent(mainHand);
+
+	kalzip = new Model("kalzip");
+	kalzip->SetParent(mainHand);
 
 	//	longSword->Rot().x -= XM_PIDIV2;	
 
 	tmpCollider = new SphereCollider();
 	tmpCollider->Scale() *= 6.0f;
+
+	tmpCollider2 = new SphereCollider();
+	tmpCollider2->Scale() *= 6.0f;
+	tmpCollider2->SetParent(backPos);
+
+	tmpCollider3 = new SphereCollider();
+	tmpCollider3->Scale() *= 6.0f;
+	tmpCollider3->SetParent(forwardPos);
 
 	//	tmpCollider->SetParent(head);
 	//	tmpCollider->SetParent(back);
@@ -70,8 +79,11 @@ void Player::Render()
 {
 	ModelAnimator::Render();
 	tmpCollider->Render();
+	tmpCollider2->Render();
+	tmpCollider3->Render();
 	//swordCollider->Render();
 	longSword->Render();
+	kalzip->Render();
 
 	if (renderEffect)
 	{
@@ -80,6 +92,101 @@ void Player::Render()
 	}		
 		
 }
+
+
+void Player::UpdateWorlds()
+{
+	if (curState != S_003)
+	{
+		mainHand->SetWorld(GetTransformByNode(108));		
+		longSword->Pos() = {};
+		longSword->Rot() = {};
+	}
+	if (curState == S_003)
+	{
+		mainHand->SetWorld(GetTransformByNode(190));
+		longSword->Pos() = { -32,32,23 };
+		longSword->Rot() = { -0.86f,-1.2f,+1.46f };
+	}
+	kalzip->SetWorld(GetTransformByNode(190));
+	kalzip->Pos() = { -32,32,23 };
+	kalzip->Rot() = { -0.86f,-1.2f,+1.46f };
+
+
+	realPos->Pos() = GetTranslationByNode(1);
+
+	realPos->UpdateWorld();
+
+	backPos->Pos() = GetTranslationByNode(1) + Forward() * 100;
+	forwardPos->Pos() = GetTranslationByNode(1) + Back() * 100;
+
+	head->Pos() = realPos->Pos() + Vector3::Up() * 200;
+
+	lastSwordEnd = swordStart->Pos();
+
+	swordStart->Pos() = longSword->GlobalPos() + longSword->Back() * 271.0f; // 20.0f : 10% 크기 반영
+	swordEnd->Pos() = longSword->GlobalPos() + longSword->Back() * 260.0f;
+
+	swordStart->UpdateWorld();
+	swordEnd->UpdateWorld();
+
+	swordSwingDir = lastSwordEnd - swordStart->GlobalPos();
+	tmpCollider->Pos() = GetTranslationByNode(node);
+
+	backPos->UpdateWorld();
+	forwardPos->UpdateWorld();
+
+	longSword->UpdateWorld();
+	kalzip->UpdateWorld();
+	head->UpdateWorld();
+	tmpCollider->UpdateWorld();
+	tmpCollider2->UpdateWorld();
+	tmpCollider3->UpdateWorld();
+
+	swordCollider->UpdateWorld();
+}
+
+void Player::Potion()
+{
+	time += DELTA;
+
+	if (KEY_DOWN('E'))
+	{
+		cure = true;
+		time = 0;
+	}
+	if (cure == true)
+	{
+		if (time < 3)
+		{
+			UIManager::Get()->HealthPotion();
+		}
+		else if (time >= 3)
+		{
+			cure = false;
+			return;
+		}
+	}
+
+	if (KEY_DOWN('R'))
+	{
+		Lcure = true;
+		time = 0;
+	}
+	if (Lcure == true)
+	{
+		if (time < 5)
+		{
+			UIManager::Get()->HealthPotion();
+		}
+		else if (time >= 5)
+		{
+			Lcure = false;
+			return;
+		}
+	}
+}
+
 
 void Player::GUIRender()
 {
@@ -440,87 +547,6 @@ void Player::ResetPlayTime()
 		GetClip(preState)->ResetPlayTime();
 }
 
-void Player::UpdateWorlds()
-{
-	if (curState != S_003)
-	{
-		mainHand->SetWorld(GetTransformByNode(108));
-		longSword->Pos() = {};
-		longSword->Rot() = {};
-	}
-	if (curState == S_003)
-	{
-		mainHand->SetWorld(GetTransformByNode(190));
-		longSword->Pos() = { -32,32,23 };
-		longSword->Rot() = { -0.86f,-1.2f,+1.46f };
-	}
-	realPos->Pos() = GetTranslationByNode(1);
-
-	head->Pos() = realPos->Pos() + Vector3::Up() * 200;
-
-	back->SetWorld(GetTransformByNode(node));
-
-	lastSwordEnd = swordStart->Pos();
-
-	swordStart->Pos() = longSword->GlobalPos() + longSword->Back() * 271.0f; // 20.0f : 10% 크기 반영
-	swordEnd->Pos() = longSword->GlobalPos() + longSword->Back() * 260.0f;
-
-	swordStart->UpdateWorld();
-	swordEnd->UpdateWorld();
-
-	swordSwingDir = lastSwordEnd - swordStart->GlobalPos();
-	tmpCollider->Pos() = GetTranslationByNode(node);
-	root->UpdateWorld();
-	realPos->UpdateWorld();
-	lastPos->UpdateWorld();
-	longSword->UpdateWorld();
-	head->UpdateWorld();
-	back->UpdateWorld();
-	tmpCollider->UpdateWorld();
-	swordCollider->UpdateWorld();
-}
-
-void Player::Potion()
-{
-	time += DELTA;
-
-	if (KEY_DOWN('E'))
-	{
-		cure = true;
-		time = 0;
-	}
-	if (cure == true)
-	{
-		if (time < 3)
-		{
-			UIManager::Get()->HealthPotion();
-		}
-		else if (time >= 3)
-		{
-			cure = false;
-			return;
-		}
-	}
-
-	if (KEY_DOWN('R'))
-	{
-		Lcure = true;
-		time = 0;
-	}
-	if (Lcure == true)
-	{
-		if (time < 5)
-		{
-			UIManager::Get()->HealthPotion();
-		}
-		else if (time >= 5)
-		{
-			Lcure = false;
-			return;
-		}
-	}
-}
-
 void Player::Rotate()
 {
 	Vector3 newForward;
@@ -623,6 +649,14 @@ void Player::SetState(State state)
 		return;
 
 	Pos() = realPos->Pos();
+
+	if (curState == L_155)
+	{
+		Vector3 realForward = forwardPos->GlobalPos() - backPos->GlobalPos();
+		Rot().y = atan2(realForward.x, realForward.z);
+	}
+
+
 	preState = curState;
 	curState = state;
 	attackOnlyOncePerMotion = false;
@@ -962,6 +996,12 @@ void Player::L010() // 구르기
 	//	if (KEY_PRESS('W'))
 	//		SetState(L_005);
 
+	// 줌 정상화
+	{
+		if (RATIO > 0 && RATIO < 0.9)
+			CAM->Zoom(300, 5);
+	}
+
 	if (GetClip(L_010)->GetRatio() > 0.98)
 	{
 		ReturnIdle();
@@ -979,6 +1019,13 @@ void Player::L101() // 내디뎌베기
 
 	if (RATIO < 0.3)
 		Rot().y = Lerp(Rot().y, rad, 0.001f);
+
+
+	// 줌 정상화 (앉아 기인 회전 베기에서 넘어온 경우)
+	{
+		if (RATIO > 0 && RATIO < 0.45)
+			CAM->Zoom(300, 5);
+	}
 
 
 	// 공격판정 프레임
@@ -1303,7 +1350,16 @@ void Player::L107() // 기인베기 2
 
 void Player::L108() // 기인베기 3
 {
-	PLAY;
+	if (INIT)
+	{
+		PlayClip(curState);
+	}
+
+	// 줌 정상화 (앉아 기인 회전 베기에서 넘어온 경우)
+	{
+		if (RATIO > 0 && RATIO < 0.45)
+			CAM->Zoom(300, 5);
+	}
 
 	// 공격판정 프레임 (이 모션은 3번 베기 동작이 있음)
 	{
@@ -1508,7 +1564,7 @@ void Player::L154() // 앉아발도 베기
 
 	// 캔슬 가능 프레임
 	{
-		if (RATIO > 0.43)
+		if (RATIO > 0.40)
 		{
 			if		(K_LMB)			SetState(L_102); // 세로베기
 			else if (K_RMB)			SetState(L_104); // 찌르기
@@ -1525,12 +1581,52 @@ void Player::L154() // 앉아발도 베기
 
 void Player::L155() // 앉아발도 기인베기
 {
+	PLAY;
+
+	// 줌아웃 && 회피 판정 프레임
+	{
+		if (RATIO > 0.1 && RATIO < 0.18)
+			CAM->Zoom(450);
+	}
+
+	// 공격판정 프레임 
+	{
+		if (RATIO > 0.1 && RATIO < 0.36)
+		{
+			Attack(35+17+17+17);
+		}
+		else
+			EndEffect();
+	}
 
 
+	// 캔슬 가능 프레임
+	{
+		if (RATIO > 0.39)
+		{
+			if		(K_LMB)			SetState(L_101); // 내디뎌베기
+			else if (K_CTRL)		SetState(L_108); // 기인 베기 3		
+			else if (K_CTRLSPACE)	SetState(L_151); // 특수 납도
+			else if (K_SPACE)		Roll();			 // 구르기
+		}
+	}
+
+	// 줌 정상화
+	{
+		if (RATIO > 0.40 && RATIO < 0.85)
+			CAM->Zoom(300, 5);
+	}
+
+	if (RATIO > 0.98)
+	{
+		ReturnIdle();
+	}
 }
 
 void Player::L156()
 {
+
+
 }
 
 void Player::LRunning()
