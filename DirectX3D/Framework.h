@@ -43,7 +43,7 @@
 
 #define RATIO GetClip(curState)->GetRatio()
 #define INIT  GetClip(curState)->isFirstPlay()
-#define PLAY  if (GetClip(curState)->isFirstPlay()) PlayClip(curState)
+#define PLAY  if (GetClip(curState)->isFirstPlay()) PlayClip(curState), initForward = Forward()
 
 #include <windows.h>
 #include <string>

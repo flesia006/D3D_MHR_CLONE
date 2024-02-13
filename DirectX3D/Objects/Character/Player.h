@@ -42,6 +42,7 @@ public:
 	void GUIRender();
 	void PostRender();
 
+
 	SphereCollider* getCollider() { return tmpCollider; }
 
 private:
@@ -73,6 +74,7 @@ private:
 	{
 		GetClip(L_001)->ResetPlayTime();
 		SetState(L_001);
+
 	}
 	void ReturnIdle2()
 	{
@@ -130,11 +132,13 @@ private:
 	void LRunning();
 private:
 	Transform* mainHand = nullptr;
-	Transform* root = nullptr;
+	Transform* backSwd = nullptr;
+
 	Transform* realPos = nullptr;
-	Transform* lastPos = nullptr;
+	Transform* backPos = nullptr;
+	Transform* forwardPos = nullptr;
+
 	Transform* head = nullptr;
-	Transform* back = nullptr;
 
 	Transform* swordStart = nullptr;
 	Transform* swordEnd = nullptr;
@@ -143,9 +147,12 @@ private:
 	Vector3 swordSwingDir;
 
 	SphereCollider* tmpCollider = nullptr;
+	SphereCollider* tmpCollider2 = nullptr;
+	SphereCollider* tmpCollider3 = nullptr;
 	CapsuleCollider* swordCollider = nullptr;
 
 	Model* longSword = nullptr;
+	Model* kalzip = nullptr;
 
 	Shadow* shadow;
 	LightBuffer::Light* light;
@@ -165,6 +172,7 @@ private:
 	Vector3 targetPos = Vector3::Zero();
 	Vector3 prevMousePos = Vector3();
 	Vector3 prevPos = Vector3();
+	
 
 
 	bool isTarget = true;
@@ -174,9 +182,12 @@ private:
 	Quad* crosshair = nullptr;
 
 	int kunaiIndex = 0;
-
-
 	int node = 197;
+
+	const int lefeHandNode = 108;
+	const int rightHandNode = 150;
+	const int backSwdNode = 190;
+
 	float rotation = -1.5;
 	float camRot;
 	float rad;
@@ -192,9 +203,10 @@ private:
 	bool Lcure = false;
 
 	bool attackOnlyOncePerMotion = false;
-
 	bool renderEffect = false;
+	bool holdingSword = false;
 
+	Vector3 initForward = Vector3::Zero();
 
 };
 
