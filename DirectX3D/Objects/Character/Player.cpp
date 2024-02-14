@@ -598,7 +598,8 @@ void Player::Attack(float power) // 충돌판정 함수
 			case Valphalk::TAIL  : hardness = 45; break;
 			default				 : hardness = 1 ; break;
 			}
-
+			UIManager::Get()->MinusDurability();
+			
 
 			Damage damage;
 			float deal = 300 * 0.06 * power * hardness * 0.01f * UIManager::Get()->GetCotingLevelCoefft() * UIManager::Get()->GetDurabilityLevelCoefft();
