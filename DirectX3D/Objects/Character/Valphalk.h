@@ -44,13 +44,10 @@ public:
 		RLEG2,
 
 		// 部府
-		TAIL,
-
-		// 鸥百阑 焊锭狼 芭府
-		TARGETDOME
+		TAIL
 	};
 
-	UINT Index = 10;
+	UINT Index = 9;
 
 public:
 	Valphalk();

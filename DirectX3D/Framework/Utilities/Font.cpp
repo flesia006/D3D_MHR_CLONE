@@ -84,7 +84,7 @@ void Font::SetStyle(string key)
 	curFormat = formats[key];
 }
 
-void Font::RenderText(wstring text, Float2 pos, string key, Float2 size)
+void Font::RenderText(wstring text, Float2 pos, string key, Float2 size, float alpha)
 {
 	if (size.x == 0.0f && size.y == 0.0f)
 	{
@@ -97,8 +97,8 @@ void Font::RenderText(wstring text, Float2 pos, string key, Float2 size)
 	pos.y = WIN_HEIGHT - pos.y;
 
 	D2D1_RECT_F rectF;
-	rectF.left = pos.x - halfSize.x;
-	rectF.right = pos.x + halfSize.x;
+	rectF.left = pos.x;
+	rectF.right = pos.x + size.x;
 	rectF.top = pos.y - halfSize.y;
 	rectF.bottom = pos.y + halfSize.y;
 
@@ -109,8 +109,11 @@ void Font::RenderText(wstring text, Float2 pos, string key, Float2 size)
 	}
 	else
 	{
+		auto color = brushes[key]->GetColor();
+		brushes[key]->SetColor(D2D1::ColorF(color.r, color.g, color.b, alpha));
 		context->DrawTextW(text.c_str(), text.size(),
 			formats[key], &rectF, brushes[key]);
+
 	}
 }
 

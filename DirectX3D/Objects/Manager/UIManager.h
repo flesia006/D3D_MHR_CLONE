@@ -19,12 +19,32 @@ public:
     void SharpeningStone();
     void GaugeBonus();
 
-    float GetcurDurability() { return curDurability -= 0.2f; } // 내구도 깎는 함수
-    float GetcurGauge() { return curGauge += 15; } // 기인게이지 늘리는 함수
-    float GetminuscurGauge() { return curGauge -= 10; } // 기인게이지 깎는 함수
-    float GetcotingLevel() { return cotingLevel++; } // 코팅레벨++
-    float GetMaxCoting() { return curCoting = maxCoting; }
+    float MinusDurability() { return curDurability -= 0.2f; } // 내구도 깎는 함수
+    float GetDurabilityLevelCoefft()                            // 내구도 공격력 보정치를 반환        
+    {
+        if      (curDurability <= 80.0f && curDurability > 60.0f)        return 1.5f;
+        else if (curDurability <= 60.0f && curDurability > 40.0f)        return 1.32f;
+        else if (curDurability <= 40.0f && curDurability > 20.0f)        return 1.2f;
+        else if (curDurability <= 20.0f && curDurability >= 0.0f)        return 1.05f;
+    }
 
+    float PlusSpritGauge()   { return curSpiritGauge += 15; }   // 기인게이지 늘리는 함수
+    float MinusSpiritGauge() { return curSpiritGauge -= 10; }   // 기인게이지 깎는 함수
+    float PlusCotingLevel()  {  
+        cotingLevel++; // 코팅레벨++
+        if (cotingLevel > 3) cotingLevel = 3;
+        return cotingLevel;
+    }          
+
+    float GetCotingLevelCoefft()
+    {
+        if      (cotingLevel == 0)            return 1.0f;
+        else if (cotingLevel == 1)            return 1.05f;
+        else if (cotingLevel == 2)            return 1.1f;
+        else if (cotingLevel == 3)            return 1.2f;
+    }
+
+    float SetMaxCoting() { return curCoting = maxCoting; }
     float curStamina = 100;//임시로 public에 올려둠
     bool staminaActive = false;
 
@@ -70,8 +90,8 @@ private:
 
     bool isBonus = false;
 
-    float curGauge = 0;
-    float maxGauge = 100;
+    float curSpiritGauge = 0;
+    float maxSpiritGauge = 100;
     float bonusTime = 0;
     float limitTime = 50;
 

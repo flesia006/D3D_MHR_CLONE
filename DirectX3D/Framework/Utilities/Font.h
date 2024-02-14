@@ -15,7 +15,7 @@ public:
     void SetColor(string key);
     void SetStyle(string key);
 
-    void RenderText(wstring text, Float2 pos, string key = "", Float2 size = Float2());
+    void RenderText(wstring text, Float2 pos, string key = "", Float2 size = Float2(), float alpha = 1.0f);
     void RenderText(string text, Float2 pos, Float2 size = Float2());
     void RenderDamage(wstring text, Float2 pos, float style, Float2 size = Float2());
 

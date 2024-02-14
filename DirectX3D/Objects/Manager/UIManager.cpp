@@ -161,15 +161,15 @@ void UIManager::Update()
 	////////////////////////////////
 
 	//기인게이지 부분
-	lsGauge2->SetAmount(curGauge / maxGauge);
+	lsGauge2->SetAmount(curSpiritGauge / maxSpiritGauge);
 
-	if (curGauge > 0.0f)
-		curGauge -= 0.1f * DELTA;
+	if (curSpiritGauge > 0.0f)
+		curSpiritGauge -= 0.1f * DELTA;
 
 	if (isBonus)
 	{
 		bonusTime += 0.1f * DELTA;
-		curGauge += 0.2f * DELTA;
+		curSpiritGauge += 0.2f * DELTA;
 	}
 
 	if (bonusTime > limitTime)

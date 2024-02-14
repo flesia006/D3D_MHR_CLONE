@@ -18,6 +18,8 @@ public:
     float Radius() { return radius * max(GlobalScale().x, max(GlobalScale().y, GlobalScale().z)); }
     float Height() { return height * GlobalScale().y; }
 
+    int part = 0;
+
 private:
     virtual void MakeMesh() override;
 

@@ -6,37 +6,44 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 	ReadClip("stun");
 	ReadClip("E_2005");
 
-	FOR(Index)
+	FOR(Valphalk::TAIL+1)
 	{
 		CapsuleCollider* capsuleCollider = new CapsuleCollider();
 		capsuleCollider->SetActive(true);
-		capsuleCollider->Scale() *= 80.0f;
+		capsuleCollider->Scale() *= 80.0f;		
 		colliders.push_back(capsuleCollider);
 	}
 
-	//colliders[HEAD]->Scale() = // 머리
+	colliders[HEAD]->part = HEAD;
 
 	colliders[BODY]->Scale() *= 2.0f; // 몸통
 	colliders[BODY]->Rot().x += 4.8f;
+	colliders[BODY]->part = BODY;
 
 	colliders[LWING]->Scale() *= 3.0f; // 왼쪽 날개
+	colliders[LWING]->part = LWING;
 
 	colliders[RWING]->Scale() *= 3.0f; // 오른쪽 날개
+	colliders[RWING]->part = RWING;
 
 	colliders[LLEG1]->Scale() *= 1.3f; // 왼쪽 다리 (앞)
+	colliders[LLEG1]->part = LLEG1;
 
 	colliders[LLEG2]->Scale() *= 1.2f;// 왼쪽 다리 (뒤)
 	colliders[LLEG2]->Rot().x += 10.0f;
+	colliders[LLEG2]->part = LLEG2;
 
 	colliders[RLEG1]->Scale() *= 1.3f; // 오른쪽 다리 (앞)
+	colliders[RLEG1]->part = RLEG1;
 
 	colliders[RLEG2]->Scale() *= 1.2f; // 오른쪽 다리 (뒤)
 	colliders[RLEG2]->Rot().x += 10.0f;
+	colliders[RLEG2]->part = RLEG2;
 
 	colliders[TAIL]->Scale().y *= 3.0f; // 꼬리
 	colliders[TAIL]->Rot().x += 4.8f;
+	colliders[TAIL]->part = TAIL;
 
-	colliders[TARGETDOME]->Scale() *= 8.0f;
 }
 
 Valphalk::~Valphalk()
@@ -45,6 +52,7 @@ Valphalk::~Valphalk()
 	{
 		delete capsulCollider;
 	}
+	
 }
 
 void Valphalk::Update()
@@ -71,7 +79,7 @@ void Valphalk::Update()
 	//===================================
 	if (Count <= 1)
 	{
-		colliders[TARGETDOME]->Pos() = GetTranslationByNode(4); // 타겟 보는 범위
+	//	colliders[TARGETDOME]->Pos() = GetTranslationByNode(4); // 타겟 보는 범위
 		StartRora();
 	}
 
@@ -87,7 +95,7 @@ void Valphalk::Update()
 		//PlayClip(1);
 	}
 
-
+	
 	//===================================
 }
 
@@ -105,7 +113,7 @@ void Valphalk::Render()
 
 	if (Count <= 1)
 	{
-		colliders[TARGETDOME]->Render();
+	//	colliders[TARGETDOME]->Render();
 	}
 
 	ModelAnimator::Render();
@@ -174,22 +182,22 @@ void Valphalk::StartRora()
 	Player* player =
 		dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetPlayer();
 	
-	if (!LookatPlayer && Count <= 1)
-	{
-		if (player->getCollider()->IsCapsuleCollision(colliders[TARGETDOME])) // 플레이어가 영역안에 들어오면
-		{
-			LookatPlayer = true; // 플레이어를 타겟으로 잡게됨
-			SetState(E_2005);
-			//PlayClip(1);
-		}
-	}
-	if (LookatPlayer)
-	{
-		if (RATIO > 0.98)
-		{
-			EndRora();
-		}
-	}
+//	if (!LookatPlayer && Count <= 1)
+//	{
+//		if (player->getCollider()->IsCapsuleCollision(colliders[TARGETDOME])) // 플레이어가 영역안에 들어오면
+//		{
+//			LookatPlayer = true; // 플레이어를 타겟으로 잡게됨
+//			SetState(E_2005);
+//			//PlayClip(1);
+//		}
+//	}
+//	if (LookatPlayer)
+//	{
+//		if (RATIO > 0.98)
+//		{
+//			EndRora();
+//		}
+//	}
 }
 
 void Valphalk::SetState(State state)

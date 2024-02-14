@@ -158,6 +158,9 @@ void GameManager::Create()
 
     Font::Get()->AddColor("Yellow", 1, 0.8, 0.1);
     Font::Get()->AddStyle("Yellow", L"Arial", 20, DWRITE_FONT_WEIGHT_MEDIUM);
+
+    Font::Get()->AddColor("Gray", 0.9, 0.9, 0.9);
+    Font::Get()->AddStyle("Gray", L"Arial", 20, DWRITE_FONT_WEIGHT_MEDIUM);
     
     Font::Get()->SetColor("White");
     Font::Get()->SetStyle("Default");

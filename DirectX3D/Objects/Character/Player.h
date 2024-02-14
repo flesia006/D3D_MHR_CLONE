@@ -32,7 +32,8 @@ private:
 	{
 		Vector3 pos = {};
 		int damage = 0;
-		float timer = 3.0f;
+		bool isWeakness = false;
+		float timer = 0.0f;
 	};
 
 
@@ -70,6 +71,9 @@ private:
 	void MotionRotate(float degree);
 
 	bool State_S();
+
+	void StatusRender();
+	void DamageRender();
 
 private:
 	void ReadClips();
@@ -195,7 +199,7 @@ private:
 	float rad;
 	float effectTimer = 0.0f;
 	float L152Timer = 0.0f;
-	float temp = -12.492f;
+	float temp = -2.364f;
 	float temp2 = -6.038f;
 	float temp3 = 11.067f;
 
@@ -207,6 +211,7 @@ private:
 	bool Lcure = false;
 
 	bool attackOnlyOncePerMotion = false;
+	bool isDoubleStrikeMotion = false;
 	bool renderEffect = false;
 	bool holdingSword = false;
 
