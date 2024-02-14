@@ -3,7 +3,7 @@
 
 ModelExportScene::ModelExportScene()
 {
-    string name = "kalzip";
+    string name = "player";
     string file = "Models/FBX/" + name + ".fbx";
     ModelExporter* exporter;
     string clipName;
@@ -13,11 +13,11 @@ ModelExportScene::ModelExportScene()
     exporter->ExportMesh();
     delete exporter;    
     
-    //clipName = "S_003";
-    //file = "Models/Animations/" + name + "/" + clipName + ".fbx";
-    //exporter = new ModelExporter(name, file);
-    //exporter->ExportClip(clipName);    
-    //delete exporter;
+    clipName = "S_018";
+    file = "Models/Animations/" + name + "/" + clipName + ".fbx";
+    exporter = new ModelExporter(name, file);
+    exporter->ExportClip(clipName);    
+    delete exporter;
     
     //clipName = "S_008";
     //file = "Models/Animations/" + name + "/" + clipName + ".fbx";
