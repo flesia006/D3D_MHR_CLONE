@@ -28,6 +28,13 @@ private:
 		ºÏ, ºÏµ¿, µ¿, ³²µ¿, ³², ³²¼­, ¼­, ºÏ¼­
 	};
 
+	struct Damage
+	{
+		Vector3 pos = {};
+		int damage = 0;
+		float timer = 3.0f;
+	};
+
 
 public:
 	Player();
@@ -169,8 +176,6 @@ private:
 	Vector3 targetPos = Vector3::Zero();
 	Vector3 prevMousePos = Vector3();
 	Vector3 prevPos = Vector3();
-	
-
 
 	bool isTarget = true;
 
@@ -190,7 +195,9 @@ private:
 	float rad;
 	float effectTimer = 0.0f;
 	float L152Timer = 0.0f;
-	int temp = 175;
+	float temp = -12.492f;
+	float temp2 = -6.038f;
+	float temp3 = 11.067f;
 
 	int loopApply = 334;
 
@@ -204,6 +211,8 @@ private:
 	bool holdingSword = false;
 
 	Vector3 initForward = Vector3::Zero();
+
+	vector<Damage> damages;
 
 };
 

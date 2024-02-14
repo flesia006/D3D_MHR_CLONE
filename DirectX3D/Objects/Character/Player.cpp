@@ -227,8 +227,10 @@ void Player::GUIRender()
 	//ImGui::SliderInt("keyboard", &U, 0, 200);
 	//
 	//
-	ImGui::SliderInt("node", &node, 100, 300);
-	ImGui::SliderInt("temp", &temp, 100, 200.0f);
+	ImGui::SliderInt("node", &node, 1, 10);
+	ImGui::SliderFloat("temp", &temp, -20, -10);
+	ImGui::SliderFloat("temp2", &temp2, -10, 10);
+	ImGui::SliderFloat("temp3", &temp3, 10, 15);
 		
 	//longSword->GUIRender();
 	//kalzip->GUIRender();
@@ -296,6 +298,28 @@ void Player::PostRender()
 	//string fps = "Status : " + strStatus.at((UINT)curState);
 	//Font::Get()->RenderText(fps, { 150, WIN_HEIGHT - 30 });
 
+	for (auto& d : damages)
+	{
+		wstring dmg = to_wstring(d.damage);
+
+
+		Vector3 pos = CAM->WorldToScreen(d.pos);
+
+		FOR(dmg.size())
+		{
+			Font::Get()->RenderText(dmg.substr(i, 1), { pos.x + temp3 * i + temp ,  pos.y - temp2 }, "Black");
+		}
+
+		Font::Get()->RenderText(dmg, { pos.x, pos.y }, "Yellow");
+
+		d.timer -= DELTA;
+	}
+
+	if (!damages.empty())
+	{
+		if (damages.back().timer < 0)
+			damages.pop_back();
+	}
 
 }
 
@@ -603,6 +627,11 @@ void Player::Attack(float power) // 충돌판정 함수
 	{
 		hitParticle->Play(contact.hitPoint, swordSwingDir);
 		attackOnlyOncePerMotion = true;
+
+		Damage damage;
+		damage.damage = power;
+		damage.pos = contact.hitPoint;
+		damages.push_back(damage);
 	}
 }
 

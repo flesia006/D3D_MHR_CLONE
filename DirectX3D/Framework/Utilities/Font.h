@@ -15,8 +15,9 @@ public:
     void SetColor(string key);
     void SetStyle(string key);
 
-    void RenderText(wstring text, Float2 pos, Float2 size = Float2());
+    void RenderText(wstring text, Float2 pos, string key = "", Float2 size = Float2());
     void RenderText(string text, Float2 pos, Float2 size = Float2());
+    void RenderDamage(wstring text, Float2 pos, float style, Float2 size = Float2());
 
     ID2D1DeviceContext* GetDC() { return context; }
 
@@ -36,4 +37,5 @@ private:
 
     ID2D1SolidColorBrush* curBrush;
     IDWriteTextFormat* curFormat;
+    IDWriteTextLayout* curLayout;
 };

@@ -117,6 +117,9 @@ void GameManager::Render()
     ImGui_ImplDX11_NewFrame();
     ImGui_ImplWin32_NewFrame();
     ImGui::NewFrame();
+
+//    Font::Get()->SetColor("White");
+//    Font::Get()->SetStyle("Default");
     
     string fps = "FPS : " + to_string(Timer::Get()->GetFPS());
     Font::Get()->RenderText(fps, { 100, WIN_HEIGHT - 10 });
@@ -148,7 +151,13 @@ void GameManager::Create()
     Observer::Get();
     
     Font::Get()->AddColor("White", 1, 1, 1);
-    Font::Get()->AddStyle("Default", L"배달의민족 주아");
+    Font::Get()->AddStyle("Default", L"Arial", 20, DWRITE_FONT_WEIGHT_MEDIUM);
+
+    Font::Get()->AddColor("Black", 0, 0, 0);
+    Font::Get()->AddStyle("Black", L"Arial", 24, DWRITE_FONT_WEIGHT_EXTRA_BLACK);
+
+    Font::Get()->AddColor("Yellow", 1, 0.8, 0.1);
+    Font::Get()->AddStyle("Yellow", L"Arial", 20, DWRITE_FONT_WEIGHT_MEDIUM);
     
     Font::Get()->SetColor("White");
     Font::Get()->SetStyle("Default");

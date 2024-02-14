@@ -84,7 +84,7 @@ void Font::SetStyle(string key)
 	curFormat = formats[key];
 }
 
-void Font::RenderText(wstring text, Float2 pos, Float2 size)
+void Font::RenderText(wstring text, Float2 pos, string key, Float2 size)
 {
 	if (size.x == 0.0f && size.y == 0.0f)
 	{
@@ -102,8 +102,16 @@ void Font::RenderText(wstring text, Float2 pos, Float2 size)
 	rectF.top = pos.y - halfSize.y;
 	rectF.bottom = pos.y + halfSize.y;
 
-	context->DrawTextW(text.c_str(), text.size(),
-		curFormat, &rectF, curBrush);
+	if (key == "")
+	{
+		context->DrawTextW(text.c_str(), text.size(),
+			curFormat, &rectF, curBrush);
+	}
+	else
+	{
+		context->DrawTextW(text.c_str(), text.size(),
+			formats[key], &rectF, brushes[key]);
+	}
 }
 
 void Font::RenderText(string text, Float2 pos, Float2 size)
@@ -128,6 +136,42 @@ void Font::RenderText(string text, Float2 pos, Float2 size)
 
 	context->DrawTextW(temp.c_str(), temp.size(),
 		curFormat, &rectF, curBrush);
+}
+
+void Font::RenderDamage(wstring text, Float2 pos, float style, Float2 size)
+{
+	SetStyle("Black");
+
+	if (size.x == 0.0f && size.y == 0.0f)
+	{
+		size.x = text.size() * curFormat->GetFontSize();
+		size.y = curFormat->GetFontSize();
+	}
+
+
+	writeFactory->CreateTextLayout(
+		text.c_str(),
+		text.size(),
+		curFormat,
+		size.x,
+		size.y,
+		&curLayout
+	);
+
+	DWRITE_TEXT_RANGE range;
+	range.startPosition = 0;
+	range.length = text.size();
+
+	if (style == 0)
+	{
+		curLayout->SetFontWeight(DWRITE_FONT_WEIGHT_ULTRA_BLACK, range);
+		curBrush = brushes["Black"];
+
+		context->DrawTextLayout(D2D1::Point2F(pos.x, pos.y), curLayout, curBrush);
+	}
+
+	curBrush = brushes["White"];
+	
 }
 
 wstring Font::ChangeWString(string value)
