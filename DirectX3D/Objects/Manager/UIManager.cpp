@@ -38,6 +38,32 @@ UIManager::UIManager()
 	staminarBar = new Quad(L"Textures/UI/StaminaBar_noColor.png");
 	staminarBar->Pos() = { 360,630,0 };
 
+	monsterIcon = new Quad(L"Textures/UI/monsterIcon.png");
+	monsterIcon->Pos() = { 1220,660,0 };
+	monsterIcon->Scale() *= 0.3f;
+	monsterIcon->UpdateWorld();
+
+	iconFrame = new Quad(L"Textures/UI/frame2.png");
+	iconFrame->Pos() = { 1220,660,0 };
+	iconFrame->Scale() *= 1.6f;
+	iconFrame->SetActive(false);
+
+	hpBarEdge = new Quad(L"Textures/UI/BarEdge.png");
+	hpBarEdge->Pos() = { 590,650,0 };
+	hpBarEdge->UpdateWorld();
+
+	staminarBarEdge = new Quad(L"Textures/UI/BarEdge2.png");
+	staminarBarEdge->Pos() = { 590,630,0 };
+	staminarBarEdge->UpdateWorld();
+
+	clockHand = new Quad(L"Textures/UI/clockhand.png");
+	clockHand->Pos() = { 86,642,0 };
+
+	clockHand2 = new Quad(L"Textures/UI/clockhand2.png");
+	clockHand2->Pos() = { 86,642,0 };
+	clockHand2->Rot().z += XM_PIDIV2 * 2 / 3;
+	clockHand2->UpdateWorld();
+
 	//캐릭터용 UI 추가
 	hp = new ProgressBar(
 		L"Textures/Color/Green.png",
@@ -111,6 +137,12 @@ UIManager::~UIManager()
 	delete recover;
 	delete stamina;
 	delete durability_gauge;
+	delete monsterIcon;
+	delete iconFrame;
+	delete hpBarEdge;
+	delete staminarBarEdge;
+	delete clockHand;
+	delete clockHand2;
 }
 
 void UIManager::Update()
@@ -125,6 +157,8 @@ void UIManager::Update()
 	slingerBug->UpdateWorld();
 	staminarBar->UpdateWorld();
 	durability_gauge->UpdateWorld();
+	iconFrame->UpdateWorld();
+	clockHand->UpdateWorld();
 
 	//hp, stamina 부분
 	hp->SetAmount(curHP / maxHP);
@@ -218,6 +252,14 @@ void UIManager::Update()
 		curCoting = 0;
 	if (curCoting >= 100.0f)
 		curCoting = 100;
+
+	//타켓 아이콘 샘플 상황, 추후 변경 필요
+	TargetMonster();
+
+	//시곗바늘 부분 : 목표 : 5분당 30도 돌아가게 해야함
+	//밑의 샘플은 빠르게 돌아가는걸 보여주는 예시
+	if (clockHand->Rot().z > -XM_PIDIV2 * 10 / 3)
+		clockHand->Rot().z -= XM_PIDIV2 * 1 / 180;
 }
 
 void UIManager::PostRender()
@@ -238,6 +280,12 @@ void UIManager::PostRender()
 	slingerBug->Render();
 	staminarBar->Render();
 	durability_gauge->Render();
+	monsterIcon->Render();
+	iconFrame->Render();
+	hpBarEdge->Render();
+	staminarBarEdge->Render();
+	clockHand->Render();
+	clockHand2->Render();
 }
 
 void UIManager::Hit(float damage)
@@ -285,5 +333,16 @@ void UIManager::GaugeBonus()
 	{
 		isBonus = true;
 		lsGauge2->SetTexture(L"Textures/UI/LSGauge2_blue.png");
+	}
+}
+
+void UIManager::TargetMonster()
+{
+	if (KEY_DOWN('T'))
+	{
+		if (!iconFrame->Active())
+			iconFrame->SetActive(true);
+		else if (iconFrame->Active())
+			iconFrame->SetActive(false);
 	}
 }
