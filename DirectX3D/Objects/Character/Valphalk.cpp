@@ -5,6 +5,8 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 {
 	ReadClip("stun");
 	ReadClip("E_2005");
+	// 아래 있는게 첫 포효
+	ReadClip("E_4013");
 
 	FOR(Valphalk::TAIL+1)
 	{
@@ -100,6 +102,11 @@ void Valphalk::Update()
 	if (KEY_DOWN('2'))
 	{
 		SetState(E_2005);
+		//PlayClip(1);
+	}
+	if (KEY_DOWN('3'))
+	{
+		SetState(E_4013);
 		//PlayClip(1);
 	}
 
