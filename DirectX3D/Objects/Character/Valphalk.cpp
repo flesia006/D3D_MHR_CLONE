@@ -56,13 +56,21 @@ void Valphalk::Update()
 	}
 
 	colliders[HEAD]->Pos() = GetTranslationByNode(14); // 머리
+
 	colliders[BODY]->Pos() = GetTranslationByNode(4); // 몸통
-	colliders[LWING]->Pos() = GetTranslationByNode(84); // 왼쪽 날개
-	colliders[RWING]->Pos() = GetTranslationByNode(64); // 오른쪽 날개
-	colliders[LLEG1]->Pos() = GetTranslationByNode(40); // 왼쪽 다리 (앞)
-	colliders[LLEG2]->Pos() = GetTranslationByNode(112); // 왼쪽 다리 (뒤)
-	colliders[RLEG1]->Pos() = GetTranslationByNode(30); // 오른쪽 다리 (앞)
-	colliders[RLEG2]->Pos() = GetTranslationByNode(98); // 오른쪽 다리 (뒤)
+
+	colliders[LWING]->Pos() = GetTranslationByNode(64); // 왼쪽 날개
+
+	colliders[RWING]->Pos() = GetTranslationByNode(84); // 오른쪽 날개
+
+	colliders[LLEG1]->Pos() = GetTranslationByNode(30); // 왼쪽 다리 (앞)
+
+	colliders[LLEG2]->Pos() = GetTranslationByNode(98); // 왼쪽 다리 (뒤)
+
+	colliders[RLEG1]->Pos() = GetTranslationByNode(40); // 오른쪽 다리 (앞)
+
+	colliders[RLEG2]->Pos() = GetTranslationByNode(112); // 오른쪽 다리 (뒤)
+
 	colliders[TAIL]->Pos() = GetTranslationByNode(127); // 꼬리
 
 	ModelAnimator::Update();
@@ -98,10 +106,10 @@ void Valphalk::PreRender()
 
 void Valphalk::Render()
 {
-	for (CapsuleCollider* capsulCollider : colliders)
-	{
-		//capsulCollider->Render();;
-	}
+	//for (CapsuleCollider* capsulCollider : colliders)
+	//{
+	//	capsulCollider->Render();;
+	//}
 
 	if (Count <= 1)
 	{
