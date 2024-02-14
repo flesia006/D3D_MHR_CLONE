@@ -1613,31 +1613,13 @@ void Player::L108() // 기인베기 3
 	}
 
 	if (RATIO > 0.50)
-	{
-		// 찌르기
-		if (KEY_FRONT(Keyboard::RMB) || KEY_FRONT(Keyboard::LMB))		
-			SetState(L_104);
-		
-		// 베어내리기
-		else if (KEY_FRONT(Keyboard::LMBRMB))		
-			SetState(L_103);
-		
-		// 기인 베기3
-		else if (KEY_FRONT(Keyboard::CTRL))		
-			SetState(L_109);
-
-
-		// 간파 베기
-		else if (KEY_FRONT(Keyboard::CTRLRMB))
-			SetState(L_147);
-
-		
-		else if (K_CTRLSPACE)	SetState(L_151);	// 특수 납도
-
-		
-		else if (KEY_FRONT(Keyboard::SPACE))		
-			Roll();
-		
+	{		
+		if (K_RMB || K_LMB)			SetState(L_104);  // 찌르기		
+		else if (K_LMBRMB)			SetState(L_103);  // 베어내리기		
+		else if (K_CTRL)			SetState(L_109);  // 기인 베기3		
+		else if (K_CTRLRMB)			SetState(L_147);  // 간파 베기
+		else if (K_CTRLSPACE)		SetState(L_151);  // 특수 납도		
+		else if (K_SPACE)			Roll();			  // 구르기		
 	}
 
 	if (RATIO > 0.98)
