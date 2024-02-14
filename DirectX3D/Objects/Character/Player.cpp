@@ -198,6 +198,11 @@ void Player::Potion()
 			return;
 		}
 	}
+	if (KEY_DOWN('T'))
+	{
+		Sounds::Get()->Play("health_potion", 0.3f);
+		UIManager::Get()->curStamina = 100;
+	}
 }
 
 
@@ -332,7 +337,7 @@ void Player::Control()
 	case Player::L_011:					break;
 	case Player::L_012:					break;
 	case Player::L_013:					break;
-	case Player::L_014:					break;
+	case Player::L_014:		L014();		break;
 	case Player::L_015:					break;
 	case Player::L_071:					break;
 	case Player::L_072:					break;
@@ -704,7 +709,6 @@ void Player::SetState(State state)
 		Rot().y = atan2(realForward.x, realForward.z);
 	}
 
-
 	preState = curState;
 	curState = state;
 	attackOnlyOncePerMotion = false;
@@ -743,7 +747,7 @@ void Player::ReadClips()
 	ReadClip(" _011");
 	ReadClip(" _012");
 	ReadClip(" _013");
-	ReadClip(" _014");
+	ReadClip("L_014");
 	ReadClip(" _015");
 	ReadClip(" _071");
 	ReadClip(" _072");
@@ -961,6 +965,14 @@ void Player::S017() // 구르기 후 제자리
 {
 	PLAY;
 
+	if (GetClip(S_017)->GetRatio() > 0.6f && KEY_PRESS('W') ||
+		GetClip(S_017)->GetRatio() > 0.6f && KEY_PRESS('S') ||
+		GetClip(S_017)->GetRatio() > 0.6f && KEY_PRESS('A') ||
+		GetClip(S_017)->GetRatio() > 0.6f && KEY_PRESS('D'))
+	{
+		SetState(S_018);
+	}
+
 	if (GetClip(S_017)->GetRatio() > 0.98)
 	{
 		ReturnIdle2();
@@ -969,6 +981,23 @@ void Player::S017() // 구르기 후 제자리
 
 void Player::S018() // 구르기 후 달리기
 {
+	PLAY;
+	Move();
+	Rotate();
+	// 줌 정상화
+	{
+		if (RATIO > 0 && RATIO < 0.9)
+			CAM->Zoom(300, 5);
+	}
+	if (GetClip(S_018)->GetRatio() > 0.48 && KEY_DOWN(VK_SPACE))
+	{
+		Roll();
+	}
+	if (GetClip(S_018)->GetRatio() > 0.98)
+	{
+		SetState(S_003);
+		UIManager::Get()->staminaActive = false;
+	}
 }
 
 void Player::S026() // 대기중 걷기시작
@@ -1258,10 +1287,40 @@ void Player::L010() // 구르기
 		if (RATIO > 0 && RATIO < 0.9)
 			CAM->Zoom(300, 5);
 	}
+	if (GetClip(L_010)->GetRatio() > 0.45f && KEY_PRESS('W')||
+		GetClip(L_010)->GetRatio() > 0.45f && KEY_PRESS('S')||
+		GetClip(L_010)->GetRatio() > 0.45f && KEY_PRESS('A')||
+		GetClip(L_010)->GetRatio() > 0.45f && KEY_PRESS('D'))
+	{
+		SetState(L_014);
+	}
+
 
 	if (GetClip(L_010)->GetRatio() > 0.98)
 	{
 		ReturnIdle();
+	}
+	
+}
+
+void Player::L014()
+{
+	PLAY;
+	Move();
+	Rotate();
+	// 줌 정상화
+	{
+		if (RATIO > 0 && RATIO < 0.9)
+			CAM->Zoom(300, 5);
+	}
+	if (GetClip(L_014)->GetRatio() > 0.48 && KEY_DOWN(VK_SPACE))
+	{
+		Roll();
+	}
+	if (GetClip(L_014)->GetRatio() > 0.98)
+	{
+		SetState(L_004);
+		UIManager::Get()->staminaActive = false;
 	}
 }
 
@@ -1963,8 +2022,9 @@ void Player::MotionRotate(float degree)
 bool Player::State_S() // 납도 스테이트 목록
 {
 	if (curState == S_001 || curState == S_003 || curState == S_005 ||
-		curState == S_014 || curState == S_017 || curState == S_038 ||
-		curState == S_118 || curState == S_119 || curState == S_120)
+		curState == S_014 || curState == S_017 || curState == S_018 ||
+		curState == S_038 || curState == S_118 || curState == S_119 || 
+		curState == S_120)
 		return true;
 
 	else return false;
