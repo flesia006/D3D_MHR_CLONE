@@ -18,6 +18,7 @@ public:
     void ReduceDurability();
     void SharpeningStone();
     void GaugeBonus();
+    void TargetMonster();
 
     float MinusDurability() { return curDurability -= 0.2f; } // 내구도 깎는 함수
     float GetDurabilityLevelCoefft()                            // 내구도 공격력 보정치를 반환        
@@ -59,6 +60,12 @@ private:
     Quad* quickSlot;
     Quad* slingerBug;
     Quad* staminarBar;
+    Quad* monsterIcon;
+    Quad* iconFrame;
+    Quad* hpBarEdge;
+    Quad* staminarBarEdge;
+    Quad* clockHand;
+    Quad* clockHand2;
 
     //액터의 UI
     ProgressBar* hp;
