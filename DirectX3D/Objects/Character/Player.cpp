@@ -27,7 +27,7 @@ Player::Player() : ModelAnimator("Player")
 	longSword = new Model("kal");
 	longSword->SetParent(mainHand);
 
-	kalzip = new Model("kalzip");
+	kalzip = new Model("LongSWD");
 	kalzip->SetParent(backSwd);
 
 	//	longSword->Rot().x -= XM_PIDIV2;	
