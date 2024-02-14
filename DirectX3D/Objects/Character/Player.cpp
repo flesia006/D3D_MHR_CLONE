@@ -239,7 +239,7 @@ void Player::GUIRender()
 	ImGui::SliderFloat("temp3", &temp3, 10, 15);
 		
 	//longSword->GUIRender();
-	//kalzip->GUIRender();
+	kalzip->GUIRender();
 
 	// t = GetClip(1)->GetRatio();
 	// ImGui::DragFloat("ratio_1", &t);
