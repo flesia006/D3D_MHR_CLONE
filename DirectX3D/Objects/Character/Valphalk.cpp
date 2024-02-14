@@ -129,7 +129,7 @@ void Valphalk::Render()
 
 void Valphalk::GUIRender()
 {
-	ModelAnimator::GUIRender();
+	//ModelAnimator::GUIRender();
 	//for (CapsuleCollider* capsulCollider : colliders)
 	//{
 	//	capsulCollider->GUIRender();
