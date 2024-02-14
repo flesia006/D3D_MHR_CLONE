@@ -44,7 +44,6 @@ GameManager::GameManager()
 //  SceneManager::Get()->Create("ParticleConfig", new ParticleConfigScene());
 //  SceneManager::Get()->Add("ParticleConfig");
 
-
     SceneManager::Get()->Create("Grid", new GridScene());
     SceneManager::Get()->Add("Grid");
 

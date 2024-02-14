@@ -1497,6 +1497,8 @@ void Player::L106() // 기인 베기 1
 {
 	PLAY;
 
+
+
 	// 공격판정 프레임
 	{
 		if (RATIO > 0.33 && RATIO < 0.416)
