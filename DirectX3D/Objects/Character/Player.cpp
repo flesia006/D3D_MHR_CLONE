@@ -169,11 +169,11 @@ void Player::Potion()
 	}
 	if (cure == true)
 	{
-		if (time < 3)
+		if (time < 2)
 		{
 			UIManager::Get()->HealthPotion();
 		}
-		else if (time >= 3)
+		else if (time >= 2)
 		{
 			cure = false;
 			return;
@@ -188,11 +188,11 @@ void Player::Potion()
 	}
 	if (Lcure == true)
 	{
-		if (time < 5)
+		if (time < 3)
 		{
 			UIManager::Get()->HealthPotion();
 		}
-		else if (time >= 5)
+		else if (time >= 3)
 		{
 			Lcure = false;
 			return;
@@ -623,10 +623,22 @@ void Player::Attack(float power) // 충돌판정 함수
 
 	Contact contact;
 
-	if (swordCollider->IsCapsuleCollision(val->GetCollider()[Valphalk::HEAD], &contact) && !attackOnlyOncePerMotion)
+	if (swordCollider->IsCapsuleCollision(val->GetCollider()[Valphalk::LLEG2], &contact) && !attackOnlyOncePerMotion) // 오른쪽 뒷다리
 	{
 		hitParticle->Play(contact.hitPoint, swordSwingDir);
 		attackOnlyOncePerMotion = true;
+
+		if(curState == L_101 || curState == L_102 || curState == L_103 || curState == L_104 || curState == L_105) // 기인베기 아니라면 게이지 증가
+			UIManager::Get()->GetcurGauge();
+
+		if(curState!=L_108)
+		UIManager::Get()->GetcurDurability();
+
+		if (curState == L_109) // 기인 큰 회전베기 적중시에만
+		{
+			UIManager::Get()->GetcotingLevel(); // 코팅 레벨을 1 올린다
+			UIManager::Get()->GetMaxCoting(); // 동시에 코팅 게이지 100으로 초기화
+		}
 
 		Damage damage;
 		damage.damage = power;
@@ -703,6 +715,9 @@ void Player::Roll()
 		SetState(S_017);
 	else if (!State_S())
 		SetState(L_010);
+
+	UIManager::Get()->staminaActive = true;
+
 }
 
 void Player::SetState(State state)
@@ -832,6 +847,7 @@ void Player::S001() // 납도 Idle
 		SetState(L_101);
 		return;
 	}
+	UIManager::Get()->staminaActive = false;
 }
 
 void Player::S003() // 납도상태 달리기
@@ -866,6 +882,8 @@ void Player::S003() // 납도상태 달리기
 
 	if (KEY_DOWN(VK_SPACE))
 		Roll();
+	UIManager::Get()->staminaActive = false;
+
 }
 
 void Player::S005() // 대기중 달리기
@@ -1043,31 +1061,34 @@ void Player::S038()
 	//	SetState(S_008);
 	if (KEY_DOWN(VK_SPACE))
 		Roll();
+	UIManager::Get()->staminaActive = true;
+
 }
 
-void Player::S118()
+void Player::S118() // 탈진 시작
 {
 	PLAY;
+	UIManager::Get()->curStamina += 2.0f * DELTA;
 	if (RATIO > 0.98f)
 		SetState(S_120);
 }
 
-void Player::S119()
+void Player::S119() // 탈진 끝
 {	
 	PLAY;
+	UIManager::Get()->curStamina += 2.0f * DELTA;
 	if (RATIO > 0.98f)
 	{
 		SetState(S_001);
 		return;
-	}
-	
+	}	
 }
 
-void Player::S120()
+void Player::S120() // 탈진 중
 {
 	PLAY;
-	UIManager::Get()->curStamina += 0.01f;
-	if (UIManager::Get()->curStamina > 30)
+	UIManager::Get()->curStamina += 12.0f * DELTA;
+	if (UIManager::Get()->curStamina > 40)
 		SetState(S_119);
 }
 
@@ -1106,6 +1127,9 @@ void Player::L001() // 발도상태 대기
 		SetState(S_008);
 	if (KEY_DOWN(VK_SPACE))
 		Roll();
+
+	UIManager::Get()->staminaActive = false;
+
 }
 
 void Player::L002() // 발도
@@ -1275,6 +1299,7 @@ void Player::L101() // 내디뎌베기
 	// PlayClip 하는데 계속 반복해서 호출되면 모션 반복되니까 방지 + 딱 한번만 실행되는거 놓기
 	if (INIT)
 	{
+		UIManager::Get()->staminaActive = false;
 		PlayClip(L_101);
 		MotionRotate(30);
 	}
@@ -1394,6 +1419,7 @@ void Player::L103() // 베어내리기
 {
 	if (INIT)
 	{
+		UIManager::Get()->staminaActive = false;
 		PlayClip(L_103);
 		MotionRotate(30);
 	}
@@ -1440,6 +1466,7 @@ void Player::L104() // 찌르기
 
 	// 공격판정 프레임
 	{
+		UIManager::Get()->staminaActive = false;
 		if (RATIO > 0.1 && RATIO < 0.213)
 			Attack(14);
 		else
@@ -1527,6 +1554,10 @@ void Player::L105() // 베어 올리기
 void Player::L106() // 기인 베기 1
 {
 	PLAY;
+	UIManager::Get()->staminaActive = false;
+	if (INIT)	
+	UIManager::Get()->GetminuscurGauge(); // 기인게이지 소모하기( 단 1번 )
+
 
 
 
@@ -1570,7 +1601,8 @@ void Player::L106() // 기인 베기 1
 void Player::L107() // 기인베기 2
 {
 	PLAY;
-
+	if (INIT)
+		UIManager::Get()->GetminuscurGauge(); // 기인게이지 소모하기( 단 1번 )
 	// 공격판정 프레임
 	{
 		if (RATIO > 0.26 && RATIO < 0.38)
@@ -1616,7 +1648,8 @@ void Player::L108() // 기인베기 3
 {
 	if (INIT)
 	{
-		PlayClip(curState);
+		PlayClip(curState);		
+		UIManager::Get()->GetminuscurGauge(); // 기인게이지 소모하기( 단 1번 )
 	}
 
 	// 줌 정상화 (앉아 기인 회전 베기에서 넘어온 경우)
@@ -1660,7 +1693,8 @@ void Player::L108() // 기인베기 3
 void Player::L109() // 기인 큰회전베기
 {
 	PLAY;
-
+	if (INIT)
+		UIManager::Get()->GetminuscurGauge(); // 기인게이지 소모하기( 단 1번 )
 	// 줌인
 	{
 		if (RATIO > 0 && RATIO < 0.16)
@@ -1704,7 +1738,7 @@ void Player::L110() // 기인 내디뎌베기
 void Player::L147() // 간파베기
 {
 	PLAY;
-
+	UIManager::Get()->staminaActive = false;
 	// 줌아웃 && 회피 판정 프레임
 	{
 		if (RATIO > 0 && RATIO < 0.30)
@@ -1748,6 +1782,7 @@ void Player::L151() // 특수 납도
 		initForward = Forward();
 		holdingSword = true;
 		EndEffect();
+		UIManager::Get()->staminaActive = false;
 	}
 
 	// 줌 정상화 (기인 큰회전 베기에서 넘어온 경우)
