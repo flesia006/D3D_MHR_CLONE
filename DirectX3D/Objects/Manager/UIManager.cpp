@@ -131,9 +131,10 @@ void UIManager::Update()
 	recover->SetAmount(recoverHP / maxHP);
 	stamina->SetAmount(curStamina / maxStamina);
 	if (curHP < recoverHP)
-		curHP += 0.001f;
-
-	curStamina += 0.001f;
+		curHP += 0.1f * DELTA;
+	
+	if(staminaActive == false)
+		curStamina += 2.5f * DELTA;
 
 	if (curHP > recoverHP)
 		recoverHP = curHP;
@@ -151,9 +152,9 @@ void UIManager::Update()
 		durability->SetTexture(L"Textures/UI/Durability_green.png");
 
 	////////////////////////////////
-	//예리도 샘플 상황, 변경 필요
-	if (curDurability > 0.0f)
-		curDurability -= 0.1f;
+	//예리도는 0 이하로 떨어지지 않는다.
+	if (curDurability <= 0.0f)
+		curDurability = 0;
 
 	if (curDurability < 0.0f)
 		SharpeningStone();
@@ -163,12 +164,12 @@ void UIManager::Update()
 	lsGauge2->SetAmount(curGauge / maxGauge);
 
 	if (curGauge > 0.0f)
-		curGauge -= 0.1f;
+		curGauge -= 0.1f * DELTA;
 
 	if (isBonus)
 	{
-		bonusTime += 0.1f;
-		curGauge += 0.2f;
+		bonusTime += 0.1f * DELTA;
+		curGauge += 0.2f * DELTA;
 	}
 
 	if (bonusTime > limitTime)
@@ -180,23 +181,25 @@ void UIManager::Update()
 
 	////////////////////////////////
 	//기인게이지 샘플상황, 변경 필요
-	if (curGauge < 100.0f)
-		curGauge += 0.2f;
+	//if (curGauge < 100.0f)
+	//	curGauge += 0.2f;
 
-	if (curGauge > 100.0f)
+	//if (curGauge > 100.0f)
+	//{
+	//	curGauge = 0.0f;
+	//	curCoting = 100.0f;
+
+	//	if (cotingLevel < 3)
+	//		cotingLevel += 1 * DELTA;
+	//}
+
+	//if (KEY_PRESS('W'))
+	//	GaugeBonus();
+
+	if (cotingLevel <= 3 && cotingLevel > 0) // 코팅레벨이 1이상이라면 게이지 주기적 감소
 	{
-		curGauge = 0.0f;
-		curCoting = 100.0f;
-
-		if (cotingLevel < 3)
-			cotingLevel += 1;
+		curCoting -= .6f * DELTA;
 	}
-
-	if (KEY_PRESS('W'))
-		GaugeBonus();
-
-	if (cotingLevel == 3)
-		curGauge -= 0.2f;
 	////////////////////////////////
 
 	//코팅 부분
@@ -205,26 +208,16 @@ void UIManager::Update()
 	if (cotingLevel == 0)
 		lsCoting->SetTexture(L"Textures/UI/LSCoting_none.png");
 	if (cotingLevel == 1)
-	{
-		lsCoting->SetTexture(L"Textures/UI/LSCoting_white.png");
-		curCoting -= 0.05f;
-	}
+		lsCoting->SetTexture(L"Textures/UI/LSCoting_white.png");			
 	if (cotingLevel == 2)
-	{
-		lsCoting->SetTexture(L"Textures/UI/LSCoting_yellow.png");
-		curCoting -= 0.05f;
-	}
+		lsCoting->SetTexture(L"Textures/UI/LSCoting_yellow.png");			
 	if (cotingLevel == 3)
-	{
-		lsCoting->SetTexture(L"Textures/UI/LSCoting_red.png");
-		curCoting -= 0.05f;
-	}
+		lsCoting->SetTexture(L"Textures/UI/LSCoting_red.png");			
 
-	if (curCoting < 0.0f)
-	{
-		curCoting = 100.0f;
-		cotingLevel -= 1;
-	}
+	if (curCoting <= 0.0f) // 게이지는 100을 넘지않고 0을 넘지않게
+		curCoting = 0;
+	if (curCoting >= 100.0f)
+		curCoting = 100;
 }
 
 void UIManager::PostRender()
@@ -258,27 +251,27 @@ void UIManager::Hit(float damage)
 
 void UIManager::HealthPotion()
 {
-	curHP += 0.02f;
+	curHP += 20.0f * DELTA;
 }
 
 void UIManager::LargeHealthPotion()
 {
-	curHP += 0.04f;
+	curHP += 30.f * DELTA;
 }
 
 void UIManager::Running()
 {
-	curStamina -= 0.01f;
+	curStamina -= 3.2f * DELTA;
 }
 
 void UIManager::Roll()
 {
-	curStamina -= 20.f;
+	curStamina -= 15.f;
 }
 
 void UIManager::ReduceDurability()
 {
-	curDurability -= 0.1f;
+	curDurability -= 0.1f * DELTA;
 }
 
 void UIManager::SharpeningStone()

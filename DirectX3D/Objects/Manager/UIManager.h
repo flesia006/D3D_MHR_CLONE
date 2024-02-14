@@ -19,7 +19,14 @@ public:
     void SharpeningStone();
     void GaugeBonus();
 
+    float GetcurDurability() { return curDurability -= 0.2f; } // 내구도 깎는 함수
+    float GetcurGauge() { return curGauge += 15; } // 기인게이지 늘리는 함수
+    float GetminuscurGauge() { return curGauge -= 10; } // 기인게이지 깎는 함수
+    float GetcotingLevel() { return cotingLevel++; } // 코팅레벨++
+    float GetMaxCoting() { return curCoting = maxCoting; }
+
     float curStamina = 100;//임시로 public에 올려둠
+    bool staminaActive = false;
 
 private:
     Quad* clockFrame;
@@ -75,5 +82,7 @@ private:
     float maxCoting = 100;
 
     UINT cotingLevel = 0;
+
+
 };
 
