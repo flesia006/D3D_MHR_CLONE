@@ -21,6 +21,7 @@ public:
     void GaugeBonus();
     void TargetMonster();
     void GetWildBug();
+    void QickSlot();
     void QickSlotBar();
 
     float MinusDurability() { return curDurability -= 0.2f; } // 내구도 깎는 함수
@@ -74,6 +75,7 @@ private:
     Quad* qickSlot_Back;
     Quad* qickSlot_Select;
     vector<Quad*> selectBoxs;
+    vector<Quad*> selectBoxFrames;
 
     Quad* blackCircle;
     Quad* blackHalfCircle;

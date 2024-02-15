@@ -120,12 +120,26 @@ UIManager::UIManager()
 
 	qickSlot_Select = new Quad(L"Textures/UI/QickSlot_Select.png");
 	qickSlot_Select->Pos() = { 820, 170, 0 };
-	qickSlot_Select->Scale() *= 0.3f;
+	qickSlot_Select->Scale() *= 0.5f;
+	qickSlot_Select->Scale().x *= 0.8f;
 	
 	FOR(8)
 	{
-		Quad* quad = new Quad(L"Textures/UI/SelectBox.png");
+		Quad* quad = new Quad(L"Textures/UI/SelectBox.png"); 
+		quad->Scale() *= 0.5f;
+		quad->Pos() = { 820, 320, 0}; // 0 번째
+		//quad->Pos() = { 930, 271, 0 };
 		selectBoxs.push_back(quad);
+		selectBoxs[i]->UpdateWorld();
+	}
+
+	FOR(8)
+	{
+		Quad* quad = new Quad(L"Textures/UI/ItemSlot.png");
+		quad->Pos() = { 817, 322, 0 }; // 0번째
+		quad->Scale() *= 1.28f;
+		selectBoxFrames.push_back(quad);
+		selectBoxFrames[i]->UpdateWorld();
 	}
 
 	//캐릭터용 UI 추가
@@ -224,12 +238,18 @@ UIManager::~UIManager()
 	delete orangeRightHalfCircle3;
 	delete qickSlot_Back;
 	delete qickSlot_Select;
+	FOR(selectBoxs.size())
+	{
+		delete selectBoxs[i];
+	}
+	FOR(selectBoxFrames.size())
+	{
+		delete selectBoxFrames[i];
+	}
 }
 
 void UIManager::Update()
 {
-	QickSlotBar();
-
 	stamina->UpdateWorld();
 	recover->UpdateWorld();
 	hp->UpdateWorld();
@@ -256,7 +276,16 @@ void UIManager::Update()
 	orangeRightHalfCircle->UpdateWorld();
 	orangeRightHalfCircle2->UpdateWorld();
 	orangeRightHalfCircle3->UpdateWorld();
+	qickSlot_Back->UpdateWorld();
 	qickSlot_Select->UpdateWorld();
+	FOR(selectBoxs.size())
+	{
+		selectBoxs[i]->UpdateWorld();
+	}
+	FOR(selectBoxFrames.size())
+	{
+		selectBoxFrames[i]->UpdateWorld();
+	}
 
 	//hp, stamina 부분
 	hp->SetAmount(curHP / maxHP);
@@ -542,12 +571,34 @@ void UIManager::PostRender()
 		orangeRightHalfCircle3->Render();
 	qickSlot_Back->Render();
 	qickSlot_Select->Render();
+
+	QickSlotBar();
 }
 
 void UIManager::GUIRender()
 {
-	qickSlot_Back->GUIRender();
-	qickSlot_Select->GUIRender();
+	//qickSlot_Back->GUIRender();
+	//qickSlot_Select->GUIRender();
+
+	//for (Quad* selectBox : selectBoxs)
+	//{
+	//	selectBox->GUIRender();
+	//}
+	selectBoxs[0]->GUIRender();
+	selectBoxs[1]->GUIRender();
+	selectBoxs[2]->GUIRender();
+	selectBoxs[3]->GUIRender();
+	selectBoxs[4]->GUIRender();
+	selectBoxs[5]->GUIRender();
+	selectBoxs[6]->GUIRender();
+	selectBoxs[7]->GUIRender();
+
+	//FOR(selectBoxFrames.size())
+	//{
+	//	selectBoxFrames[i]->GUIRender();
+	//}
+	//selectBoxs[1]->GUIRender();
+	//selectBoxFrames[1]->GUIRender();
 }
 
 void UIManager::Hit(float damage)
@@ -614,7 +665,24 @@ void UIManager::GetWildBug()
 	bugCount++;
 }
 
-void UIManager::QickSlotBar()
+void UIManager::QickSlot()
 {
 
+}
+
+void UIManager::QickSlotBar()
+{
+	if (KEY_PRESS(VK_TAB))
+	{
+		qickSlot_Back->Render();
+		FOR(selectBoxFrames.size())
+		{
+			selectBoxFrames[i]->Render();
+		}
+		FOR(selectBoxs.size())
+		{
+			selectBoxs[i]->Render();
+		}
+		qickSlot_Select->Render();
+	}
 }
