@@ -19,6 +19,7 @@ public:
     void SharpeningStone();
     void GaugeBonus();
     void TargetMonster();
+    void GetWildBug();
 
     float MinusDurability() { return curDurability -= 0.2f; } // 내구도 깎는 함수
     float GetDurabilityLevelCoefft()                            // 내구도 공격력 보정치를 반환        
@@ -59,6 +60,8 @@ private:
     Quad* lsGauge;
     Quad* quickSlot;
     Quad* slingerBug;
+    Quad* slingerBug2;
+    Quad* slingerBug3;
     Quad* staminarBar;
     Quad* monsterIcon;
     Quad* iconFrame;
@@ -66,6 +69,19 @@ private:
     Quad* staminarBarEdge;
     Quad* clockHand;
     Quad* clockHand2;
+
+    Quad* blackCircle;
+    Quad* blackHalfCircle;
+    Quad* orangeLeftHalfCircle;
+    Quad* orangeRightHalfCircle;
+    Quad* blackCircle2;
+    Quad* blackHalfCircle2;
+    Quad* orangeLeftHalfCircle2;
+    Quad* orangeRightHalfCircle2;
+    Quad* blackCircle3;
+    Quad* blackHalfCircle3;
+    Quad* orangeLeftHalfCircle3;
+    Quad* orangeRightHalfCircle3;
 
     //액터의 UI
     ProgressBar* hp;
@@ -110,6 +126,16 @@ private:
 
     UINT cotingLevel = 0;
 
+    //밧줄벌레 쿨타임 부분
+    UINT bugCount = 2;
 
+    bool isCoolTime1 = false;
+    bool isCoolTime2 = false;
+    bool isCoolTime3 = false;
+
+    bool getWildBug = false;
+
+    const float wildBugDurationLimit = 180.0f;
+    float wildBugDuration = 0.0f;
 };
 
