@@ -10,6 +10,7 @@ public:
 
     void Update();
     void PostRender();
+    void GUIRender();
     void Hit(float damage);
     void HealthPotion();
     void LargeHealthPotion();
@@ -20,6 +21,7 @@ public:
     void GaugeBonus();
     void TargetMonster();
     void GetWildBug();
+    void QickSlotBar();
 
     float MinusDurability() { return curDurability -= 0.2f; } // 내구도 깎는 함수
     float GetDurabilityLevelCoefft()                            // 내구도 공격력 보정치를 반환        
@@ -69,6 +71,9 @@ private:
     Quad* staminarBarEdge;
     Quad* clockHand;
     Quad* clockHand2;
+    Quad* qickSlot_Back;
+    Quad* qickSlot_Select;
+    vector<Quad*> selectBoxs;
 
     Quad* blackCircle;
     Quad* blackHalfCircle;

@@ -112,6 +112,22 @@ UIManager::UIManager()
 	orangeRightHalfCircle3 = new Quad(L"Textures/UI/orangeHalfCircle2.png");
 	orangeRightHalfCircle3->SetActive(false);
 
+	// 퀵슬롯 UI 추가
+	qickSlot_Back = new Quad(L"Textures/UI/QickSlot_Back.png");
+	qickSlot_Back->Pos() = { 820, 170, 0 };
+	qickSlot_Back->Scale() *= 0.3f;
+	qickSlot_Back->UpdateWorld();
+
+	qickSlot_Select = new Quad(L"Textures/UI/QickSlot_Select.png");
+	qickSlot_Select->Pos() = { 820, 170, 0 };
+	qickSlot_Select->Scale() *= 0.3f;
+	
+	FOR(8)
+	{
+		Quad* quad = new Quad(L"Textures/UI/SelectBox.png");
+		selectBoxs.push_back(quad);
+	}
+
 	//캐릭터용 UI 추가
 	hp = new ProgressBar(
 		L"Textures/Color/Hp.png",
@@ -206,10 +222,14 @@ UIManager::~UIManager()
 	delete orangeRightHalfCircle;
 	delete orangeRightHalfCircle2;
 	delete orangeRightHalfCircle3;
+	delete qickSlot_Back;
+	delete qickSlot_Select;
 }
 
 void UIManager::Update()
 {
+	QickSlotBar();
+
 	stamina->UpdateWorld();
 	recover->UpdateWorld();
 	hp->UpdateWorld();
@@ -236,6 +256,7 @@ void UIManager::Update()
 	orangeRightHalfCircle->UpdateWorld();
 	orangeRightHalfCircle2->UpdateWorld();
 	orangeRightHalfCircle3->UpdateWorld();
+	qickSlot_Select->UpdateWorld();
 
 	//hp, stamina 부분
 	hp->SetAmount(curHP / maxHP);
@@ -519,6 +540,14 @@ void UIManager::PostRender()
 		blackHalfCircle3->Render();
 	if (orangeLeftHalfCircle3->Rot().z > XM_PI)
 		orangeRightHalfCircle3->Render();
+	qickSlot_Back->Render();
+	qickSlot_Select->Render();
+}
+
+void UIManager::GUIRender()
+{
+	qickSlot_Back->GUIRender();
+	qickSlot_Select->GUIRender();
 }
 
 void UIManager::Hit(float damage)
@@ -583,4 +612,9 @@ void UIManager::TargetMonster()
 void UIManager::GetWildBug()
 {
 	bugCount++;
+}
+
+void UIManager::QickSlotBar()
+{
+
 }
