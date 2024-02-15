@@ -51,6 +51,7 @@ Player::Player() : ModelAnimator("Player")
 	ReadClips();
 
 	CAM->SetTarget(head);
+	
 
 	//캐릭터용 UI 추가
 
@@ -592,6 +593,10 @@ void Player::Attack(float power) // 충돌판정 함수
 			{
 				UIManager::Get()->PlusCotingLevel(); // 코팅 레벨을 1 올린다
 				UIManager::Get()->SetMaxCoting(); // 동시에 코팅 게이지 100으로 초기화
+			}
+			if (curState == L_154) // 앉아발도 베기 적중시 기인게이지 상승 버프
+			{
+				UIManager::Get()->Bonus154True();
 			}
 
 			float hardness = 1.0f;
@@ -1701,6 +1706,8 @@ void Player::L109() // 기인 큰회전베기
 void Player::L110() // 기인 내디뎌베기
 {
 	PLAY;
+	if(INIT)
+	UIManager::Get()->MinusSpiritGauge(); // 기인게이지 소모하기( 단 1번 )
 
 	// 공격판정 프레임 
 	{
@@ -1832,7 +1839,7 @@ void Player::L153() // 특수납도 취소 동작
 void Player::L154() // 앉아발도 베기
 {
 	PLAY;
-
+	
 	// 공격판정 프레임 (이 모션은 2번 베기 동작이 있음)
 	{
 		if (RATIO > 0.04 && RATIO < 0.17)

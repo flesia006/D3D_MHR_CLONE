@@ -215,6 +215,21 @@ void UIManager::Update()
 		lsGauge2->SetTexture(L"Textures/UI/LSGauge2.png");
 	}
 
+	if (bonus154 == true)
+	{
+		bonusTime += DELTA;
+		if (bonusTime < limitTime)
+		{
+			lsGauge2->SetTexture(L"Textures/UI/LSGauge2_blue.png");
+			curSpiritGauge += 2.f * DELTA;			
+		}
+		else
+		{
+			lsGauge2->SetTexture(L"Textures/UI/LSGauge2.png");
+			bonus154 = false;
+		}
+	}
+
 	////////////////////////////////
 	//기인게이지 샘플상황, 변경 필요
 	//if (curGauge < 100.0f)
@@ -234,7 +249,7 @@ void UIManager::Update()
 
 	if (cotingLevel <= 3 && cotingLevel > 0) // 코팅레벨이 1이상이라면 게이지 주기적 감소
 	{
-		curCoting -= .6f * DELTA;
+		curCoting -= .3f * DELTA;
 	}
 	////////////////////////////////
 

@@ -44,7 +44,7 @@ public:
         else if (cotingLevel == 2)            return 1.1f;
         else if (cotingLevel == 3)            return 1.2f;
     }
-
+    void Bonus154True() { bonus154 = true;}
     float SetMaxCoting() { return curCoting = maxCoting; }
     float curStamina = 100;//임시로 public에 올려둠
     bool staminaActive = false;
@@ -99,8 +99,9 @@ private:
 
     float curSpiritGauge = 0;
     float maxSpiritGauge = 100;
-    float bonusTime = 0;
-    float limitTime = 50;
+    float bonusTime = 0.f;
+    float limitTime = 32.f;
+    bool bonus154 = false;
 
     //코팅 UI
     ProgressBar* lsCoting;
@@ -110,6 +111,6 @@ private:
 
     UINT cotingLevel = 0;
 
-
+    
 };
 
