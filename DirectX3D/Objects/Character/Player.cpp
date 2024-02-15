@@ -978,7 +978,7 @@ void Player::S017() // 구르기 후 제자리
 	}
 }
 
-void Player::S018() // 구르기 후 달리기
+void Player::S018() // 납도상태 구르기 후 이동키 유지시
 {
 	PLAY;
 	Move();
@@ -987,6 +987,15 @@ void Player::S018() // 구르기 후 달리기
 	{
 		if (RATIO > 0 && RATIO < 0.9)
 			CAM->Zoom(300, 5);
+	}
+
+	if (KEY_UP('W') || KEY_UP('S') || KEY_UP('A') || KEY_UP('D'))
+	{
+		if (KEY_PRESS('W') || KEY_PRESS('A') || KEY_PRESS('S') || KEY_PRESS('D'))
+			return;
+
+		SetState(S_014);
+		return;
 	}
 	if (GetClip(S_018)->GetRatio() > 0.48 && KEY_DOWN(VK_SPACE))
 	{
@@ -1302,7 +1311,7 @@ void Player::L010() // 구르기
 	
 }
 
-void Player::L014()
+void Player::L014() // 발도상태 구르기 후 이동키 유지시
 {
 	PLAY;
 	Move();
@@ -1312,6 +1321,16 @@ void Player::L014()
 		if (RATIO > 0 && RATIO < 0.9)
 			CAM->Zoom(300, 5);
 	}
+
+	if (KEY_UP('W') || KEY_UP('S') || KEY_UP('A') || KEY_UP('D'))
+	{
+		if (KEY_PRESS('W') || KEY_PRESS('A') || KEY_PRESS('S') || KEY_PRESS('D'))
+			return;
+
+		SetState(L_008);
+		return;
+	}
+
 	if (GetClip(L_014)->GetRatio() > 0.48 && KEY_DOWN(VK_SPACE))
 	{
 		Roll();
