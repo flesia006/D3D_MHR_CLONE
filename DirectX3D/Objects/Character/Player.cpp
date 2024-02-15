@@ -1435,7 +1435,7 @@ void Player::L103() // 베어내리기
 			EndEffect();
 	}
 
-	if (RATIO > 0.95)
+	if (RATIO > 0.87)
 	{
 		if		(K_RMB)				SetState(L_104);	// 찌르기
 		else if (K_CTRL)			SetState(L_110);	// 기인내디뎌베기		
@@ -1769,7 +1769,6 @@ void Player::L151() // 특수 납도
 	if (RATIO > 0.98)
 	{
 		SetState(L_152);
-		Pos() = realPos->Pos() + Back() * temp;
 	}
 }
 
@@ -1787,7 +1786,6 @@ void Player::L152() // 특수납도대기
 	{
 		L152Timer = 0.0f;
 		SetState(L_153);
-		Pos() = realPos->Pos() + Back() * temp;
 	}
 }
 

@@ -92,7 +92,7 @@ UIManager::UIManager()
 	);
 
 	// hp bar ui
-	hp->Scale() = { 1.75f,0.02f,0 };
+	hp->Scale() = { 1.75f,0.02f,0 } ;
 	hp->Pos() = hpBar->Pos();
 	hp->Pos().x -= 0.1f;
 	curHP = maxHP;
