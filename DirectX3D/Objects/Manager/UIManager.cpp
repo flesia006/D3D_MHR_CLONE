@@ -112,6 +112,36 @@ UIManager::UIManager()
 	orangeRightHalfCircle3 = new Quad(L"Textures/UI/orangeHalfCircle2.png");
 	orangeRightHalfCircle3->SetActive(false);
 
+	// 퀵슬롯 UI 추가
+	qickSlot_Back = new Quad(L"Textures/UI/QickSlot_Back.png");
+	qickSlot_Back->Pos() = { 820, 170, 0 };
+	qickSlot_Back->Scale() *= 0.3f;
+	qickSlot_Back->UpdateWorld();
+
+	qickSlot_Select = new Quad(L"Textures/UI/QickSlot_Select.png");
+	qickSlot_Select->Pos() = { 820, 170, 0 };
+	qickSlot_Select->Scale() *= 0.5f;
+	qickSlot_Select->Scale().x *= 0.8f;
+	
+	FOR(8)
+	{
+		Quad* quad = new Quad(L"Textures/UI/SelectBox.png"); 
+		quad->Scale() *= 0.5f;
+		quad->Pos() = { 820, 320, 0}; // 0 번째
+		//quad->Pos() = { 930, 271, 0 };
+		selectBoxs.push_back(quad);
+		selectBoxs[i]->UpdateWorld();
+	}
+
+	FOR(8)
+	{
+		Quad* quad = new Quad(L"Textures/UI/ItemSlot.png");
+		quad->Pos() = { 817, 322, 0 }; // 0번째
+		quad->Scale() *= 1.28f;
+		selectBoxFrames.push_back(quad);
+		selectBoxFrames[i]->UpdateWorld();
+	}
+
 	//캐릭터용 UI 추가
 	hp = new ProgressBar(
 		L"Textures/Color/Hp.png",
@@ -206,6 +236,16 @@ UIManager::~UIManager()
 	delete orangeRightHalfCircle;
 	delete orangeRightHalfCircle2;
 	delete orangeRightHalfCircle3;
+	delete qickSlot_Back;
+	delete qickSlot_Select;
+	FOR(selectBoxs.size())
+	{
+		delete selectBoxs[i];
+	}
+	FOR(selectBoxFrames.size())
+	{
+		delete selectBoxFrames[i];
+	}
 }
 
 void UIManager::Update()
@@ -236,6 +276,17 @@ void UIManager::Update()
 	orangeRightHalfCircle->UpdateWorld();
 	orangeRightHalfCircle2->UpdateWorld();
 	orangeRightHalfCircle3->UpdateWorld();
+	qickSlot_Back->UpdateWorld();
+	qickSlot_Select->UpdateWorld();
+
+	FOR(selectBoxs.size())
+	{
+		selectBoxs[i]->UpdateWorld();
+	}
+	FOR(selectBoxFrames.size())
+	{
+		selectBoxFrames[i]->UpdateWorld();
+	}
 
 	//hp, stamina 부분
 	hp->SetAmount(curHP / maxHP);
@@ -292,6 +343,21 @@ void UIManager::Update()
 		lsGauge2->SetTexture(L"Textures/UI/LSGauge2.png");
 	}
 
+	if (bonus154 == true)
+	{
+		bonusTime += DELTA;
+		if (bonusTime < limitTime)
+		{
+			lsGauge2->SetTexture(L"Textures/UI/LSGauge2_blue.png");
+			curSpiritGauge += 2.f * DELTA;			
+		}
+		else
+		{
+			lsGauge2->SetTexture(L"Textures/UI/LSGauge2.png");
+			bonus154 = false;
+		}
+	}
+
 	////////////////////////////////
 	//기인게이지 샘플상황, 변경 필요
 	//if (curGauge < 100.0f)
@@ -311,7 +377,7 @@ void UIManager::Update()
 
 	if (cotingLevel <= 3 && cotingLevel > 0) // 코팅레벨이 1이상이라면 게이지 주기적 감소
 	{
-		curCoting -= .6f * DELTA;
+		curCoting -= .3f * DELTA;
 	}
 	////////////////////////////////
 
@@ -504,6 +570,34 @@ void UIManager::PostRender()
 		blackHalfCircle3->Render();
 	if (orangeLeftHalfCircle3->Rot().z > XM_PI)
 		orangeRightHalfCircle3->Render();
+
+	QickSlotBar();
+}
+
+void UIManager::GUIRender()
+{
+	//qickSlot_Back->GUIRender();
+	//qickSlot_Select->GUIRender();
+
+	//for (Quad* selectBox : selectBoxs)
+	//{
+	//	selectBox->GUIRender();
+	//}
+	selectBoxs[0]->GUIRender();
+	selectBoxs[1]->GUIRender();
+	selectBoxs[2]->GUIRender();
+	selectBoxs[3]->GUIRender();
+	selectBoxs[4]->GUIRender();
+	selectBoxs[5]->GUIRender();
+	selectBoxs[6]->GUIRender();
+	selectBoxs[7]->GUIRender();
+
+	//FOR(selectBoxFrames.size())
+	//{
+	//	selectBoxFrames[i]->GUIRender();
+	//}
+	//selectBoxs[1]->GUIRender();
+	//selectBoxFrames[1]->GUIRender();
 }
 
 void UIManager::Hit(float damage)
@@ -568,4 +662,26 @@ void UIManager::TargetMonster()
 void UIManager::GetWildBug()
 {
 	bugCount++;
+}
+
+void UIManager::QickSlot()
+{
+
+}
+
+void UIManager::QickSlotBar()
+{
+	if (KEY_PRESS(VK_TAB))
+	{
+		qickSlot_Back->Render();
+		FOR(selectBoxFrames.size())
+		{
+			selectBoxFrames[i]->Render();
+		}
+		FOR(selectBoxs.size())
+		{
+			selectBoxs[i]->Render();
+		}
+		qickSlot_Select->Render();
+	}
 }

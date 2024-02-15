@@ -10,6 +10,7 @@ public:
 
     void Update();
     void PostRender();
+    void GUIRender();
     void Hit(float damage);
     void HealthPotion();
     void LargeHealthPotion();
@@ -20,6 +21,8 @@ public:
     void GaugeBonus();
     void TargetMonster();
     void GetWildBug();
+    void QickSlot();
+    void QickSlotBar();
 
     float MinusDurability() { return curDurability -= 0.2f; } // 내구도 깎는 함수
     float GetDurabilityLevelCoefft()                            // 내구도 공격력 보정치를 반환        
@@ -45,7 +48,7 @@ public:
         else if (cotingLevel == 2)            return 1.1f;
         else if (cotingLevel == 3)            return 1.2f;
     }
-
+    void Bonus154True() { bonus154 = true;}
     float SetMaxCoting() { return curCoting = maxCoting; }
     float curStamina = 100;//임시로 public에 올려둠
     bool staminaActive = false;
@@ -69,6 +72,10 @@ private:
     Quad* staminarBarEdge;
     Quad* clockHand;
     Quad* clockHand2;
+    Quad* qickSlot_Back;
+    Quad* qickSlot_Select;
+    vector<Quad*> selectBoxs;
+    vector<Quad*> selectBoxFrames;
 
     Quad* blackCircle;
     Quad* blackHalfCircle;
@@ -115,8 +122,9 @@ private:
 
     float curSpiritGauge = 0;
     float maxSpiritGauge = 100;
-    float bonusTime = 0;
-    float limitTime = 50;
+    float bonusTime = 0.f;
+    float limitTime = 32.f;
+    bool bonus154 = false;
 
     //코팅 UI
     ProgressBar* lsCoting;
@@ -137,5 +145,6 @@ private:
 
     const float wildBugDurationLimit = 180.0f;
     float wildBugDuration = 0.0f;
+    
 };
 
