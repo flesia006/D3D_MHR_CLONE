@@ -71,11 +71,11 @@ void Player::Update()
 	Control();
 	ResetPlayTime();
 	UpdateWorlds();
+	TermAttackUpdate();
+	
 
 	trail->Update();
-
-	FOR(hitParticle.size())
-		hitParticle[i]->Update();
+	FOR(hitParticle.size())		hitParticle[i]->Update();
 
 	ModelAnimator::Update();
 	UIManager::Get()->Update();
@@ -161,7 +161,7 @@ void Player::UpdateWorlds()
 	tmpCollider2->UpdateWorld();
 	tmpCollider3->UpdateWorld();
 
-	swordCollider->UpdateWorld();
+	swordCollider->Update();
 }
 
 void Player::Potion()
@@ -563,7 +563,7 @@ void Player::Rotate()
 
 }
 
-void Player::Attack(float power) // 충돌판정 함수
+bool Player::Attack(float power) // 충돌판정 함수
 {
 	renderEffect = true;
 
@@ -616,7 +616,10 @@ void Player::Attack(float power) // 충돌판정 함수
 			damage.damage = (int)deal;
 			// ((공격력/무기배율) * 모션 배율 * (육질/100 )) * 예리도 보정 계수 * 기인 보정 계수
 			damage.pos = contact.hitPoint;
-			
+			damage.hitPart = collider->part;
+			lastHitPart = collider->part;
+			lastSwordDir = swordSwingDir;
+
 			if (hardness >= 30)				// 육질이 30 이상으로 노란데미지가 뜨는 상황
 				damage.isWeakness = true;
 			else
@@ -624,12 +627,62 @@ void Player::Attack(float power) // 충돌판정 함수
 
 			damages.push_back(damage);
 
-			break;
+			return true;;
 		}
-
 	}
 
+	return false;
+}
 
+void Player::AttackWOCollision(float power)
+{
+	Valphalk* val =
+		dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetValphalk();
+	auto colliders = val->GetCollider();
+
+	int hitPart = lastHitPart;
+
+	Vector3 hitPos    = colliders[hitPart]->GetHitPointPos();
+	Vector3 MinHitPos = hitPos + Vector3::Down() * 30;
+	Vector3 MaxHitPos = hitPos + Vector3::Up() * 30;
+	Vector3 RandomPos = Random(MinHitPos, MaxHitPos);
+
+	Vector3 MinSwdDir = lastSwordDir + Vector3(-0.1, -0.1, -0.1);
+	Vector3 MaxSwdDir = lastSwordDir + Vector3(0.1, 0.1, 0.1);
+	Vector3 RandomSwdDir = Random(MinSwdDir, MaxSwdDir);
+
+	hitParticle[lastParticleIndex]->Play(RandomPos, RandomSwdDir);
+	lastParticleIndex++;
+	if (lastParticleIndex >= hitParticle.size())
+		lastParticleIndex = 0;
+
+	float hardness = 1.0f;
+	switch (lastHitPart)
+	{
+	case Valphalk::HEAD: hardness = 55; break;
+	case Valphalk::BODY: hardness = 30; break;
+	case Valphalk::LWING: hardness = 22; break;
+	case Valphalk::RWING: hardness = 22; break;
+	case Valphalk::LLEG1: hardness = 25; break;
+	case Valphalk::LLEG2: hardness = 25; break;
+	case Valphalk::RLEG1: hardness = 25; break;
+	case Valphalk::RLEG2: hardness = 25; break;
+	case Valphalk::TAIL: hardness = 45; break;
+	default: hardness = 1; break;
+	}
+
+	Damage damage;
+	float deal = 300 * 0.06 * power * hardness * 0.01f * UIManager::Get()->GetCotingLevelCoefft() * UIManager::Get()->GetDurabilityLevelCoefft();
+	damage.damage = (int)deal;
+	// ((공격력/무기배율) * 모션 배율 * (육질/100 )) * 예리도 보정 계수 * 기인 보정 계수
+	damage.pos = RandomPos;
+
+	if (hardness >= 30)				// 육질이 30 이상으로 노란데미지가 뜨는 상황
+		damage.isWeakness = true;
+	else
+		damage.isWeakness = false;
+
+	damages.push_back(damage);
 }
 
 void Player::SetAnimation()
@@ -705,6 +758,49 @@ void Player::Roll()
 		SetState(L_010);
 
 	UIManager::Get()->staminaActive = true;
+
+}
+
+void Player::TermAttackUpdate()
+{
+	if (!isHitL155 && !isHitL133)
+		return;
+
+	if (isHitL155)
+	{
+		TermAttackTimer += DELTA;
+
+		if (TermAttackTimer > 0.4 && TermAttackTimer < 0.5)
+		{
+			if (!playOncePerTerm)
+			{
+				AttackWOCollision(17);
+				playOncePerTerm = true;
+			}
+		}
+		else if (TermAttackTimer > 0.55f && TermAttackTimer < 0.65f)
+		{
+			if (playOncePerTerm)
+			{
+				AttackWOCollision(17);
+				playOncePerTerm = false;
+			}
+		}
+		else if (TermAttackTimer > 0.7f && TermAttackTimer < 0.8f)
+		{
+			if (!playOncePerTerm)
+			{
+				AttackWOCollision(17);
+				playOncePerTerm = true;
+			}
+		}
+		else if (TermAttackTimer > 0.8f)
+		{
+			isHitL155 = false;
+			playOncePerTerm = false;
+			TermAttackTimer = 0.0;
+		}
+	}
 
 }
 
@@ -1864,15 +1960,26 @@ void Player::L155() // 앉아발도 기인베기
 			CAM->Zoom(450);
 	}
 
+	static bool isHit = false;
+
 	// 공격판정 프레임 
 	{
 		if (RATIO > 0.1 && RATIO < 0.36)
 		{
 			holdingSword = false;
-			Attack(35+17+17+17);
+			if(Attack(35)) 
+				isHit = true;
 		}
 		else
 			EndEffect();
+	}
+
+	// 카운터 성공 시 추가 공격 프레임 (TODO :: 카운터 조건을 만들어야 함)
+	{
+		if (isHit && (RATIO >0.385  && RATIO < 0.39))
+		{
+			isHitL155 = true;
+		}
 	}
 
 
@@ -1896,6 +2003,8 @@ void Player::L155() // 앉아발도 기인베기
 	if (RATIO > 0.98)
 	{
 		ReturnIdle();
+		isDoubleStrikeMotion = false;
+		isHit = false;
 	}
 }
 
@@ -2057,7 +2166,7 @@ void Player::DamageRender()
 	auto eraseiter = damages.end();
 	for (auto iter = damages.begin(); iter != damages.end(); iter++)
 	{
-		if ((*iter).timer > 2.0f)
+		if ((*iter).timer > 6.0f)
 			eraseiter = iter;
 	}
 	if (eraseiter != damages.end())

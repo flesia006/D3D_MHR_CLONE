@@ -18,12 +18,18 @@ public:
     float Radius() { return radius * max(GlobalScale().x, max(GlobalScale().y, GlobalScale().z)); }
     float Height() { return height * GlobalScale().y; }
 
+    Vector3 GetHitPointPos() { return  hitPoint->GlobalPos(); }
+
+    void Update();
+
     int part = 0;
 
 private:
     virtual void MakeMesh() override;
 
 private:
+
+    Transform* hitPoint;
     float radius, height;
     UINT stackCount, sliceCount;
 };

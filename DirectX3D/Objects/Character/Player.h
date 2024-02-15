@@ -32,6 +32,7 @@ private:
 	{
 		Vector3 pos = {};
 		int damage = 0;
+		int hitPart = 9;
 		bool isWeakness = false;
 		float timer = 0.0f;
 	};
@@ -59,9 +60,11 @@ private:
 	void Potion();
 
 	void Rotate();
-	void Attack(float power = 0); // TODO : 데미지 계산 넣어야함
+	bool Attack(float power = 0); // TODO : 데미지 계산 넣어야함
+	void AttackWOCollision(float power = 0); // 충돌검사를 안하는 공격
 	void SetAnimation();
 	void Roll();
+	void TermAttackUpdate();
 
 	void SetState(State state);	
 	void EndEffect();
@@ -168,6 +171,8 @@ private:
 	Trail* trail;
 	vector<HitParticle*> hitParticle;
 	UINT lastParticleIndex = 0;
+	UINT lastHitPart = 0;
+	Vector3 lastSwordDir;
 
 	State curState = L_101;
 	State preState = L_101;
@@ -184,6 +189,9 @@ private:
 	Vector3 prevPos = Vector3();
 
 	bool isTarget = true;
+	bool isHitL155 = false;
+	bool isHitL133 = false;
+	float TermAttackTimer = 0.0f;
 
 	POINT clientCenterPos = { WIN_WIDTH / 2, WIN_HEIGHT >> 1 };
 
@@ -214,6 +222,8 @@ private:
 
 	bool attackOnlyOncePerMotion = false;
 	bool isDoubleStrikeMotion = false;
+	bool playOncePerTerm = false;
+
 	bool renderEffect = false;
 	bool holdingSword = false;
 
