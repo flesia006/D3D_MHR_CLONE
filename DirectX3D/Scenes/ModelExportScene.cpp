@@ -8,15 +8,21 @@ ModelExportScene::ModelExportScene()
     ModelExporter* exporter;
     string clipName;
 
-    exporter = new ModelExporter(name, file);
-    exporter->ExportMaterial();
-    exporter->ExportMesh();
-    delete exporter;    
-    
-    clipName = "S_018";
+//    exporter = new ModelExporter(name, file);
+//    exporter->ExportMaterial();
+//    exporter->ExportMesh();
+//    delete exporter;    
+//    
+    clipName = "L_152";
     file = "Models/Animations/" + name + "/" + clipName + ".fbx";
     exporter = new ModelExporter(name, file);
     exporter->ExportClip(clipName);    
+    delete exporter;
+
+    clipName = "L_153";
+    file = "Models/Animations/" + name + "/" + clipName + ".fbx";
+    exporter = new ModelExporter(name, file);
+    exporter->ExportClip(clipName);
     delete exporter;
     
     //clipName = "S_008";

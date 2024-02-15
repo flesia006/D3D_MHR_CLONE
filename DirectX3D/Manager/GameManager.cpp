@@ -38,8 +38,8 @@ GameManager::GameManager()
     SceneManager::Get()->Create("ShadowScene", new ShadowScene());
     SceneManager::Get()->Add("ShadowScene");
 
-//  SceneManager::Get()->Create("ModelExport", new ModelExportScene());
-//  SceneManager::Get()->Add("ModelExport");
+//    SceneManager::Get()->Create("ModelExport", new ModelExportScene());
+//    SceneManager::Get()->Add("ModelExport");
 
 //  SceneManager::Get()->Create("ParticleConfig", new ParticleConfigScene());
 //  SceneManager::Get()->Add("ParticleConfig");
@@ -154,13 +154,13 @@ void GameManager::Create()
     Font::Get()->AddStyle("Default", L"Arial", 20, DWRITE_FONT_WEIGHT_MEDIUM);
 
     Font::Get()->AddColor("Black", 0, 0, 0);
-    Font::Get()->AddStyle("Black", L"Arial", 24, DWRITE_FONT_WEIGHT_EXTRA_BLACK);
+    Font::Get()->AddStyle("Black", L"Arial", 30, DWRITE_FONT_WEIGHT_EXTRA_BLACK);
 
     Font::Get()->AddColor("Yellow", 1, 0.8, 0.1);
-    Font::Get()->AddStyle("Yellow", L"Arial", 20, DWRITE_FONT_WEIGHT_MEDIUM);
+    Font::Get()->AddStyle("Yellow", L"Arial", 26, DWRITE_FONT_WEIGHT_MEDIUM);
 
     Font::Get()->AddColor("Gray", 0.9, 0.9, 0.9);
-    Font::Get()->AddStyle("Gray", L"Arial", 20, DWRITE_FONT_WEIGHT_MEDIUM);
+    Font::Get()->AddStyle("Gray", L"Arial", 26, DWRITE_FONT_WEIGHT_MEDIUM);
     
     Font::Get()->SetColor("White");
     Font::Get()->SetStyle("Default");

@@ -166,7 +166,8 @@ private:
 	Shadow* shadow;
 	LightBuffer::Light* light;
 	Trail* trail;
-	HitParticle* hitParticle;
+	vector<HitParticle*> hitParticle;
+	UINT lastParticleIndex = 0;
 
 	State curState = L_101;
 	State preState = L_101;
@@ -202,7 +203,7 @@ private:
 	float L152Timer = 0.0f;
 	float temp = -2.364f;
 	float temp2 = -6.038f;
-	float temp3 = 11.067f;
+	float temp3 = 14.067f;
 
 	int loopApply = 334;
 

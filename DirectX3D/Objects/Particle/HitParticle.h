@@ -19,6 +19,6 @@ private:
 	ParticleSystem* hit1 = nullptr;
 	ParticleSystem* hit2 = nullptr;
 
-
+	float lifeTime = 0;
 };
 

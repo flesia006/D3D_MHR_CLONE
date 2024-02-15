@@ -22,7 +22,9 @@ Player::Player() : ModelAnimator("Player")
 
 
 	trail = new Trail(L"Textures/Effect/Snow.png", swordStart, swordEnd, 20, 85);
-	hitParticle = new HitParticle();	
+
+	FOR(6) 
+		hitParticle.push_back(new HitParticle());
 
 	longSword = new Model("kal");
 	longSword->SetParent(mainHand);
@@ -60,7 +62,7 @@ Player::~Player()
 	delete head;
 	delete realPos;
 	delete tmpCollider;
-	delete hitParticle;
+	hitParticle.clear();
 }
 
 void Player::Update()
@@ -71,7 +73,9 @@ void Player::Update()
 	UpdateWorlds();
 
 	trail->Update();
-	hitParticle->Update();
+
+	FOR(hitParticle.size())
+		hitParticle[i]->Update();
 
 	ModelAnimator::Update();
 	UIManager::Get()->Update();
@@ -91,8 +95,10 @@ void Player::Render()
 	if (renderEffect)
 	{
 		trail->Render();
-		hitParticle->Render();
 	}		
+	
+	FOR(hitParticle.size())
+		hitParticle[i]->Render();
 		
 }
 
@@ -572,7 +578,11 @@ void Player::Attack(float power) // 충돌판정 함수
 	{
 		if (swordCollider->IsCapsuleCollision(collider, &contact) && !attackOnlyOncePerMotion) 
 		{
-			hitParticle->Play(contact.hitPoint, swordSwingDir);
+			hitParticle[lastParticleIndex]->Play(contact.hitPoint, swordSwingDir);
+			lastParticleIndex++;
+			if (lastParticleIndex >= hitParticle.size())
+				lastParticleIndex = 0;
+
 			attackOnlyOncePerMotion = true;
 
 			if (curState == L_101 || curState == L_102 || curState == L_103 || curState == L_104 || curState == L_105) // 기인베기 아니라면 게이지 증가
@@ -686,6 +696,9 @@ void Player::Roll()
 		float rot = atan2(newForward.x, newForward.z);
 		Rot().y = rot;
 	}
+
+	holdingSword = false;
+
 	if (State_S())
 		SetState(S_017);
 	else if (!State_S())
@@ -1432,7 +1445,7 @@ void Player::L103() // 베어내리기
 			EndEffect();
 	}
 
-	if (RATIO > 0.95)
+	if (RATIO > 0.87)
 	{
 		if		(K_RMB)				SetState(L_104);	// 찌르기
 		else if (K_CTRL)			SetState(L_110);	// 기인내디뎌베기		
@@ -1766,7 +1779,6 @@ void Player::L151() // 특수 납도
 	if (RATIO > 0.98)
 	{
 		SetState(L_152);
-		Pos() = realPos->Pos() + Back() * temp;
 	}
 }
 
@@ -1784,7 +1796,6 @@ void Player::L152() // 특수납도대기
 	{
 		L152Timer = 0.0f;
 		SetState(L_153);
-		Pos() = realPos->Pos() + Back() * temp;
 	}
 }
 
@@ -1793,7 +1804,10 @@ void Player::L153() // 특수납도 취소 동작
 	PLAY;
 
 	if (RATIO > 0.98)
+	{
+		holdingSword = false;
 		SetState(S_001);
+	}
 }
 
 void Player::L154() // 앉아발도 베기
