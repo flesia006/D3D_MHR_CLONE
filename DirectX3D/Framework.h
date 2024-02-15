@@ -3,12 +3,12 @@
 #include "targetver.h"
 #define WIN32_LEAN_AND_MEAN
 
-#define WIN_WIDTH 1280
-#define WIN_HEIGHT 720
+#define WIN_WIDTH 1920
+#define WIN_HEIGHT 1080
 
 #define MAX_LIGHT 10
 #define MAX_BONE 512
-#define MAX_FRAME 2048
+#define MAX_FRAME 300
 #define MAX_INSTANCE 128
 
 #define CENTER_X (WIN_WIDTH * 0.5f)
@@ -22,8 +22,17 @@
 #define KEY_DOWN(k) Keyboard::Get()->Down(k)
 #define KEY_UP(k) Keyboard::Get()->Up(k)
 #define KEY_PRESS(k) Keyboard::Get()->Press(k)
-
 #define KEY_FRONT(k) Keyboard::Get()->IsInputBufferFront(k)
+
+#define	K_RMB			  Keyboard::Get()->IsInputBufferFront(Keyboard::RMB)
+#define	K_LMB			  Keyboard::Get()->IsInputBufferFront(Keyboard::LMB)
+#define	K_CTRL		  Keyboard::Get()->IsInputBufferFront(Keyboard::CTRL)
+#define	K_CTRLRMB		  Keyboard::Get()->IsInputBufferFront(Keyboard::CTRLRMB)
+#define	K_CTRLSPACE     Keyboard::Get()->IsInputBufferFront(Keyboard::CTRLSPACE)
+#define	K_LMBRMB		  Keyboard::Get()->IsInputBufferFront(Keyboard::LMBRMB)
+#define	K_SHIFT		  Keyboard::Get()->IsInputBufferFront(Keyboard::SHIFT)
+#define	K_SPACE		  Keyboard::Get()->IsInputBufferFront(Keyboard::SPACE)
+
 
 
 #define CAM Environment::Get()->GetMainCamera()
@@ -34,7 +43,7 @@
 
 #define RATIO GetClip(curState)->GetRatio()
 #define INIT  GetClip(curState)->isFirstPlay()
-#define PLAY  if (GetClip(curState)->isFirstPlay()) PlayClip(curState)
+#define PLAY  if (GetClip(curState)->isFirstPlay()) PlayClip(curState), initForward = Forward()
 
 #include <windows.h>
 #include <string>
@@ -98,6 +107,8 @@ typedef function<void(int)> IntParamEvent;
 #include "Framework/Utilities/Utility.h"
 #include "Framework/Utilities/Font.h"
 #include "Framework/Utilities/Audio.h"
+#include "Framework/Utilities/String.h"
+#include "Framework/System/Sounds.h"
 
 using namespace Utility;
 
@@ -185,6 +196,7 @@ using namespace GameMath;
 #include "Objects/Particle/Sprite.h"
 #include "Objects/Particle/Spark.h"
 #include "Objects/Particle/Trail.h"
+#include "Objects/Particle/HitParticle.h"
 
 #include "Objects/Algorithm/Node.h"
 #include "Objects/Algorithm/Heap.h"
@@ -215,3 +227,5 @@ using namespace GameMath;
 
 extern HWND hWnd;
 extern Vector3 mousePos;
+
+const wstring SoundPath = L"../DirectX3D/Sounds/";

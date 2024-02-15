@@ -13,7 +13,7 @@ public:
     virtual void GUIRender() override;
 
     Valphalk* GetValphalk() { return valphalk; }
-
+    Player* GetPlayer() { return player; }
 private:
 
     Model* forest;
@@ -25,5 +25,6 @@ private:
 
     SkyBox* skyBox;
     LightBuffer::Light* light; //ºû »ç¿ëÇÏ±â
+
 };
 

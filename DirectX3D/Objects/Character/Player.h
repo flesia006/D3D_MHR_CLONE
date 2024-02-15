@@ -14,14 +14,27 @@ private:
 		L_079, L_101, L_102, L_103, L_104,
 		L_105, L_106, L_107, L_108, L_109,
 		L_110, L_111, L_112, L_113, L_114,
-		L_115, L_116, L_117, L_118, L_119,
-		L_120, L_121, L_122, L_123, S_003,
-		S_008, S_009
+		L_115, /*L_116, L_117, L_118, L_119,
+		L_120, L_121, L_122, L_123,*/ 
+		L_147, L_151, L_152, L_153, L_154,
+		L_155, L_156,
+		S_001, S_003, S_005, S_008, S_009,
+		S_014, S_017, S_018, S_026, S_029,
+		S_038, S_118, S_119, S_120
 	};
 
 	enum Rotation
 	{
 		북, 북동, 동, 남동, 남, 남서, 서, 북서
+	};
+
+	struct Damage
+	{
+		Vector3 pos = {};
+		int damage = 0;
+		int hitPart = 9;
+		bool isWeakness = false;
+		float timer = 0.0f;
 	};
 
 
@@ -31,43 +44,69 @@ public:
 
 
 	void Update();
-	void UpdateWorlds();
 	void PreRender();
 	void Render();
 	void GUIRender();
 	void PostRender();
 
+	SphereCollider* getCollider() { return tmpCollider; }	
 
 private:
 	void Control();
 	void Move();
 	void ResetPlayTime();
 
+	void UpdateWorlds();
+	void Potion();
+
 	void Rotate();
-	void Attack(); // TODO :  인자로 모션 배율 넣기
+	bool Attack(float power = 0); // TODO : 데미지 계산 넣어야함
+	void AttackWOCollision(float power = 0); // 충돌검사를 안하는 공격
 	void SetAnimation();
 	void Roll();
+	void TermAttackUpdate();
 
-	void SetState(State state);
-	void Throw();
-	void EndThrow();
+	void SetState(State state);	
+	void EndEffect();
 
 	void SetIdle() { SetState((State)1); }
 
 	void MotionRotate(float degree);
+
+	bool State_S();
+
+	void StatusRender();
+	void DamageRender();
 
 private:
 	void ReadClips();
 	void RecordLastPos();
 	void ReturnIdle()
 	{
-		Pos() = realPos->Pos();
 		GetClip(L_001)->ResetPlayTime();
 		SetState(L_001);
+
 	}
+	void ReturnIdle2()
+	{
+		GetClip(S_001)->ResetPlayTime();
+		SetState(S_001);
+	}
+	void S001();
 	void S003();
+	void S005();
 	void S008();
 	void S009();
+	void S014();
+	void S017();
+	void S018();
+	void S026();
+	void S029();
+	void S038();
+	void S118();
+	void S119();
+	void S120();
+
 
 	void L001();
 	void L002();
@@ -79,45 +118,66 @@ private:
 	void L008();
 	void L009();
 	void L010();
+	void L014();
 
 	void L101();
 	void L102();
 	void L103();
 	void L104();
 	void L105();
-
 	void L106();
 	void L107();
 	void L108();
 	void L109();
 	void L110();
 
+
+	void L147();
+	void L151();
+	void L152();
+	void L153();
+	void L154();
+	void L155();
+	void L156();
+
+
 	void LRunning();
 private:
 	Transform* mainHand = nullptr;
-	Transform* root = nullptr;
+	Transform* backSwd = nullptr;
+
 	Transform* realPos = nullptr;
-	Transform* lastPos = nullptr;
+	Transform* backPos = nullptr;
+	Transform* forwardPos = nullptr;
+
 	Transform* head = nullptr;
-	Transform* back = nullptr;
 
 	Transform* swordStart = nullptr;
 	Transform* swordEnd = nullptr;
+	
+	Vector3 lastSwordEnd = {0, 0, 0};
+	Vector3 swordSwingDir;
 
 	SphereCollider* tmpCollider = nullptr;
+	SphereCollider* tmpCollider2 = nullptr;
+	SphereCollider* tmpCollider3 = nullptr;
 	CapsuleCollider* swordCollider = nullptr;
 
 	Model* longSword = nullptr;
+	Model* kalzip = nullptr;
 
 	Shadow* shadow;
-	Particle* particle;
 	LightBuffer::Light* light;
 	Trail* trail;
+	vector<HitParticle*> hitParticle;
+	UINT lastParticleIndex = 0;
+	UINT lastHitPart = 0;
+	Vector3 lastSwordDir;
 
 	State curState = L_101;
 	State preState = L_101;
 
-	float moveSpeed = 500;
+	float moveSpeed = 400;
 	float rotSpeed = 10.0f;
 	float deceleration = 5;
 
@@ -128,25 +188,48 @@ private:
 	Vector3 prevMousePos = Vector3();
 	Vector3 prevPos = Vector3();
 
-
 	bool isTarget = true;
+	bool isHitL155 = false;
+	bool isHitL133 = false;
+	float TermAttackTimer = 0.0f;
 
 	POINT clientCenterPos = { WIN_WIDTH / 2, WIN_HEIGHT >> 1 };
 
 	Quad* crosshair = nullptr;
 
 	int kunaiIndex = 0;
-
-
 	int node = 197;
-	float rotation = -1.5;
 
+	const int lefeHandNode = 108;
+	const int rightHandNode = 150;
+	const int backSwdNode = 190;
+
+	float rotation = -1.5;
 	float camRot;
 	float rad;
+	float effectTimer = 0.0f;
+	float L152Timer = 0.0f;
+	float temp = -2.364f;
+	float temp2 = -6.038f;
+	float temp3 = 14.067f;
 
 	int loopApply = 334;
 
+	float time = 0;
 
+	bool cure = false;
+	bool Lcure = false;
+
+	bool attackOnlyOncePerMotion = false;
+	bool isDoubleStrikeMotion = false;
+	bool playOncePerTerm = false;
+
+	bool renderEffect = false;
+	bool holdingSword = false;
+
+	Vector3 initForward = Vector3::Zero();
+
+	vector<Damage> damages;
 
 };
 

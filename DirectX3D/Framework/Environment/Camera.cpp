@@ -154,7 +154,6 @@ void Camera::LookAtTarget()
     Rot().x = acos(Dot(forward, dir));
     Rot().y = atan2(dir.x, dir.z);
 }
-
 void Camera::FreeMode()
 {
     Vector3 delta = mousePos - prevMousePos;

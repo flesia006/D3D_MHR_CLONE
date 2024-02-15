@@ -6,6 +6,9 @@ CapsuleCollider::CapsuleCollider(float radius, float height, UINT stackCount, UI
     type = CAPSULE;
     MakeMesh();
     mesh->CreateMesh();
+    hitPoint = new Transform();
+    hitPoint->SetParent(this);
+    hitPoint->UpdateWorld();
 }
 
 bool CapsuleCollider::IsRayCollision(IN Ray ray, OUT Contact* contact)
@@ -167,6 +170,54 @@ bool CapsuleCollider::IsCapsuleCollision(CapsuleCollider* collider)
     float distance = Distance(bestA, bestB);
 
     return distance <= (Radius() + collider->Radius());
+}
+
+bool CapsuleCollider::IsCapsuleCollision(CapsuleCollider* collider, Contact* contactPos)
+{
+    Vector3 aDirection = Up();
+    Vector3 aA = GlobalPos() - aDirection * Height() * 0.5f;
+    Vector3 aB = GlobalPos() + aDirection * Height() * 0.5f;
+
+    Vector3 bDirection = collider->Up();
+    Vector3 bA = collider->GlobalPos() - bDirection * collider->Height() * 0.5f;
+    Vector3 bB = collider->GlobalPos() + bDirection * collider->Height() * 0.5f;
+
+    Vector3 v0 = bA - aA;
+    Vector3 v1 = bB - aA;
+    Vector3 v2 = bA - aB;
+    Vector3 v3 = bB - aB;
+
+    float d0 = Dot(v0, v0);
+    float d1 = Dot(v1, v1);
+    float d2 = Dot(v2, v2);
+    float d3 = Dot(v3, v3);
+
+    Vector3 bestA;
+    if (d2 < d0 || d2 < d1 || d3 < d0 || d3 > d1)
+        bestA = aB;
+    else
+        bestA = aA;
+
+    Vector3 bestB = ClosestPointOnLine(bA, bB, bestA);
+    bestA = ClosestPointOnLine(aA, aB, bestB);
+    bestB = ClosestPointOnLine(bA, bB, bestA);
+
+    float distance = Distance(bestA, bestB);
+
+    if (distance <= (Radius() + collider->Radius()))
+    {
+        contactPos->hitPoint = bestA;
+        hitPoint->Pos() = GlobalPos() - bestA;
+        return true;
+    }
+    else return false;
+}
+
+
+void CapsuleCollider::Update()
+{
+    hitPoint->UpdateWorld();
+    UpdateWorld();
 }
 
 void CapsuleCollider::MakeMesh()

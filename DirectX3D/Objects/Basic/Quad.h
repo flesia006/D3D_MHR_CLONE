@@ -13,6 +13,8 @@ public:
     void Render();
     void SetRender();
 
+    void SetTexture(wstring file);
+
 private:
     void MakeMesh();
 

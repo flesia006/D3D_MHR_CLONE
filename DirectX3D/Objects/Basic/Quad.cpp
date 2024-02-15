@@ -42,6 +42,17 @@ void Quad::SetRender()
     GameObject::SetRender();
 }
 
+void Quad::SetTexture(wstring file)
+{
+    Texture* texture = Texture::Add(file);
+    material->SetDiffuseMap(file);
+    size = texture->GetSize();
+
+    mesh = new Mesh<VertexType>();
+    MakeMesh();
+    mesh->CreateMesh();
+}
+
 void Quad::MakeMesh()
 {
     float left = -size.x * 0.5f;

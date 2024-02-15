@@ -44,14 +44,20 @@ void Keyboard::Update()
         keyStorage.push_front(make_pair(CTRL, 0));
 
     if ((KEY_DOWN(VK_CONTROL) && KEY_PRESS(VK_RBUTTON)) ||
-        (KEY_DOWN(VK_RBUTTON) && KEY_PRESS(VK_CONTROL)))
+        (KEY_DOWN(VK_RBUTTON) && KEY_PRESS(VK_CONTROL)) ||
+        (KEY_DOWN(VK_RBUTTON) && KEY_DOWN(VK_CONTROL)) ||
+        (KEY_DOWN(VK_RBUTTON) && KEY_UP(VK_CONTROL)) ||
+        (KEY_UP(VK_RBUTTON) && KEY_DOWN(VK_CONTROL)))
         keyStorage.push_front(make_pair(CTRLRMB, 0));
 
     if (KEY_DOWN(VK_SPACE))
         keyStorage.push_front(make_pair(SPACE, 0));
 
     if ((KEY_DOWN(VK_SPACE) && KEY_PRESS(VK_CONTROL)) ||
-        (KEY_DOWN(VK_CONTROL) && KEY_PRESS(VK_SPACE)))
+        (KEY_DOWN(VK_CONTROL) && KEY_PRESS(VK_SPACE)) ||
+        (KEY_DOWN(VK_CONTROL) && KEY_DOWN(VK_SPACE)) ||
+        (KEY_DOWN(VK_CONTROL) && KEY_UP(VK_SPACE)) ||
+        (KEY_UP(VK_CONTROL) && KEY_DOWN(VK_SPACE)))
         keyStorage.push_front(make_pair(CTRLSPACE, 0));
 
     if (KEY_DOWN(VK_SHIFT))

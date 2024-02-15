@@ -35,9 +35,17 @@
 GameManager::GameManager()
 {
     Create();
+    SceneManager::Get()->Create("ShadowScene", new ShadowScene());
+    SceneManager::Get()->Add("ShadowScene");
+
+//    SceneManager::Get()->Create("ModelExport", new ModelExportScene());
+//    SceneManager::Get()->Add("ModelExport");
+
+//  SceneManager::Get()->Create("ParticleConfig", new ParticleConfigScene());
+//  SceneManager::Get()->Add("ParticleConfig");
 
     SceneManager::Get()->Create("Grid", new GridScene());
-    //SceneManager::Get()->Create("ModelExport", new ModelExportScene());
+    SceneManager::Get()->Add("Grid");
 
     //SceneManager::Get()->Create("Cube", new CubeScene());
     //SceneManager::Get()->Create("Sphere", new SphereScene());
@@ -50,20 +58,17 @@ GameManager::GameManager()
     //SceneManager::Get()->Create("Game", new GameScene());
     //SceneManager::Get()->Create("RenderTarget", new RenderTargetScene());
     //SceneManager::Get()->Create("GeometryBuffer", new GBufferScene());
-    SceneManager::Get()->Create("ShadowScene", new ShadowScene());
+    //SceneManager::Get()->Create("ShadowScene", new ShadowScene());
     //SceneManager::Get()->Create("AStar", new AStarScene());
     //SceneManager::Get()->Create("LightTest", new LightScene());
     //SceneManager::Get()->Create("Billboard", new BillboardScene());
-    //SceneManager::Get()->Create("Particle", new ParticleScene());
-    //SceneManager::Get()->Create("ParticleConfig", new ParticleConfigScene());
+//    SceneManager::Get()->Create("Particle", new ParticleScene());
     // *작업중 // SceneManager::Get()->Create("MirrorScene", new MirrorScene());
     //SceneManager::Get()->Create("WaterScene", new WaterScene());
     //SceneManager::Get()->Create("QuadTree", new QuadTreeScene());
     //SceneManager::Get()->Create("Tessellation", new TessellationScene());
     //SceneManager::Get()->Create("LOD", new TerrainLODScene());
 
-    SceneManager::Get()->Add("Grid");
-    //SceneManager::Get()->Add("ModelExport");
     //SceneManager::Get()->Add("HumanTest");
     //SceneManager::Get()->Add("Game");
     //SceneManager::Get()->Add("RenderTarget");
@@ -72,13 +77,13 @@ GameManager::GameManager()
     //SceneManager::Get()->Add("AStar");
     //SceneManager::Get()->Add("LightTest");
     //SceneManager::Get()->Add("Billboard");
-    //SceneManager::Get()->Add("Particle");
-    //SceneManager::Get()->Add("ParticleConfig");
+    SceneManager::Get()->Add("Particle");
     //SceneManager::Get()->Add("MirrorScene");
     //SceneManager::Get()->Add("WaterScene");
     //SceneManager::Get()->Add("QuadTree");
     //SceneManager::Get()->Add("Tessellation");
-    SceneManager::Get()->Add("ShadowScene");
+
+
 }
 
 GameManager::~GameManager()
@@ -112,6 +117,9 @@ void GameManager::Render()
     ImGui_ImplDX11_NewFrame();
     ImGui_ImplWin32_NewFrame();
     ImGui::NewFrame();
+
+//    Font::Get()->SetColor("White");
+//    Font::Get()->SetStyle("Default");
     
     string fps = "FPS : " + to_string(Timer::Get()->GetFPS());
     Font::Get()->RenderText(fps, { 100, WIN_HEIGHT - 10 });
@@ -143,7 +151,16 @@ void GameManager::Create()
     Observer::Get();
     
     Font::Get()->AddColor("White", 1, 1, 1);
-    Font::Get()->AddStyle("Default", L"배달의민족 주아");
+    Font::Get()->AddStyle("Default", L"Arial", 20, DWRITE_FONT_WEIGHT_MEDIUM);
+
+    Font::Get()->AddColor("Black", 0, 0, 0);
+    Font::Get()->AddStyle("Black", L"Arial", 30, DWRITE_FONT_WEIGHT_EXTRA_BLACK);
+
+    Font::Get()->AddColor("Yellow", 1, 0.8, 0.1);
+    Font::Get()->AddStyle("Yellow", L"Arial", 26, DWRITE_FONT_WEIGHT_MEDIUM);
+
+    Font::Get()->AddColor("Gray", 0.9, 0.9, 0.9);
+    Font::Get()->AddStyle("Gray", L"Arial", 26, DWRITE_FONT_WEIGHT_MEDIUM);
     
     Font::Get()->SetColor("White");
     Font::Get()->SetStyle("Default");

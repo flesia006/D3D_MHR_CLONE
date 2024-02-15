@@ -84,6 +84,7 @@ private:
     void UpdatePhysical(); //실체를 업데이트하는 함수
     void UpdateColor();    //색깔을 업데이트하는 함수
     void Init();           //기능 시작
+    void Init(Vector3 rot);
 
     void LoadData(string file); //사전에 지정된 텍스트 설정 파일이 있는 경우
     void LoadData(wstring file); //텍스처의 정보를 사용할 경우
