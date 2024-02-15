@@ -6,6 +6,9 @@ CapsuleCollider::CapsuleCollider(float radius, float height, UINT stackCount, UI
     type = CAPSULE;
     MakeMesh();
     mesh->CreateMesh();
+    hitPoint = new Transform();
+    hitPoint->SetParent(this);
+    hitPoint->UpdateWorld();
 }
 
 bool CapsuleCollider::IsRayCollision(IN Ray ray, OUT Contact* contact)
@@ -204,11 +207,18 @@ bool CapsuleCollider::IsCapsuleCollision(CapsuleCollider* collider, Contact* con
     if (distance <= (Radius() + collider->Radius()))
     {
         contactPos->hitPoint = bestA;
+        hitPoint->Pos() = GlobalPos() - bestA;
         return true;
     }
     else return false;
 }
 
+
+void CapsuleCollider::Update()
+{
+    hitPoint->UpdateWorld();
+    UpdateWorld();
+}
 
 void CapsuleCollider::MakeMesh()
 {

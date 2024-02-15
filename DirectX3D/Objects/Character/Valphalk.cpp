@@ -62,7 +62,7 @@ void Valphalk::Update()
 
 	for (CapsuleCollider* capsulCollider : colliders)
 	{
-		capsulCollider->UpdateWorld();;
+		capsulCollider->Update();;
 	}
 
 	colliders[HEAD]->Pos() = GetTranslationByNode(14); // ¸Ó¸®
