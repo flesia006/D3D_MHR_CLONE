@@ -278,6 +278,7 @@ void UIManager::Update()
 	orangeRightHalfCircle3->UpdateWorld();
 	qickSlot_Back->UpdateWorld();
 	qickSlot_Select->UpdateWorld();
+
 	FOR(selectBoxs.size())
 	{
 		selectBoxs[i]->UpdateWorld();
@@ -569,8 +570,6 @@ void UIManager::PostRender()
 		blackHalfCircle3->Render();
 	if (orangeLeftHalfCircle3->Rot().z > XM_PI)
 		orangeRightHalfCircle3->Render();
-	qickSlot_Back->Render();
-	qickSlot_Select->Render();
 
 	QickSlotBar();
 }
