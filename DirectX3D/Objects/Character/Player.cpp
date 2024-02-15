@@ -20,7 +20,6 @@ Player::Player() : ModelAnimator("Player")
 	swordCollider->Pos().z -= 100.0f;
 	swordCollider->Scale() *= 3.0f;
 
-
 	trail = new Trail(L"Textures/Effect/Snow.png", swordStart, swordEnd, 20, 85);
 
 	FOR(6) 
