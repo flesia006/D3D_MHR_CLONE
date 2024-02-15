@@ -166,7 +166,8 @@ private:
 	Shadow* shadow;
 	LightBuffer::Light* light;
 	Trail* trail;
-	HitParticle* hitParticle;
+	vector<HitParticle*> hitParticle;
+	UINT lastParticleIndex = 0;
 
 	State curState = L_101;
 	State preState = L_101;
