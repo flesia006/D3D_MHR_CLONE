@@ -78,7 +78,7 @@ void Player::Update()
 	FOR(hitParticle.size())		hitParticle[i]->Update();
 
 	ModelAnimator::Update();
-	UIManager::Get()->Update();
+	//UIManager::Get()->Update();
 	Potion();	
 }
 
