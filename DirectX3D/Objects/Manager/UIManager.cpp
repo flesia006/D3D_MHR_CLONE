@@ -199,6 +199,8 @@ void UIManager::Update()
 
 	if (curSpiritGauge > 0.0f)
 		curSpiritGauge -= 0.1f * DELTA;
+	if (curSpiritGauge <= 0)
+		curSpiritGauge = 0;
 
 	if (isBonus)
 	{
