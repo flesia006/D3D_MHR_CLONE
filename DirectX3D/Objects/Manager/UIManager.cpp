@@ -84,7 +84,7 @@ UIManager::UIManager()
 	);
 	lsGauge2 = new ProgressBar(
 		L"Textures/UI/LSGauge2.png",
-		L"Textures/UI/LSGauge2_bg.png"
+		L"Textures/UI/nonebg.png"
 	);
 	lsCoting = new ProgressBar(
 		L"Textures/UI/LSCoting_none.png",
