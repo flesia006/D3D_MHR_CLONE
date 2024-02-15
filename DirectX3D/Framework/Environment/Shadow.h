@@ -3,7 +3,7 @@
 class Shadow
 {
 public:
-    Shadow(UINT width = 2000, UINT height = 2000);
+    Shadow(UINT width = 6000, UINT height = 6000);
     ~Shadow();
 
     void SetRenderTarget();
