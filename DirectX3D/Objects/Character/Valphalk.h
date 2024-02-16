@@ -75,12 +75,12 @@ private:
 
 	// 전환 되는 이벤트들 인데 아직 잘 모름
 	//===============
-	void EndRora(); // 포효 끝
+	void EndRoar(); // 포효 끝
 	//===============
 
 	// 이벤트 실행 될때 내용인데 위에 전환이랑 합칠수도
 	//===============
-	void StartRora(); // 포효 시작
+	void StartRoar(); // 포효 시작
 	//===============
 
 	void SetState(State state);

@@ -21,8 +21,12 @@ public:
     void GaugeBonus();
     void TargetMonster();
     void GetWildBug();
-    void QickSlot();
-    void QickSlotBar();
+
+    // 퀵 슬롯 관한 내용
+    //=====================
+    void QuickSlot(); // 퀵 슬롯 어떤 식으로 랜더 할지 내용
+    void QuickSlotBar(); // 퀵 슬롯 에서 가리키는 내용 함수
+    //=====================
 
     float MinusDurability() { return curDurability -= 0.2f; } // 내구도 깎는 함수
     float GetDurabilityLevelCoefft()                            // 내구도 공격력 보정치를 반환        
@@ -72,8 +76,8 @@ private:
     Quad* staminarBarEdge;
     Quad* clockHand;
     Quad* clockHand2;
-    Quad* qickSlot_Back;
-    Quad* qickSlot_Select;
+    Quad* quickSlot_Back;
+    Quad* quickSlot_Select;
     vector<Quad*> selectBoxs;
     vector<Quad*> selectBoxFrames;
 
@@ -146,5 +150,17 @@ private:
     const float wildBugDurationLimit = 180.0f;
     float wildBugDuration = 0.0f;
     
+    // 퀵 슬롯 실행 할때 유무 확인 하기
+    // 일단 8칸 이라 8개 만들건데 바뀔수 있음
+    bool useQuickSlot1 = false;
+    bool useQuickSlot2 = false;
+    bool useQuickSlot3 = false;
+    bool useQuickSlot4 = false;
+    bool useQuickSlot5 = false;
+    bool useQuickSlot6 = false;
+    bool useQuickSlot7 = false;
+    bool useQuickSlot8 = false;
+    // 아래 이건 특정 키를 누르면 Bar가 활성화됨
+    bool useSelectBar = false;
 };
 

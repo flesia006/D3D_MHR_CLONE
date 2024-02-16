@@ -90,7 +90,7 @@ void Valphalk::Update()
 	if (Count <= 1)
 	{
 	//	colliders[TARGETDOME]->Pos() = GetTranslationByNode(4); // 타겟 보는 범위
-		StartRora();
+		StartRoar();
 	}
 
 	// 잘 들어갔나 확인하기 용 코드
@@ -180,7 +180,7 @@ void Valphalk::ExecuteEvent()
 	eventIters[index]++;
 }
 
-void Valphalk::EndRora() // 포효 끝나고 원래 모션으로 돌아옴
+void Valphalk::EndRoar() // 포효 끝나고 원래 모션으로 돌아옴
 {
 	SetState(STUN);
 	Count += 1;
@@ -191,7 +191,7 @@ void Valphalk::EndRora() // 포효 끝나고 원래 모션으로 돌아옴
 	}
 }
 
-void Valphalk::StartRora()
+void Valphalk::StartRoar()
 {
 	// 플레이어 필요해서 임시로 불러옴
 	Player* player =

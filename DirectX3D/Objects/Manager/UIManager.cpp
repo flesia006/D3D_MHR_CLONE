@@ -113,22 +113,52 @@ UIManager::UIManager()
 	orangeRightHalfCircle3->SetActive(false);
 
 	// 퀵슬롯 UI 추가
-	qickSlot_Back = new Quad(L"Textures/UI/QickSlot_Back.png");
-	qickSlot_Back->Pos() = { 820, 170, 0 };
-	qickSlot_Back->Scale() *= 0.3f;
-	qickSlot_Back->UpdateWorld();
+	quickSlot_Back = new Quad(L"Textures/UI/QickSlot_Back.png");
+	quickSlot_Back->Pos() = { 1224, 260, 0 };
+	quickSlot_Back->Scale() *= 0.3f;
+	quickSlot_Back->UpdateWorld();
 
-	qickSlot_Select = new Quad(L"Textures/UI/QickSlot_Select.png");
-	qickSlot_Select->Pos() = { 820, 170, 0 };
-	qickSlot_Select->Scale() *= 0.5f;
-	qickSlot_Select->Scale().x *= 0.8f;
+	quickSlot_Select = new Quad(L"Textures/UI/QickSlot_Select.png");
+	quickSlot_Select->Pos() = { 1224, 260, 0 };
+	quickSlot_Select->Scale() *= 0.42f;
+	quickSlot_Select->Scale().x *= 0.88f;
 	
 	FOR(8)
 	{
 		Quad* quad = new Quad(L"Textures/UI/SelectBox.png"); 
 		quad->Scale() *= 0.5f;
-		quad->Pos() = { 820, 320, 0}; // 0 번째
-		//quad->Pos() = { 930, 271, 0 };
+		if (i == 0)
+		{
+			quad->Pos() = { 1224, 390, 0 }; // 0 번째
+		}
+		if (i == 1)
+		{
+			quad->Pos() = { 1317, 345, 0 }; // 1 번째
+		}
+		if (i == 2)
+		{
+			quad->Pos() = { 1354, 260, 0 }; // 2 번째
+		}
+		if (i == 3)
+		{
+			quad->Pos() = { 1317, 170, 0 }; // 3 번째
+		}
+		if (i == 4)
+		{
+			quad->Pos() = { 1224, 131, 0 }; // 4 번째
+		}
+		if (i == 5)
+		{
+			quad->Pos() = { 1131, 170, 0 }; // 5 번째
+		}
+		if (i == 6)
+		{
+			quad->Pos() = { 1094, 260, 0 }; // 6 번째
+		}
+		if (i == 7)
+		{
+			quad->Pos() = { 1131, 345, 0 }; // 7 번째
+		}
 		selectBoxs.push_back(quad);
 		selectBoxs[i]->UpdateWorld();
 	}
@@ -136,8 +166,9 @@ UIManager::UIManager()
 	FOR(8)
 	{
 		Quad* quad = new Quad(L"Textures/UI/ItemSlot.png");
-		quad->Pos() = { 817, 322, 0 }; // 0번째
 		quad->Scale() *= 1.28f;
+		quad->Pos().x = selectBoxs[i]->Pos().x - 3;
+		quad->Pos().y = selectBoxs[i]->Pos().y + 2;
 		selectBoxFrames.push_back(quad);
 		selectBoxFrames[i]->UpdateWorld();
 	}
@@ -236,8 +267,8 @@ UIManager::~UIManager()
 	delete orangeRightHalfCircle;
 	delete orangeRightHalfCircle2;
 	delete orangeRightHalfCircle3;
-	delete qickSlot_Back;
-	delete qickSlot_Select;
+	delete quickSlot_Back;
+	delete quickSlot_Select;
 	FOR(selectBoxs.size())
 	{
 		delete selectBoxs[i];
@@ -250,6 +281,8 @@ UIManager::~UIManager()
 
 void UIManager::Update()
 {
+	QuickSlotBar();
+
 	stamina->UpdateWorld();
 	recover->UpdateWorld();
 	hp->UpdateWorld();
@@ -276,8 +309,8 @@ void UIManager::Update()
 	orangeRightHalfCircle->UpdateWorld();
 	orangeRightHalfCircle2->UpdateWorld();
 	orangeRightHalfCircle3->UpdateWorld();
-	qickSlot_Back->UpdateWorld();
-	qickSlot_Select->UpdateWorld();
+	quickSlot_Back->UpdateWorld();
+	quickSlot_Select->UpdateWorld();
 
 	FOR(selectBoxs.size())
 	{
@@ -571,33 +604,14 @@ void UIManager::PostRender()
 	if (orangeLeftHalfCircle3->Rot().z > XM_PI)
 		orangeRightHalfCircle3->Render();
 
-	QickSlotBar();
+	QuickSlot();
 }
 
 void UIManager::GUIRender()
 {
-	//qickSlot_Back->GUIRender();
-	//qickSlot_Select->GUIRender();
-
-	//for (Quad* selectBox : selectBoxs)
-	//{
-	//	selectBox->GUIRender();
-	//}
-	selectBoxs[0]->GUIRender();
-	selectBoxs[1]->GUIRender();
-	selectBoxs[2]->GUIRender();
-	selectBoxs[3]->GUIRender();
-	selectBoxs[4]->GUIRender();
-	selectBoxs[5]->GUIRender();
-	selectBoxs[6]->GUIRender();
-	selectBoxs[7]->GUIRender();
-
-	//FOR(selectBoxFrames.size())
-	//{
-	//	selectBoxFrames[i]->GUIRender();
-	//}
-	//selectBoxs[1]->GUIRender();
-	//selectBoxFrames[1]->GUIRender();
+	ImGui::SliderFloat3("qickSlot_Select", (float*)&quickSlot_Select->Rot(), 0, -6.3);
+	//ImGui::SliderFloat3("selectBoxs", (float*)&selectBoxs[5]->Pos(), 100, 1500);
+	//ImGui::SliderFloat3("selectBoxFrames", (float*)&selectBoxFrames[5]->Pos(), 100, 1500);
 }
 
 void UIManager::Hit(float damage)
@@ -664,24 +678,218 @@ void UIManager::GetWildBug()
 	bugCount++;
 }
 
-void UIManager::QickSlot()
+void UIManager::QuickSlot()
 {
-
-}
-
-void UIManager::QickSlotBar()
-{
-	if (KEY_PRESS(VK_TAB))
+	if (KEY_PRESS('X')) // X 만 누르면 슬롯만 나옴
 	{
-		qickSlot_Back->Render();
-		FOR(selectBoxFrames.size())
-		{
-			selectBoxFrames[i]->Render();
-		}
+		quickSlot_Back->Render();
 		FOR(selectBoxs.size())
 		{
 			selectBoxs[i]->Render();
 		}
-		qickSlot_Select->Render();
+	
+		if (useQuickSlot1)
+		{
+			selectBoxFrames[0]->Render();
+		}
+		if (useQuickSlot2)
+		{
+			selectBoxFrames[1]->Render();
+		}
+		if (useQuickSlot3)
+		{
+			selectBoxFrames[2]->Render();
+		}
+		if (useQuickSlot4)
+		{
+			selectBoxFrames[3]->Render();
+		}
+		if (useQuickSlot5)
+		{
+			selectBoxFrames[4]->Render();
+		}
+		if (useQuickSlot6)
+		{
+			selectBoxFrames[5]->Render();
+		}
+		if (useQuickSlot7)
+		{
+			selectBoxFrames[6]->Render();
+		}
+		if (useQuickSlot8)
+		{
+			selectBoxFrames[7]->Render();
+		}
+		if (useSelectBar)
+		{
+			quickSlot_Select->Render();
+		}
+		if (KEY_PRESS('C')) // C 를 누른다면 Bar 활성화
+		{
+			useSelectBar = true;
+		}	
+	}
+	else
+	{
+		useSelectBar = false;
+	}
+}
+
+void UIManager::QuickSlotBar()
+{
+	if (quickSlot_Select->Rot().z <= -3.0f && quickSlot_Select->Rot().z >= -6.0f)
+	{
+		quickSlot_Select->Pos() = { 1221.5, 260, 0 };
+	}
+	else if (quickSlot_Select->Rot().z > -3.0f && quickSlot_Select->Rot().z < -6.0f)
+	{
+		quickSlot_Select->Pos() = { 1224, 260, 0 };
+	}
+
+	if (KEY_PRESS('X') && KEY_PRESS('C')) 
+		// X 와 C 를 누르면 Bar 보이면서 C를 때어도 Bar는 보임 대신 X 를 놓는거 아님 사용 하는거 아님
+	{
+		Vector3 pos = mousePos - Vector3(quickSlot_Back->Pos().x, quickSlot_Back->Pos().y);
+		//SetCursorPos(quickSlot_Back->Pos().x, quickSlot_Back->Pos().y);
+		// 음의 방향으로 Rot().z 가 6.3 까지 MaxRot를 설정하면 완벽한 한바퀴
+		//float MaxRot = -6.3;
+
+		quickSlot_Select->Rot().z += pos.x * -0.01f * DELTA;
+		quickSlot_Select->Rot().z += pos.y * 0.01f * DELTA;
+
+		if (0.01f <= quickSlot_Select->Rot().z)
+		{
+			quickSlot_Select->Rot().z = 0.0f;
+		}
+		else if (quickSlot_Select->Rot().z <= -6.31f)
+		{
+			quickSlot_Select->Rot().z = -6.3f;
+		}
+
+		if (quickSlot_Select->Rot().z > -0.42f || quickSlot_Select->Rot().z < -5.98f)
+		{
+			useQuickSlot1 = true;
+			useQuickSlot2 = false;
+			useQuickSlot3 = false;
+			useQuickSlot4 = false;
+			useQuickSlot5 = false;
+			useQuickSlot6 = false;
+			useQuickSlot7 = false;
+			useQuickSlot8 = false;
+		}
+		if (quickSlot_Select->Rot().z <= -0.42f && quickSlot_Select->Rot().z > -1.2f)
+		{
+			useQuickSlot1 = false;
+			useQuickSlot2 = true;
+			useQuickSlot3 = false;
+			useQuickSlot4 = false;
+			useQuickSlot5 = false;
+			useQuickSlot6 = false;
+			useQuickSlot7 = false;
+			useQuickSlot8 = false;
+		}
+		if (quickSlot_Select->Rot().z <= -1.2f && quickSlot_Select->Rot().z > -1.98f)
+		{
+			useQuickSlot1 = false;
+			useQuickSlot2 = false;
+			useQuickSlot3 = true;
+			useQuickSlot4 = false;
+			useQuickSlot5 = false;
+			useQuickSlot6 = false;
+			useQuickSlot7 = false;
+			useQuickSlot8 = false;
+		}
+		if (quickSlot_Select->Rot().z <= -1.98f && quickSlot_Select->Rot().z > -2.78f)
+		{
+			useQuickSlot1 = false;
+			useQuickSlot2 = false;
+			useQuickSlot3 = false;
+			useQuickSlot4 = true;
+			useQuickSlot5 = false;
+			useQuickSlot6 = false;
+			useQuickSlot7 = false;
+			useQuickSlot8 = false;
+		}
+		if (quickSlot_Select->Rot().z <= -2.78f && quickSlot_Select->Rot().z > -3.6f)
+		{
+			useQuickSlot1 = false;
+			useQuickSlot2 = false;
+			useQuickSlot3 = false;
+			useQuickSlot4 = false;
+			useQuickSlot5 = true;
+			useQuickSlot6 = false;
+			useQuickSlot7 = false;
+			useQuickSlot8 = false;
+		}
+		if (quickSlot_Select->Rot().z <= -3.6f && quickSlot_Select->Rot().z > -4.38f)
+		{
+			useQuickSlot1 = false;
+			useQuickSlot2 = false;
+			useQuickSlot3 = false;
+			useQuickSlot4 = false;
+			useQuickSlot5 = false;
+			useQuickSlot6 = true;
+			useQuickSlot7 = false;
+			useQuickSlot8 = false;
+		}
+		if (quickSlot_Select->Rot().z <= -4.38f && quickSlot_Select->Rot().z > -5.12f)
+		{
+			useQuickSlot1 = false;
+			useQuickSlot2 = false;
+			useQuickSlot3 = false;
+			useQuickSlot4 = false;
+			useQuickSlot5 = false;
+			useQuickSlot6 = false;
+			useQuickSlot7 = true;
+			useQuickSlot8 = false;
+		}
+		if (quickSlot_Select->Rot().z <= -5.12f && quickSlot_Select->Rot().z > -5.98f)
+		{
+			useQuickSlot1 = false;
+			useQuickSlot2 = false;
+			useQuickSlot3 = false;
+			useQuickSlot4 = false;
+			useQuickSlot5 = false;
+			useQuickSlot6 = false;
+			useQuickSlot7 = false;
+			useQuickSlot8 = true;
+		}
+	}
+
+	if (KEY_PRESS('X') && !KEY_PRESS('C'))
+		// X 를 누른 상태에서 C 를 누르면 지금 선택 되어있는 슬롯을 잡아줌
+	{
+		if (quickSlot_Select->Rot().z > -0.42f || quickSlot_Select->Rot().z < -5.98f)
+		{
+			quickSlot_Select->Rot().z = 0.0f;
+		}
+		if (quickSlot_Select->Rot().z <= -0.42f && quickSlot_Select->Rot().z > -1.2f)
+		{
+			quickSlot_Select->Rot().z = -0.8f;
+		}
+		if (quickSlot_Select->Rot().z <= -1.2f && quickSlot_Select->Rot().z > -1.98f)
+		{
+			quickSlot_Select->Rot().z = -1.56f;
+		}
+		if (quickSlot_Select->Rot().z <= -1.98f && quickSlot_Select->Rot().z > -2.78f)
+		{
+			quickSlot_Select->Rot().z = -2.38f;
+		}
+		if (quickSlot_Select->Rot().z <= -2.78f && quickSlot_Select->Rot().z > -3.6f)
+		{
+			quickSlot_Select->Rot().z = -3.173f;
+		}
+		if (quickSlot_Select->Rot().z <= -3.6f && quickSlot_Select->Rot().z > -4.38f)
+		{
+			quickSlot_Select->Rot().z = -3.992f;
+		}
+		if (quickSlot_Select->Rot().z <= -4.38f && quickSlot_Select->Rot().z > -5.12f)
+		{
+			quickSlot_Select->Rot().z = -4.77f;
+		}
+		if (quickSlot_Select->Rot().z <= -5.12f && quickSlot_Select->Rot().z > -5.98f)
+		{
+			quickSlot_Select->Rot().z = -5.453f;
+		}
 	}
 }
