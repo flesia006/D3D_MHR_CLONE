@@ -8,6 +8,8 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 	// 아래 있는게 첫 포효
 	ReadClip("E_4013");
 
+	this->AddMaterial();
+
 	FOR(Valphalk::TAIL+1)
 	{
 		CapsuleCollider* capsuleCollider = new CapsuleCollider();
@@ -136,7 +138,7 @@ void Valphalk::Render()
 
 void Valphalk::GUIRender()
 {
-	//ModelAnimator::GUIRender();
+	ModelAnimator::GUIRender();
 	//for (CapsuleCollider* capsulCollider : colliders)
 	//{
 	//	capsulCollider->GUIRender();
