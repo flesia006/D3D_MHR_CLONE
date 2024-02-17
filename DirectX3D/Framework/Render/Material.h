@@ -5,7 +5,7 @@ class Material
 private:
     enum MapType
     {
-        DIFFUSE, SPECULAR, NORMAL
+        DIFFUSE, SPECULAR, NORMAL, EMISSIVE
     };
 
 public:
@@ -48,12 +48,14 @@ public:
     void SetDiffuseMap(wstring textureFile);
     void SetSpecularMap(wstring textureFile);
     void SetNormalMap(wstring textureFile); 
+    void SetEmissiveMap(wstring textureFile);
 
     void SetDiffuseMap(Texture* texture) { diffuseMap = texture; }
 
     Texture* GetDiffuseMap() { return diffuseMap; }
     Texture* GetSpecularMap() { return specularMap; }
     Texture* GetNormalMap() { return normalMap; }
+    Texture* GetEmissiveMap() { return emissiveMap; }
 
     void Save(string file);
     void Load(string file);
@@ -80,6 +82,7 @@ private:
     Texture* diffuseMap = nullptr;
     Texture* specularMap = nullptr;
     Texture* normalMap = nullptr;
+    Texture* emissiveMap = nullptr;
 
     MaterialBuffer* buffer;
 };

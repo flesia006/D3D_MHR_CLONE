@@ -215,7 +215,7 @@ void Player::Potion()
 
 void Player::GUIRender()
 {
-//	ModelAnimator::GUIRender();
+	ModelAnimator::GUIRender();
 
 //	trail->GetMaterial()->GUIRender();
 //	hitParticle->GUIRender();
@@ -239,12 +239,12 @@ void Player::GUIRender()
 	//ImGui::SliderInt("keyboard", &U, 0, 200);
 	//
 	//
-	ImGui::SliderInt("node", &node, 1, 10);
-	ImGui::SliderFloat("temp", &temp, -10, 10);
-	ImGui::SliderFloat("temp2", &temp2, -10, 10);
-	ImGui::SliderFloat("temp3", &temp3, 10, 15);
+	//ImGui::SliderInt("node", &node, 1, 10);
+	//ImGui::SliderFloat("temp", &temp, -10, 10);
+	//ImGui::SliderFloat("temp2", &temp2, -10, 10);
+	//ImGui::SliderFloat("temp3", &temp3, 10, 15);
 		
-	//longSword->GUIRender();
+	longSword->GUIRender();
 	kalzip->GUIRender();
 
 	// t = GetClip(1)->GetRatio();

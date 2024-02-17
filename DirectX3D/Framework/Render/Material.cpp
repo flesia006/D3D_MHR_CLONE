@@ -5,7 +5,8 @@ Material::Material()
     diffuseMap = Texture::Add(L"Textures/Color/White.png", L"DM");
     specularMap = Texture::Add(L"Textures/Color/White.png", L"SM");
     normalMap = Texture::Add(L"Textures/Color/White.png", L"NM");
-    
+    emissiveMap = Texture::Add(L"Textures/Color/Black.png", L"EM");
+
     buffer = new MaterialBuffer();
 
     char path[128];
@@ -20,6 +21,7 @@ Material::Material(wstring shaderFile)
     diffuseMap = Texture::Add(L"Textures/Color/White.png", L"DM");
     specularMap = Texture::Add(L"Textures/Color/White.png", L"SM");
     normalMap = Texture::Add(L"Textures/Color/White.png", L"NM");
+    emissiveMap = Texture::Add(L"Textures/Color/Black.png", L"EM");
 
     buffer = new MaterialBuffer();
 
@@ -38,8 +40,9 @@ void Material::Set()
     diffuseMap->PSSet(0);
     specularMap->PSSet(1);
     normalMap->PSSet(2);
+    emissiveMap->PSSet(3);
 
-    buffer->SetPS(3);
+    buffer->SetPS(4);
 
     vertexShader->Set();
     pixelShader->Set();
@@ -78,6 +81,9 @@ void Material::GUIRender()
         SelectMap("NM", NORMAL);
         ImGui::SameLine();
         UnselectMap(NORMAL);
+        SelectMap("EM", EMISSIVE);
+        ImGui::SameLine();
+        UnselectMap(EMISSIVE);
 
         SaveDialog();
         LoadDialog();
@@ -122,6 +128,14 @@ void Material::SetNormalMap(wstring textureFile)
     }        
 }
 
+void Material::SetEmissiveMap(wstring textureFile)
+{
+    if (textureFile.length() > 0)
+        emissiveMap = Texture::Add(textureFile);
+    else
+        emissiveMap = Texture::Add(L"Textures/Color/Black.png", L"EM");
+}
+
 void Material::Save(string file)
 {
     tinyxml2::XMLDocument* document = new tinyxml2::XMLDocument();
@@ -145,7 +159,9 @@ void Material::Save(string file)
     textureFile = ToString(specularMap->GetFile());
     texture->SetAttribute("Specular", textureFile.c_str());
     textureFile = ToString(normalMap->GetFile());
-    texture->SetAttribute("Normal", textureFile.c_str());    
+    texture->SetAttribute("Normal", textureFile.c_str());
+    textureFile = ToString(emissiveMap->GetFile());
+    texture->SetAttribute("Emissive", textureFile.c_str());
     material->InsertEndChild(texture);
 
     tinyxml2::XMLElement* property = document->NewElement("Property");
@@ -211,6 +227,9 @@ void Material::Load(string file)
     SetSpecularMap(textureFile);
     textureFile = ToWString(texture->Attribute("Normal"));
     SetNormalMap(textureFile);
+    if(texture->Attribute("Emissive"))
+        textureFile = ToWString(texture->Attribute("Emissive"));
+    SetEmissiveMap(textureFile);
 
     tinyxml2::XMLElement* property = texture->NextSiblingElement();
     tinyxml2::XMLElement* diffuse = property->FirstChildElement();
@@ -263,6 +282,9 @@ void Material::SelectMap(string name, MapType type)
     case Material::NORMAL:
         textureID = normalMap->GetSRV();
         break;
+    case Material::EMISSIVE:
+        textureID = emissiveMap->GetSRV();
+        break;
     default:
         break;
     }
@@ -294,6 +316,9 @@ void Material::SelectMap(string name, MapType type)
             case Material::NORMAL:
                 SetNormalMap(ToWString(file));
                 break;
+            case Material::EMISSIVE:
+                SetEmissiveMap(ToWString(file));
+                break;
             default:
                 break;
             }            
@@ -318,6 +343,9 @@ void Material::UnselectMap(MapType type)
     case Material::NORMAL:
         textureID = Texture::Add(L"Textures/UI/Cancel.png", L"NMCancel")->GetSRV();
         break;
+    case Material::EMISSIVE:
+        textureID = Texture::Add(L"Textures/UI/Cancel.png", L"EMCancel")->GetSRV();
+        break;
     default:
         break;
     }
@@ -334,6 +362,9 @@ void Material::UnselectMap(MapType type)
             break;
         case Material::NORMAL:
             SetNormalMap(L"");
+            break;
+        case Material::EMISSIVE:
+            SetEmissiveMap(L"");
             break;
         default:
             break;

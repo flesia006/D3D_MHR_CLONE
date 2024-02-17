@@ -9,6 +9,7 @@ struct Material
 	float3 normal;
 	float4 diffuseColor;
 	float4 specularIntensity;
+	float4 emissiveIntensity;//emissive 조작용 변수 추가
 	float3 viewPos;
 	float3 worldPos;
 };
@@ -58,7 +59,7 @@ cbuffer LightBuffer : register(b0)
 	float3 ambientCeil;
 }
 
-cbuffer MaterialBuffer : register(b3)
+cbuffer MaterialBuffer : register(b4)//material에서 받아올 때 버퍼 슬롯은 4번으로 바꿨기 때문에 3에서 4로 바뀜
 {
 	float4 mDiffuse;
 	float4 mSpecular;
@@ -75,6 +76,7 @@ SamplerState samp : register(s0);
 Texture2D diffuseMap : register(t0);
 Texture2D specularMap : register(t1);
 Texture2D normalMap : register(t2);
+Texture2D emissiveMap : register(t3);//material에서 3번 슬롯에 emissiveMap을 받기위해 3번으로 할당
 
 //Pixel Function
 float3 NormalMapping(float3 T, float3 B, float3 N, float2 uv)
@@ -104,6 +106,7 @@ Material GetMaterial(LightPixelInput input)
 		
 	material.diffuseColor = diffuseMap.Sample(samp, input.uv);
 	material.specularIntensity = specularMap.Sample(samp, input.uv);
+	material.emissiveIntensity = emissiveMap.Sample(samp, input.uv);//emissiveMap에서 emissive 강도 추출
 	material.viewPos = input.viewPos;
 	material.worldPos = input.worldPos;
 	
@@ -119,20 +122,20 @@ float4 CalcAmbient(Material material)
 	return resultAmbient * material.diffuseColor * mAmbient;
 }
 
-float4 CalcEmissive(Material material)
+float4 CalcEmissive(Material material)//emissive 계산 함수
 {
 	float emissiveIntensity = 0.0f;
 	
 	[flatten]
-	if(mEmissive.a > 0.0f)
+    if (material.emissiveIntensity.a > 0.0f)//기준은 mEmissive가 아닌 파일에서 받아온 emissiveIntensity로 한다
 	{
 		float3 viewDir = normalize(material.viewPos - material.worldPos);
 
 		float t = saturate(dot(material.normal, viewDir));
-		emissiveIntensity = smoothstep(1.0f - mEmissive.a, 1.0f, 1.0f - t);
-	}
+        emissiveIntensity = smoothstep(1.0f - material.emissiveIntensity.a, 1.0f, 1.0f - t);
+    }
 	
-	return mEmissive * emissiveIntensity;
+    return material.emissiveIntensity * emissiveIntensity;//원본 그대로 emissive 적용하고 싶으면 mEmissive 빼야함
 }
 
 float4 CalcDirectional(Material material, Light light)
@@ -275,8 +278,8 @@ float4 CalcLights(LightPixelInput input)
 	}
 	
 	float4 ambient = CalcAmbient(material);
-	//float4 emissive = CalcEmissive(material);
-	float4 emissive = mEmissive;
+	float4 emissive = CalcEmissive(material);//emissive 연산 수행을 위해 이 함수를 사용하고 밑의 줄은 주석처리
+	//float4 emissive = mEmissive;
 	
 	return color + ambient + emissive;
 }

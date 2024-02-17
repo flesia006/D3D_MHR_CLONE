@@ -1,6 +1,6 @@
 <Material Name="face1">
-    <Shader Vertex="" Pixel="Shaders/Model/ModelAnimation.hlsl"/>
-    <Texture Diffuse="Textures\Model\player\faceALBD.png" Specular="Textures/Color/White.png" Normal="Textures/Color/White.png"/>
+    <Shader Vertex="" Pixel="Shaders/Light/Shadow.hlsl"/>
+    <Texture Diffuse="Textures\Model\player\faceALBD.png" Specular="Textures/Color/White.png" Normal="Textures/Color/White.png" Emissive="Textures/Color/Black.png"/>
     <Property Shininess="20" HasNormalMap="0">
         <Diffuse R="0.80000001" G="0.80000001" B="0.80000001" A="1"/>
         <Specular R="0.80000001" G="0.80000001" B="0.80000001" A="1"/>
