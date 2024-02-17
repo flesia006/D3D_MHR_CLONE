@@ -14,7 +14,7 @@ ModelAnimator::~ModelAnimator()
 {
     for (ModelClip* clip : clips)
         delete clip;
-
+    
     delete frameBuffer;
 
     delete[] clipTransforms;

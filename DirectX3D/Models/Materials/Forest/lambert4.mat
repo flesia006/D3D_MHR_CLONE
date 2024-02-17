@@ -1,6 +1,6 @@
 <Material Name="lambert4">
-    <Shader Vertex="" Pixel="Shaders/Light/Light.hlsl"/>
-    <Texture Diffuse="Textures\Model\Forest\sky_k_bg.png" Specular="Textures/Color/White.png" Normal="Textures/Color/White.png"/>
+    <Shader Vertex="" Pixel="Shaders/Light/Shadow.hlsl"/>
+    <Texture Diffuse="Textures\Model\Forest\sky_k_bg.png" Specular="Textures/Color/White.png" Normal="Textures/Color/White.png" Emissive="Textures/Color/Black.png"/>
     <Property Shininess="22.499998" HasNormalMap="0">
         <Diffuse R="0.80000001" G="0.80000001" B="0.80000001" A="1"/>
         <Specular R="0.80000001" G="0.80000001" B="0.80000001" A="1"/>

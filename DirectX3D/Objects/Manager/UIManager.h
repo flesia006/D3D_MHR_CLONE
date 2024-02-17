@@ -26,8 +26,9 @@ public:
     //=====================
     void QuickSlot(); // 퀵 슬롯 어떤 식으로 랜더 할지 내용
     void QuickSlotBar(); // 퀵 슬롯 에서 가리키는 내용 함수
+    void DragSlot(); // 드래그 슬롯 내용
     //=====================
-
+        
     float MinusDurability() { return curDurability -= 0.2f; } // 내구도 깎는 함수
     float GetDurabilityLevelCoefft()                            // 내구도 공격력 보정치를 반환        
     {
@@ -76,10 +77,16 @@ private:
     Quad* staminarBarEdge;
     Quad* clockHand;
     Quad* clockHand2;
+    // 퀵슬롯 추가 부분
     Quad* quickSlot_Back;
     Quad* quickSlot_Select;
     vector<Quad*> selectBoxs;
     vector<Quad*> selectBoxFrames;
+    // 드래그 슬롯 추가 부분
+    Quad* dragSlotBox;
+    // 슬롯 안에 아이템 이름
+    Quad* slotName1;
+    Quad* slotName2;
 
     Quad* blackCircle;
     Quad* blackHalfCircle;

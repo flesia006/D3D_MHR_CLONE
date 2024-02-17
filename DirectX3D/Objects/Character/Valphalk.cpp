@@ -136,11 +136,13 @@ void Valphalk::Render()
 
 void Valphalk::GUIRender()
 {
-	//ModelAnimator::GUIRender();
+	ModelAnimator::GUIRender();
 	//for (CapsuleCollider* capsulCollider : colliders)
 	//{
 	//	capsulCollider->GUIRender();
 	//}
+
+	ImGui::SliderFloat3("ValphalkPos", (float*)&Pos(), 0, 100);
 }
 
 void Valphalk::PostRender()
@@ -197,6 +199,14 @@ void Valphalk::StartRoar()
 	Player* player =
 		dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetPlayer();
 	
+	float dirB = 1000.0f;
+	float dirA = Distance(Pos(),player->getCollider()->Pos());
+
+	if (dirA < dirB)
+	{
+		LookatPlayer = true; // 플레이어를 타겟으로 잡게됨
+		SetState(E_4013);
+	}
 //	if (!LookatPlayer && Count <= 1)
 //	{
 //		if (player->getCollider()->IsCapsuleCollision(colliders[TARGETDOME])) // 플레이어가 영역안에 들어오면
@@ -206,13 +216,13 @@ void Valphalk::StartRoar()
 //			//PlayClip(1);
 //		}
 //	}
-//	if (LookatPlayer)
-//	{
-//		if (RATIO > 0.98)
-//		{
-//			EndRora();
-//		}
-//	}
+	if (LookatPlayer)
+	{
+		if (RATIO > 0.98)
+		{
+			EndRoar();
+		}
+	}
 }
 
 void Valphalk::SetState(State state)

@@ -123,9 +123,25 @@ UIManager::UIManager()
 	quickSlot_Select->Scale() *= 0.42f;
 	quickSlot_Select->Scale().x *= 0.88f;
 	
+	// 드래그 UI 추가
+	dragSlotBox = new Quad(L"Textures/UI/DragSlotBox.png");
+	dragSlotBox->Scale() *= 2.5f;
+	dragSlotBox->Pos() = { 1500,130,0 };
+
+	// 슬롯 내임 들어갈 박스 추가
+	slotName1 = new Quad(L"Textures/UI/SlotName.png");
+	slotName1->Scale() *= 2.0f;
+	slotName1->Pos() = { 1500, 230, 0 };
+	slotName1->UpdateWorld();
+
+	slotName2 = new Quad(L"Textures/UI/SlotName.png");
+	slotName2->Scale() *= 2.0f;
+	slotName2->Pos() = { 1224, 150, 0 };
+	slotName2->UpdateWorld();
+
 	FOR(8)
 	{
-		Quad* quad = new Quad(L"Textures/UI/SelectBox.png"); 
+		Quad* quad = new Quad(L"Textures/UI/ItemSlotBox.png"); 
 		quad->Scale() *= 0.5f;
 		if (i == 0)
 		{
@@ -277,6 +293,9 @@ UIManager::~UIManager()
 	{
 		delete selectBoxFrames[i];
 	}
+	delete dragSlotBox;
+	delete slotName1;
+	delete slotName2;
 }
 
 void UIManager::Update()
@@ -311,6 +330,7 @@ void UIManager::Update()
 	orangeRightHalfCircle3->UpdateWorld();
 	quickSlot_Back->UpdateWorld();
 	quickSlot_Select->UpdateWorld();
+	dragSlotBox->UpdateWorld();
 
 	FOR(selectBoxs.size())
 	{
@@ -570,6 +590,11 @@ void UIManager::PostRender()
 	lsCoting->Render();
 	lsGauge->Render();
 	lsGauge2->Render();
+	// 드래그 슬롯 이랑 내임 추가
+	dragSlotBox->Render();
+	slotName1->Render();
+	slotName2->Render();
+	// 위에 1 혹은 2 중에 하나 자리 바꿀거임
 	quickSlot->Render();
 	slingerBug->Render();
 	slingerBug2->Render();
@@ -754,16 +779,26 @@ void UIManager::QuickSlotBar()
 		// 음의 방향으로 Rot().z 가 6.3 까지 MaxRot를 설정하면 완벽한 한바퀴
 		//float MaxRot = -6.3;
 
-		quickSlot_Select->Rot().z += pos.x * -0.01f * DELTA;
-		quickSlot_Select->Rot().z += pos.y * 0.01f * DELTA;
+		if (pos.x > 0)
+		{
+			quickSlot_Select->Rot().z -= pos.x * 0.01f * DELTA;
+			quickSlot_Select->Rot().z += pos.y * 0.01f * DELTA;
+		}
+		else
+		{
+			quickSlot_Select->Rot().z += pos.x * 0.01f * DELTA;
+			//quickSlot_Select->Rot().z = pos.y * 0.01f * DELTA;
+		}
 
 		if (0.01f <= quickSlot_Select->Rot().z)
 		{
-			quickSlot_Select->Rot().z = 0.0f;
+			//quickSlot_Select->Rot().z = 0.0f;
+			quickSlot_Select->Rot().z = -6.3f;
 		}
 		else if (quickSlot_Select->Rot().z <= -6.31f)
 		{
-			quickSlot_Select->Rot().z = -6.3f;
+			//quickSlot_Select->Rot().z = -6.3f;
+			quickSlot_Select->Rot().z = 0.0f;
 		}
 
 		if (quickSlot_Select->Rot().z > -0.42f || quickSlot_Select->Rot().z < -5.98f)
@@ -892,4 +927,9 @@ void UIManager::QuickSlotBar()
 			quickSlot_Select->Rot().z = -5.453f;
 		}
 	}
+}
+
+void UIManager::DragSlot()
+{
+
 }
