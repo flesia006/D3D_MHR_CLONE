@@ -54,6 +54,10 @@ public:
         else if (cotingLevel == 3)            return 1.2f;
     }
     void Bonus154True() { bonus154 = true;}
+
+    bool IsAbleBugSkill();
+    void UseBugSkill();
+
     float SetMaxCoting() { return curCoting = maxCoting; }
     float curStamina = 100;//임시로 public에 올려둠
     bool staminaActive = false;
@@ -106,28 +110,35 @@ private:
     Vector3 hpPos; //체력바의 위치를 수치화한 것 (진짜 위치를 위한 중간계산용)
     ProgressBar* recover;
 
-    float curHP = 100;
-    float maxHP = 100;
-
-    float recoverHP = 100;
-
     // 스태미너 UI
     ProgressBar* stamina;
     Vector3 staminaPos; //체력바의 위치를 수치화한 것 (진짜 위치를 위한 중간계산용)
     ProgressBar* staminaRecover;
 
-    float maxStamina = 100;
-
-    float recoverStamina = 100;
-
     //예리도 UI
     ProgressBar* durability_gauge;
 
-    float curDurability = 80;
-    float maxDurability = 80;
 
     //기인게이지 UI
     ProgressBar* lsGauge2;
+
+
+    //코팅 UI
+    ProgressBar* lsCoting;
+
+public:
+    UINT cotingLevel = 0;
+    UINT bugCount = 2;    
+
+    float curHP = 100;
+    float maxHP = 100;
+
+    float recoverHP = 100;
+    float maxStamina = 100;
+    float recoverStamina = 100;
+    float curDurability = 80;
+    float maxDurability = 80;
+
 
     bool isBonus = false;
 
@@ -137,16 +148,11 @@ private:
     float limitTime = 32.f;
     bool bonus154 = false;
 
-    //코팅 UI
-    ProgressBar* lsCoting;
 
     float curCoting = 100;
     float maxCoting = 100;
 
-    UINT cotingLevel = 0;
 
-    //밧줄벌레 쿨타임 부분
-    UINT bugCount = 2;
 
     bool isCoolTime1 = false;
     bool isCoolTime2 = false;

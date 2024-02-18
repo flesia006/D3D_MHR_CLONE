@@ -8,6 +8,8 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 	// 아래 있는게 첫 포효
 	ReadClip("E_4013");
 
+	this->AddMaterial();
+
 	FOR(Valphalk::TAIL+1)
 	{
 		CapsuleCollider* capsuleCollider = new CapsuleCollider();

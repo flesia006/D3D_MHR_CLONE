@@ -49,6 +49,10 @@ ShadowScene::ShadowScene()
 
     garuk->SetTarget(player);
     //aStar->Update();    
+    FOR(2)
+        rasterizerSatate[i] = new RasterizerState();
+    rasterizerSatate[1]->CullMode(D3D11_CULL_NONE);
+
 }
 
 ShadowScene::~ShadowScene()
@@ -62,6 +66,8 @@ ShadowScene::~ShadowScene()
     //delete aStar;
     delete garuk;
 
+    FOR(2)
+        delete rasterizerSatate[i];
 }
 
 void ShadowScene::Update()
@@ -120,7 +126,11 @@ void ShadowScene::Render()
     garuk->SetShader(L"Light/Shadow.hlsl");
     //셰이더가 세팅된 배경과 인간을 진짜 호출
     forest->Render();
+
+    rasterizerSatate[1]->SetState();
     valphalk->Render();
+    rasterizerSatate[0]->SetState();
+
     player->Render();
     garuk->Render();
 
@@ -136,8 +146,7 @@ void ShadowScene::PostRender()
 void ShadowScene::GUIRender()
 {
     //forest->GUIRender();
-    //valphalk->GUIRender();
-    //player->GUIRender(); // 디버그 조작용
-    garuk->GUIRender();
-    UIManager::Get()->GUIRender();
+    valphalk->GUIRender();
+    player->GUIRender(); // 디버그 조작용
+//    UIManager::Get()->GUIRender();
 }

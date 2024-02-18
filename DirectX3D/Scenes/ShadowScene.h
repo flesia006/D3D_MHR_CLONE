@@ -30,5 +30,7 @@ private:
     //Terrain* terrain;
     //AStar* aStar;
     Garuk* garuk;
+    RasterizerState* rasterizerSatate[2];
+
 };
 

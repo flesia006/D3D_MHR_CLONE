@@ -22,7 +22,7 @@ Player::Player() : ModelAnimator("Player")
 
 	trail = new Trail(L"Textures/Effect/Snow.png", swordStart, swordEnd, 20, 85);
 
-	FOR(6) 
+	FOR(7) 
 		hitParticle.push_back(new HitParticle());
 
 	longSword = new Model("kal");
@@ -33,15 +33,15 @@ Player::Player() : ModelAnimator("Player")
 
 	//	longSword->Rot().x -= XM_PIDIV2;	
 
-	tmpCollider = new SphereCollider();
+	tmpCollider = new CapsuleCollider(1,0.1);
 	tmpCollider->Scale() *= 6.0f;
 
-	tmpCollider2 = new SphereCollider();
+	tmpCollider2 = new CapsuleCollider(1, 0.1);
 	tmpCollider2->Scale() *= 6.0f;
 	tmpCollider2->SetParent(backPos);
 
-	tmpCollider3 = new SphereCollider();
-	tmpCollider3->Scale() *= 6.0f;
+	tmpCollider3 = new CapsuleCollider(1, 0.1);
+	tmpCollider3->Scale() *= 24.0f;
 	tmpCollider3->SetParent(forwardPos);
 
 	//	tmpCollider->SetParent(head);
@@ -87,7 +87,7 @@ void Player::Render()
 	ModelAnimator::Render();
 	tmpCollider->Render();
 	tmpCollider2->Render();
-	tmpCollider3->Render();
+//	tmpCollider3->Render();
 	//swordCollider->Render();
 	longSword->Render();
 	kalzip->Render();
@@ -111,7 +111,7 @@ void Player::UpdateWorlds()
 		longSword->Pos() = {};
 		longSword->Rot() = {};
 	}
-	if (State_S())
+	else if (State_S())
 	{
 		mainHand->SetWorld(GetTransformByNode(backSwdNode));
 		longSword->Pos() = { -32,32,23 };
@@ -136,7 +136,7 @@ void Player::UpdateWorlds()
 	realPos->UpdateWorld();
 
 	backPos->Pos() = GetTranslationByNode(1) + Forward() * 100;
-	forwardPos->Pos() = GetTranslationByNode(1) + Back() * 100;
+	forwardPos->Pos() = GetTranslationByNode(1) + Back() * 50 + Vector3::Up() * 80 ;
 
 	head->Pos() = realPos->Pos() + Vector3::Up() * 200;
 
@@ -231,21 +231,24 @@ void Player::GUIRender()
 //	float y = atan2(CAMForward.x, CAMForward.z);
 //	ImGui::DragFloat("CAM.y", &y);
 
-	//Vector3 pos = realPos->Pos();
-	//
-	//ImGui::DragFloat3("RealPos", (float*)&pos);
+	Vector3 realpos = realPos->Pos();
+	
+	ImGui::DragFloat3("RealPos", (float*)&realpos);
+
+	Vector3 pos = Pos();
+	ImGui::DragFloat3("RealPos", (float*)&pos);
 	//
 	//int U = Keyboard::Get()->ReturnFirst();
 	//ImGui::SliderInt("keyboard", &U, 0, 200);
 	//
 	//
-	//ImGui::SliderInt("node", &node, 1, 10);
-	//ImGui::SliderFloat("temp", &temp, -10, 10);
-	//ImGui::SliderFloat("temp2", &temp2, -10, 10);
-	//ImGui::SliderFloat("temp3", &temp3, 10, 15);
-		
-	longSword->GUIRender();
-	kalzip->GUIRender();
+//	ImGui::SliderInt("node", &node, 1, 10);
+//	ImGui::SliderFloat("temp", &temp, -10, 10);
+//	ImGui::SliderFloat("temp2", &temp2, -10, 10);
+//	ImGui::SliderFloat("temp3", &temp3, 10, 15);
+//		
+//	//longSword->GUIRender();
+//	kalzip->GUIRender();
 
 	// t = GetClip(1)->GetRatio();
 	// ImGui::DragFloat("ratio_1", &t);
@@ -324,19 +327,26 @@ void Player::Control()
 	case Player::L_108:		L108();		break;
 	case Player::L_109:		L109();		break;
 	case Player::L_110:		L110();		break;
-	case Player::L_111:					break;
-	case Player::L_112:					break;
-	case Player::L_113:					break;
-	case Player::L_114:					break;
-	case Player::L_115:					break;
-	//case Player::L_116:					break;
-	//case Player::L_117:					break;
-	//case Player::L_118:					break;
-	//case Player::L_119:					break;
-	//case Player::L_120:					break;
-	//case Player::L_121:					break;
-	//case Player::L_122:					break;
-	//case Player::L_123:					break;
+
+	case Player::L_113:		L113();		break;
+	case Player::L_114:		L114();		break;
+	case Player::L_115:		L115();		break;
+	case Player::L_116:		L116();		break;
+	case Player::L_119:		L119();		break;
+	case Player::L_122:		L122();		break;
+	case Player::L_128:		L128();		break;
+	case Player::L_130:		L130();		break;
+	case Player::L_131:		L131();		break;
+	case Player::L_132:		L132();		break;
+	case Player::L_133:		L133();		break;
+	case Player::L_134:		L134();		break;
+	case Player::L_135:		L135();		break;
+	case Player::L_136:		L136();		break;
+	case Player::L_137:		L137();		break;
+	case Player::L_138:		L138();		break;
+
+
+
 	case Player::L_147:		L147();		break;
 	case Player::L_151:		L151();		break;
 	case Player::L_152:		L152();		break;
@@ -450,7 +460,7 @@ void Player::Move()
 			Rot().y -= rotSpeed * DELTA;
 		}
 	}
-	if (KEY_PRESS('A') && KEY_PRESS('W') || KEY_PRESS('W') && KEY_PRESS('A'))
+	if (KEY_PRESS('A') && KEY_PRESS('W') )
 	{
 		Vector3 cross = Cross(forward, CAMLeftForward);
 
@@ -463,7 +473,7 @@ void Player::Move()
 			Rot().y -= rotSpeed * DELTA;
 		}
 	}
-	if (KEY_PRESS('D') && KEY_PRESS('W') || KEY_PRESS('W') && KEY_PRESS('D'))
+	if (KEY_PRESS('D') && KEY_PRESS('W'))
 	{
 		Vector3 cross = Cross(forward, CAMRightForward);
 
@@ -476,7 +486,7 @@ void Player::Move()
 			Rot().y -= rotSpeed * DELTA;
 		}
 	}
-	if (KEY_PRESS('A') && KEY_PRESS('S') || KEY_PRESS('S') && KEY_PRESS('A'))
+	if (KEY_PRESS('A') && KEY_PRESS('S'))
 	{
 		Vector3 cross = Cross(forward, CAMLeftBack);
 
@@ -489,7 +499,7 @@ void Player::Move()
 			Rot().y -= rotSpeed * DELTA;
 		}
 	}
-	if (KEY_PRESS('D') && KEY_PRESS('S') || KEY_PRESS('S') && KEY_PRESS('D'))
+	if (KEY_PRESS('D') && KEY_PRESS('S'))
 	{
 		Vector3 cross = Cross(forward, CAMRightBack);
 
@@ -503,7 +513,7 @@ void Player::Move()
 		}
 	}
 
-	if (KEY_PRESS('W') && KEY_PRESS('S') || KEY_PRESS('S') && KEY_PRESS('W'))
+	if (KEY_PRESS('W') && KEY_PRESS('S'))
 	{
 		Vector3 cross = Cross(forward, CAMRightBack);
 
@@ -517,7 +527,7 @@ void Player::Move()
 		}
 	}
 
-	if (KEY_PRESS('D') && KEY_PRESS('A') || KEY_PRESS('A') && KEY_PRESS('D'))
+	if (KEY_PRESS('D') && KEY_PRESS('A'))
 	{
 		Vector3 cross = Cross(forward, CAMRightBack);
 
@@ -563,7 +573,7 @@ void Player::Rotate()
 
 }
 
-bool Player::Attack(float power) // 충돌판정 함수
+bool Player::Attack(float power, bool push, UINT useOtherCollider) // 충돌판정 함수
 {
 	renderEffect = true;
 
@@ -573,10 +583,25 @@ bool Player::Attack(float power) // 충돌판정 함수
 	Contact contact;
 
 	auto colliders = val->GetCollider();
+	
+	CapsuleCollider* playerCollider = swordCollider;
+	if (useOtherCollider != 0)
+	{
+		renderEffect = false;
+		switch (useOtherCollider)
+		{
+		case 1:	playerCollider = tmpCollider; break;
+		case 2:	playerCollider = tmpCollider2; break;
+		case 3:	playerCollider = tmpCollider3; break;
+		default: playerCollider = swordCollider; break;
+		}
+	}
+
+
 
 	for (auto collider : colliders)
 	{
-		if (swordCollider->IsCapsuleCollision(collider, &contact) && !attackOnlyOncePerMotion) 
+		if (playerCollider->IsCapsuleCollision(collider, &contact) && !attackOnlyOncePerMotion)
 		{
 			hitParticle[lastParticleIndex]->Play(contact.hitPoint, swordSwingDir);
 			lastParticleIndex++;
@@ -629,7 +654,8 @@ bool Player::Attack(float power) // 충돌판정 함수
 			else
 				damage.isWeakness = false;
 
-			damages.push_back(damage);
+			if(push)
+				damages.push_back(damage);
 
 			return true;;
 		}
@@ -687,6 +713,19 @@ void Player::AttackWOCollision(float power)
 		damage.isWeakness = false;
 
 	damages.push_back(damage);
+}
+
+bool Player::CollisionCheck()
+{
+	Valphalk* val =
+		dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetValphalk();
+	auto colliders = val->GetCollider();
+
+	for (auto collider : colliders)
+		if (tmpCollider3->IsCapsuleCollision(collider))
+			return true;;
+
+	return false;
 }
 
 void Player::SetAnimation()
@@ -767,7 +806,7 @@ void Player::Roll()
 
 void Player::TermAttackUpdate()
 {
-	if (!isHitL155 && !isHitL133)
+	if (!isHitL155 && !isHitL133 && !isHitL136)
 		return;
 
 	if (isHitL155)
@@ -806,6 +845,98 @@ void Player::TermAttackUpdate()
 		}
 	}
 
+
+	if (isHitL133)
+	{
+		TermAttackTimer2 += DELTA;
+		int dmg = 0;
+		if		(UI->cotingLevel == 2) dmg = 28;
+		else if (UI->cotingLevel == 1) dmg = 17.5f;
+		else if (UI->cotingLevel == 0) dmg = 10.5f;
+
+
+		if (TermAttackTimer2 > 0.6 && TermAttackTimer2 < 0.65)
+		{
+			if (!playOncePerTerm2)
+			{
+				AttackWOCollision(dmg);
+				playOncePerTerm2 = true;
+			}
+		}
+		else if (TermAttackTimer2 > 0.70f && TermAttackTimer2 < 0.75f)
+		{
+			if (playOncePerTerm2)
+			{
+				AttackWOCollision(dmg);
+				playOncePerTerm2 = false;
+			}
+		}
+		else if (TermAttackTimer2 > 0.80f && TermAttackTimer2 < 0.85f)
+		{
+			if (!playOncePerTerm2)
+			{
+				AttackWOCollision(dmg);
+				playOncePerTerm2 = true;
+			}
+		}
+		if (TermAttackTimer2 > 0.9 && TermAttackTimer2 < 0.95)
+		{
+			if (playOncePerTerm2)
+			{
+				AttackWOCollision(dmg);
+				playOncePerTerm2 = false;
+			}
+		}
+		else if (TermAttackTimer2 > 1.0f && TermAttackTimer2 < 1.05f)
+		{
+			if (!playOncePerTerm2)
+			{
+				AttackWOCollision(dmg);
+				playOncePerTerm2 = true;
+			}
+		}
+		else if (TermAttackTimer2 > 1.1f && TermAttackTimer2 < 1.15f)
+		{
+			if (playOncePerTerm2)
+			{
+				AttackWOCollision(dmg);
+				playOncePerTerm2 = false;
+			}
+		}
+		else if (TermAttackTimer2 > 1.2f)
+		{
+			isHitL133 = false;
+			TermAttackTimer2 = 0.0;
+		}
+	}
+
+	if (isHitL136)
+	{
+		TermAttackTimer2 += DELTA;
+
+		if (TermAttackTimer2 > 0.1 && TermAttackTimer2 < 0.15)
+		{
+			if (!playOncePerTerm2)
+			{
+				AttackWOCollision(19);
+				playOncePerTerm2 = true;
+			}
+		}
+		else if (TermAttackTimer2 > 0.2f && TermAttackTimer2 < 0.25f)
+		{
+			if (playOncePerTerm2)
+			{
+				AttackWOCollision(19);
+				playOncePerTerm2 = false;
+			}
+		}
+		else if (TermAttackTimer2 > 0.3f)
+		{
+			isHitL136 = false;
+			TermAttackTimer2 = 0.0;
+		}
+	}
+
 }
 
 void Player::SetState(State state)
@@ -814,6 +945,8 @@ void Player::SetState(State state)
 		return;
 
 	Pos() = realPos->Pos();
+	if (Pos().y < 0)
+		Pos().y = 0;
 
 	if (curState == L_155)
 	{
@@ -834,7 +967,7 @@ void Player::EndEffect()
 
 	effectTimer += DELTA;
 
-	if (effectTimer > 0.2f)
+	if (effectTimer > 0.1f)
 	{
 		renderEffect = false;
 		effectTimer = 0;
@@ -877,19 +1010,23 @@ void Player::ReadClips()
 	ReadClip("L_108");
 	ReadClip("L_109");
 	ReadClip("L_110");
-	ReadClip(" _111");
-	ReadClip(" _112");
-	ReadClip(" _113");
-	ReadClip(" _114");
-	ReadClip(" _115");
-	/*ReadClip(" _116");
-	ReadClip(" _117");
-	ReadClip(" _118");
-	ReadClip(" _119");
-	ReadClip(" _120");
-	ReadClip(" _121");
-	ReadClip(" _122");
-	ReadClip(" _123");*/
+
+	ReadClip("L_113");
+	ReadClip("L_114");
+	ReadClip("L_115");
+	ReadClip("L_116");
+	ReadClip("L_119");
+	ReadClip("L_122");
+	ReadClip("L_128");
+	ReadClip("L_130");
+	ReadClip("L_131");
+	ReadClip("L_132");
+	ReadClip("L_133");
+	ReadClip("L_134");
+	ReadClip("L_135");
+	ReadClip("L_136");
+	ReadClip("L_137");
+	ReadClip("L_138");
 
 	ReadClip("L_147");
 	ReadClip("L_151");
@@ -1220,34 +1357,13 @@ void Player::L001() // 발도상태 대기
 	if (KEY_PRESS('W') || KEY_PRESS('A') || KEY_PRESS('S') || KEY_PRESS('D'))
 		SetState(L_005);
 
-	// 101 내디뎌 베기
-	if (KEY_FRONT(Keyboard::LMB))
-	{
-		SetState(L_101);
-		return;
-	}
-	// 104 찌르기
-	if (KEY_FRONT(Keyboard::RMB))
-	{
-		SetState(L_104);
-		return;
-	}
-	// 103 베어내리기
-	if (KEY_FRONT(Keyboard::LMBRMB))
-	{
-		SetState(L_103);
-		return;
-	}
-	// 106 기인베기
-	if (KEY_FRONT(Keyboard::CTRL))
-	{
-		SetState(L_106);
-		return;
-	}
-	if (KEY_PRESS(VK_LSHIFT))
-		SetState(S_008);
-	if (KEY_DOWN(VK_SPACE))
-		Roll();
+	else if (KEY_PRESS(VK_LSHIFT))		SetState(S_008); // 납도	
+	else if (K_LMB)		SetState(L_101);	// 101 내디뎌 베기	
+	else if (K_RMB)		SetState(L_104);	// 104 찌르기	
+	else if (K_LMBRMB)	SetState(L_103);	// 103 베어내리기
+	else if (K_CTRL)	SetState(L_106);	// 106 기인 베기	
+	else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// 날라차기
+	else if (K_SPACE)	Roll();				// 010 구르기
 
 	UIManager::Get()->staminaActive = false;
 
@@ -1265,10 +1381,20 @@ void Player::L003() // 서서 납도
 	Rotate();
 }
 
-void Player::L004() // 발도상태 걷기 중
+void Player::L004() // 발도상태 걷기 중 // 루프
 {
 	PLAY;
 	//
+
+	if (KEY_PRESS(VK_LSHIFT))		SetState(S_009); // 납도	
+	else if (K_LMB)		SetState(L_101);	// 101 내디뎌 베기	
+	else if (K_RMB)		SetState(L_104);	// 104 찌르기	
+	else if (K_LMBRMB)	SetState(L_103);	// 103 베어내리기
+	else if (K_CTRL)	SetState(L_106);	// 106 기인 베기	
+	else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// 날라차기
+	else if (K_SPACE)	Roll();				// 010 구르기
+
+
 	if (KEY_UP('W') || KEY_UP('S') || KEY_UP('A') || KEY_UP('D')) // 이동 중 키를 뗄 때
 	{
 		if (KEY_PRESS('W') || KEY_PRESS('A') || KEY_PRESS('S') || KEY_PRESS('D')) // 다른 키가 아직 눌려있으면 돌아간다.
@@ -1281,52 +1407,23 @@ void Player::L004() // 발도상태 걷기 중
 	Move();
 	Rotate();
 
-	if (KEY_PRESS(VK_LSHIFT))
-		SetState(S_009);
-	// 101 내디뎌 베기
-	if (KEY_FRONT(Keyboard::LMB))
-	{
-		SetState(L_101);
-		return;
-	}
-	// 104 찌르기
-	if (KEY_FRONT(Keyboard::RMB))
-	{
-		SetState(L_104);
-		return;
-	}
-	// 103 베어내리기
-	if (KEY_FRONT(Keyboard::LMBRMB))
-	{
-		SetState(L_103);
-		return;
-	}
-
-	// 106 기인 베기
-	{
-
-	}
-
-	// 이동 : 
-	{
-
-	}
-	// 010 구르기
-	if (KEY_DOWN(VK_SPACE))
-	{
-		Roll();
-		return;
-	}
-
 	if (RATIO > 0.98)
 	{
-		GetClip(L_004)->SetPlayTime(-100.3f);
+		Loop();
 	}
 }
 
 void Player::L005() // 발도상태 걷기 시작 (발돋움)
 {
 	PLAY;
+
+	if (KEY_PRESS(VK_LSHIFT))		SetState(S_009); // 납도	
+	else if (K_LMB)		SetState(L_101);	// 101 내디뎌 베기	
+	else if (K_RMB)		SetState(L_104);	// 104 찌르기	
+	else if (K_LMBRMB)	SetState(L_103);	// 103 베어내리기
+	else if (K_CTRL)	SetState(L_106);	// 106 기인 베기	
+	else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// 날라차기
+	else if (K_SPACE)	Roll();				// 010 구르기
 
 	Move();
 	Rotate();
@@ -1343,19 +1440,14 @@ void Player::L005() // 발도상태 걷기 시작 (발돋움)
 	if (RATIO < 0.6)
 		Rotate();
 
-	if (RATIO > 0.94 && (KEY_PRESS('W') || KEY_PRESS('S') || KEY_PRESS('A') || KEY_PRESS('D')))
+	if (RATIO > 0.98 )
 	{
-		SetState(L_004);
-		return;
+		if((KEY_PRESS('W') || KEY_PRESS('S') || KEY_PRESS('A') || KEY_PRESS('D')))
+			SetState(L_004);
+		else 
+			ReturnIdle();
 	}
 
-	if (RATIO > 0.98)
-	{
-		ReturnIdle();
-	}
-
-	if (KEY_DOWN(VK_SPACE))
-		Roll();
 }
 
 void Player::L006() // 더미 (사용X)
@@ -1370,19 +1462,23 @@ void Player::L008() // 멈춤
 {
 	PLAY;
 
-	if (RATIO > 0.5 && RATIO <= 0.94)
+	if (KEY_PRESS(VK_LSHIFT))		SetState(S_009); // 납도	
+	else if (K_LMB)		SetState(L_101);	// 101 내디뎌 베기	
+	else if (K_RMB)		SetState(L_104);	// 104 찌르기	
+	else if (K_LMBRMB)	SetState(L_103);	// 103 베어내리기
+	else if (K_CTRL)	SetState(L_106);	// 106 기인 베기	
+	else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// 날라차기
+	else if (K_SPACE)	Roll();				// 010 구르기
+
+	if (RATIO > 0.5 && RATIO <= 0.98)
 	{
 		if (KEY_PRESS('W') || KEY_PRESS('A') || KEY_PRESS('S') || KEY_PRESS('D'))
 		{
 			SetState(L_005);
 		}
-		if (KEY_DOWN(VK_SPACE))
-		{
-			Roll();
-		}
 	}
 
-	if (RATIO > 0.94)
+	if (RATIO > 0.98)
 	{
 		GetClip(L_008)->SetPlayTime(-100.3f);
 		ReturnIdle();
@@ -1493,6 +1589,7 @@ void Player::L101() // 내디뎌베기
 		else if (K_CTRL)			SetState(L_106);	// 기인베기1		
 		else if (K_CTRLRMB)			SetState(L_147);	// 간파 베기
 		else if (K_CTRLSPACE)		SetState(L_151);	// 특수 납도
+		else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// 날라차기
 		else if (K_SPACE)			Roll();		
 	}
 
@@ -1535,6 +1632,7 @@ void Player::L102() // 세로베기
 		else if (K_CTRL)			SetState(L_106);	// 기인베기1		
 		else if (K_CTRLRMB)			SetState(L_147);	// 간파 베기
 		else if (K_CTRLSPACE)		SetState(L_151);	// 특수 납도
+		else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// 날라차기
 		else if (K_SPACE)			Roll();
 	}
 
@@ -1570,6 +1668,7 @@ void Player::L103() // 베어내리기
 		else if (K_CTRL)			SetState(L_110);	// 기인내디뎌베기		
 		else if (K_CTRLRMB)			SetState(L_147);	// 간파 베기
 		else if (K_CTRLSPACE)		SetState(L_151);	// 특수 납도
+		else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// 날라차기
 		else if (K_SPACE)			Roll();
 	}
 
@@ -1599,6 +1698,7 @@ void Player::L104() // 찌르기
 		else if (K_CTRL)			SetState(L_106);	// 기인베기1		
 		else if (K_CTRLRMB)			SetState(L_147);	// 간파 베기
 		else if (K_CTRLSPACE)		SetState(L_151);	// 특수 납도
+		else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// 날라차기
 		else if (K_SPACE)			Roll();
 		
 	}
@@ -1627,6 +1727,7 @@ void Player::L105() // 베어 올리기
 		else if (K_CTRL)		SetState(L_106);	// 기인베기1		
 		else if (K_CTRLRMB)		SetState(L_147);	// 간파 베기
 		else if (K_CTRLSPACE)	SetState(L_151);	// 특수 납도
+		else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// 날라차기
 		else if (K_SPACE)		Roll();
 	}
 
@@ -1661,6 +1762,7 @@ void Player::L106() // 기인 베기 1
 		else if (K_CTRL)		SetState(L_107);	// 기인 베기2		
 		else if (K_CTRLRMB)		SetState(L_147);	// 간파 베기		
 		else if (K_CTRLSPACE)	SetState(L_151);	// 특수 납도		
+		else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// 날라차기
 		else if (K_SPACE)		Roll();				// 구르기
 	}
 
@@ -1692,6 +1794,7 @@ void Player::L107() // 기인베기 2
 			else if (K_CTRL)			SetState(L_108);	// 기인 베기3		
 			else if (K_CTRLRMB)			SetState(L_147);	// 간파 베기
 			else if (K_CTRLSPACE)		SetState(L_151);	// 특수 납도		
+			else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// 날라차기
 			else if (K_SPACE)			Roll();				// 구르기		
 		}
 	}
@@ -1750,6 +1853,7 @@ void Player::L108() // 기인베기 3
 		else if (K_CTRL)			SetState(L_109);  // 기인 큰회전베기
 		else if (K_CTRLRMB)			SetState(L_147);  // 간파 베기
 		else if (K_CTRLSPACE)		SetState(L_151);  // 특수 납도		
+		else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// 날라차기
 		else if (K_SPACE)			Roll();			  // 구르기		
 	}
 
@@ -1792,6 +1896,7 @@ void Player::L109() // 기인 큰회전베기
 	if (RATIO > 0.30) // 특납 연계 가능 타이밍 언제?
 	{
 		 if (K_CTRLSPACE)	SetState(L_151);	// 특수 납도
+		 else if(KEY_DOWN(VK_XBUTTON1)) SetState(L_101);
 	}
 
 	if (RATIO > 0.98)
@@ -1815,15 +1920,254 @@ void Player::L110() // 기인 내디뎌베기
 
 	if (RATIO > 0.52) // 캔슬 가능 타이밍
 	{
-		if		(K_LMB || K_RMB)	SetState(L_105);    // 베어올리기		
-		else if (K_CTRLRMB)			SetState(L_147);    // 간파 베기
-		else if (K_CTRLSPACE)		SetState(L_151);	// 특수 납도
-		else if (K_CTRL)			SetState(L_108);	// 기인베기3
-		else if (K_SPACE)			Roll();				// 구르기
+		if (K_LMB || K_RMB)							SetState(L_105);    // 베어올리기		
+		else if (K_CTRLRMB)							SetState(L_147);    // 간파 베기
+		else if (K_CTRLSPACE)						SetState(L_151);	// 특수 납도
+		else if (K_CTRL)							SetState(L_108);	// 기인베기3
+		else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// 날라차기
+		else if (K_SPACE)							Roll();				// 구르기
 	}
 
 	if (RATIO > 0.98)
 		ReturnIdle();
+}
+
+void Player::L113()
+{
+}
+
+void Player::L114()
+{
+}
+
+void Player::L115()
+{
+
+}
+
+void Player::L116()
+{
+
+}
+
+void Player::L119()
+{
+	PLAY;
+
+	// 공격판정 프레임 
+	{
+		if (RATIO > 0.03f && RATIO < 0.19f)
+			Attack(30);
+		else
+			EndEffect();
+	}
+
+
+	if (RATIO > 0.54) // 캔슬 가능 타이밍
+	{
+		if (K_LMB || K_RMB || K_LMBRMB)
+			SetState(L_104);    // 찌르기
+	}
+
+	if (RATIO > 0.98)
+		ReturnIdle();
+}
+
+void Player::L122()
+{
+	PLAY;
+
+	// 공격판정 프레임 
+	{
+		if (RATIO > 0.03f && RATIO < 0.19f)
+			Attack(30);
+		else
+			EndEffect();
+	}
+
+
+	if (RATIO > 0.81) // 캔슬 가능 타이밍
+	{
+		if (K_LMB || K_RMB || K_LMBRMB)
+			SetState(L_104);    // 찌르기
+	}
+
+	if (RATIO > 0.98)
+		ReturnIdle();
+}
+
+void Player::L128()	// 날라차기 시작
+{
+	PLAY;
+	if (!playOncePerMotion)
+	{
+		UI->UseBugSkill();
+		playOncePerMotion = true;
+	}
+
+	// 줌 정상화 (앉아 기인 회전 베기에서 넘어온 경우)
+	{
+		if (RATIO > 0 && RATIO < 0.9)
+			CAM->Zoom(300, 5);
+	}
+
+
+	if (RATIO > 0.98)
+	{
+		SetState(L_130);
+		playOncePerMotion = false;
+	}
+}
+
+void Player::L130()	// 날라차기 체공중
+{
+	PLAY;
+
+	// 체공중
+	{
+		if(Jump(850))
+		// 공격판정 프레임
+		{
+			if ( Pos().y > 50 )
+			{
+				if (Attack(2, true, 3))
+				{
+					if (K_CTRL)	SetState(L_133);  // 투구깨기
+					else	 	SetState(L_136);  // 낙하찌르기
+				}
+			}
+
+			if (RATIO > 0.98)
+			{
+				SetState(L_131);
+			}
+		}
+		else
+		{
+			SetState(L_119);
+		}
+	}
+}
+
+void Player::L131() // 체공 루프
+{
+	PLAY;
+	// 체공중
+	{
+		if (Jump(850))
+			// 공격판정 프레임
+		{
+			if (Attack(2,true, 3))
+			{
+				if (K_CTRL)	SetState(L_133);  // 투구깨기
+				else	 	SetState(L_136);  // 낙하찌르기
+			}
+
+			if (RATIO > 0.98)
+				Loop();
+		}
+		else
+		{
+			SetState(L_119);
+		}
+	}
+
+}
+
+void Player::L132()
+{
+
+}
+
+void Player::L133()	// 투구깨기
+{
+	PLAY;
+
+	// 체공중
+	{
+		if (RATIO < 0.38) // 줌아웃
+			CAM->Zoom(650, 5);
+
+		// 공격판정 타이밍
+		if (RATIO > 0.38)
+		{
+			if (Attack(0, false))
+				isHitL133 = true;
+			CAM->Zoom(300, 5);
+		}
+
+
+		if (realPos->Pos().y < 0)
+		{
+			Pos().y = 0.0f;
+			jumpVelocity = originJumpVelocity;
+			SetState(L_135);
+		}
+	}
+}
+
+void Player::L134()	// 투구깨기 루프
+{
+
+}
+
+void Player::L135()	// 투구깨기 끝
+{
+	PLAY;
+	EndEffect();
+	CAM->Zoom(300, 5);	
+	{
+		if (RATIO > 0.23)
+		{
+			if (K_LMB || K_RMB)		SetState(L_104);	// 찌르기
+			else if(K_CTRLSPACE)	SetState(L_151);	// 특수납도
+			else if (K_SPACE)		Roll();				// 구르기
+		}
+
+		if (RATIO > 0.98)
+		{
+			SetState(L_001);
+		}
+	}
+}
+
+void Player::L136() // 낙하찌르기
+{
+	PLAY;
+
+	// 체공중
+	{
+		if (RATIO > 0.55)
+		{
+			if (Attack(19))
+				isHitL136 = true;
+		}
+
+		if (realPos->Pos().y < 0)
+		{
+			EndEffect();
+			Pos().y = 0.0f;
+			jumpVelocity = originJumpVelocity;
+			SetState(L_138);
+		}
+	}
+}
+
+void Player::L137() // 낙하찌르기 루프
+{
+}
+
+void Player::L138() // 낙하찌르기 끝
+{
+	PLAY;
+
+	// 체공중
+	{
+		if (RATIO > 0.98)
+		{
+			ReturnIdle();
+		}
+	}
 }
 
 void Player::L147() // 간파베기
@@ -1863,7 +2207,8 @@ void Player::L147() // 간파베기
 		else if (K_RMB)			SetState(L_104);	// 찌르기		
 		else if (K_LMBRMB)		SetState(L_103);	// 베어내리기		
 		else if (K_CTRLSPACE)	SetState(L_151);	// 특수 납도
-		else if (K_CTRL)		SetState(L_109);	// 기인큰회전베기 (TODO :: 이건 조건 따져야함)		
+		else if (K_CTRL)		SetState(L_109);	// 기인큰회전베기 (TODO :: 이건 조건 따져야함)	
+		else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// 날라차기
 		else if (K_SPACE)		Roll();				// 구르기
 	}
 
@@ -1966,6 +2311,7 @@ void Player::L154() // 앉아발도 베기
 			else if (K_RMB)			SetState(L_104); // 찌르기
 			else if (K_CTRL)		SetState(L_106); // 기인 베기 1		
 			else if (K_CTRLRMB)		SetState(L_147); // 간파 베기
+			else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// 날라차기
 			else if (K_SPACE)		Roll();			 // 구르기
 		}
 	}
@@ -1985,7 +2331,7 @@ void Player::L155() // 앉아발도 기인베기
 			CAM->Zoom(450);
 	}
 
-	static bool isHit = false;
+	static bool isHit = false;	// hit 하고 바로 3번 공격 들어가면 어색하니까 넣어주는 bool 
 
 	// 공격판정 프레임 
 	{
@@ -2015,6 +2361,7 @@ void Player::L155() // 앉아발도 기인베기
 			if		(K_LMB)			SetState(L_101); // 내디뎌베기
 			else if (K_CTRL)		SetState(L_108); // 기인 베기 3		
 			else if (K_CTRLSPACE)	SetState(L_151); // 특수 납도
+			else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// 날라차기
 			else if (K_SPACE)		Roll();			 // 구르기
 		}
 	}
@@ -2196,4 +2543,23 @@ void Player::DamageRender()
 	}
 	if (eraseiter != damages.end())
 		damages.erase(eraseiter);
+}
+
+bool Player::Jump(float moveSpeed)
+{
+	jumpVelocity -= 9.8f * gravityMult * DELTA;
+	Pos() += -1 * initForward * moveSpeed * DELTA;
+	Pos().y += jumpVelocity;
+
+	if (realPos->Pos().y >= 0)
+	{
+		return true;
+	}
+
+	if (realPos->Pos().y < 0)
+	{
+		Pos().y = 0.0f;
+		jumpVelocity = originJumpVelocity;
+		return false;
+	}
 }

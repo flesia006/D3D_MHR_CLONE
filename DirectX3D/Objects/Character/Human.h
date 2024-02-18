@@ -40,8 +40,8 @@ private:
     // 일단은 예시 (써도 좋고, 수정해도 좋고....)
     float moveSpeed = 0;
     float jumpVelocity = 0;
-    float jumpForce = 0.5f;
     float gravityMult = 0.5f;
+    float jumpForce = 0.5f;
     bool isJump = false;
 
 

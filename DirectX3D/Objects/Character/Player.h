@@ -4,6 +4,8 @@ class Particle;
 class Trail;
 class Player : public ModelAnimator
 {
+	
+
 private:
 	enum State
 	{
@@ -13,9 +15,12 @@ private:
 		L_071, L_072, L_073, L_077, L_078,
 		L_079, L_101, L_102, L_103, L_104,
 		L_105, L_106, L_107, L_108, L_109,
-		L_110, L_111, L_112, L_113, L_114,
-		L_115, /*L_116, L_117, L_118, L_119,
-		L_120, L_121, L_122, L_123,*/ 
+		L_110, 
+
+		L_113, L_114, L_115, L_116, L_119, L_122,
+		L_128, L_130, L_131, L_132, L_133, 
+		L_134, L_135, L_136, L_137, L_138,	
+
 		L_147, L_151, L_152, L_153, L_154,
 		L_155, L_156,
 		S_001, S_003, S_005, S_008, S_009,
@@ -49,7 +54,7 @@ public:
 	void GUIRender();
 	void PostRender();
 
-	SphereCollider* getCollider() { return tmpCollider; }	
+	CapsuleCollider* getCollider() { return tmpCollider; }
 
 private:
 	void Control();
@@ -60,8 +65,9 @@ private:
 	void Potion();
 
 	void Rotate();
-	bool Attack(float power = 0); // TODO : 데미지 계산 넣어야함
+	bool Attack(float power, bool push = true, UINT useOtherCollider = 0); // TODO : 데미지 계산 넣어야함
 	void AttackWOCollision(float power = 0); // 충돌검사를 안하는 공격
+	bool CollisionCheck();
 	void SetAnimation();
 	void Roll();
 	void TermAttackUpdate();
@@ -78,6 +84,8 @@ private:
 	void StatusRender();
 	void DamageRender();
 
+	bool Jump(float moveSpeed);
+
 private:
 	void ReadClips();
 	void RecordLastPos();
@@ -92,6 +100,8 @@ private:
 		GetClip(S_001)->ResetPlayTime();
 		SetState(S_001);
 	}
+	void Loop() {GetClip(curState)->ResetPlayTime();}
+
 	void S001();
 	void S003();
 	void S005();
@@ -131,6 +141,22 @@ private:
 	void L109();
 	void L110();
 
+	void L113();
+	void L114();
+	void L115();
+	void L116();
+	void L119();
+	void L122();
+	void L128();
+	void L130();
+	void L131();
+	void L132();
+	void L133();
+	void L134();
+	void L135();
+	void L136();
+	void L137();
+	void L138();
 
 	void L147();
 	void L151();
@@ -158,9 +184,9 @@ private:
 	Vector3 lastSwordEnd = {0, 0, 0};
 	Vector3 swordSwingDir;
 
-	SphereCollider* tmpCollider = nullptr;
-	SphereCollider* tmpCollider2 = nullptr;
-	SphereCollider* tmpCollider3 = nullptr;
+	CapsuleCollider* tmpCollider = nullptr;
+	CapsuleCollider* tmpCollider2 = nullptr;
+	CapsuleCollider* tmpCollider3 = nullptr;
 	CapsuleCollider* swordCollider = nullptr;
 
 	Model* longSword = nullptr;
@@ -191,7 +217,10 @@ private:
 	bool isTarget = true;
 	bool isHitL155 = false;
 	bool isHitL133 = false;
+	bool isHitL136 = false;
 	float TermAttackTimer = 0.0f;
+	float TermAttackTimer2 = 0.0f;
+	float TermAttackTimer3 = 0.0f;
 
 	POINT clientCenterPos = { WIN_WIDTH / 2, WIN_HEIGHT >> 1 };
 
@@ -213,6 +242,10 @@ private:
 	float temp2 = -6.038f;
 	float temp3 = 14.067f;
 
+	float jumpVelocity = 2.8f;
+	const float originJumpVelocity = jumpVelocity;
+	float gravityMult = 0.6f;
+
 	int loopApply = 334;
 
 	float time = 0;
@@ -222,7 +255,9 @@ private:
 
 	bool attackOnlyOncePerMotion = false;
 	bool isDoubleStrikeMotion = false;
+	bool playOncePerMotion = false;
 	bool playOncePerTerm = false;
+	bool playOncePerTerm2 = false;
 
 	bool renderEffect = false;
 	bool holdingSword = false;

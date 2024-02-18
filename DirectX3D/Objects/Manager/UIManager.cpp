@@ -492,12 +492,7 @@ void UIManager::Update()
 	orangeLeftHalfCircle3->Pos() = slingerBug3->Pos();
 	orangeRightHalfCircle3->Pos() = slingerBug3->Pos();
 
-	if (KEY_DOWN('1') && !isCoolTime1)
-		isCoolTime1 = true;
-	else if (KEY_DOWN('1') && isCoolTime1 && !isCoolTime2)
-		isCoolTime2 = true;
-	else if (KEY_DOWN('1') && bugCount == 3 && isCoolTime1 && isCoolTime2 && !isCoolTime3)
-		isCoolTime3 = true;
+
 
 	if (isCoolTime1)
 	{
@@ -934,4 +929,24 @@ void UIManager::QuickSlotBar()
 void UIManager::DragSlot()
 {
 
+}
+
+bool UIManager::IsAbleBugSkill()
+{
+	if (isCoolTime1 && isCoolTime2)
+		return false;
+	else if (bugCount == 3 && isCoolTime3)
+		return false;
+	else
+		return true;
+}
+
+void UIManager::UseBugSkill()
+{
+	if (!isCoolTime1)
+		isCoolTime1 = true;
+	else if (isCoolTime1 && !isCoolTime2)
+		isCoolTime2 = true;
+	else if (bugCount == 3 && isCoolTime1 && isCoolTime2 && !isCoolTime3)
+		isCoolTime3 = true;
 }

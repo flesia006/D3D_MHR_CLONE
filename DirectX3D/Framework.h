@@ -32,7 +32,10 @@
 #define	K_LMBRMB		  Keyboard::Get()->IsInputBufferFront(Keyboard::LMBRMB)
 #define	K_SHIFT		  Keyboard::Get()->IsInputBufferFront(Keyboard::SHIFT)
 #define	K_SPACE		  Keyboard::Get()->IsInputBufferFront(Keyboard::SPACE)
+#define	K_LBUG		  Keyboard::Get()->IsInputBufferFront(Keyboard::BUG1)
+#define	K_RBUG		  Keyboard::Get()->IsInputBufferFront(Keyboard::BUG2)
 
+#define UI  UIManager::Get()
 
 
 #define CAM Environment::Get()->GetMainCamera()
