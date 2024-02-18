@@ -50,7 +50,7 @@ public:
     }
 
 private:
-    const float keyStoreTime = 1.0f;
+    const float keyStoreTime = 0.7f;
 
     BYTE curState[KEY_MAX] = {};
     BYTE oldState[KEY_MAX] = {};

@@ -33,15 +33,15 @@ Player::Player() : ModelAnimator("Player")
 
 	//	longSword->Rot().x -= XM_PIDIV2;	
 
-	tmpCollider = new SphereCollider();
+	tmpCollider = new CapsuleCollider(1,0.1);
 	tmpCollider->Scale() *= 6.0f;
 
-	tmpCollider2 = new SphereCollider();
+	tmpCollider2 = new CapsuleCollider(1, 0.1);
 	tmpCollider2->Scale() *= 6.0f;
 	tmpCollider2->SetParent(backPos);
 
-	tmpCollider3 = new SphereCollider();
-	tmpCollider3->Scale() *= 10.0f;
+	tmpCollider3 = new CapsuleCollider(1, 0.1);
+	tmpCollider3->Scale() *= 24.0f;
 	tmpCollider3->SetParent(forwardPos);
 
 	//	tmpCollider->SetParent(head);
@@ -87,7 +87,7 @@ void Player::Render()
 	ModelAnimator::Render();
 	tmpCollider->Render();
 	tmpCollider2->Render();
-	tmpCollider3->Render();
+//	tmpCollider3->Render();
 	//swordCollider->Render();
 	longSword->Render();
 	kalzip->Render();
@@ -136,7 +136,7 @@ void Player::UpdateWorlds()
 	realPos->UpdateWorld();
 
 	backPos->Pos() = GetTranslationByNode(1) + Forward() * 100;
-	forwardPos->Pos() = GetTranslationByNode(1) + Back() * 80; ;
+	forwardPos->Pos() = GetTranslationByNode(1) + Back() * 50 + Vector3::Up() * 80 ;
 
 	head->Pos() = realPos->Pos() + Vector3::Up() * 200;
 
@@ -573,7 +573,7 @@ void Player::Rotate()
 
 }
 
-bool Player::Attack(float power, bool push) // 충돌판정 함수
+bool Player::Attack(float power, bool push, UINT useOtherCollider) // 충돌판정 함수
 {
 	renderEffect = true;
 
@@ -583,10 +583,25 @@ bool Player::Attack(float power, bool push) // 충돌판정 함수
 	Contact contact;
 
 	auto colliders = val->GetCollider();
+	
+	CapsuleCollider* playerCollider = swordCollider;
+	if (useOtherCollider != 0)
+	{
+		renderEffect = false;
+		switch (useOtherCollider)
+		{
+		case 1:	playerCollider = tmpCollider; break;
+		case 2:	playerCollider = tmpCollider2; break;
+		case 3:	playerCollider = tmpCollider3; break;
+		default: playerCollider = swordCollider; break;
+		}
+	}
+
+
 
 	for (auto collider : colliders)
 	{
-		if (swordCollider->IsCapsuleCollision(collider, &contact) && !attackOnlyOncePerMotion) 
+		if (playerCollider->IsCapsuleCollision(collider, &contact) && !attackOnlyOncePerMotion)
 		{
 			hitParticle[lastParticleIndex]->Play(contact.hitPoint, swordSwingDir);
 			lastParticleIndex++;
@@ -791,7 +806,7 @@ void Player::Roll()
 
 void Player::TermAttackUpdate()
 {
-	if (!isHitL155 && !isHitL133)
+	if (!isHitL155 && !isHitL133 && !isHitL136)
 		return;
 
 	if (isHitL155)
@@ -895,6 +910,33 @@ void Player::TermAttackUpdate()
 		}
 	}
 
+	if (isHitL136)
+	{
+		TermAttackTimer2 += DELTA;
+
+		if (TermAttackTimer2 > 0.1 && TermAttackTimer2 < 0.15)
+		{
+			if (!playOncePerTerm2)
+			{
+				AttackWOCollision(19);
+				playOncePerTerm2 = true;
+			}
+		}
+		else if (TermAttackTimer2 > 0.2f && TermAttackTimer2 < 0.25f)
+		{
+			if (playOncePerTerm2)
+			{
+				AttackWOCollision(19);
+				playOncePerTerm2 = false;
+			}
+		}
+		else if (TermAttackTimer2 > 0.3f)
+		{
+			isHitL136 = false;
+			TermAttackTimer2 = 0.0;
+		}
+	}
+
 }
 
 void Player::SetState(State state)
@@ -925,7 +967,7 @@ void Player::EndEffect()
 
 	effectTimer += DELTA;
 
-	if (effectTimer > 0.2f)
+	if (effectTimer > 0.1f)
 	{
 		renderEffect = false;
 		effectTimer = 0;
@@ -1375,6 +1417,14 @@ void Player::L005() // 발도상태 걷기 시작 (발돋움)
 {
 	PLAY;
 
+	if (KEY_PRESS(VK_LSHIFT))		SetState(S_009); // 납도	
+	else if (K_LMB)		SetState(L_101);	// 101 내디뎌 베기	
+	else if (K_RMB)		SetState(L_104);	// 104 찌르기	
+	else if (K_LMBRMB)	SetState(L_103);	// 103 베어내리기
+	else if (K_CTRL)	SetState(L_106);	// 106 기인 베기	
+	else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// 날라차기
+	else if (K_SPACE)	Roll();				// 010 구르기
+
 	Move();
 	Rotate();
 
@@ -1390,19 +1440,14 @@ void Player::L005() // 발도상태 걷기 시작 (발돋움)
 	if (RATIO < 0.6)
 		Rotate();
 
-	if (RATIO > 0.94 && (KEY_PRESS('W') || KEY_PRESS('S') || KEY_PRESS('A') || KEY_PRESS('D')))
+	if (RATIO > 0.98 )
 	{
-		SetState(L_004);
-		return;
+		if((KEY_PRESS('W') || KEY_PRESS('S') || KEY_PRESS('A') || KEY_PRESS('D')))
+			SetState(L_004);
+		else 
+			ReturnIdle();
 	}
 
-	if (RATIO > 0.98)
-	{
-		ReturnIdle();
-	}
-
-	if (KEY_DOWN(VK_SPACE))
-		Roll();
 }
 
 void Player::L006() // 더미 (사용X)
@@ -1417,19 +1462,23 @@ void Player::L008() // 멈춤
 {
 	PLAY;
 
-	if (RATIO > 0.5 && RATIO <= 0.94)
+	if (KEY_PRESS(VK_LSHIFT))		SetState(S_009); // 납도	
+	else if (K_LMB)		SetState(L_101);	// 101 내디뎌 베기	
+	else if (K_RMB)		SetState(L_104);	// 104 찌르기	
+	else if (K_LMBRMB)	SetState(L_103);	// 103 베어내리기
+	else if (K_CTRL)	SetState(L_106);	// 106 기인 베기	
+	else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// 날라차기
+	else if (K_SPACE)	Roll();				// 010 구르기
+
+	if (RATIO > 0.5 && RATIO <= 0.98)
 	{
 		if (KEY_PRESS('W') || KEY_PRESS('A') || KEY_PRESS('S') || KEY_PRESS('D'))
 		{
 			SetState(L_005);
 		}
-		if (KEY_DOWN(VK_SPACE))
-		{
-			Roll();
-		}
 	}
 
-	if (RATIO > 0.94)
+	if (RATIO > 0.98)
 	{
 		GetClip(L_008)->SetPlayTime(-100.3f);
 		ReturnIdle();
@@ -1903,6 +1952,25 @@ void Player::L116()
 
 void Player::L119()
 {
+	PLAY;
+
+	// 공격판정 프레임 
+	{
+		if (RATIO > 0.03f && RATIO < 0.19f)
+			Attack(30);
+		else
+			EndEffect();
+	}
+
+
+	if (RATIO > 0.54) // 캔슬 가능 타이밍
+	{
+		if (K_LMB || K_RMB || K_LMBRMB)
+			SetState(L_104);    // 찌르기
+	}
+
+	if (RATIO > 0.98)
+		ReturnIdle();
 }
 
 void Player::L122()
@@ -1920,7 +1988,7 @@ void Player::L122()
 
 	if (RATIO > 0.81) // 캔슬 가능 타이밍
 	{
-		if (K_LMB || K_RMB || K_LMBRMB)	
+		if (K_LMB || K_RMB || K_LMBRMB)
 			SetState(L_104);    // 찌르기
 	}
 
@@ -1960,18 +2028,23 @@ void Player::L130()	// 날라차기 체공중
 		if(Jump(850))
 		// 공격판정 프레임
 		{
-			if (CollisionCheck() && Pos().y > 50 )
+			if ( Pos().y > 50 )
 			{
-				if(K_CTRL)	SetState(L_133);  // 투구깨기
-				else	 	SetState(L_136);  // 낙하찌르기
+				if (Attack(2, true, 3))
+				{
+					if (K_CTRL)	SetState(L_133);  // 투구깨기
+					else	 	SetState(L_136);  // 낙하찌르기
+				}
 			}
 
 			if (RATIO > 0.98)
+			{
 				SetState(L_131);
+			}
 		}
 		else
 		{
-			SetState(L_122);
+			SetState(L_119);
 		}
 	}
 }
@@ -1984,7 +2057,7 @@ void Player::L131() // 체공 루프
 		if (Jump(850))
 			// 공격판정 프레임
 		{
-			if (CollisionCheck())
+			if (Attack(2,true, 3))
 			{
 				if (K_CTRL)	SetState(L_133);  // 투구깨기
 				else	 	SetState(L_136);  // 낙하찌르기
@@ -1995,7 +2068,7 @@ void Player::L131() // 체공 루프
 		}
 		else
 		{
-			SetState(L_122);
+			SetState(L_119);
 		}
 	}
 
@@ -2042,9 +2115,15 @@ void Player::L135()	// 투구깨기 끝
 {
 	PLAY;
 	EndEffect();
-	CAM->Zoom(300, 5);
-	// 체공중
+	CAM->Zoom(300, 5);	
 	{
+		if (RATIO > 0.23)
+		{
+			if (K_LMB || K_RMB)		SetState(L_104);	// 찌르기
+			else if(K_CTRLSPACE)	SetState(L_151);	// 특수납도
+			else if (K_SPACE)		Roll();				// 구르기
+		}
+
 		if (RATIO > 0.98)
 		{
 			SetState(L_001);
@@ -2058,8 +2137,15 @@ void Player::L136() // 낙하찌르기
 
 	// 체공중
 	{
+		if (RATIO > 0.55)
+		{
+			if (Attack(19))
+				isHitL136 = true;
+		}
+
 		if (realPos->Pos().y < 0)
 		{
+			EndEffect();
 			Pos().y = 0.0f;
 			jumpVelocity = originJumpVelocity;
 			SetState(L_138);

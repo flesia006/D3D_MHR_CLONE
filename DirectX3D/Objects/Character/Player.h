@@ -54,7 +54,7 @@ public:
 	void GUIRender();
 	void PostRender();
 
-	SphereCollider* getCollider() { return tmpCollider; }	
+	CapsuleCollider* getCollider() { return tmpCollider; }
 
 private:
 	void Control();
@@ -65,7 +65,7 @@ private:
 	void Potion();
 
 	void Rotate();
-	bool Attack(float power = 0, bool push = true); // TODO : 데미지 계산 넣어야함
+	bool Attack(float power, bool push = true, UINT useOtherCollider = 0); // TODO : 데미지 계산 넣어야함
 	void AttackWOCollision(float power = 0); // 충돌검사를 안하는 공격
 	bool CollisionCheck();
 	void SetAnimation();
@@ -184,9 +184,9 @@ private:
 	Vector3 lastSwordEnd = {0, 0, 0};
 	Vector3 swordSwingDir;
 
-	SphereCollider* tmpCollider = nullptr;
-	SphereCollider* tmpCollider2 = nullptr;
-	SphereCollider* tmpCollider3 = nullptr;
+	CapsuleCollider* tmpCollider = nullptr;
+	CapsuleCollider* tmpCollider2 = nullptr;
+	CapsuleCollider* tmpCollider3 = nullptr;
 	CapsuleCollider* swordCollider = nullptr;
 
 	Model* longSword = nullptr;
@@ -217,8 +217,10 @@ private:
 	bool isTarget = true;
 	bool isHitL155 = false;
 	bool isHitL133 = false;
+	bool isHitL136 = false;
 	float TermAttackTimer = 0.0f;
 	float TermAttackTimer2 = 0.0f;
+	float TermAttackTimer3 = 0.0f;
 
 	POINT clientCenterPos = { WIN_WIDTH / 2, WIN_HEIGHT >> 1 };
 
