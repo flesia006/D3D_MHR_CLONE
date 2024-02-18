@@ -13,7 +13,7 @@ ShadowScene::ShadowScene()
     skyDom->Pos().y -= 25000;
     skyDom->UpdateWorld();
 
-
+    garuk = new Garuk();
     valphalk = new Valphalk();
     valphalk->Pos().z -= 1500.0f;
     valphalk->Rot().y += XM_PI;
@@ -49,6 +49,7 @@ ShadowScene::ShadowScene()
 
 ShadowScene::~ShadowScene()
 {
+    delete garuk;
     delete forest;
     delete player;
     delete shadow;
@@ -62,7 +63,8 @@ void ShadowScene::Update()
     //if (KEY_DOWN('2')) light->type = 1;
     //if (KEY_DOWN('3')) light->type = 2;
     //if (KEY_DOWN('4')) light->type = 3;
-
+    garuk->SetTarget(player);
+    garuk->Update();
     forest->UpdateWorld();
     valphalk->Update();
     player->Update();
@@ -84,9 +86,11 @@ void ShadowScene::PreRender()
     //인간한테 뎁스 셰이더를 적용 (조건에 따른 셰이더 변화...등을 가진 조건 함수)
     valphalk->SetShader(L"Light/DepthMap.hlsl");
     player->SetShader(L"Light/DepthMap.hlsl");
+    garuk->SetShader(L"Light/DepthMap.hlsl");
     //조건에 따라 픽셀이 바뀐 인간을 렌더...해서 텍스처를 준비
     valphalk->Render();
     player->Render();
+    garuk->Render();
 }
 
 void ShadowScene::Render()
@@ -101,6 +105,7 @@ void ShadowScene::Render()
     forest->SetShader(L"Light/Shadow.hlsl");
     valphalk->SetShader(L"Light/Shadow.hlsl");
     player->SetShader(L"Light/Shadow.hlsl");
+    garuk->SetShader(L"Light/Shadow.hlsl");
     //셰이더가 세팅된 배경과 인간을 진짜 호출
 
     rasterizerSatate[1]->SetState();
@@ -111,6 +116,7 @@ void ShadowScene::Render()
     }
     rasterizerSatate[0]->SetState();
     player->Render();
+    garuk->Render();
 
 }
 
