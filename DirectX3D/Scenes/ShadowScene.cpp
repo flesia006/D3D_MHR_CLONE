@@ -89,7 +89,7 @@ void ShadowScene::Update()
     }
     //aStar->Update();
     //garuk->Control(player);
-
+    skyBox->Update();
 
 
 }

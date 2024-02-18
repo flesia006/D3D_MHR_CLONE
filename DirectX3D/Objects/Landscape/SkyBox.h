@@ -14,7 +14,7 @@ public:
     ~SkyBox();
 
     void Render();
-
+    void Update();
 private:
     Texture* skyMap; //ÇÏ´Ã¿ë ÅØ½ºÃ³ (¸Ê)
 

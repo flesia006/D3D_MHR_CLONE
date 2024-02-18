@@ -36,6 +36,11 @@ SkyBox::~SkyBox()
         delete depthStencilState[i];
 }
 
+void SkyBox::Update()
+{
+    Rot().y += 10 * DELTA;
+}
+
 void SkyBox::Render()
 {
     skyMap->PSSet(10); // 넉넉하게 슬롯 순위 설정

@@ -29,6 +29,7 @@ void Transform::UpdateWorld()
 
     globalPosition = tempPos;
     globalScale = tempScale;    
+    
 }
 
 void Transform::GUIRender()
