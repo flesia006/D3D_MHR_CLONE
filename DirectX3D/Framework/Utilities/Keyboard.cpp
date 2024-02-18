@@ -1,5 +1,6 @@
 #include "Framework.h"
 
+
 void Keyboard::Update()
 {
     memcpy(oldState, curState, sizeof(oldState));
@@ -60,13 +61,18 @@ void Keyboard::Update()
         (KEY_UP(VK_CONTROL) && KEY_DOWN(VK_SPACE)))
         keyStorage.push_front(make_pair(CTRLSPACE, 0));
 
-    if (KEY_DOWN(VK_SHIFT))
-        keyStorage.push_front(make_pair(SHIFT, 0));
-
-    if (KEY_DOWN('1'))
+    if ((KEY_DOWN(VK_XBUTTON1) && KEY_PRESS(VK_LBUTTON)) ||
+        (KEY_PRESS(VK_XBUTTON1) && KEY_DOWN(VK_LBUTTON)) ||
+        (KEY_DOWN(VK_XBUTTON1) && KEY_DOWN(VK_LBUTTON)) ||
+        (KEY_DOWN(VK_XBUTTON1) && KEY_UP(VK_LBUTTON)) ||
+        (KEY_UP(VK_XBUTTON1) && KEY_DOWN(VK_LBUTTON)))
         keyStorage.push_front(make_pair(BUG1, 0));
 
-    if (KEY_DOWN('2'))
+    if ((KEY_DOWN(VK_XBUTTON1) && KEY_PRESS(VK_RBUTTON)) ||
+        (KEY_PRESS(VK_XBUTTON1) && KEY_DOWN(VK_RBUTTON)) ||
+        (KEY_DOWN(VK_XBUTTON1) &&  KEY_DOWN(VK_RBUTTON)) ||
+        (KEY_DOWN(VK_XBUTTON1) &&    KEY_UP(VK_RBUTTON)) ||
+        (KEY_UP(VK_XBUTTON1) &&    KEY_DOWN(VK_RBUTTON)))
         keyStorage.push_front(make_pair(BUG2, 0));
 
     for (auto& p : keyStorage)

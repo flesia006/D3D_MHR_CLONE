@@ -107,7 +107,7 @@ void ShadowScene::PostRender()
 
 void ShadowScene::GUIRender()
 {
-    valphalk->GUIRender();
-//    player->GUIRender(); // 디버그 조작용
+//    valphalk->GUIRender();
+    player->GUIRender(); // 디버그 조작용
 //    UIManager::Get()->GUIRender();
 }
