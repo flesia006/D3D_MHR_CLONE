@@ -27,7 +27,7 @@ SkyBox::SkyBox(wstring fileName)
 SkyBox::~SkyBox()
 {
     // 텍스처에서 관리할 스카이맵은 지우지 않아도 좋다
-
+    
     FOR(2)
         delete rasterizerSatate[i];
 
