@@ -17,6 +17,7 @@ public:
 private:
 
     Model* forest;
+    Model* skyDom;
 
     Player* player;
     Valphalk* valphalk = nullptr;
