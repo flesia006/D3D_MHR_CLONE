@@ -66,8 +66,7 @@ Player::~Player()
 }
 
 void Player::Update()
-{
-
+{	
 	Control();
 	ResetPlayTime();
 	UpdateWorlds();
