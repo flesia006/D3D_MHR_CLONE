@@ -67,7 +67,6 @@ void ShadowScene::Update()
     {
         UIManager::Get()->Hit(valphalk->damage);
     }
-
 }
 
 void ShadowScene::PreRender()
