@@ -20,6 +20,7 @@ private:
 
     Player* player;
     Valphalk* valphalk = nullptr;
+    ModelAnimator* otomo = nullptr;
 
     Shadow* shadow;
 

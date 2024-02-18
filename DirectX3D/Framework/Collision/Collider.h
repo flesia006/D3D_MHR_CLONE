@@ -39,6 +39,7 @@ public:
 
     void Render();
 
+
     bool IsCollision(Collider* collider);
 
     virtual bool IsRayCollision(IN Ray ray, OUT Contact* contact = nullptr) = 0;
