@@ -26,5 +26,7 @@ private:
     SkyBox* skyBox;
     LightBuffer::Light* light; //빛 사용하기
 
+    RasterizerState* rasterizerSatate[2];
+
 };
 

@@ -36,6 +36,9 @@ ShadowScene::ShadowScene()
     Sounds::Get()->Play("Valphalk_Thema", 0.03f);
     Sounds::Get()->AddSound("health_potion", SoundPath + L"health_potion.mp3");
 
+    FOR(2)
+        rasterizerSatate[i] = new RasterizerState();
+    rasterizerSatate[1]->CullMode(D3D11_CULL_NONE);
 
 }
 
@@ -45,7 +48,8 @@ ShadowScene::~ShadowScene()
     delete player;
     delete shadow;
     delete skyBox;
-
+    FOR(2)
+        delete rasterizerSatate[i];
 }
 
 void ShadowScene::Update()
@@ -93,7 +97,11 @@ void ShadowScene::Render()
     player->SetShader(L"Light/Shadow.hlsl");
     //셰이더가 세팅된 배경과 인간을 진짜 호출
     forest->Render();
+
+    rasterizerSatate[1]->SetState();
     valphalk->Render();
+    rasterizerSatate[0]->SetState();
+
     player->Render();
 
 }
@@ -107,7 +115,6 @@ void ShadowScene::PostRender()
 
 void ShadowScene::GUIRender()
 {
-//    valphalk->GUIRender();
     //forest->GUIRender();
     valphalk->GUIRender();
     player->GUIRender(); // 디버그 조작용

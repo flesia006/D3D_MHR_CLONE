@@ -13,7 +13,7 @@ ModelExportScene::ModelExportScene()
 //    exporter->ExportMesh();
 //    delete exporter;    
 //    
-    clipName = "L_135";
+    clipName = "L_133";
     file = "Models/Animations/" + name + "/" + clipName + ".fbx";
     exporter = new ModelExporter(name, file);
     exporter->ExportClip(clipName);    

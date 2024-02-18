@@ -833,65 +833,65 @@ void Player::TermAttackUpdate()
 
 	if (isHitL133)
 	{
-		TermAttackTimer += DELTA;
+		TermAttackTimer2 += DELTA;
 		int dmg = 0;
 		if		(UI->cotingLevel == 2) dmg = 28;
 		else if (UI->cotingLevel == 1) dmg = 17.5f;
 		else if (UI->cotingLevel == 0) dmg = 10.5f;
 
 
-		if (TermAttackTimer > 0.6 && TermAttackTimer < 0.65)
+		if (TermAttackTimer2 > 0.6 && TermAttackTimer2 < 0.65)
 		{
-			if (!playOncePerTerm)
+			if (!playOncePerTerm2)
 			{
 				AttackWOCollision(dmg);
-				playOncePerTerm = true;
+				playOncePerTerm2 = true;
 			}
 		}
-		else if (TermAttackTimer > 0.70f && TermAttackTimer < 0.75f)
+		else if (TermAttackTimer2 > 0.70f && TermAttackTimer2 < 0.75f)
 		{
-			if (playOncePerTerm)
+			if (playOncePerTerm2)
 			{
 				AttackWOCollision(dmg);
-				playOncePerTerm = false;
+				playOncePerTerm2 = false;
 			}
 		}
-		else if (TermAttackTimer > 0.80f && TermAttackTimer < 0.85f)
+		else if (TermAttackTimer2 > 0.80f && TermAttackTimer2 < 0.85f)
 		{
-			if (!playOncePerTerm)
+			if (!playOncePerTerm2)
 			{
 				AttackWOCollision(dmg);
-				playOncePerTerm = true;
+				playOncePerTerm2 = true;
 			}
 		}
-		if (TermAttackTimer > 0.9 && TermAttackTimer < 0.95)
+		if (TermAttackTimer2 > 0.9 && TermAttackTimer2 < 0.95)
 		{
-			if (playOncePerTerm)
+			if (playOncePerTerm2)
 			{
 				AttackWOCollision(dmg);
-				playOncePerTerm = false;
+				playOncePerTerm2 = false;
 			}
 		}
-		else if (TermAttackTimer > 1.0f && TermAttackTimer < 1.05f)
+		else if (TermAttackTimer2 > 1.0f && TermAttackTimer2 < 1.05f)
 		{
-			if (!playOncePerTerm)
+			if (!playOncePerTerm2)
 			{
 				AttackWOCollision(dmg);
-				playOncePerTerm = true;
+				playOncePerTerm2 = true;
 			}
 		}
-		else if (TermAttackTimer > 1.1f && TermAttackTimer < 1.15f)
+		else if (TermAttackTimer2 > 1.1f && TermAttackTimer2 < 1.15f)
 		{
-			if (playOncePerTerm)
+			if (playOncePerTerm2)
 			{
 				AttackWOCollision(dmg);
-				playOncePerTerm = false;
+				playOncePerTerm2 = false;
 			}
 		}
-		else if (TermAttackTimer > 1.2f)
+		else if (TermAttackTimer2 > 1.2f)
 		{
 			isHitL133 = false;
-			TermAttackTimer = 0.0;
+			TermAttackTimer2 = 0.0;
 		}
 	}
 
@@ -1931,16 +1931,23 @@ void Player::L122()
 void Player::L128()	// 날라차기 시작
 {
 	PLAY;
-	if (!playOncePerTerm)
+	if (!playOncePerMotion)
 	{
 		UI->UseBugSkill();
-		playOncePerTerm = true;
+		playOncePerMotion = true;
 	}
+
+	// 줌 정상화 (앉아 기인 회전 베기에서 넘어온 경우)
+	{
+		if (RATIO > 0 && RATIO < 0.9)
+			CAM->Zoom(300, 5);
+	}
+
 
 	if (RATIO > 0.98)
 	{
 		SetState(L_130);
-		playOncePerTerm = false;
+		playOncePerMotion = false;
 	}
 }
 
@@ -1953,7 +1960,7 @@ void Player::L130()	// 날라차기 체공중
 		if(Jump(850))
 		// 공격판정 프레임
 		{
-			if (CollisionCheck())
+			if (CollisionCheck() && Pos().y > 50 )
 			{
 				if(K_CTRL)	SetState(L_133);  // 투구깨기
 				else	 	SetState(L_136);  // 낙하찌르기
@@ -2114,7 +2121,8 @@ void Player::L147() // 간파베기
 		else if (K_RMB)			SetState(L_104);	// 찌르기		
 		else if (K_LMBRMB)		SetState(L_103);	// 베어내리기		
 		else if (K_CTRLSPACE)	SetState(L_151);	// 특수 납도
-		else if (K_CTRL)		SetState(L_109);	// 기인큰회전베기 (TODO :: 이건 조건 따져야함)		
+		else if (K_CTRL)		SetState(L_109);	// 기인큰회전베기 (TODO :: 이건 조건 따져야함)	
+		else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// 날라차기
 		else if (K_SPACE)		Roll();				// 구르기
 	}
 
@@ -2217,6 +2225,7 @@ void Player::L154() // 앉아발도 베기
 			else if (K_RMB)			SetState(L_104); // 찌르기
 			else if (K_CTRL)		SetState(L_106); // 기인 베기 1		
 			else if (K_CTRLRMB)		SetState(L_147); // 간파 베기
+			else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// 날라차기
 			else if (K_SPACE)		Roll();			 // 구르기
 		}
 	}
@@ -2266,6 +2275,7 @@ void Player::L155() // 앉아발도 기인베기
 			if		(K_LMB)			SetState(L_101); // 내디뎌베기
 			else if (K_CTRL)		SetState(L_108); // 기인 베기 3		
 			else if (K_CTRLSPACE)	SetState(L_151); // 특수 납도
+			else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// 날라차기
 			else if (K_SPACE)		Roll();			 // 구르기
 		}
 	}

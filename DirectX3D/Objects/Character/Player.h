@@ -218,6 +218,7 @@ private:
 	bool isHitL155 = false;
 	bool isHitL133 = false;
 	float TermAttackTimer = 0.0f;
+	float TermAttackTimer2 = 0.0f;
 
 	POINT clientCenterPos = { WIN_WIDTH / 2, WIN_HEIGHT >> 1 };
 
@@ -252,7 +253,9 @@ private:
 
 	bool attackOnlyOncePerMotion = false;
 	bool isDoubleStrikeMotion = false;
+	bool playOncePerMotion = false;
 	bool playOncePerTerm = false;
+	bool playOncePerTerm2 = false;
 
 	bool renderEffect = false;
 	bool holdingSword = false;
