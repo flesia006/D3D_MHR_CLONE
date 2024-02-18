@@ -8,6 +8,11 @@ ShadowScene::ShadowScene()
     forest->Pos() += Vector3::Back() * 16000;
     forest->UpdateWorld();
 
+    skyDom = new Model("SkyDom");
+    skyDom->Scale() *= 100;
+    skyDom->Pos().y -= 25000;
+    skyDom->UpdateWorld();
+
 
     valphalk = new Valphalk();
     valphalk->Pos().z -= 1500.0f;
@@ -22,17 +27,17 @@ ShadowScene::ShadowScene()
     light = Environment::Get()->GetLight(0);
 
     light->type = 0;
-    light->pos = { 0, 2000, +1000 };
+    light->pos = { 0, 3000, +3000 };
     light->range = 3000;
 
-    light->direction = { 0, -1, 1 };
+    light->direction = { -0.1, -1, 0.1 };
     light->color = { 1, 1, 1, 1 };
 
     light->length;
     light->inner;   //조명 집중 범위 (빛이 집중되어 쏘이는 범위...의 비중)
     light->outer;   //조명 외곽 범위 (빛이 흩어져서 비치는 범위...의 비중)
 
-    skyBox = new SkyBox(L"Textures/Landscape/SpaceSky.dds");
+    skyBox = new SkyBox(L"Textures/Landscape/Texture3.dds");
     Sounds::Get()->AddSound("Valphalk_Thema", SoundPath + L"Valphalk_Thema.mp3",true);
     Sounds::Get()->Play("Valphalk_Thema", 0.03f);
     Sounds::Get()->AddSound("health_potion", SoundPath + L"health_potion.mp3");
@@ -61,6 +66,8 @@ void ShadowScene::Update()
     forest->UpdateWorld();
     valphalk->Update();
     player->Update();
+    skyDom->Rot().y += 0.025 * DELTA;
+    skyDom->UpdateWorld();
     UIManager::Get()->Update();
 
     if (player->getCollider()->IsCapsuleCollision(valphalk->GetCollider()[Valphalk::HEAD]))
@@ -84,10 +91,11 @@ void ShadowScene::PreRender()
 
 void ShadowScene::Render()
 {
-    skyBox->Render();
+    //skyBox->Render();
 
     //위 함수에서 만들어진 텍스처를 그림자에서 렌더 대상으로 세팅
     shadow->SetRender();
+
 
     //그림자를 받기 위한 셰이더 세팅
     forest->SetShader(L"Light/Shadow.hlsl");
@@ -99,6 +107,7 @@ void ShadowScene::Render()
     {
         forest->Render();
         valphalk->Render();
+        skyDom->Render();
     }
     rasterizerSatate[0]->SetState();
     player->Render();
@@ -114,7 +123,8 @@ void ShadowScene::PostRender()
 
 void ShadowScene::GUIRender()
 {
-    valphalk->GUIRender();
-    player->GUIRender(); // 디버그 조작용
-    UIManager::Get()->GUIRender();
+    skyDom->GUIRender();
+    //valphalk->GUIRender();
+    //player->GUIRender(); // 디버그 조작용
+    //UIManager::Get()->GUIRender();
 }
