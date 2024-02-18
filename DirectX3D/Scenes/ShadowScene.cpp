@@ -66,7 +66,7 @@ void ShadowScene::Update()
     forest->UpdateWorld();
     valphalk->Update();
     player->Update();
-    skyDom->Rot().y += 0.02 * DELTA;
+    skyDom->Rot().y += 0.025 * DELTA;
     skyDom->UpdateWorld();
     UIManager::Get()->Update();
 
