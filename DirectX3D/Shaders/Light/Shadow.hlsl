@@ -64,6 +64,7 @@ float4 PS(PixelInput input) : SV_TARGET
 		
 	material.diffuseColor = diffuseMap.Sample(samp, input.uv);
 	material.specularIntensity = specularMap.Sample(samp, input.uv);
+	material.emissiveIntensity = emissiveMap.Sample(samp, input.uv);
 	material.viewPos = input.viewPos;
 	material.worldPos = input.worldPos;
 	
@@ -88,7 +89,8 @@ float4 PS(PixelInput input) : SV_TARGET
 	}
 	
 	float4 ambient = CalcAmbient(material);	
-	float4 emissive = mEmissive;
+    float4 emissive = CalcEmissive(material);
+	//float4 emissive = mEmissive;
 	
 	color = color + ambient + emissive;
 	

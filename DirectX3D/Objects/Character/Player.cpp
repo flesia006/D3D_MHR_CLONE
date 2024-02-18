@@ -215,7 +215,7 @@ void Player::Potion()
 
 void Player::GUIRender()
 {
-//	ModelAnimator::GUIRender();
+	ModelAnimator::GUIRender();
 
 //	trail->GetMaterial()->GUIRender();
 //	hitParticle->GUIRender();

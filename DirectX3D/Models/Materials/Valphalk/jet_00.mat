@@ -1,6 +1,6 @@
 <Material Name="jet_00">
     <Shader Vertex="" Pixel="Shaders/Light/Shadow.hlsl"/>
-    <Texture Diffuse="Textures\Model\Valphalk\albd.tga" Specular="Textures/Color/White.png" Normal="Textures\Model\Valphalk\normal.tga"/>
+    <Texture Diffuse="Textures\Model\Valphalk\albd.tga" Specular="Textures/Color/White.png" Normal="Textures\Model\Valphalk\normal.tga" Emissive="Textures\Model\Valphalk\emissive.png"/>
     <Property Shininess="20" HasNormalMap="1">
         <Diffuse R="0.80000001" G="0.80000001" B="0.80000001" A="1"/>
         <Specular R="0.80000001" G="0.80000001" B="0.80000001" A="1"/>
