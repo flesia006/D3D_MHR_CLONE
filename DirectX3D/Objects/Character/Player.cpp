@@ -216,7 +216,6 @@ void Player::Potion()
 void Player::GUIRender()
 {
 	ModelAnimator::GUIRender();
-
 //	trail->GetMaterial()->GUIRender();
 //	hitParticle->GUIRender();
 
@@ -734,6 +733,7 @@ void Player::SetAnimation()
 
 void Player::Roll()
 {
+	moveSpeed = 400;
 	Vector3 CAMLeftForward = CAM->Back() + CAM->Right();
 	Vector3 CAMRightForward = CAM->Back() + CAM->Left();
 	Vector3 CAMLeftBack = CAM->Right() + CAM->Forward();
@@ -1416,7 +1416,7 @@ void Player::L004() // 발도상태 걷기 중 // 루프
 void Player::L005() // 발도상태 걷기 시작 (발돋움)
 {
 	PLAY;
-
+	
 	if (KEY_PRESS(VK_LSHIFT))		SetState(S_009); // 납도	
 	else if (K_LMB)		SetState(L_101);	// 101 내디뎌 베기	
 	else if (K_RMB)		SetState(L_104);	// 104 찌르기	
@@ -2032,7 +2032,11 @@ void Player::L130()	// 날라차기 체공중
 			{
 				if (Attack(2, true, 3))
 				{
-					if (K_CTRL)	SetState(L_133);  // 투구깨기
+					if (K_CTRL && UIManager::Get()->GetCotingLevel() > 0)
+					{
+						UIManager::Get()->MinusCotingLevel();
+						SetState(L_133);  // 투구깨기
+					}
 					else	 	SetState(L_136);  // 낙하찌르기
 				}
 			}
@@ -2059,7 +2063,11 @@ void Player::L131() // 체공 루프
 		{
 			if (Attack(2,true, 3))
 			{
-				if (K_CTRL)	SetState(L_133);  // 투구깨기
+				if (K_CTRL && UIManager::Get()->GetCotingLevel() > 0) 
+				{
+					UIManager::Get()->MinusCotingLevel();
+					SetState(L_133);
+				}  // 투구깨기
 				else	 	SetState(L_136);  // 낙하찌르기
 			}
 
@@ -2082,7 +2090,6 @@ void Player::L132()
 void Player::L133()	// 투구깨기
 {
 	PLAY;
-
 	// 체공중
 	{
 		if (RATIO < 0.38) // 줌아웃

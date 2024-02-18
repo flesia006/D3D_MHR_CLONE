@@ -3,21 +3,21 @@
 
 ModelExportScene::ModelExportScene()
 {
-    string name = "Garuk";
+    string name = "Ground";
     string file = "Models/FBX/" + name + ".fbx";
     ModelExporter* exporter;
     string clipName;
 
-//    exporter = new ModelExporter(name, file);
-//    exporter->ExportMaterial();
-//    exporter->ExportMesh();
-//    delete exporter;    
-//    
-    clipName = "L_133";
-    file = "Models/Animations/" + name + "/" + clipName + ".fbx";
     exporter = new ModelExporter(name, file);
-    exporter->ExportClip(clipName);    
-    delete exporter;
+    exporter->ExportMaterial();
+    exporter->ExportMesh();
+    delete exporter;    
+    
+//    clipName = "L_133";
+//    file = "Models/Animations/" + name + "/" + clipName + ".fbx";
+//    exporter = new ModelExporter(name, file);
+//    exporter->ExportClip(clipName);    
+//    delete exporter;
 
 //    clipName = "L_153";
 //    file = "Models/Animations/" + name + "/" + clipName + ".fbx";
@@ -25,11 +25,11 @@ ModelExportScene::ModelExportScene()
 //    exporter->ExportClip(clipName);
 //    delete exporter;
     
-    clipName = "G_024";
-    file = "Models/Animations/" + name + "/" + clipName + ".fbx";
-    exporter = new ModelExporter(name, file);
-    exporter->ExportClip(clipName);
-    delete exporter;
+//    clipName = "G_024";
+//    file = "Models/Animations/" + name + "/" + clipName + ".fbx";
+//    exporter = new ModelExporter(name, file);
+//    exporter->ExportClip(clipName);
+//    delete exporter;
     
     //clipName = "Walk";
     //file = "Models/Animations/" + name + "/" + clipName + ".fbx";
