@@ -144,7 +144,7 @@ void Valphalk::GUIRender()
 
 	for (CapsuleCollider* capsulCollider : colliders)
 	{
-		capsulCollider->GUIRender();
+	//	capsulCollider->GUIRender();
 	}
 
 	ImGui::SliderFloat3("ValphalkPos", (float*)&Pos(), 0, 100);
