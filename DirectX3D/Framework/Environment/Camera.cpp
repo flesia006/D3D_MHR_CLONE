@@ -32,12 +32,19 @@ void Camera::Update()
     Frustum();
 
     if (target)
-        //FollowMode();
         ThirdPresonViewMode();
+        //FreeMode();
+
+        //FollowMode();
     else
         FreeMode();
 
     UpdateWorld();    
+
+    if (KEY_DOWN(VK_F4))
+        freeCam = true;
+    if (KEY_DOWN(VK_F5))
+        freeCam = false;
 }
 
 void Camera::GUIRender()
@@ -209,16 +216,24 @@ void Camera::FollowMode()
 
 void Camera::ThirdPresonViewMode()
 {
-    Vector3 delta = mousePos - prevMousePos;
-    prevMousePos = mousePos;
+    if (freeCam == true)
+    {
+        FreeMode();
+        return;
+    }
+    if (freeCam == false)
+    {
+        Vector3 delta = mousePos - prevMousePos;
+        prevMousePos = mousePos;
 
-    sightRot->Rot().x -= delta.y * rotSpeed * DELTA;
-    sightRot->Rot().x = Clamp(-XM_PIDIV2 + 0.5f, XM_PIDIV2 - 0.01f, sightRot->Rot().x);
-    sightRot->Rot().y += delta.x * rotSpeed * DELTA;
-    sightRot->UpdateWorld();
+        sightRot->Rot().x -= delta.y * rotSpeed * DELTA;
+        sightRot->Rot().x = Clamp(-XM_PIDIV2 + 0.5f, XM_PIDIV2 - 0.01f, sightRot->Rot().x);
+        sightRot->Rot().y += delta.x * rotSpeed * DELTA;
+        sightRot->UpdateWorld();
 
-    CAM->Rot() = sightRot->Rot();
-    CAM->Pos() = target->GlobalPos() + sightRot->Back() * distance * 1.6;
+        CAM->Rot() = sightRot->Rot();
+        CAM->Pos() = target->GlobalPos() + sightRot->Back() * distance * 1.6;
+    }
 
     // 만약 카메라가 지면을 파고든다? (TODO : Terrain 만들면 그에 맞게 수정)
 

@@ -7,6 +7,19 @@ ShadowScene::ShadowScene()
     forest = new Model("GroundAll(fix)");
     forest->Pos() += Vector3::Back() * 16000;
     //forest->Scale() *= 0.1f;
+    //terrain = new Terrain();
+    //terrain->Scale() *= 30;
+    //terrain->GlobalScale() *= 30;
+    //terrain->GetSize();
+    //terrain->UpdateWorld();
+    //aStar = new AStar(30, 30);        
+    //aStar->SetNode(terrain);
+
+    garuk = new Garuk();
+    //garuk->SetTerrain(terrain);
+    //garuk->SetAStar(aStar);
+    forest = new Model("Forest");
+    forest->Scale() *= 10;
     forest->UpdateWorld();
 
     valphalk = new Valphalk();
@@ -41,6 +54,8 @@ ShadowScene::ShadowScene()
     Sounds::Get()->Play("Valphalk_Thema", 0.03f);
     Sounds::Get()->AddSound("health_potion", SoundPath + L"health_potion.mp3");
 
+    garuk->SetTarget(player);
+    //aStar->Update();    
     FOR(2)
         rasterizerSatate[i] = new RasterizerState();
     rasterizerSatate[1]->CullMode(D3D11_CULL_NONE);
@@ -53,6 +68,11 @@ ShadowScene::~ShadowScene()
     delete player;
     delete shadow;
     delete skyBox;
+
+    //delete terrain;
+    //delete aStar;
+    delete garuk;
+
     FOR(2)
         delete rasterizerSatate[i];
 }
@@ -70,12 +90,17 @@ void ShadowScene::Update()
     player->Update();
     otomo->Update();
     skyBox->UpdateWorld();
+    garuk->Update();
     UIManager::Get()->Update();
 
     if (player->getCollider()->IsCapsuleCollision(valphalk->GetCollider()[Valphalk::HEAD]))
     {
         UIManager::Get()->Hit(valphalk->damage);
     }
+    //aStar->Update();
+    //garuk->Control(player);
+
+
 
 }
 
@@ -89,10 +114,12 @@ void ShadowScene::PreRender()
     player->SetShader(L"Light/DepthMap.hlsl");
     otomo->SetShader(L"Light/DepthMap.hlsl");
     
+    garuk->SetShader(L"Light/DepthMap.hlsl");
     //조건에 따라 픽셀이 바뀐 인간을 렌더...해서 텍스처를 준비
     valphalk->Render();
     player->Render();
     otomo->Render();
+    garuk->Render();
 }
 
 void ShadowScene::Render()
@@ -101,12 +128,16 @@ void ShadowScene::Render()
 
     //위 함수에서 만들어진 텍스처를 그림자에서 렌더 대상으로 세팅
     shadow->SetRender();
+    
+    //terrain->Render();
+    //aStar->Render();    
 
     //그림자를 받기 위한 셰이더 세팅
     forest->SetShader(L"Light/Shadow.hlsl");
     valphalk->SetShader(L"Light/Shadow.hlsl");
     player->SetShader(L"Light/Shadow.hlsl");
     otomo->SetShader(L"Light/Shadow.hlsl");
+    garuk->SetShader(L"Light/Shadow.hlsl");
     //셰이더가 세팅된 배경과 인간을 진짜 호출
 
     rasterizerSatate[1]->SetState();
@@ -116,6 +147,7 @@ void ShadowScene::Render()
     rasterizerSatate[0]->SetState();
 
     player->Render();
+    garuk->Render();
 
 }
 

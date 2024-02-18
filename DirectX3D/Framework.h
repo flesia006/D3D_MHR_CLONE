@@ -212,6 +212,7 @@ using namespace GameMath;
 #include "Objects/Character/Naruto.h"
 #include "Objects/Character/Robot.h"
 #include "Objects/Character/Fox.h"
+#include "Objects/Character/Garuk.h"
 #include "Objects/Character/Player.h"
 #include "Objects/Character/Valphalk.h"
 

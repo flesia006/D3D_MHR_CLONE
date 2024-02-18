@@ -40,11 +40,19 @@ public:
 
     float PlusSpritGauge()   { return curSpiritGauge += 15; }   // 기인게이지 늘리는 함수
     float MinusSpiritGauge() { return curSpiritGauge -= 10; }   // 기인게이지 깎는 함수
+
+    float GetCotingLevel() { return cotingLevel; }
     float PlusCotingLevel()  {  
         cotingLevel++; // 코팅레벨++
         if (cotingLevel > 3) cotingLevel = 3;
         return cotingLevel;
-    }          
+    }    
+    float MinusCotingLevel() {
+        cotingLevel--; // 코팅레벨--
+        if (cotingLevel <= 0) cotingLevel = 0;
+        curCoting = maxCoting;
+        return cotingLevel;
+    }
 
     float GetCotingLevelCoefft()
     {

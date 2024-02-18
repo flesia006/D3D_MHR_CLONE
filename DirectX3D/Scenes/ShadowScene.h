@@ -27,6 +27,10 @@ private:
     SkyBox* skyBox;
     LightBuffer::Light* light; //빛 사용하기
 
+private:
+    //Terrain* terrain;
+    //AStar* aStar;
+    Garuk* garuk;
     RasterizerState* rasterizerSatate[2];
 
 };

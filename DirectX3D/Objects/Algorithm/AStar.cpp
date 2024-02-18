@@ -168,7 +168,7 @@ void AStar::SetNode(Terrain* terrain)
     //배치간격 구하기
     interval.x = mapSize.x / width; //맵 크기를 길찾기의 가로로 나누기
     interval.y = mapSize.y / height;
-
+    interval *= 30;
     nodes.reserve((width + 1) * (height + 1)); // +1 : 크기 연산과 벡터 순번 연산 오차
 
     for (UINT z = 0; z <= height; ++z)
@@ -183,7 +183,7 @@ void AStar::SetNode(Terrain* terrain)
             pos.y = terrain->GetHeight(pos); //지형에 의한 높이
 
             nodes.push_back(new Node(pos, nodes.size()));
-            nodes.back()->Scale() = { interval.x, 50, interval.y }; // 노드의 크기 : 가로세로 = 간격
+            nodes.back()->Scale() = { interval.x, 200, interval.y }; // 노드의 크기 : 가로세로 = 간격
                                                                     // 높이 : "아무튼 지형 안에서 점프하는 걸로는 못 벗어날 정도로"
             nodes.back()->UpdateWorld();
 

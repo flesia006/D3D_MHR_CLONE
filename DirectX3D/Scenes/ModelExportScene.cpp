@@ -25,11 +25,11 @@ ModelExportScene::ModelExportScene()
 //    exporter->ExportClip(clipName);
 //    delete exporter;
     
-    //clipName = "S_008";
-    //file = "Models/Animations/" + name + "/" + clipName + ".fbx";
-    //exporter = new ModelExporter(name, file);
-    //exporter->ExportClip(clipName);
-    //delete exporter;
+//    clipName = "G_024";
+//    file = "Models/Animations/" + name + "/" + clipName + ".fbx";
+//    exporter = new ModelExporter(name, file);
+//    exporter->ExportClip(clipName);
+//    delete exporter;
     
     //clipName = "Walk";
     //file = "Models/Animations/" + name + "/" + clipName + ".fbx";

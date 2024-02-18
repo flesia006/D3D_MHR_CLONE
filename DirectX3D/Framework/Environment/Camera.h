@@ -51,7 +51,7 @@ private:
     Vector3 planes[6];
     float a, b, c, d;
 
-    float moveSpeed = 50.0f;
+    float moveSpeed = 500.0f;
     float rotSpeed = 10.0f;
 
     Vector3 prevMousePos;
@@ -80,4 +80,6 @@ private:
     BoxCollider* ground = nullptr;
     Ray sight;
     Transform* sightRot;
+
+    bool freeCam = false;
 };

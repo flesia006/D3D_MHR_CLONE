@@ -17,6 +17,7 @@ Terrain::Terrain()
     MakeNormal();
     MakeTangent();
     mesh->CreateMesh();
+    Scale() *= 30;
 }
 
 Terrain::~Terrain()
