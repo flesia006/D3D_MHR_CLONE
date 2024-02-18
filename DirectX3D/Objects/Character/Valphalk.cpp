@@ -8,7 +8,6 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 	// 아래 있는게 첫 포효
 	ReadClip("E_4013");
 
-	this->AddMaterial();
 
 	FOR(Valphalk::TAIL+1)
 	{
@@ -19,13 +18,16 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 	}
 
 	colliders[HEAD]->part = HEAD;
+	colliders[HEAD]->SetTag("Head");
 
 	colliders[BODY]->Scale() *= 2.0f; // 몸통
 	colliders[BODY]->Rot().x += 4.8f;
 	colliders[BODY]->part = BODY;
+	colliders[BODY]->SetTag("Body");
 
 	colliders[LWING]->Scale() *= 3.0f; // 왼쪽 날개
 	colliders[LWING]->part = LWING;
+	colliders[LWING]->SetTag("LWing");
 
 	colliders[RWING]->Scale() *= 3.0f; // 오른쪽 날개
 	colliders[RWING]->part = RWING;
@@ -123,10 +125,10 @@ void Valphalk::PreRender()
 
 void Valphalk::Render()
 {
-	//for (CapsuleCollider* capsulCollider : colliders)
-	//{
-	//	capsulCollider->Render();;
-	//}
+	for (CapsuleCollider* capsulCollider : colliders)
+	{
+		capsulCollider->Render();;
+	}
 
 	if (Count <= 1)
 	{
@@ -139,10 +141,11 @@ void Valphalk::Render()
 void Valphalk::GUIRender()
 {
 	ModelAnimator::GUIRender();
-	//for (CapsuleCollider* capsulCollider : colliders)
-	//{
+
+	for (CapsuleCollider* capsulCollider : colliders)
+	{
 	//	capsulCollider->GUIRender();
-	//}
+	}
 
 	ImGui::SliderFloat3("ValphalkPos", (float*)&Pos(), 0, 100);
 }

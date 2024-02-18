@@ -220,6 +220,11 @@ void CapsuleCollider::Update()
     UpdateWorld();
 }
 
+void CapsuleCollider::GUIRender()
+{
+    Transform::GUIRender();
+}
+
 void CapsuleCollider::MakeMesh()
 {
     float thetaStep = XM_2PI / sliceCount;

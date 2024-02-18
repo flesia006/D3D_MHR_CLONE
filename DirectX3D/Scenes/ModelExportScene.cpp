@@ -3,7 +3,7 @@
 
 ModelExportScene::ModelExportScene()
 {
-    string name = "Ground";
+    string name = "GroundAll(fix)";
     string file = "Models/FBX/" + name + ".fbx";
     ModelExporter* exporter;
     string clipName;
@@ -12,8 +12,8 @@ ModelExportScene::ModelExportScene()
     exporter->ExportMaterial();
     exporter->ExportMesh();
     delete exporter;    
-    
-//    clipName = "L_133";
+//    
+//    clipName = "O_002";
 //    file = "Models/Animations/" + name + "/" + clipName + ".fbx";
 //    exporter = new ModelExporter(name, file);
 //    exporter->ExportClip(clipName);    

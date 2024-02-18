@@ -21,6 +21,7 @@ public:
     Vector3 GetHitPointPos() { return  hitPoint->GlobalPos(); }
 
     void Update();
+    void GUIRender();
 
     int part = 0;
 

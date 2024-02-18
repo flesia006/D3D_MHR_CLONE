@@ -238,9 +238,10 @@ private:
 	float rad;
 	float effectTimer = 0.0f;
 	float L152Timer = 0.0f;
-	float temp = -2.364f;
-	float temp2 = -6.038f;
-	float temp3 = 14.067f;
+
+	const float temp = -2.364f;  // 텍스트 띄우기 용 수치
+	const float temp2 = -6.038f; // 텍스트 띄우기 용 수치
+	const float temp3 = 14.067f; // 텍스트 띄우기 용 수치
 
 	float jumpVelocity = 2.8f;
 	const float originJumpVelocity = jumpVelocity;
