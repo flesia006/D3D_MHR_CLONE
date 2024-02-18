@@ -32,11 +32,12 @@ void Camera::Update()
     Frustum();
 
     if (target)
+        //FreeMode();
+
         //FollowMode();
         ThirdPresonViewMode();
     else
         FreeMode();
-
     UpdateWorld();    
 }
 

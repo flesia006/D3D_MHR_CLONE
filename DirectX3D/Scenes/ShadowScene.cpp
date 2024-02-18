@@ -4,6 +4,17 @@
 
 ShadowScene::ShadowScene()
 {
+    //terrain = new Terrain();
+    //terrain->Scale() *= 30;
+    //terrain->GlobalScale() *= 30;
+    //terrain->GetSize();
+    //terrain->UpdateWorld();
+    //aStar = new AStar(30, 30);        
+    //aStar->SetNode(terrain);
+
+    garuk = new Garuk();
+    //garuk->SetTerrain(terrain);
+    //garuk->SetAStar(aStar);
     forest = new Model("Forest");
     forest->Scale() *= 10;
     forest->UpdateWorld();
@@ -36,7 +47,8 @@ ShadowScene::ShadowScene()
     Sounds::Get()->Play("Valphalk_Thema", 0.03f);
     Sounds::Get()->AddSound("health_potion", SoundPath + L"health_potion.mp3");
 
-
+    garuk->SetTarget(player);
+    //aStar->Update();    
 }
 
 ShadowScene::~ShadowScene()
@@ -45,6 +57,10 @@ ShadowScene::~ShadowScene()
     delete player;
     delete shadow;
     delete skyBox;
+
+    //delete terrain;
+    //delete aStar;
+    delete garuk;
 
 }
 
@@ -58,12 +74,17 @@ void ShadowScene::Update()
     forest->UpdateWorld();
     valphalk->Update();
     player->Update();
+    garuk->Update();
     UIManager::Get()->Update();
 
     if (player->getCollider()->IsCapsuleCollision(valphalk->GetCollider()[Valphalk::HEAD]))
     {
         UIManager::Get()->Hit(valphalk->damage);
     }
+    //aStar->Update();
+    //garuk->Control(player);
+
+
 
 }
 
@@ -75,9 +96,11 @@ void ShadowScene::PreRender()
     //인간한테 뎁스 셰이더를 적용 (조건에 따른 셰이더 변화...등을 가진 조건 함수)
     valphalk->SetShader(L"Light/DepthMap.hlsl");
     player->SetShader(L"Light/DepthMap.hlsl");
+    garuk->SetShader(L"Light/DepthMap.hlsl");
     //조건에 따라 픽셀이 바뀐 인간을 렌더...해서 텍스처를 준비
     valphalk->Render();
     player->Render();
+    garuk->Render();
 }
 
 void ShadowScene::Render()
@@ -86,15 +109,20 @@ void ShadowScene::Render()
 
     //위 함수에서 만들어진 텍스처를 그림자에서 렌더 대상으로 세팅
     shadow->SetRender();
+    
+    //terrain->Render();
+    //aStar->Render();    
 
     //그림자를 받기 위한 셰이더 세팅
     forest->SetShader(L"Light/Shadow.hlsl");
     valphalk->SetShader(L"Light/Shadow.hlsl");
     player->SetShader(L"Light/Shadow.hlsl");
+    garuk->SetShader(L"Light/Shadow.hlsl");
     //셰이더가 세팅된 배경과 인간을 진짜 호출
     forest->Render();
     valphalk->Render();
     player->Render();
+    garuk->Render();
 
 }
 
@@ -108,7 +136,8 @@ void ShadowScene::PostRender()
 void ShadowScene::GUIRender()
 {
     //forest->GUIRender();
-    valphalk->GUIRender();
-    player->GUIRender(); // 디버그 조작용
+    //valphalk->GUIRender();
+    //player->GUIRender(); // 디버그 조작용
+    garuk->GUIRender();
     UIManager::Get()->GUIRender();
 }

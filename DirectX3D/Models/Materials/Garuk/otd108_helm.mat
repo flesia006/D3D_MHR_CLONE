@@ -1,6 +1,6 @@
-<Material Name="film_00">
+<Material Name="otd108_helm">
     <Shader Vertex="" Pixel="Shaders/Light/Shadow.hlsl"/>
-    <Texture Diffuse="Textures\Model\boss\albd.png" Specular="Textures/Color/White.png" Normal="Textures/Color/White.png" Emissive="Textures\Model\boss\albd.png"/>
+    <Texture Diffuse="Textures\Model\Garuk\helm108_ALBD.png" Specular="Textures/Color/White.png" Normal="Textures/Color/White.png" Emissive="Textures\Model\Garuk\helm108_EMI.png"/>
     <Property Shininess="20" HasNormalMap="0">
         <Diffuse R="0.80000001" G="0.80000001" B="0.80000001" A="1"/>
         <Specular R="0.80000001" G="0.80000001" B="0.80000001" A="1"/>
