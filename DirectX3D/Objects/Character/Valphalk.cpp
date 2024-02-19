@@ -297,7 +297,7 @@ void Valphalk::Update()
 	//}
 	//
 	//// 잘 들어갔나 확인하기 용 코드
-	if (KEY_DOWN('U'))
+	if (KEY_DOWN('1'))
 	{
 		SetState(STUN);
 	//	//PlayClip(0);
@@ -307,16 +307,16 @@ void Valphalk::Update()
 	//	SetState(E_2005);
 	//	//PlayClip(1);
 	//}
-	if (KEY_DOWN('I'))
+	if (KEY_DOWN('2'))
 	{
 		SetState(E_4013);
 		//PlayClip(1);
 	}
-	if (KEY_DOWN('O'))
+	if (KEY_DOWN('3'))
 	{
 		SetState(E_0043);
 	}
-	if (KEY_DOWN('P'))
+	if (KEY_DOWN('4'))
 	{
 		SetState(E_0044);
 	}

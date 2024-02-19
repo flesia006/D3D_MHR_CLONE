@@ -222,7 +222,7 @@ void CapsuleCollider::Update()
 
 void CapsuleCollider::GUIRender()
 {
-    GameObject::GUIRender();
+    Transform::GUIRender();
 }
 
 void CapsuleCollider::MakeMesh()

@@ -52,15 +52,11 @@ ShadowScene::ShadowScene()
     Sounds::Get()->AddSound("Valphalk_Thema", SoundPath + L"Valphalk_Thema.mp3",true);
     Sounds::Get()->Play("Valphalk_Thema", 0.03f);
     Sounds::Get()->AddSound("health_potion", SoundPath + L"health_potion.mp3");
-    skyBox = new SkyBox(L"Textures/Landscape/Texture3.dds");
 
     FOR(2) rasterizerState[i] = new RasterizerState();
     FOR(2) blendState[i] = new BlendState();
     blendState[1]->Additive();
     rasterizerState[1]->CullMode(D3D11_CULL_NONE);
-
-    FOR(2) rasterizerSatate[i] = new RasterizerState();
-    rasterizerSatate[1]->CullMode(D3D11_CULL_NONE);
 
     AddSounds();
 }
