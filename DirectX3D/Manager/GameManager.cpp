@@ -1,29 +1,31 @@
 #include "Framework.h"
 
-#include "Scenes/CubeScene.h"
-#include "Scenes/GridScene.h"
-#include "Scenes/SphereScene.h"
-#include "Scenes/TerrainEditorScene.h"
-#include "Scenes/CollisionScene.h"
 #include "Scenes/ModelExportScene.h"
-#include "Scenes/ModelRenderScene.h"
-#include "Scenes/ModelAnimationScene.h"
-#include "Scenes/IntancingScene.h"
-#include "Scenes/HumanScene.h"
-#include "Scenes/GameScene.h"
-#include "Scenes/RenderTargetScene.h"
-#include "Scenes/GBufferScene.h"
 #include "Scenes/ShadowScene.h"
-#include "Scenes/AStarScene.h"
-#include "Scenes/LightScene.h"
-#include "Scenes/BillboardScene.h"
-#include "Scenes/ParticleScene.h"
 #include "Scenes/ParticleConfigScene.h"
-#include "Scenes/MirrorScene.h"
-#include "Scenes/WaterScene.h"
-#include "Scenes/QuadTreeScene.h"
-#include "Scenes/TessellationScene.h"
-#include "Scenes/TerrainLODScene.h"
+#include "Scenes/GridScene.h"
+#include "Scenes/MapDesignScene.h"
+
+#include "Scenes/NotUse/CubeScene.h"
+#include "Scenes/NotUse/SphereScene.h"
+#include "Scenes/NotUse/TerrainEditorScene.h"
+#include "Scenes/NotUse/CollisionScene.h"
+#include "Scenes/NotUse/ModelRenderScene.h"
+#include "Scenes/NotUse/ModelAnimationScene.h"
+#include "Scenes/NotUse/IntancingScene.h"
+#include "Scenes/NotUse/HumanScene.h"
+#include "Scenes/NotUse/GameScene.h"
+#include "Scenes/NotUse/RenderTargetScene.h"
+#include "Scenes/NotUse/GBufferScene.h"
+#include "Scenes/NotUse/AStarScene.h"
+#include "Scenes/NotUse/LightScene.h"
+#include "Scenes/NotUse/BillboardScene.h"
+#include "Scenes/NotUse/ParticleScene.h"
+#include "Scenes/NotUse/MirrorScene.h"
+#include "Scenes/NotUse/WaterScene.h"
+#include "Scenes/NotUse/QuadTreeScene.h"
+#include "Scenes/NotUse/TessellationScene.h"
+#include "Scenes/NotUse/TerrainLODScene.h"
 
 // 오늘 진행된 설명 : 궤적 파티클, 다른 특수 파티클(눈, 스파크)
 //                   + 궤적 파티클 적용 (휴먼 클래스에 추가함)
@@ -40,53 +42,19 @@ GameManager::GameManager()
 //    SceneManager::Get()->Add("ModelExport");
 
 
-    SceneManager::Get()->Create("ShadowScene", new ShadowScene());
-    SceneManager::Get()->Add("ShadowScene");
+//    SceneManager::Get()->Create("ShadowScene", new ShadowScene());
+//    SceneManager::Get()->Add("ShadowScene");
 
-
+    SceneManager::Get()->Create("MapDesignScene", new MapDesignScene());
+    SceneManager::Get()->Add("MapDesignScene");
 
 //  SceneManager::Get()->Create("ParticleConfig", new ParticleConfigScene());
 //  SceneManager::Get()->Add("ParticleConfig");
 
-    SceneManager::Get()->Create("Grid", new GridScene());
-    SceneManager::Get()->Add("Grid");
+//    SceneManager::Get()->Create("Grid", new GridScene());
+//    SceneManager::Get()->Add("Grid");
 
-    //SceneManager::Get()->Create("Cube", new CubeScene());
-    //SceneManager::Get()->Create("Sphere", new SphereScene());
-//    SceneManager::Get()->Create("Terrain", new TerrainEditorScene());
-    //SceneManager::Get()->Create("Collision", new CollisionScene());
-    //SceneManager::Get()->Create("ModelRender", new ModelRenderScene());
-    //SceneManager::Get()->Create("ModelAnimationScene", new ModelAnimationScene());
-    //SceneManager::Get()->Create("Instancing", new IntancingScene());
-    //SceneManager::Get()->Create("HumanTest", new HumanScene());
-    //SceneManager::Get()->Create("Game", new GameScene());
-    //SceneManager::Get()->Create("RenderTarget", new RenderTargetScene());
-    //SceneManager::Get()->Create("GeometryBuffer", new GBufferScene());
-    //SceneManager::Get()->Create("ShadowScene", new ShadowScene());
-    //SceneManager::Get()->Create("AStar", new AStarScene());
-    //SceneManager::Get()->Create("LightTest", new LightScene());
-    //SceneManager::Get()->Create("Billboard", new BillboardScene());
-//    SceneManager::Get()->Create("Particle", new ParticleScene());
-    // *작업중 // SceneManager::Get()->Create("MirrorScene", new MirrorScene());
-    //SceneManager::Get()->Create("WaterScene", new WaterScene());
-    //SceneManager::Get()->Create("QuadTree", new QuadTreeScene());
-    //SceneManager::Get()->Create("Tessellation", new TessellationScene());
-    //SceneManager::Get()->Create("LOD", new TerrainLODScene());
-
-    //SceneManager::Get()->Add("HumanTest");
-    //SceneManager::Get()->Add("Game");
-    //SceneManager::Get()->Add("RenderTarget");
-    //SceneManager::Get()->Add("GeometryBuffer");
-    //SceneManager::Get()->Add("ShadowScene");
-    //SceneManager::Get()->Add("AStar");
-    //SceneManager::Get()->Add("LightTest");
-    //SceneManager::Get()->Add("Billboard");
-    SceneManager::Get()->Add("Terrain");
-    //SceneManager::Get()->Add("ParticleConfig");
-    //SceneManager::Get()->Add("MirrorScene");
-    //SceneManager::Get()->Add("WaterScene");
-    //SceneManager::Get()->Add("QuadTree");
-    //SceneManager::Get()->Add("Tessellation");
+//    SceneManager::Get()->Add("Terrain");
 
 
 }

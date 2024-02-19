@@ -4,10 +4,7 @@
 
 ShadowScene::ShadowScene()
 {
-    forest = new Model("GroundAll(fix)");
-    forest->Pos() = Vector3(2062.1f, 346.2f, 17653.896f);
-    forest->Rot().y = XM_PI;
-    forest->UpdateWorld();
+    objects = new M41Objects();
 
     terrain = new TerrainEditor();
 
@@ -32,6 +29,7 @@ ShadowScene::ShadowScene()
     valphalk->UpdateWorld();
 
     player = new Player();
+    player->Pos() = Vector3(2237.314, 460, 6411.237);
     shadow = new Shadow();
     UIManager::Get();
 
@@ -66,7 +64,7 @@ ShadowScene::ShadowScene()
 ShadowScene::~ShadowScene()
 {
     delete garuk;
-    delete forest;
+    delete objects;
     delete player;
     delete shadow;
 
@@ -81,7 +79,7 @@ void ShadowScene::Update()
     terrain->Update();
     garuk->SetTarget(player);
     garuk->Update();
-    forest->UpdateWorld();
+    objects->Update();
     valphalk->Update();
     player->Update();
 
@@ -125,17 +123,16 @@ void ShadowScene::Render()
 
 
     //그림자를 받기 위한 셰이더 세팅
-    forest->SetShader(L"Light/Shadow.hlsl");
     valphalk->SetShader(L"Light/Shadow.hlsl");
     player->SetShader(L"Light/Shadow.hlsl");
     garuk->SetShader(L"Light/Shadow.hlsl");
     //셰이더가 세팅된 배경과 인간을 진짜 호출
 
-    terrain->Render();
+    //terrain->Render();
 
     rasterizerState[1]->SetState(); // 후면도 그림
     {
-        forest->Render();
+        objects->Render();
         ball->Render();
 
         blendState[1]->SetState(); // 반투명
@@ -168,10 +165,10 @@ void ShadowScene::GUIRender()
 //    cloud2->GUIRender();
 //    cloud3->GUIRender();
 //    cloud4->GUIRender();
-    forest->GUIRender();
-    terrain->GUIRender();
+//    forest->GUIRender();
+//    terrain->GUIRender();
 //    valphalk->GUIRender();
-    //player->GUIRender(); // 디버그 조작용
+    player->GUIRender(); // 디버그 조작용
     //UIManager::Get()->GUIRender();
 }
 

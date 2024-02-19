@@ -14,18 +14,18 @@ public:
 
     Valphalk* GetValphalk() { return valphalk; }
     Player* GetPlayer() { return player; }
+    TerrainEditor* GetTerrain() { return terrain; }
 
 private:
     void AddSounds();
+
 private:
-
-    Model* forest;
-
     Player* player;
     Valphalk* valphalk = nullptr;
 
     Shadow* shadow;
 
+    M41Objects* objects;
 
     HalfSphere* ball;
     Model* fog;

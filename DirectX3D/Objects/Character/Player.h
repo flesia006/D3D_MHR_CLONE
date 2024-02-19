@@ -84,6 +84,7 @@ private:
 	void DamageRender();
 
 	bool Jump(float moveSpeed);
+	void GroundCheck();
 
 private:
 	void ReadClips();

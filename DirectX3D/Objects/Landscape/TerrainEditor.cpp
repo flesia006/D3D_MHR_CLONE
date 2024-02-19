@@ -85,26 +85,28 @@ void TerrainEditor::GUIRender()
 {
     ImGui::Text("TerrainEdit Option");
     //ImGui::Text("x : %.1f, y : %.1f, z : %.1f", pickingPos.x, pickingPos.y, pickingPos.z);
-    if (ImGui::DragInt("Width", (int*)&width, 1.0f, 2, MAX_SIZE))
-        Resize();
-    if (ImGui::DragInt("Height", (int*)&height, 1.0f, 2, MAX_SIZE))
-        Resize();
+//    if (ImGui::DragInt("Width", (int*)&width, 1.0f, 2, MAX_SIZE))
+//        Resize();
+//    if (ImGui::DragInt("Height", (int*)&height, 1.0f, 2, MAX_SIZE))
+//        Resize();
 
     if (ImGui::DragInt("Scale", (int*)&offset, 50, 1, 100))
         Resize(offset);
+//
+//    const char* editList[] = { "Height", "Alpha" };
+//    ImGui::Combo("EditType", (int*)&editType, editList, 2);
+//
+//    const char* brushList[] = { "Circle", "SoftCircle", "Rect" };
+//    if (ImGui::Combo("BrushType", (int*)&brushType, brushList, 3))
+//        brushBuffer->Get().type = brushType;
+//
+//    ImGui::DragFloat("Range", &brushBuffer->Get().range, 1.0f, 1.0f, 20.0f);
+//    ImGui::DragFloat("AdjustValue", &adjustValue, 1.0f, -50.0f, 50.0f);
+//    ImGui::ColorEdit3("Color", (float*)&brushBuffer->Get().color);
+//
+//    ImGui::DragInt("SelectMap", (int*)&selectMap, 1.0f, 0, 2);
 
-    const char* editList[] = { "Height", "Alpha" };
-    ImGui::Combo("EditType", (int*)&editType, editList, 2);
-
-    const char* brushList[] = { "Circle", "SoftCircle", "Rect" };
-    if (ImGui::Combo("BrushType", (int*)&brushType, brushList, 3))
-        brushBuffer->Get().type = brushType;
-
-    ImGui::DragFloat("Range", &brushBuffer->Get().range, 1.0f, 1.0f, 20.0f);
-    ImGui::DragFloat("AdjustValue", &adjustValue, 1.0f, -50.0f, 50.0f);
-    ImGui::ColorEdit3("Color", (float*)&brushBuffer->Get().color);
-
-    ImGui::DragInt("SelectMap", (int*)&selectMap, 1.0f, 0, 2);
+    ImGui::DragFloat3("MousePos", (float*)& pickingPos);
 
     SaveHeightMap();
     ImGui::SameLine();
