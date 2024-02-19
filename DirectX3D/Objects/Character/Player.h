@@ -266,6 +266,5 @@ private:
 	Vector3 initForward = Vector3::Zero();
 
 	vector<Damage> damages;
-
 };
 
