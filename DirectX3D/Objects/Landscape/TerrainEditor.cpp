@@ -152,9 +152,20 @@ Vector3 TerrainEditor::Picking()
     return Vector3();
 }
 
-bool TerrainEditor::ComputePicking(Vector3& pos)
+bool TerrainEditor::ComputePicking(Vector3& pos, Vector3 manualPos, Vector3 manualDir)
 {
-    Ray ray = CAM->ScreenPointToRay(mousePos);
+    Ray ray;
+
+    if (manualDir == Vector3())
+    {
+        //마우스 위치에서 광선을 쏘는 걸로
+        ray = CAM->ScreenPointToRay(mousePos); // 마우스의 위치를 매개변수로 주기
+    }
+    else
+    {
+        ray.pos = manualPos;
+        ray.dir = manualDir;
+    }
 
     rayBuffer->Get().pos = ray.pos;
     rayBuffer->Get().dir = ray.dir;
