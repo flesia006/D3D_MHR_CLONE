@@ -4,7 +4,6 @@ class Particle;
 class Trail;
 class Player : public ModelAnimator
 {
-	
 
 private:
 	enum State

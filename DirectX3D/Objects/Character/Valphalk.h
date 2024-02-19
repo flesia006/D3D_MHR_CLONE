@@ -89,6 +89,8 @@ private:
 	void Move();
 	void UpdateUI(); //캐릭터 UI가 있으면 이후 업데이트
 
+	void E4013();
+
 private: // 이벤트 혹은 함수에서 조건이 필요할거 같을때
 	bool LookatPlayer = false;
 	int Count = 0;
@@ -101,6 +103,7 @@ private:
 	ModelAnimatorInstancing::Motion* motion;
 
 	Transform* target;
+	Vector3 initForward = Vector3::Zero();
 
 	// 샘플 무조건 바뀜
 	//float speed = 50; //속력 : 기본 스탯

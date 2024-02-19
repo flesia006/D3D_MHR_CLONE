@@ -38,13 +38,12 @@ ShadowScene::ShadowScene()
     light->outer;   //조명 외곽 범위 (빛이 흩어져서 비치는 범위...의 비중)
 
     skyBox = new SkyBox(L"Textures/Landscape/Texture3.dds");
-    Sounds::Get()->AddSound("Valphalk_Thema", SoundPath + L"Valphalk_Thema.mp3",true);
-    Sounds::Get()->Play("Valphalk_Thema", 0.03f);
-    Sounds::Get()->AddSound("health_potion", SoundPath + L"health_potion.mp3");
+
 
     FOR(2) rasterizerSatate[i] = new RasterizerState();
     rasterizerSatate[1]->CullMode(D3D11_CULL_NONE);
 
+    AddSounds();
 }
 
 ShadowScene::~ShadowScene()
@@ -133,4 +132,44 @@ void ShadowScene::GUIRender()
     //valphalk->GUIRender();
     //player->GUIRender(); // 디버그 조작용
     //UIManager::Get()->GUIRender();
+}
+
+void ShadowScene::AddSounds()
+{    
+    auto sound = Sounds::Get();
+    // Sounds::Get()->AddSound("", SoundPath + L".mp3");
+    // Sounds::Get()->Play("", .5f);
+    /////////////////////////////////////////////////////////////
+    // BGM
+    sound->AddSound("Valphalk_Thema", SoundPath + L"Valphalk_Thema.mp3", true);
+    sound->AddSound("env_114", SoundPath + L"env_114.mp3", true);
+
+    sound->Play("Valphalk_Thema", 0.03f);
+    sound->Play("env_114", .5f);
+    /////////////////////////////////////////////////////////////
+    // Player
+    Sounds::Get()->AddSound("Heeee", SoundPath + L"Heeee.mp3");
+    /////////////////////////////////////////////////////////////
+    // Weapon
+    // 공격시검뽑는소리
+    sound->AddSound("pl_wp_l_swd_com_media.bnk.2_5", SoundPath + L"pl_wp_l_swd_com_media.bnk.2_5.mp3");
+    // 기인베기성공사운드
+    sound->AddSound("pl_wp_l_swd_com_media.bnk.2_8", SoundPath + L"pl_wp_l_swd_com_media.bnk.2_8.mp3");
+    // 납도사운드
+    sound->AddSound("pl_wp_l_swd_com_media.bnk.2_9", SoundPath + L"pl_wp_l_swd_com_media.bnk.2_9.mp3");
+    // 공격시 검뽑는소리2
+    sound->AddSound("pl_wp_l_swd_com_media.bnk.2_25", SoundPath + L"pl_wp_l_swd_com_media.bnk.2_25.mp3");
+    // 앉아발도기인베기 회피추가타
+    sound->AddSound("pl_wp_l_swd_epv_media.bnk.2_8", SoundPath + L"pl_wp_l_swd_epv_media.bnk.2_8.mp3");
+    // 검 휘두르는 바람소리
+    sound->AddSound("pl_wp_l_swd_com_media.bnk.2_7", SoundPath + L"pl_wp_l_swd_com_media.bnk.2_7.mp3");
+
+    /////////////////////////////////////////////////////////////
+    // Item
+    sound->AddSound("health_potion", SoundPath + L"health_potion.mp3");
+
+    /////////////////////////////////////////////////////////////
+    // Valphalk
+    sound->AddSound("em086_05_vo_media_10", SoundPath + L"em086_05_vo_media_10.mp3");
+
 }
