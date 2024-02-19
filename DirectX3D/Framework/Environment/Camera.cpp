@@ -225,6 +225,10 @@ void Camera::ThirdPresonViewMode()
     {
         Vector3 delta = mousePos - prevMousePos;
         prevMousePos = mousePos;
+    if (!KEY_PRESS('X'))
+    {
+        Vector3 delta = mousePos - prevMousePos;
+        prevMousePos = mousePos;
 
         sightRot->Rot().x -= delta.y * rotSpeed * DELTA;
         sightRot->Rot().x = Clamp(-XM_PIDIV2 + 0.5f, XM_PIDIV2 - 0.01f, sightRot->Rot().x);
@@ -235,6 +239,11 @@ void Camera::ThirdPresonViewMode()
         CAM->Pos() = target->GlobalPos() + sightRot->Back() * distance * 1.6;
     }
 
+        CAM->Rot() = sightRot->Rot();
+    }
+    
+    CAM->Pos() = target->GlobalPos() + sightRot->Back() * distance * 1.6;
+    
     // 만약 카메라가 지면을 파고든다? (TODO : Terrain 만들면 그에 맞게 수정)
 
     // 1. 광선(뒤통수의 시선) 만들기

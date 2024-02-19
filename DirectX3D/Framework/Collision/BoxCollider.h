@@ -20,7 +20,8 @@ public:
     virtual bool IsSphereCollision(SphereCollider* collider) override;
     virtual bool IsCapsuleCollision(CapsuleCollider* collider) override;
 
-    void GetObb(ObbDesc& obbDesc);    
+    void GetObb(ObbDesc& obbDesc);
+    void GUIRender();
 
 private:
     bool IsSeperateAxis(Vector3 D, Vector3 axis, ObbDesc box1, ObbDesc box2);

@@ -133,6 +133,11 @@ void BoxCollider::GetObb(ObbDesc& obbDesc)
     obbDesc.halfSize = size * 0.5f * GlobalScale();
 }
 
+void BoxCollider::GUIRender()
+{
+    GameObject::GUIRender();
+}
+
 bool BoxCollider::IsSeperateAxis(Vector3 D, Vector3 axis, ObbDesc box1, ObbDesc box2)
 {
     float distance = abs(Dot(D, axis));
