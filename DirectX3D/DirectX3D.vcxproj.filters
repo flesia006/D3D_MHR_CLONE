@@ -405,6 +405,15 @@
     <ClInclude Include="Objects\Character\Garuk.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="Objects\Basic\HalfSphere.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\Basic\Cylinder2.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\Landscape\M41Objects.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DirectX3D.cpp">
@@ -765,6 +774,15 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Objects\Character\Garuk.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Objects\Basic\HalfSphere.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Objects\Basic\Cylinder2.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Objects\Landscape\M41Objects.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

@@ -12,7 +12,7 @@ Camera::Camera()
     camSphere->SetParent(this);
     camSphere->UpdateWorld();
 
-    ground = new BoxCollider({ FLT_MAX, 0.1, FLT_MAX });
+    ground = new BoxCollider({ FLT_MAX, 20, FLT_MAX });
     ground->UpdateWorld();
 
     prevMousePos = mousePos;
