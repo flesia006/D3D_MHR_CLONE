@@ -45,6 +45,7 @@ public:
     float PlusCotingLevel()  {  
         cotingLevel++; // 코팅레벨++
         if (cotingLevel > 3) cotingLevel = 3;
+        curCoting = maxCoting;
         return cotingLevel;
     }    
     float MinusCotingLevel() {

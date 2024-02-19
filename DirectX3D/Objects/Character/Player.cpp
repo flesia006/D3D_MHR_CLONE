@@ -1564,7 +1564,7 @@ void Player::L101() // 내디뎌베기
 		PlayClip(L_101);
 		MotionRotate(30);
 	}
-	if(RATIO>0.2 && RATIO<0.3)
+	if(RATIO>0.18 && RATIO<0.21)
 		Sounds::Get()->Play("Heeee", .5f);
 
 	if (RATIO < 0.3)
@@ -1617,8 +1617,6 @@ void Player::L102() // 세로베기
 		PlayClip(L_102);
 		MotionRotate(30);
 	}
-	if (RATIO > 0.2 && RATIO < 0.3)
-		Sounds::Get()->Play("Heeee", .5f);
 
 	// 방향 조정 가능 프레임
 	{
@@ -1661,7 +1659,7 @@ void Player::L103() // 베어내리기
 		PlayClip(L_103);
 		MotionRotate(30);
 	}
-	if (RATIO > 0.2 && RATIO < 0.3)
+	if (RATIO > 0.1 && RATIO < 0.15)
 		Sounds::Get()->Play("Heeee", .5f);
 
 	if (RATIO < 0.272)
@@ -1696,8 +1694,6 @@ void Player::L104() // 찌르기
 	PLAY;
 	if(INIT)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_5", .5f);
-	if (RATIO > 0.2 && RATIO < 0.3)
-		Sounds::Get()->Play("Heeee", .5f);
 	// 공격판정 프레임
 	{
 		UIManager::Get()->staminaActive = false;
@@ -1728,7 +1724,7 @@ void Player::L105() // 베어 올리기
 	PLAY;
 	if(INIT)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_5", .5f);
-	if (RATIO > 0.2 && RATIO < 0.3)
+	if (RATIO > 0.1 && RATIO < 0.15)
 		Sounds::Get()->Play("Heeee", .5f);
 	// 공격판정 프레임
 	{
@@ -1762,8 +1758,6 @@ void Player::L106() // 기인 베기 1
 		initForward = Forward();
 		UIManager::Get()->MinusSpiritGauge() ; // 기인게이지 소모하기( 단 1번 )
 	}
-	if (RATIO > 0.2 && RATIO < 0.3)
-		Sounds::Get()->Play("Heeee", .5f);
 	UIManager::Get()->staminaActive = false;
 
 	// 공격판정 프레임
@@ -1795,8 +1789,6 @@ void Player::L107() // 기인베기 2
 	PLAY;
 	if (INIT)
 		UIManager::Get()->MinusSpiritGauge(); // 기인게이지 소모하기( 단 1번 )
-	if (RATIO > 0.2 && RATIO < 0.3)
-		Sounds::Get()->Play("Heeee", .5f);
 
 	// 공격판정 프레임
 	{
@@ -1833,8 +1825,6 @@ void Player::L108() // 기인베기 3
 		initForward = Forward();
 		UIManager::Get()->MinusSpiritGauge(); // 기인게이지 소모하기( 단 1번 )
 	}
-	if (RATIO > 0.2 && RATIO < 0.3)
-		Sounds::Get()->Play("Heeee", .5f);
 	// 줌 정상화 (앉아 기인 회전 베기에서 넘어온 경우)
 	{
 		if (RATIO > 0 && RATIO < 0.45)
@@ -1888,7 +1878,7 @@ void Player::L109() // 기인 큰회전베기
 	PLAY;
 	if (INIT)
 		UIManager::Get()->MinusSpiritGauge(); // 기인게이지 소모하기( 단 1번 )
-	if (RATIO > 0.2 && RATIO < 0.3)
+	if (RATIO > 0.1 && RATIO < 0.15)
 		Sounds::Get()->Play("Heeee", .5f);
 	// 줌인
 	{
@@ -2394,8 +2384,11 @@ void Player::L155() // 앉아발도 기인베기
 	{
 		if (isHit && (RATIO >0.385  && RATIO < 0.39))
 		{
+			if(isHitL155==false)
+			UIManager::Get()->PlusCotingLevel();
+
 			isHitL155 = true;
-			Sounds::Get()->Play("pl_wp_l_swd_epv_media.bnk.2_8", .5f);
+			Sounds::Get()->Play("pl_wp_l_swd_epv_media.bnk.2_8", .5f);			
 
 		}
 	}
