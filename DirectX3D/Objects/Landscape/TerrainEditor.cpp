@@ -8,12 +8,15 @@ TerrainEditor::TerrainEditor()
     secondMap = Texture::Add(L"Textures/Landscape/Dirt.png");
     thirdMap = Texture::Add(L"Textures/Landscape/Dirt3.png");
 
+    heightMap = Texture::Add(L"Textures/Landscape/M41Height(fix).png");
+
     mesh = new Mesh<VertexType>();
     MakeMesh();
     MakeNormal();
     MakeTangent();
     MakeComputeData();
     mesh->CreateMesh();    
+
 
     computeShader = Shader::AddCS(L"Compute/ComputePicking.hlsl");
 
@@ -25,6 +28,7 @@ TerrainEditor::TerrainEditor()
 
     char path[128];
     GetCurrentDirectoryA(128, path);
+
     projectPath = path;
 }
 
@@ -46,6 +50,7 @@ void TerrainEditor::Update()
     {
         return;
     }
+    UpdateWorld();
 
     if (KEY_PRESS(VK_LBUTTON) && !ImGui::GetIO().WantCaptureMouse)
     {
@@ -81,11 +86,14 @@ void TerrainEditor::GUIRender()
     ImGui::Text("TerrainEdit Option");
     //ImGui::Text("x : %.1f, y : %.1f, z : %.1f", pickingPos.x, pickingPos.y, pickingPos.z);
     if (ImGui::DragInt("Width", (int*)&width, 1.0f, 2, MAX_SIZE))
-        Resize();    
+        Resize();
     if (ImGui::DragInt("Height", (int*)&height, 1.0f, 2, MAX_SIZE))
         Resize();
 
-    const char* editList[] = { "Height", "Alpha"};
+    if (ImGui::DragInt("Scale", (int*)&offset, 50, 1, 100))
+        Resize(offset);
+
+    const char* editList[] = { "Height", "Alpha" };
     ImGui::Combo("EditType", (int*)&editType, editList, 2);
 
     const char* brushList[] = { "Circle", "SoftCircle", "Rect" };
@@ -106,6 +114,7 @@ void TerrainEditor::GUIRender()
     ImGui::SameLine();
     LoadAlphaMap();
 }
+
 
 Vector3 TerrainEditor::Picking()
 {
@@ -190,7 +199,7 @@ bool TerrainEditor::ComputePicking(Vector3& pos)
     return false;
 }
 
-void TerrainEditor::MakeMesh()
+void TerrainEditor::MakeMesh(int offset)
 {
     vector<Float4> pixels(width * height, Float4(0, 0, 0, 0));
 
@@ -213,11 +222,14 @@ void TerrainEditor::MakeMesh()
         {
             VertexType vertex;
             vertex.pos = { (float)x, 0.0f, (float)(height - z - 1) };
+            vertex.pos.x *= offset;
+            vertex.pos.z *= offset;
             vertex.uv.x = x / (float)(width - 1);
             vertex.uv.y = z / (float)(height - 1);
 
             UINT index = width * z + x;
             vertex.pos.y = pixels[index].x * MAX_HEIGHT;
+            vertex.pos.y *= offset;
 
             vertices.push_back(vertex);
         }
@@ -328,9 +340,9 @@ void TerrainEditor::MakeComputeData()
     }    
 }
 
-void TerrainEditor::Resize()
+void TerrainEditor::Resize(int offset)
 {
-    MakeMesh();
+    MakeMesh(offset);
     MakeNormal();
     MakeTangent();
     MakeComputeData();

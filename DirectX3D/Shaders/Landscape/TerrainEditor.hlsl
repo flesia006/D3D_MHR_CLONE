@@ -88,6 +88,7 @@ float4 PS(PixelInput input) : SV_TARGET
 		input.binormal, input.normal, input.uv);		
 	material.diffuseColor = albedo;
 	material.specularIntensity = specularMap.Sample(samp, input.uv);
+    material.emissiveIntensity = emissiveMap.Sample(samp, input.uv);
 	material.viewPos = input.viewPos;
 	material.worldPos = input.worldPos;
 	

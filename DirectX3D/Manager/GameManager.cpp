@@ -53,7 +53,7 @@ GameManager::GameManager()
 
     //SceneManager::Get()->Create("Cube", new CubeScene());
     //SceneManager::Get()->Create("Sphere", new SphereScene());
-    //SceneManager::Get()->Create("Terrain", new TerrainEditorScene());
+//    SceneManager::Get()->Create("Terrain", new TerrainEditorScene());
     //SceneManager::Get()->Create("Collision", new CollisionScene());
     //SceneManager::Get()->Create("ModelRender", new ModelRenderScene());
     //SceneManager::Get()->Create("ModelAnimationScene", new ModelAnimationScene());
@@ -81,7 +81,8 @@ GameManager::GameManager()
     //SceneManager::Get()->Add("AStar");
     //SceneManager::Get()->Add("LightTest");
     //SceneManager::Get()->Add("Billboard");
-    SceneManager::Get()->Add("Particle");
+    SceneManager::Get()->Add("Terrain");
+    //SceneManager::Get()->Add("ParticleConfig");
     //SceneManager::Get()->Add("MirrorScene");
     //SceneManager::Get()->Add("WaterScene");
     //SceneManager::Get()->Add("QuadTree");

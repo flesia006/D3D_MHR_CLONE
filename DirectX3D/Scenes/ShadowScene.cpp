@@ -5,11 +5,14 @@
 ShadowScene::ShadowScene()
 {
     forest = new Model("GroundAll(fix)");
-    forest->Pos() += Vector3::Back() * 16000;
+    forest->Pos() = Vector3(2062.1f, 346.2f, 17653.896f);
+    forest->Rot().y = XM_PI;
     forest->UpdateWorld();
 
-    ball = new HalfSphere();
-    
+    terrain = new TerrainEditor();
+
+
+    ball = new HalfSphere();    
     ball->Scale() *= 150000;
     ball->Pos().y -= 6000;
     ball->GetMaterial()->SetShader(L"Basic/Texture.hlsl");
@@ -52,15 +55,10 @@ ShadowScene::ShadowScene()
     Sounds::Get()->AddSound("Valphalk_Thema", SoundPath + L"Valphalk_Thema.mp3",true);
     Sounds::Get()->Play("Valphalk_Thema", 0.03f);
     Sounds::Get()->AddSound("health_potion", SoundPath + L"health_potion.mp3");
-    skyBox = new SkyBox(L"Textures/Landscape/Texture3.dds");
-
     FOR(2) rasterizerState[i] = new RasterizerState();
     FOR(2) blendState[i] = new BlendState();
     blendState[1]->Additive();
     rasterizerState[1]->CullMode(D3D11_CULL_NONE);
-
-    FOR(2) rasterizerSatate[i] = new RasterizerState();
-    rasterizerSatate[1]->CullMode(D3D11_CULL_NONE);
 
     AddSounds();
 }
@@ -80,6 +78,7 @@ void ShadowScene::Update()
     //if (KEY_DOWN('2')) light->type = 1;
     //if (KEY_DOWN('3')) light->type = 2;
     //if (KEY_DOWN('4')) light->type = 3;
+    terrain->Update();
     garuk->SetTarget(player);
     garuk->Update();
     forest->UpdateWorld();
@@ -87,10 +86,10 @@ void ShadowScene::Update()
     player->Update();
 
     
-    ball->Rot().y += 0.04 * DELTA;
+    ball->Rot().y += 0.02 * DELTA;
     ball->UpdateWorld();
 
-    fog->Rot().y += 0.02 * DELTA;
+    fog->Rot().y += 0.04 * DELTA;
     fog->UpdateWorld();
     
     UIManager::Get()->Update();
@@ -132,21 +131,21 @@ void ShadowScene::Render()
     garuk->SetShader(L"Light/Shadow.hlsl");
     //셰이더가 세팅된 배경과 인간을 진짜 호출
 
-    rasterizerState[1]->SetState();
+    terrain->Render();
+
+    rasterizerState[1]->SetState(); // 후면도 그림
     {
         forest->Render();
         ball->Render();
-        blendState[1]->SetState();
+
+        blendState[1]->SetState(); // 반투명
         {
-            //cloud->Render();
-            //cloud2->Render();
-            //cloud3->Render();
-            //cloud4->Render();
             fog->Render();
         }
         blendState[0]->SetState();
+        
+        valphalk->Render();
     }
-    valphalk->Render();
     rasterizerState[0]->SetState();
 
     player->Render();
@@ -163,13 +162,14 @@ void ShadowScene::PostRender()
 
 void ShadowScene::GUIRender()
 {
-    ball->GUIRender();
-    fog->GUIRender();
+//    ball->GUIRender();
+//    fog->GUIRender();
 //    cloud->GUIRender();
 //    cloud2->GUIRender();
 //    cloud3->GUIRender();
 //    cloud4->GUIRender();
-
+    forest->GUIRender();
+    terrain->GUIRender();
 //    valphalk->GUIRender();
     //player->GUIRender(); // 디버그 조작용
     //UIManager::Get()->GUIRender();

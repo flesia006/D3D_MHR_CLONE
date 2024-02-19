@@ -18,7 +18,7 @@ private:
     const float MIN_HEIGHT = 0.0f;
     const float MAX_HEIGHT = 20.0f;
 
-    const UINT MAX_SIZE = 256;
+    const UINT MAX_SIZE = 300;
 
     class BrushBuffer : public ConstBuffer
     {
@@ -87,14 +87,14 @@ public:
 
     Vector3 Picking();
     bool ComputePicking(Vector3& pos);
+    void Resize(int offset = 31);
 
 private:
-    void MakeMesh();
+    void MakeMesh(int offset = 31);
     void MakeNormal();
     void MakeTangent();
     void MakeComputeData();
 
-    void Resize();
     void UpdateHeight();
 
     void AdjustHeight();
@@ -113,6 +113,7 @@ private:
     UINT triangleSize;
 
     float adjustValue = 10.0f;
+    int offset = 31;
     BrushType brushType = CIRCLE;
     EditType editType = ALPHA;
 

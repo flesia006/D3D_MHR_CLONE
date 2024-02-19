@@ -51,7 +51,7 @@ private:
     Vector3 planes[6];
     float a, b, c, d;
 
-    float moveSpeed = 500.0f;
+    float moveSpeed = 5000.0f;
     float rotSpeed = 10.0f;
 
     Vector3 prevMousePos;

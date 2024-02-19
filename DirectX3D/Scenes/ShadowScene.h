@@ -30,7 +30,7 @@ private:
     HalfSphere* ball;
     Model* fog;
 
-
+    TerrainEditor* terrain;
 
 
     LightBuffer::Light* light; //빛 사용하기
