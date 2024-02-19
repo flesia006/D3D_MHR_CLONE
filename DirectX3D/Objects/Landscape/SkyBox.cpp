@@ -27,13 +27,18 @@ SkyBox::SkyBox(wstring fileName)
 SkyBox::~SkyBox()
 {
     // 텍스처에서 관리할 스카이맵은 지우지 않아도 좋다
-
+    
     FOR(2)
         delete rasterizerSatate[i];
 
     //나중에 스테이트 개수가 서로 달라질 수 있어서 미리 반복문 분리
     FOR(2)
         delete depthStencilState[i];
+}
+
+void SkyBox::Update()
+{
+    Rot().y += 10 * DELTA;
 }
 
 void SkyBox::Render()

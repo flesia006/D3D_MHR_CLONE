@@ -1156,6 +1156,8 @@ void Player::S008() // 서서 납도
 	PLAY;
 	//Move();
 	Rotate();
+	if(RATIO>0.6)
+		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_9", .5f);
 
 	if (RATIO > 0.94 && (KEY_PRESS('W') || KEY_PRESS('S') || KEY_PRESS('A') || KEY_PRESS('D')))
 	{
@@ -1176,13 +1178,14 @@ void Player::S009() // 걸으면서 납도
 	PLAY;
 	Move();
 	Rotate();
+	if (RATIO > 0.4)
+		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_9", .5f);
 
 	if (RATIO > 0.94 && (KEY_PRESS('W') || KEY_PRESS('S') || KEY_PRESS('A') || KEY_PRESS('D')))
 	{
 		SetState(S_003);
 		return;
 	}
-
 	if (RATIO > 0.98)
 	{
 		//ReturnIdle();
@@ -1265,7 +1268,7 @@ void Player::S029() // 걷는중
 {
 }
 
-void Player::S038()
+void Player::S038() // 전력질주
 {
 	PLAY;
 	Move();
@@ -1370,6 +1373,7 @@ void Player::L001() // 발도상태 대기
 
 void Player::L002() // 발도
 {
+	Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_5", .5f);
 	PLAY;
 }
 
@@ -1551,14 +1555,17 @@ void Player::L014() // 발도상태 구르기 후 이동키 유지시
 }
 
 void Player::L101() // 내디뎌베기
-{
+{	
 	// PlayClip 하는데 계속 반복해서 호출되면 모션 반복되니까 방지 + 딱 한번만 실행되는거 놓기
 	if (INIT)
 	{
+		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_5", .5f);
 		UIManager::Get()->staminaActive = false;
 		PlayClip(L_101);
 		MotionRotate(30);
 	}
+	if(RATIO>0.2 && RATIO<0.3)
+		Sounds::Get()->Play("Heeee", .5f);
 
 	if (RATIO < 0.3)
 		Rot().y = Lerp(Rot().y, rad, 0.001f);
@@ -1579,9 +1586,11 @@ void Player::L101() // 내디뎌베기
 			EndEffect();
 	}
 
+
 	// 캔슬 가능 프레임
 	if (RATIO > 0.6 && RATIO < 0.98)
 	{
+
 		if		(K_LMB)				SetState(L_102);	// 세로베기		
 		else if (K_RMB)				SetState(L_104);	// 찌르기
 		else if (K_LMBRMB)			SetState(L_103);	// 베어내리기
@@ -1604,16 +1613,18 @@ void Player::L102() // 세로베기
 {
 	if (INIT)
 	{
+		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_5", .5f);
 		PlayClip(L_102);
 		MotionRotate(30);
 	}
+	if (RATIO > 0.2 && RATIO < 0.3)
+		Sounds::Get()->Play("Heeee", .5f);
 
 	// 방향 조정 가능 프레임
 	{
 		if (RATIO < 0.3)
 			Rot().y = Lerp(Rot().y, rad, 0.001f);
 	}
-
 
 	// 공격판정 프레임
 	{
@@ -1645,14 +1656,17 @@ void Player::L103() // 베어내리기
 {
 	if (INIT)
 	{
+		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_5", .5f);
 		UIManager::Get()->staminaActive = false;
 		PlayClip(L_103);
 		MotionRotate(30);
 	}
+	if (RATIO > 0.2 && RATIO < 0.3)
+		Sounds::Get()->Play("Heeee", .5f);
 
 	if (RATIO < 0.272)
 		Rot().y = Lerp(Rot().y, rad, 0.001f);
-
+		
 	// 공격판정 프레임
 	{
 		if (RATIO > 0.272 && RATIO < 0.456)
@@ -1680,7 +1694,10 @@ void Player::L103() // 베어내리기
 void Player::L104() // 찌르기
 {
 	PLAY;
-
+	if(INIT)
+		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_5", .5f);
+	if (RATIO > 0.2 && RATIO < 0.3)
+		Sounds::Get()->Play("Heeee", .5f);
 	// 공격판정 프레임
 	{
 		UIManager::Get()->staminaActive = false;
@@ -1709,7 +1726,10 @@ void Player::L104() // 찌르기
 void Player::L105() // 베어 올리기
 {
 	PLAY;
-
+	if(INIT)
+		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_5", .5f);
+	if (RATIO > 0.2 && RATIO < 0.3)
+		Sounds::Get()->Play("Heeee", .5f);
 	// 공격판정 프레임
 	{
 		if (RATIO > 0.1 && RATIO < 0.2)
@@ -1742,7 +1762,8 @@ void Player::L106() // 기인 베기 1
 		initForward = Forward();
 		UIManager::Get()->MinusSpiritGauge() ; // 기인게이지 소모하기( 단 1번 )
 	}
-
+	if (RATIO > 0.2 && RATIO < 0.3)
+		Sounds::Get()->Play("Heeee", .5f);
 	UIManager::Get()->staminaActive = false;
 
 	// 공격판정 프레임
@@ -1774,7 +1795,8 @@ void Player::L107() // 기인베기 2
 	PLAY;
 	if (INIT)
 		UIManager::Get()->MinusSpiritGauge(); // 기인게이지 소모하기( 단 1번 )
-
+	if (RATIO > 0.2 && RATIO < 0.3)
+		Sounds::Get()->Play("Heeee", .5f);
 
 	// 공격판정 프레임
 	{
@@ -1811,7 +1833,8 @@ void Player::L108() // 기인베기 3
 		initForward = Forward();
 		UIManager::Get()->MinusSpiritGauge(); // 기인게이지 소모하기( 단 1번 )
 	}
-
+	if (RATIO > 0.2 && RATIO < 0.3)
+		Sounds::Get()->Play("Heeee", .5f);
 	// 줌 정상화 (앉아 기인 회전 베기에서 넘어온 경우)
 	{
 		if (RATIO > 0 && RATIO < 0.45)
@@ -1865,7 +1888,8 @@ void Player::L109() // 기인 큰회전베기
 	PLAY;
 	if (INIT)
 		UIManager::Get()->MinusSpiritGauge(); // 기인게이지 소모하기( 단 1번 )
-
+	if (RATIO > 0.2 && RATIO < 0.3)
+		Sounds::Get()->Play("Heeee", .5f);
 	// 줌인
 	{
 		if (RATIO > 0 && RATIO < 0.16)
@@ -1907,7 +1931,8 @@ void Player::L110() // 기인 내디뎌베기
 	PLAY;
 	if(INIT)
 	UIManager::Get()->MinusSpiritGauge(); // 기인게이지 소모하기( 단 1번 )
-
+	if (RATIO > 0.2 && RATIO < 0.3)
+		Sounds::Get()->Play("Heeee", .5f);
 	// 공격판정 프레임 
 	{
 		if (RATIO > 0.30f && RATIO < 0.406f)
@@ -1949,10 +1974,11 @@ void Player::L116()
 
 }
 
-void Player::L119()
+void Player::L119() // 날라차기 착지
 {
 	PLAY;
-
+	if (RATIO > 0.2 && RATIO < 0.3)
+		Sounds::Get()->Play("Heeee", .5f);
 	// 공격판정 프레임 
 	{
 		if (RATIO > 0.03f && RATIO < 0.19f)
@@ -1975,7 +2001,8 @@ void Player::L119()
 void Player::L122()
 {
 	PLAY;
-
+	if (RATIO > 0.2 && RATIO < 0.3)
+		Sounds::Get()->Play("Heeee", .5f);
 	// 공격판정 프레임 
 	{
 		if (RATIO > 0.03f && RATIO < 0.19f)
@@ -2001,7 +2028,8 @@ void Player::L128()	// 날라차기 시작
 	if (!playOncePerMotion)
 	{
 		UI->UseBugSkill();
-		playOncePerMotion = true;
+		playOncePerMotion = true;		
+		Sounds::Get()->Play("Heeee", .5f);
 	}
 
 	// 줌 정상화 (앉아 기인 회전 베기에서 넘어온 경우)
@@ -2089,6 +2117,8 @@ void Player::L132()
 void Player::L133()	// 투구깨기
 {
 	PLAY;
+	if (RATIO > 0.2 && RATIO < 0.3)
+		Sounds::Get()->Play("Heeee", .5f);
 	// 체공중
 	{
 		if (RATIO < 0.38) // 줌아웃
@@ -2140,7 +2170,8 @@ void Player::L135()	// 투구깨기 끝
 void Player::L136() // 낙하찌르기
 {
 	PLAY;
-
+	if (RATIO > 0.2 && RATIO < 0.3)
+		Sounds::Get()->Play("Heeee", .5f);
 	// 체공중
 	{
 		if (RATIO > 0.55)
@@ -2179,6 +2210,8 @@ void Player::L138() // 낙하찌르기 끝
 void Player::L147() // 간파베기
 {
 	PLAY;
+	if (RATIO > 0.2 && RATIO < 0.3)
+		Sounds::Get()->Play("Heeee", .5f);
 	UIManager::Get()->staminaActive = false;
 	// 줌아웃 && 회피 판정 프레임
 	{
@@ -2232,12 +2265,15 @@ void Player::L151() // 특수 납도
 		EndEffect();
 		UIManager::Get()->staminaActive = false;
 	}
-
+	if(RATIO>0.5 && RATIO<0.6)		
+			Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_9", .5f);
+	if (RATIO > 0.2 && RATIO < 0.3)
+		Sounds::Get()->Play("Heeee", .5f);
 	// 줌 정상화 (기인 큰회전 베기에서 넘어온 경우)
 	{
 		if (RATIO > 0 && RATIO < 0.45)
 			CAM->Zoom(300, 5);
-	}
+	}	
 
 	// 캔슬 가능 프레임
 	{
@@ -2285,7 +2321,8 @@ void Player::L153() // 특수납도 취소 동작
 void Player::L154() // 앉아발도 베기
 {
 	PLAY;
-	
+	if (RATIO > 0.2 && RATIO < 0.3)
+		Sounds::Get()->Play("Heeee", .5f);
 	// 공격판정 프레임 (이 모션은 2번 베기 동작이 있음)
 	{
 		if (RATIO > 0.04 && RATIO < 0.17)
@@ -2330,6 +2367,8 @@ void Player::L154() // 앉아발도 베기
 void Player::L155() // 앉아발도 기인베기
 {
 	PLAY;
+	if(INIT)
+		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_8", .5f);
 
 	// 줌아웃 && 회피 판정 프레임
 	{
@@ -2356,6 +2395,8 @@ void Player::L155() // 앉아발도 기인베기
 		if (isHit && (RATIO >0.385  && RATIO < 0.39))
 		{
 			isHitL155 = true;
+			Sounds::Get()->Play("pl_wp_l_swd_epv_media.bnk.2_8", .5f);
+
 		}
 	}
 

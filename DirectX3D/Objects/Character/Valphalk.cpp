@@ -114,8 +114,23 @@ void Valphalk::Update()
 		//PlayClip(1);
 	}
 
-	
+	switch (curState)
+	{
+	case STUN:
+		break;
+	case E_2005:
+		break;
+	case E_4013:		
+		break;
+	}
 	//===================================
+	if (curState == E_4013)
+	{
+		if (RATIO > 0.2 && RATIO < 0.28)
+			Sounds::Get()->Play("em086_05_vo_media_10", 0.5f);
+		if(RATIO>0.98)
+		SetState(STUN);
+	}
 }
 
 void Valphalk::PreRender()
@@ -265,5 +280,13 @@ void Valphalk::Move()
 
 void Valphalk::UpdateUI()
 {
+
+}
+
+void Valphalk::E4013()
+{	
+	PLAY;
+	if (RATIO > 0.7)
+		Sounds::Get()->Play("em086_05_vo_media_10", 0.5f);
 
 }

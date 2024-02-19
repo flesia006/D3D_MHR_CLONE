@@ -14,6 +14,9 @@ public:
 
     Valphalk* GetValphalk() { return valphalk; }
     Player* GetPlayer() { return player; }
+
+private:
+    void AddSounds();
 private:
 
     Model* forest;
