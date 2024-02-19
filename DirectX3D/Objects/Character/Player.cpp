@@ -79,6 +79,7 @@ void Player::Update()
 	ModelAnimator::Update();
 	//UIManager::Get()->Update();
 	Potion();	
+	GroundCheck();
 }
 
 void Player::Render()
@@ -624,16 +625,16 @@ bool Player::Attack(float power, bool push, UINT useOtherCollider) // Ãæµ¹ÆÇÁ¤ Ç
 			float hardness = 1.0f;
 			switch (collider->part)
 			{
-			case Valphalk::HEAD  : hardness = 55; break;
-			case Valphalk::BODY	 : hardness = 30; break;
-			case Valphalk::LWING : hardness = 22; break;
-			case Valphalk::RWING : hardness = 22; break;
-			case Valphalk::LLEG1 : hardness = 25; break;
-			case Valphalk::LLEG2 : hardness = 25; break;
-			case Valphalk::RLEG1 : hardness = 25; break;
-			case Valphalk::RLEG2 : hardness = 25; break;
-			case Valphalk::TAIL  : hardness = 45; break;
-			default				 : hardness = 1 ; break;
+				case Valphalk::HEAD  : hardness = 55; break;
+				case Valphalk::BODY	 : hardness = 30; break;
+				case Valphalk::LWING : hardness = 22; break;
+				case Valphalk::RWING : hardness = 22; break;
+				case Valphalk::LLEG1 : hardness = 25; break;
+				case Valphalk::LLEG2 : hardness = 25; break;
+				case Valphalk::RLEG1 : hardness = 25; break;
+				case Valphalk::RLEG2 : hardness = 25; break;
+				case Valphalk::TAIL  : hardness = 45; break;
+				default				 : hardness = 1 ; break;
 			}
 			UIManager::Get()->MinusDurability();
 			
@@ -2660,4 +2661,18 @@ bool Player::Jump(float moveSpeed)
 		jumpVelocity = originJumpVelocity;
 		return false;
 	}
+}
+
+void Player::GroundCheck()
+{
+	TerrainEditor* terrain = dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetTerrain();
+
+	Vector3 pos1;
+	terrain->ComputePicking(pos1, realPos->Pos() + Vector3::Up() * 200, Vector3::Down());
+
+//	Vector3 pos2;
+//	terrain->ComputePicking(pos2, realPos->Pos(), Vector3::Up());
+
+//	float y = max(pos1.y, pos2.y);
+	Pos().y = pos1.y;
 }

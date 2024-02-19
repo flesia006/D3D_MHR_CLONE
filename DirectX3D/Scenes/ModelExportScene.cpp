@@ -3,7 +3,7 @@
 
 ModelExportScene::ModelExportScene()
 {
-    string name = "SkyDom";
+    string name = "";
     string file = "Models/FBX/" + name + ".fbx";
     ModelExporter* exporter;
     string clipName;
@@ -12,6 +12,19 @@ ModelExportScene::ModelExportScene()
     exporter->ExportMaterial();
     exporter->ExportMesh();
     delete exporter;    
+
+//    name = "tikei7";
+//    exporter = new ModelExporter(name, file);
+//    exporter->ExportMaterial();
+//    exporter->ExportMesh();
+//    delete exporter;
+//
+//    name = "tikei10";
+//    exporter = new ModelExporter(name, file);
+//    exporter->ExportMaterial();
+//    exporter->ExportMesh();
+//    delete exporter;
+
 //    
 //    clipName = "O_002";
 //    file = "Models/Animations/" + name + "/" + clipName + ".fbx";

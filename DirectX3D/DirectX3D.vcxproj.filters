@@ -189,40 +189,40 @@
     <ClInclude Include="Framework\Utilities\Audio.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Scenes\CollisionScene.h">
+    <ClInclude Include="Scenes\NotUse\CollisionScene.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Scenes\CubeScene.h">
+    <ClInclude Include="Scenes\NotUse\CubeScene.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Scenes\GameScene.h">
+    <ClInclude Include="Scenes\NotUse\GameScene.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Scenes\GBufferScene.h">
+    <ClInclude Include="Scenes\NotUse\GBufferScene.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Scenes\GridScene.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Scenes\HumanScene.h">
+    <ClInclude Include="Scenes\NotUse\HumanScene.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Scenes\IntancingScene.h">
+    <ClInclude Include="Scenes\NotUse\IntancingScene.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Scenes\LightScene.h">
+    <ClInclude Include="Scenes\NotUse\LightScene.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Scenes\ModelAnimationScene.h">
+    <ClInclude Include="Scenes\NotUse\ModelAnimationScene.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Scenes\ModelExportScene.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Scenes\ModelRenderScene.h">
+    <ClInclude Include="Scenes\NotUse\ModelRenderScene.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Scenes\RenderTargetScene.h">
+    <ClInclude Include="Scenes\NotUse\RenderTargetScene.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Scenes\Scene.h">
@@ -231,13 +231,13 @@
     <ClInclude Include="Scenes\ShadowScene.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Scenes\SphereScene.h">
+    <ClInclude Include="Scenes\NotUse\SphereScene.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Scenes\TerrainEditorScene.h">
+    <ClInclude Include="Scenes\NotUse\TerrainEditorScene.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Scenes\TerrainScene.h">
+    <ClInclude Include="Scenes\NotUse\TerrainScene.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Objects\UI\ProgressBar.h">
@@ -306,19 +306,19 @@
     <ClInclude Include="Objects\Character\Fox.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Scenes\AStarScene.h">
+    <ClInclude Include="Scenes\NotUse\AStarScene.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Objects\Test\TestLight.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Scenes\BillboardScene.h">
+    <ClInclude Include="Scenes\NotUse\BillboardScene.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Objects\Particle\ParticleSystem.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Scenes\ParticleScene.h">
+    <ClInclude Include="Scenes\NotUse\ParticleScene.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Objects\Particle\Particle.h">
@@ -354,7 +354,7 @@
     <ClInclude Include="Framework\Shader\HullShader.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Scenes\WaterScene.h">
+    <ClInclude Include="Scenes\NotUse\WaterScene.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Objects\Landscape\Water.h">
@@ -369,19 +369,19 @@
     <ClInclude Include="Objects\Landscape\TerrainLOD.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Scenes\QuadTreeScene.h">
+    <ClInclude Include="Scenes\NotUse\QuadTreeScene.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Scenes\TessellationScene.h">
+    <ClInclude Include="Scenes\NotUse\TessellationScene.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Scenes\TerrainLODScene.h">
+    <ClInclude Include="Scenes\NotUse\TerrainLODScene.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Objects\Static\Reflector.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Scenes\MirrorScene.h">
+    <ClInclude Include="Scenes\NotUse\MirrorScene.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Objects\Character\Player.h">
@@ -412,6 +412,9 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Objects\Landscape\M41Objects.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Scenes\MapDesignScene.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
@@ -563,52 +566,52 @@
     <ClCompile Include="Framework\Utilities\Audio.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Scenes\CollisionScene.cpp">
+    <ClCompile Include="Scenes\NotUse\CollisionScene.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Scenes\CubeScene.cpp">
+    <ClCompile Include="Scenes\NotUse\CubeScene.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Scenes\GameScene.cpp">
+    <ClCompile Include="Scenes\NotUse\GameScene.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Scenes\GBufferScene.cpp">
+    <ClCompile Include="Scenes\NotUse\GBufferScene.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Scenes\GridScene.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Scenes\HumanScene.cpp">
+    <ClCompile Include="Scenes\NotUse\HumanScene.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Scenes\IntancingScene.cpp">
+    <ClCompile Include="Scenes\NotUse\IntancingScene.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Scenes\LightScene.cpp">
+    <ClCompile Include="Scenes\NotUse\LightScene.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Scenes\ModelAnimationScene.cpp">
+    <ClCompile Include="Scenes\NotUse\ModelAnimationScene.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Scenes\ModelExportScene.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Scenes\ModelRenderScene.cpp">
+    <ClCompile Include="Scenes\NotUse\ModelRenderScene.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Scenes\RenderTargetScene.cpp">
+    <ClCompile Include="Scenes\NotUse\RenderTargetScene.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Scenes\ShadowScene.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Scenes\SphereScene.cpp">
+    <ClCompile Include="Scenes\NotUse\SphereScene.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Scenes\TerrainEditorScene.cpp">
+    <ClCompile Include="Scenes\NotUse\TerrainEditorScene.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Scenes\TerrainScene.cpp">
+    <ClCompile Include="Scenes\NotUse\TerrainScene.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Objects\UI\ProgressBar.cpp">
@@ -677,19 +680,19 @@
     <ClCompile Include="Objects\Character\Fox.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Scenes\AStarScene.cpp">
+    <ClCompile Include="Scenes\NotUse\AStarScene.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Objects\Test\TestLight.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Scenes\BillboardScene.cpp">
+    <ClCompile Include="Scenes\NotUse\BillboardScene.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Objects\Particle\ParticleSystem.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Scenes\ParticleScene.cpp">
+    <ClCompile Include="Scenes\NotUse\ParticleScene.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Objects\Particle\Particle.cpp">
@@ -725,7 +728,7 @@
     <ClCompile Include="Framework\Shader\HullShader.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Scenes\WaterScene.cpp">
+    <ClCompile Include="Scenes\NotUse\WaterScene.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Objects\Landscape\Water.cpp">
@@ -740,19 +743,19 @@
     <ClCompile Include="Objects\Landscape\TerrainLOD.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Scenes\QuadTreeScene.cpp">
+    <ClCompile Include="Scenes\NotUse\QuadTreeScene.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Scenes\TessellationScene.cpp">
+    <ClCompile Include="Scenes\NotUse\TessellationScene.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Scenes\TerrainLODScene.cpp">
+    <ClCompile Include="Scenes\NotUse\TerrainLODScene.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Objects\Static\Reflector.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Scenes\MirrorScene.cpp">
+    <ClCompile Include="Scenes\NotUse\MirrorScene.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Objects\Character\Player.cpp">
@@ -783,6 +786,9 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Objects\Landscape\M41Objects.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Scenes\MapDesignScene.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

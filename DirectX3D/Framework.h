@@ -190,6 +190,7 @@ using namespace GameMath;
 #include "Objects/Landscape/TerrainLOD.h"
 #include "Objects/Landscape/TerrainData.h"
 #include "Objects/Landscape/QuadTreeTerrain.h"
+#include "Objects/Landscape/M41Objects.h"
 
 #include "Objects/Static/Reflector.h"
 
