@@ -16,7 +16,7 @@ private:
     typedef VertexUVNormalTangentAlpha VertexType;
 
     const float MIN_HEIGHT = 0.0f;
-    const float MAX_HEIGHT = 20.0f;
+    const float MAX_HEIGHT = 12.0f;
 
     const UINT MAX_SIZE = 300;
 
@@ -86,7 +86,7 @@ public:
     void GUIRender() override;
 
     Vector3 Picking();
-    bool ComputePicking(Vector3& pos);
+    bool ComputePicking(Vector3& pos, Vector3 manualPos = Vector3(), Vector3 manualDir = Vector3());
     void Resize(int offset = 31);
 
 private:
