@@ -20,21 +20,27 @@ private:
 private:
 
     Model* forest;
-    Model* skyDom;
 
     Player* player;
     Valphalk* valphalk = nullptr;
 
     Shadow* shadow;
 
-    SkyBox* skyBox;
+
+    HalfSphere* ball;
+    Model* fog;
+
+
+
+
     LightBuffer::Light* light; //ºû »ç¿ëÇÏ±â
 
 private:
     //Terrain* terrain;
     //AStar* aStar;
     Garuk* garuk;
-    RasterizerState* rasterizerSatate[2];
+    RasterizerState* rasterizerState[2];
+    BlendState* blendState[2];
 
 };
 

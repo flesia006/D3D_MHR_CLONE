@@ -177,6 +177,8 @@ using namespace GameMath;
 #include "Objects/Basic/Cube.h"
 #include "Objects/Basic/Sphere.h"
 #include "Objects/Basic/Cylinder.h"
+#include "Objects/Basic/HalfSphere.h"
+#include "Objects/Basic/Cylinder2.h"
 
 #include "Objects/Actor/ActorUI.h"
 #include "Objects/UI/ProgressBar.h"

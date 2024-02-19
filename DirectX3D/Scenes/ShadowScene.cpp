@@ -8,10 +8,19 @@ ShadowScene::ShadowScene()
     forest->Pos() += Vector3::Back() * 16000;
     forest->UpdateWorld();
 
-    skyDom = new Model("SkyDom");
-    skyDom->Scale() *= 100;
-    skyDom->Pos().y -= 25000;
-    skyDom->UpdateWorld();
+    ball = new HalfSphere();
+    
+    ball->Scale() *= 150000;
+    ball->Pos().y -= 6000;
+    ball->GetMaterial()->SetShader(L"Basic/Texture.hlsl");
+    ball->GetMaterial()->SetDiffuseMap(L"Textures/M41Sky/Sky.tga");
+    ball->UpdateWorld();
+
+    fog = new Model("skydom");
+    fog->SetTag("fog");
+    fog->Scale() *= 100;
+    fog->Pos().y -= 10000;
+    fog->UpdateWorld();
 
     garuk = new Garuk();
     valphalk = new Valphalk();
@@ -31,17 +40,23 @@ ShadowScene::ShadowScene()
     light->range = 3000;
 
     light->direction = { -0.1, -1, 0.1 };
-    light->color = { 1, 1, 1, 1 };
+//    light->color = { 0.57, 0.66, 0.88, 1 }; // 밤조명
+    light->color = { 1, 1, 1, 1 };        // 낮조명
 
     light->length;
     light->inner;   //조명 집중 범위 (빛이 집중되어 쏘이는 범위...의 비중)
     light->outer;   //조명 외곽 범위 (빛이 흩어져서 비치는 범위...의 비중)
 
-    skyBox = new SkyBox(L"Textures/Landscape/Texture3.dds");
+    
 
+    Sounds::Get()->AddSound("Valphalk_Thema", SoundPath + L"Valphalk_Thema.mp3",true);
+    Sounds::Get()->Play("Valphalk_Thema", 0.03f);
+    Sounds::Get()->AddSound("health_potion", SoundPath + L"health_potion.mp3");
 
-    FOR(2) rasterizerSatate[i] = new RasterizerState();
-    rasterizerSatate[1]->CullMode(D3D11_CULL_NONE);
+    FOR(2) rasterizerState[i] = new RasterizerState();
+    FOR(2) blendState[i] = new BlendState();
+    blendState[1]->Additive();
+    rasterizerState[1]->CullMode(D3D11_CULL_NONE);
 
     AddSounds();
 }
@@ -52,7 +67,6 @@ ShadowScene::~ShadowScene()
     delete forest;
     delete player;
     delete shadow;
-    delete skyBox;
 
 }
 
@@ -67,8 +81,14 @@ void ShadowScene::Update()
     forest->UpdateWorld();
     valphalk->Update();
     player->Update();
-    skyDom->Rot().y += 0.025 * DELTA;
-    skyDom->UpdateWorld();
+
+    
+    ball->Rot().y += 0.04 * DELTA;
+    ball->UpdateWorld();
+
+    fog->Rot().y += 0.02 * DELTA;
+    fog->UpdateWorld();
+    
     UIManager::Get()->Update();
 
     if (player->getCollider()->IsCapsuleCollision(valphalk->GetCollider()[Valphalk::HEAD]))
@@ -89,6 +109,7 @@ void ShadowScene::PreRender()
     //조건에 따라 픽셀이 바뀐 인간을 렌더...해서 텍스처를 준비
     valphalk->Render();
     player->Render();
+    
     garuk->Render();
 }
 
@@ -107,13 +128,23 @@ void ShadowScene::Render()
     garuk->SetShader(L"Light/Shadow.hlsl");
     //셰이더가 세팅된 배경과 인간을 진짜 호출
 
-    rasterizerSatate[1]->SetState();
+    rasterizerState[1]->SetState();
     {
         forest->Render();
-        valphalk->Render();
-        skyDom->Render();
+        ball->Render();
+        blendState[1]->SetState();
+        {
+            //cloud->Render();
+            //cloud2->Render();
+            //cloud3->Render();
+            //cloud4->Render();
+            fog->Render();
+        }
+        blendState[0]->SetState();
     }
-    rasterizerSatate[0]->SetState();
+    valphalk->Render();
+    rasterizerState[0]->SetState();
+
     player->Render();
     garuk->Render();
 
@@ -128,8 +159,14 @@ void ShadowScene::PostRender()
 
 void ShadowScene::GUIRender()
 {
-    skyDom->GUIRender();
-    //valphalk->GUIRender();
+    ball->GUIRender();
+    fog->GUIRender();
+//    cloud->GUIRender();
+//    cloud2->GUIRender();
+//    cloud3->GUIRender();
+//    cloud4->GUIRender();
+
+//    valphalk->GUIRender();
     //player->GUIRender(); // 디버그 조작용
     //UIManager::Get()->GUIRender();
 }

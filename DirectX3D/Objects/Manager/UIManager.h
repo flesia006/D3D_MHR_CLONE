@@ -184,5 +184,7 @@ public:
     bool useQuickSlot8 = false;
     // 아래 이건 특정 키를 누르면 Bar가 활성화됨
     bool useSelectBar = false;
+    Vector3 MousePos;
+    float CamRot;
 };
 
