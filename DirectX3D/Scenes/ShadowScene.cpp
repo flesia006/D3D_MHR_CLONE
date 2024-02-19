@@ -206,11 +206,10 @@ void ShadowScene::AddSounds()
     sound->AddSound("pl_wp_l_swd_com_media.bnk.2_7", SoundPath + L"pl_wp_l_swd_com_media.bnk.2_7.mp3");
 
     /////////////////////////////////////////////////////////////
-    // Item
-    sound->AddSound("health_potion", SoundPath + L"health_potion.mp3");
-
-    /////////////////////////////////////////////////////////////
     // Valphalk
     sound->AddSound("em086_05_vo_media_10", SoundPath + L"em086_05_vo_media_10.mp3");
 
+    /////////////////////////////////////////////////////////////
+    // Item
+    Sounds::Get()->AddSound("health_potion", SoundPath + L"health_potion.mp3");
 }
