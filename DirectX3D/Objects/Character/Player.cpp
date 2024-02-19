@@ -78,7 +78,8 @@ void Player::Update()
 
 	ModelAnimator::Update();
 	//UIManager::Get()->Update();
-	Potion();	
+	Potion();		
+
 }
 
 void Player::Render()
@@ -353,6 +354,11 @@ void Player::Control()
 	case Player::L_155:		L155();		break;
 	case Player::L_156:		L156();		break;
 	}
+
+	if (KEY_UP('W') || KEY_UP('A') || KEY_UP('S') || KEY_UP('D'))
+	{
+		rotSpeed = 10;
+	}
 }
 
 void Player::Move()
@@ -406,7 +412,14 @@ void Player::Move()
 	Vector3 CAMRightBack = CAM->Left() + CAM->Forward();
 
 	Vector3 forward = Back();//모델 기준으로 앞 따오기
-	if (KEY_PRESS('W'))
+
+	if (rotSpeed >= 0)
+	{
+		rotSpeed -= 0.05f;
+		if (rotSpeed <= 3)
+			rotSpeed = 3;
+	}
+		if (KEY_PRESS('W'))
 	{
 		Vector3 cross = Cross(forward, CAMForward);//방향차이에서 나온 법선
 
@@ -415,9 +428,9 @@ void Player::Move()
 			Rot().y += rotSpeed * DELTA;
 		}
 		else if (cross.y > 0)//반대의 경우
-		{
+		{			
 			Rot().y -= rotSpeed * DELTA;
-		}
+		}			
 	}
 	if (KEY_PRESS('S'))
 	{
@@ -548,7 +561,7 @@ void Player::Move()
 	//	velocity.z = Lerp(velocity.z, 0, deceleration * DELTA); //보간에 의해 감속
 	//
 	//if (!isMoveX) // 좌우이동에 적용
-	//	velocity.x = Lerp(velocity.x, 0, deceleration * DELTA);
+	//	velocity.x = Lerp(velocity.x, 0, deceleration * DELTA);	
 }
 
 void Player::ResetPlayTime()
@@ -942,7 +955,6 @@ void Player::SetState(State state)
 {
 	if (curState == state)
 		return;
-
 	Pos() = realPos->Pos();
 	if (Pos().y < 0)
 		Pos().y = 0;
