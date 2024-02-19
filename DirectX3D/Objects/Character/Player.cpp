@@ -1564,6 +1564,8 @@ void Player::L101() // 내디뎌베기
 		PlayClip(L_101);
 		MotionRotate(30);
 	}
+	if(RATIO>0.3 && RATIO<0.35)
+		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
 	if(RATIO>0.18 && RATIO<0.21)
 		Sounds::Get()->Play("Heeee", .5f);
 
@@ -1617,7 +1619,8 @@ void Player::L102() // 세로베기
 		PlayClip(L_102);
 		MotionRotate(30);
 	}
-
+	if (RATIO > 0.25 && RATIO < 0.28)
+		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
 	// 방향 조정 가능 프레임
 	{
 		if (RATIO < 0.3)
@@ -1659,9 +1662,9 @@ void Player::L103() // 베어내리기
 		PlayClip(L_103);
 		MotionRotate(30);
 	}
-	if (RATIO > 0.1 && RATIO < 0.15)
-		Sounds::Get()->Play("Heeee", .5f);
 
+	if (RATIO > 0.2 && RATIO < 0.25)
+		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
 	if (RATIO < 0.272)
 		Rot().y = Lerp(Rot().y, rad, 0.001f);
 		
@@ -1694,6 +1697,9 @@ void Player::L104() // 찌르기
 	PLAY;
 	if(INIT)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_5", .5f);
+
+	if (RATIO > 0.1 && RATIO < 0.15)
+		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
 	// 공격판정 프레임
 	{
 		UIManager::Get()->staminaActive = false;
@@ -1724,8 +1730,8 @@ void Player::L105() // 베어 올리기
 	PLAY;
 	if(INIT)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_5", .5f);
-	if (RATIO > 0.1 && RATIO < 0.15)
-		Sounds::Get()->Play("Heeee", .5f);
+	if (RATIO > 0.1 && RATIO < 0.12)
+		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
 	// 공격판정 프레임
 	{
 		if (RATIO > 0.1 && RATIO < 0.2)
@@ -1754,10 +1760,13 @@ void Player::L106() // 기인 베기 1
 {
 	if (INIT)
 	{
+		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_25", .5f);
 		PlayClip(curState);
 		initForward = Forward();
 		UIManager::Get()->MinusSpiritGauge() ; // 기인게이지 소모하기( 단 1번 )
 	}
+	if (RATIO > 0.3 && RATIO < 0.31)
+		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
 	UIManager::Get()->staminaActive = false;
 
 	// 공격판정 프레임
@@ -1788,8 +1797,12 @@ void Player::L107() // 기인베기 2
 {
 	PLAY;
 	if (INIT)
+	{
+		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_25", .5f);
 		UIManager::Get()->MinusSpiritGauge(); // 기인게이지 소모하기( 단 1번 )
-
+	}
+	if (RATIO > 0.25 && RATIO < 0.26)
+		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
 	// 공격판정 프레임
 	{
 		if (RATIO > 0.26 && RATIO < 0.38)
@@ -1825,6 +1838,12 @@ void Player::L108() // 기인베기 3
 		initForward = Forward();
 		UIManager::Get()->MinusSpiritGauge(); // 기인게이지 소모하기( 단 1번 )
 	}
+	if (RATIO > 0.1 && RATIO < 0.11)
+		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
+	if (RATIO > 0.2 && RATIO < 0.21)
+		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
+	if (RATIO > 0.4 && RATIO < 0.46)
+		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
 	// 줌 정상화 (앉아 기인 회전 베기에서 넘어온 경우)
 	{
 		if (RATIO > 0 && RATIO < 0.45)
@@ -1877,9 +1896,16 @@ void Player::L109() // 기인 큰회전베기
 {
 	PLAY;
 	if (INIT)
+	{
+		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_25", .5f);
 		UIManager::Get()->MinusSpiritGauge(); // 기인게이지 소모하기( 단 1번 )
+	}
+	if (RATIO > 0.2 && RATIO < 0.21)
+		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
 	if (RATIO > 0.1 && RATIO < 0.15)
 		Sounds::Get()->Play("Heeee", .5f);
+	if (RATIO > 0.7 && RATIO < 0.75)
+		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_9", .5f);
 	// 줌인
 	{
 		if (RATIO > 0 && RATIO < 0.16)
@@ -1913,16 +1939,22 @@ void Player::L109() // 기인 큰회전베기
 	}
 
 	if (RATIO > 0.98)
-		SetState(S_003);
+		SetState(S_001);
 }
 
 void Player::L110() // 기인 내디뎌베기
 {
 	PLAY;
-	if(INIT)
-	UIManager::Get()->MinusSpiritGauge(); // 기인게이지 소모하기( 단 1번 )
+	if (INIT)
+	{
+		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_25", .5f);
+		UIManager::Get()->MinusSpiritGauge(); // 기인게이지 소모하기( 단 1번 )
+	}
+	if (RATIO > 0.3 && RATIO < 0.31)
+		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
 	if (RATIO > 0.2 && RATIO < 0.3)
 		Sounds::Get()->Play("Heeee", .5f);
+
 	// 공격판정 프레임 
 	{
 		if (RATIO > 0.30f && RATIO < 0.406f)
@@ -1966,7 +1998,9 @@ void Player::L116()
 
 void Player::L119() // 날라차기 착지
 {
-	PLAY;
+	PLAY;	
+	if (RATIO > 0.001 && RATIO < 0.002)
+		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
 	if (RATIO > 0.2 && RATIO < 0.3)
 		Sounds::Get()->Play("Heeee", .5f);
 	// 공격판정 프레임 
@@ -2016,10 +2050,9 @@ void Player::L128()	// 날라차기 시작
 {
 	PLAY;
 	if (!playOncePerMotion)
-	{
+	{		
 		UI->UseBugSkill();
 		playOncePerMotion = true;		
-		Sounds::Get()->Play("Heeee", .5f);
 	}
 
 	// 줌 정상화 (앉아 기인 회전 베기에서 넘어온 경우)
@@ -2107,8 +2140,13 @@ void Player::L132()
 void Player::L133()	// 투구깨기
 {
 	PLAY;
+	if(INIT)
+		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_25", .5f);
+
 	if (RATIO > 0.2 && RATIO < 0.3)
 		Sounds::Get()->Play("Heeee", .5f);
+	if (RATIO > 0.4 && RATIO < 0.44)
+		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
 	// 체공중
 	{
 		if (RATIO < 0.38) // 줌아웃
@@ -2160,8 +2198,14 @@ void Player::L135()	// 투구깨기 끝
 void Player::L136() // 낙하찌르기
 {
 	PLAY;
+	if(INIT)
+		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_5", .5f);
+
 	if (RATIO > 0.2 && RATIO < 0.3)
 		Sounds::Get()->Play("Heeee", .5f);
+	if(RATIO>0.5&&RATIO<0.54)
+		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
+
 	// 체공중
 	{
 		if (RATIO > 0.55)
@@ -2200,6 +2244,9 @@ void Player::L138() // 낙하찌르기 끝
 void Player::L147() // 간파베기
 {
 	PLAY;
+	if(INIT)
+	Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_5", .5f);
+
 	if (RATIO > 0.2 && RATIO < 0.3)
 		Sounds::Get()->Play("Heeee", .5f);
 	UIManager::Get()->staminaActive = false;
@@ -2311,6 +2358,12 @@ void Player::L153() // 특수납도 취소 동작
 void Player::L154() // 앉아발도 베기
 {
 	PLAY;
+	if(INIT)
+		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_5", .5f);
+	if (RATIO > 0.01 && RATIO < 0.05)
+		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
+	if (RATIO > 0.17 && RATIO < 0.18)
+		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
 	if (RATIO > 0.2 && RATIO < 0.3)
 		Sounds::Get()->Play("Heeee", .5f);
 	// 공격판정 프레임 (이 모션은 2번 베기 동작이 있음)
@@ -2357,9 +2410,14 @@ void Player::L154() // 앉아발도 베기
 void Player::L155() // 앉아발도 기인베기
 {
 	PLAY;
-	if(INIT)
+	
+	if (INIT)
+	{
+		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_25", .5f);
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_8", .5f);
-
+	}
+	if (RATIO > 0.11 && RATIO < 0.15)
+		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
 	// 줌아웃 && 회피 판정 프레임
 	{
 		if (RATIO > 0.1 && RATIO < 0.18)
