@@ -582,6 +582,7 @@ void UIManager::Update()
 
 void UIManager::PostRender()
 {
+	DragSlot();
 	recover->Render();
 	hp->Render();
 	stamina->Render();
@@ -594,11 +595,9 @@ void UIManager::PostRender()
 	lsCoting->Render();
 	lsGauge->Render();
 	lsGauge2->Render();
-	// 드래그 슬롯 이랑 내임 추가
-	dragSlotBox->Render();
+	// 이건 한번 더 봐야 알듯
 	slotName1->Render();
-	slotName2->Render();
-	// 위에 1 혹은 2 중에 하나 자리 바꿀거임
+
 	quickSlot->Render();
 	slingerBug->Render();
 	slingerBug2->Render();
@@ -724,9 +723,12 @@ void UIManager::GetWildBug()
 
 void UIManager::QuickSlot()
 {
+	
 	if (KEY_PRESS('X')) // X 만 누르면 슬롯만 나옴
 	{
 		quickSlot_Back->Render();
+		slotName2->Render();
+
 		FOR(selectBoxs.size())
 		{
 			selectBoxs[i]->Render();
@@ -768,26 +770,9 @@ void UIManager::QuickSlot()
 		{
 			quickSlot_Select->Render();
 		}
-		if (KEY_PRESS('C')) // C 를 누른다면 Bar 활성화
-		{
-			useSelectBar = true;
-		}	
+	
 	}
-	else if (KEY_DOWN('X'))
-	{
-		MousePos = mousePos;
-		//CamRot = CAM->Rot().x;
-	}
-	else if (KEY_UP('X'))
-	{
-		//float pos;
-		//pos = Distance(MousePos.y, mousePos.y);
-		//mousePos = MousePos;
-		//CAM->Rot().x = CamRot;
-		//CAM->Rot().x = pos.y;
-		SetCursorPos(MousePos.x + 8.0f, MousePos.y);
-		useSelectBar = false;
-	}
+	
 }
 
 void UIManager::QuickSlotBar()
@@ -802,13 +787,52 @@ void UIManager::QuickSlotBar()
 		quickSlot_Select->Pos() = { 1224, 260, 0 };
 	}
 
-	if (KEY_PRESS('X') && KEY_PRESS('C')) 
-		// X 와 C 를 누르면 Bar 보이면서 C를 때어도 Bar는 보임 대신 X 를 놓는거 아님 사용 하는거 아님
+	if (KEY_DOWN('X'))
+	{
+		MousePos = mousePos;
+		useSlotUse = true;
+	}
+	else if (KEY_UP('X'))
+	{
+		//SetCursorPos(MousePos.x + 8.0f, MousePos.y);
+		useSelectBar = false;
+		useSlotUse = false;
+		if (MousePos.y > CENTER_Y)
+		{
+			SetCursorPos(MousePos.x + 8.0f, CENTER_Y - Distance(MousePos.y, CENTER_Y) + 31.0f);
+		}
+		else if (MousePos.y <= CENTER_Y)
+		{
+			SetCursorPos(MousePos.x + 8.0f, CENTER_Y + Distance(MousePos.y, CENTER_Y) + 31.0f);
+		}
+	}
+
+	if (KEY_PRESS('X'))
+	{
+		if (MousePos.y > CENTER_Y && !KEY_PRESS(VK_MBUTTON))// C 누르기 에서 마우스 휠 버튼 누르기로
+		{
+			SetCursorPos(MousePos.x + 8.0f, CENTER_Y - Distance(MousePos.y, CENTER_Y) + 31.0f);
+		}
+		else if (MousePos.y <= CENTER_Y && !KEY_PRESS(VK_MBUTTON))// C 누르기 에서 마우스 휠 버튼 누르기로
+		{
+			SetCursorPos(MousePos.x + 8.0f, CENTER_Y + Distance(MousePos.y, CENTER_Y) + 31.0f);
+		}
+		if (KEY_PRESS(VK_MBUTTON)) // 마우스 휠 버튼 을 누른다면 Bar 활성화
+		{
+			useSelectBar = true;
+		}
+	}
+
+	if (KEY_PRESS('X') && KEY_PRESS(VK_MBUTTON))
+		// X 와 마우스 휠 버튼 을 누르면 Bar 보이면서 마우스 휠 버튼 누르기 를 때어도 Bar는 보임 
+		// 대신 X 를 놓는거 아님 사용 하는거 아님
 	{
 		// 마우스가 오른쪽으로 가면 오른쪽 방향으로 바늘이 회전
 		// 마우스가 왼쪽 으로 가면 왼쪽으로 회전
-		SetCursorPos(quickSlot_Back->Pos().x + 8.069f, quickSlot_Back->Pos().y);
-		Vector3 pos = mousePos - Vector3(quickSlot_Back->Pos().x, quickSlot_Back->Pos().y);
+		//SetCursorPos(quickSlot_Back->Pos().x + 8.069f, quickSlot_Back->Pos().y);
+		//Vector3 pos = mousePos - Vector3(quickSlot_Back->Pos().x, quickSlot_Back->Pos().y);
+		SetCursorPos(MousePos.x + 8.0f, CENTER_Y - Distance(MousePos.y, CENTER_Y) + 31.0f);
+		Vector3 pos = mousePos - Vector3(MousePos.x, CENTER_Y - Distance(MousePos.y, CENTER_Y) + 31.0f);
 		quickSlot_Select->Rot().z -= pos.x * 0.4f * DELTA;
 
 		if (0.01f <= quickSlot_Select->Rot().z)
@@ -910,7 +934,7 @@ void UIManager::QuickSlotBar()
 		}
 	}
 
-	if (KEY_PRESS('X') && !KEY_PRESS('C'))
+	if (KEY_PRESS('X') && !KEY_PRESS(VK_MBUTTON)) // C 누르기 에서 마우스 휠 버튼 누르기로
 		// X 를 누른 상태에서 C 를 누르면 지금 선택 되어있는 슬롯을 잡아줌
 	{
 		if (quickSlot_Select->Rot().z > -0.42f || quickSlot_Select->Rot().z < -5.98f)
@@ -950,7 +974,11 @@ void UIManager::QuickSlotBar()
 
 void UIManager::DragSlot()
 {
-
+	if (KEY_PRESS('C') && useSlotUse && !useSelectBar)
+	{
+		dragSlotBox->Render();
+		
+	}
 }
 
 bool UIManager::IsAbleBugSkill()

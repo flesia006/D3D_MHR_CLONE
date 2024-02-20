@@ -21,13 +21,6 @@ public:
     void GaugeBonus();
     void TargetMonster();
     void GetWildBug();
-
-    // 퀵 슬롯 관한 내용
-    //=====================
-    void QuickSlot(); // 퀵 슬롯 어떤 식으로 랜더 할지 내용
-    void QuickSlotBar(); // 퀵 슬롯 에서 가리키는 내용 함수
-    void DragSlot(); // 드래그 슬롯 내용
-    //=====================
         
     float MinusDurability() { return curDurability -= 0.2f; } // 내구도 깎는 함수
     float GetDurabilityLevelCoefft()                            // 내구도 공격력 보정치를 반환        
@@ -70,6 +63,14 @@ public:
     float SetMaxCoting() { return curCoting = maxCoting; }
     float curStamina = 100;//임시로 public에 올려둠
     bool staminaActive = false;
+    
+private:
+    // 퀵 슬롯 관한 내용
+    //=====================
+    void QuickSlot(); // 퀵 슬롯 어떤 식으로 랜더 할지 내용
+    void QuickSlotBar(); // 퀵 슬롯 에서 가리키는 내용 함수
+    void DragSlot(); // 드래그 슬롯 내용
+    //=====================
 
 private:
     Quad* clockFrame;
@@ -173,6 +174,7 @@ public:
     float wildBugDuration = 0.0f;
     
     // 퀵 슬롯 실행 할때 유무 확인 하기
+    bool useSlotUse = false;
     // 일단 8칸 이라 8개 만들건데 바뀔수 있음
     bool useQuickSlot1 = false;
     bool useQuickSlot2 = false;
@@ -185,6 +187,5 @@ public:
     // 아래 이건 특정 키를 누르면 Bar가 활성화됨
     bool useSelectBar = false;
     Vector3 MousePos;
-    float CamRot;
 };
 
