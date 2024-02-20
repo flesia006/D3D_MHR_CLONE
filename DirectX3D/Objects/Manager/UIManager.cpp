@@ -831,8 +831,15 @@ void UIManager::QuickSlotBar()
 		// 마우스가 왼쪽 으로 가면 왼쪽으로 회전
 		//SetCursorPos(quickSlot_Back->Pos().x + 8.069f, quickSlot_Back->Pos().y);
 		//Vector3 pos = mousePos - Vector3(quickSlot_Back->Pos().x, quickSlot_Back->Pos().y);
-		SetCursorPos(MousePos.x + 8.0f, CENTER_Y - Distance(MousePos.y, CENTER_Y) + 31.0f);
-		Vector3 pos = mousePos - Vector3(MousePos.x, CENTER_Y - Distance(MousePos.y, CENTER_Y) + 31.0f);
+		if (MousePos.y > CENTER_Y)
+		{
+			SetCursorPos(MousePos.x + 8.0f, CENTER_Y - Distance(MousePos.y, CENTER_Y) + 31.0f);
+		}
+		else if (MousePos.y <= CENTER_Y)
+		{
+			SetCursorPos(MousePos.x + 8.0f, CENTER_Y + Distance(MousePos.y, CENTER_Y) + 31.0f);
+		}
+		Vector3 pos = mousePos - Vector3(MousePos.x, CENTER_Y - Distance(MousePos.y, CENTER_Y));
 		quickSlot_Select->Rot().z -= pos.x * 0.4f * DELTA;
 
 		if (0.01f <= quickSlot_Select->Rot().z)
@@ -977,7 +984,11 @@ void UIManager::DragSlot()
 	if (KEY_PRESS('C') && useSlotUse && !useSelectBar)
 	{
 		dragSlotBox->Render();
-		
+	}
+
+	if (WM_MOUSEHWHEEL)
+	{
+		dragSlotBox->Render();
 	}
 }
 

@@ -115,6 +115,12 @@ private:
     Quad* orangeLeftHalfCircle3;
     Quad* orangeRightHalfCircle3;
 
+    // 아이템 아이콘 추가
+    //===================
+    Quad* potionIcon;
+    Quad* whetstoneIcon;
+    //===================
+
     //액터의 UI
     ProgressBar* hp;
     Vector3 hpPos; //체력바의 위치를 수치화한 것 (진짜 위치를 위한 중간계산용)
