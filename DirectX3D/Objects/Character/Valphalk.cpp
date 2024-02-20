@@ -3,10 +3,9 @@
 
 Valphalk::Valphalk() : ModelAnimator("Valphalk")
 {
-	ReadClip("stun");
-	ReadClip("E_2005");
-	// 아래 있는게 첫 포효
-	ReadClip("E_4013");
+	head = new Transform();
+	ReadClip("E_0003");
+	ReadClip("E_0007");
 	// 플레이어 발견 전
 	ReadClip("E_0043");
 	ReadClip("E_0044");
@@ -15,7 +14,352 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 	ReadClip("E_0097");
 	ReadClip("E_0098");
 	ReadClip("E_0099");
+	ReadClip("E_2038");
+	ReadClip("E_2040");
+	ReadClip("E_2054");
+	ReadClip("E_3001");
+	ReadClip("E_3023");
+	// 아래 있는게 첫 포효
+	ReadClip("E_4013");
+	//ReadClip("E_22005");
 
+	ColliderAdd();	
+
+	realPos = new CapsuleCollider(1, 0.1);
+	realPos->Scale() *= 6.0f;
+}
+
+Valphalk::~Valphalk()
+{
+	for (CapsuleCollider* capsulCollider : colliders)
+	{
+		delete capsulCollider;
+	}
+	for (Transform* transform : transforms)
+	{
+		delete transform;
+	}
+	delete head;
+	delete realPos;
+}
+
+void Valphalk::Update()
+{
+	Move();
+	head->Pos() = realPos->Pos() + Vector3::Up() * 200;
+	head->UpdateWorld();
+	realPos->Pos() = GetTranslationByNode(1);
+	realPos->UpdateWorld();
+	velocity = target->GlobalPos() - GlobalPos();
+
+	for (CapsuleCollider* capsulCollider : colliders)	
+		capsulCollider->Update();	
+
+	for (BoxCollider* boxCollider : wings )	
+		boxCollider->UpdateWorld();	
+
+	ColliderNodePos();
+
+	ModelAnimator::Update();
+	patrolTime += DELTA;
+
+	// Test 샘플 코드
+	//===================================
+	//if (Count <= 0)
+	//{
+	////	colliders[TARGETDOME]->Pos() = GetTranslationByNode(4); // 타겟 보는 범위
+	//	StartRoar();
+	//}
+	//
+	//// 잘 들어갔나 확인하기 용 코드
+	if (patrolTime > 6 && curState==E_0003 || patrolTime > 6 && curState==E_0043)
+		encounter = true;
+	Patrol();
+	if (encounter == true)
+	{
+		SetState(E_4013);
+		encounter = false;
+	}
+		//Fight();
+
+}
+
+void Valphalk::PreRender()
+{
+
+}
+
+void Valphalk::Render()
+{
+	for (CapsuleCollider* capsulCollider : colliders)
+	{
+		capsulCollider->Render();
+	}
+
+	for (BoxCollider* boxCollider : wings )
+	{
+		boxCollider->Render();
+	}
+
+	ModelAnimator::Render();
+	realPos->Render();
+}
+
+void Valphalk::GUIRender()
+{
+	//ModelAnimator::GUIRender();
+	Vector3 realpos = realPos->Pos();
+	ImGui::SliderFloat3("ValphalkPos", (float*)&Pos(), -5000, 5000);
+	ImGui::DragFloat3("RealPos", (float*)&realPos->Pos());
+	ImGui::Text("RanPatrolNum : %d", ranPatrol);
+	ImGui::Text("PatrolTime : %.3f", patrolTime);
+	ImGui::Text("PatrolTime : %.3f", velocity.Length());
+
+	for (int i = 0; i < colliders.size(); i++)
+	{
+		colliders[i]->GUIRender();
+		//ImGui::SliderFloat3("ValphalkPos", (float*)&colliders[i]->Rot(), -10, 10);
+		//ImGui::SliderFloat3("ValphalkScale", (float*)&colliders[i]->Scale(), 0, 1000);
+	}
+
+	for (int i = 0; i < wings.size(); i++)
+	{
+		wings[i]->GUIRender();
+	}
+}
+
+void Valphalk::PostRender()
+{
+}
+
+void Valphalk::Hit()
+{
+}
+
+void Valphalk::Spawn(Vector3 pos)
+{
+}
+
+void Valphalk::SetEvent(int clip, Event event, float timeRatio)
+{
+	if (totalEvents[clip].count(timeRatio) > 0)
+		return;
+
+	totalEvents[clip][timeRatio] = event;
+}
+
+void Valphalk::ExecuteEvent()
+{
+	int index = curState;
+
+	if (totalEvents[index].empty()) return; 
+	if (eventIters[index] == totalEvents[index].end()) return;
+	
+	float ratio = motion->runningTime / motion->duration; 
+	
+	if (eventIters[index]->first > ratio) return; 	
+	
+	eventIters[index]->second();
+	eventIters[index]++;
+}
+
+void Valphalk::SetState(State state)
+{
+	if (state == curState)
+		return;
+	if (combo == false) // 연계공격중일때는 갱신X
+	Pos() = realPos->Pos();
+
+	//bossRealPos->Pos() = Pos();
+
+	curState = state;
+	PlayClip(state);
+
+	TerrainEditor* terrain = dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetTerrain();
+
+	Vector3 pos1;
+	terrain->ComputePicking(pos1, head->Pos() + Vector3::Up() * 200, Vector3::Down());
+
+	//	float y = max(pos1.y, pos2.y);
+	Pos().y = pos1.y;
+}
+
+void Valphalk::SetType(Type type)
+{
+	if (type == curType)
+		return;
+	curType = type;
+	// 여기는 텍스처 들어갈거 같음
+	// 예를 들면 (*여기서 안할수도 있지만)
+	if (curType == TypeA)
+	{
+		
+	}
+	if (curType == TypeB)
+	{
+
+	}
+	if (curType == TypeC)
+	{
+
+	}
+}
+
+void Valphalk::Patrol()
+{	
+	if (velocity.Length() < 2000) return;
+	// 타겟과의 거리가 일정 거리 이상이면 패트롤 = 일정거리 안으로 들어오면 패트롤을 중지후, 공격 태세	
+	//preran 설정으로 같은패턴이 연속 두번이상 나오지 않도록 수정예정.
+	if (patrolTime > 5)
+	{
+		ranPatrol = rand() % 2;
+		patrolTime = 0;
+	}
+	if(ranPatrol == 0)
+		SetState(E_0003);
+	if (ranPatrol == 1)
+		SetState(E_0043);
+}
+
+void Valphalk::Fight()
+{
+	SetState(E_2040);
+
+
+
+}
+
+void Valphalk::Move()
+{
+	switch (curState)
+	{
+	case Valphalk::E_0003:	 E0003();		break;
+	case Valphalk::E_0007:	 E0007();		break;
+	case Valphalk::E_0043:	 E0043();		break;
+	case Valphalk::E_0044:	 E0044();		break;
+	case Valphalk::E_0045:	 E0045();		break;
+	case Valphalk::E_0097:	 E0097();		break;
+	case Valphalk::E_2038:	 E2038();		break;
+	case Valphalk::E_2040:	 E2040();		break;
+	case Valphalk::E_2054:	 E2054();		break;
+	case Valphalk::E_3001:	 E3001();		break;
+	case Valphalk::E_3023:	 E3023();		break;
+	case Valphalk::E_4013:	 E4013();		break;
+	}
+}
+
+void Valphalk::UpdateUI()
+{
+
+}
+
+void Valphalk::E0003() // 평상시 대기
+{
+	PLAY;
+	if (RATIO > 0.98)
+		SetState(E_0003);
+}
+
+void Valphalk::E0007() // 탈진
+{
+	PLAY;
+}
+
+void Valphalk::E0043() // 앞으로 전진
+{
+	PLAY;
+	if (RATIO > 0.98)
+		SetState(E_0003);
+}
+
+void Valphalk::E0044() // 좌회전
+{
+	PLAY;
+}
+
+void Valphalk::E0045() // 뒤로 회전
+{
+	PLAY;
+}
+
+void Valphalk::E0097() // 정지 (공격 준비)
+{
+	PLAY;
+}
+
+void Valphalk::E0098() // 급좌회전 턴
+{
+	PLAY;
+}
+
+void Valphalk::E0099() // 급뒤로 턴
+{
+	PLAY;
+}
+
+void Valphalk::E2038() // 날개 찌르기
+{
+	combo = true; // 콤보 시작
+
+	PLAY;
+
+	if (RATIO > 0.98)
+		SetState(E_2054);
+}
+
+void Valphalk::E2040() // 찌르기 준비
+{
+	PLAY;	
+	if (RATIO > 0.98)
+		SetState(E_2038);
+}
+
+void Valphalk::E2054() // 찌르기 날개 회수
+{
+	PLAY;
+
+	if (RATIO > 0.98)
+	{
+		SetState(E_0003);
+		combo = false; // 콤보 마무리
+	}
+}
+
+void Valphalk::E3001() // 작은 데미지 피격
+{
+	PLAY;
+}
+
+void Valphalk::E3023() // 사망
+{
+	PLAY;
+	if (RATIO > 0.98)
+		GetClip(curState)->SetRatio(0.98); // 사망시 애니메이션 정지	
+}
+
+void Valphalk::E4013() // 조우 포효
+{	
+	PLAY;
+	if (RATIO > 0.2 && RATIO < 0.28)
+		Sounds::Get()->Play("em086_05_vo_media_10", 0.5f);
+	if (RATIO > 0.98)
+		SetState(E_2040);
+}
+
+void Valphalk::E22005() // 포효
+{
+	PLAY;
+	if (RATIO > 0.5 && RATIO < 0.58)
+		Sounds::Get()->Play("em086_05_vo_media_10", 0.5f);
+	if (RATIO > 0.98)
+		SetState(E_0003);
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+// Collider 관련 함수들
+
+void Valphalk::ColliderAdd()
+{
 	FOR(TAIL + 1)
 	{
 		Transform* transForm = new Transform();
@@ -41,7 +385,7 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 	}
 
 	// 머리 부분
- 	{
+	{
 		colliders[HEAD]->SetParent(transforms[HEAD]);
 		colliders[HEAD]->Scale().x = 90.0f;
 		colliders[HEAD]->Scale().y = 70.0f;
@@ -62,7 +406,7 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 	}
 
 	// 가슴 부분
-	{ 
+	{
 		colliders[CHEST]->SetParent(transforms[CHEST]);
 		colliders[CHEST]->Scale().x = 150.0f;
 		colliders[CHEST]->Scale().y = 110.0f;
@@ -140,7 +484,7 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 		colliders[LLEG1]->part = LLEG1;
 		colliders[LLEG1]->SetTag("LLEG1");
 	}
-	
+
 	// 왼쪽 발바닥 (앞)
 	{
 		colliders[LLEG1_FOOT]->SetParent(transforms[LLEG1_FOOT]);
@@ -183,7 +527,7 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 		colliders[RLEG1]->part = RLEG1;
 		colliders[RLEG1]->SetTag("RLEG1");
 	}
-	
+
 	// 오른쪽 다리 발바닥(앞)
 	{
 		colliders[RLEG1_FOOT]->SetParent(transforms[RLEG1_FOOT]);
@@ -251,167 +595,8 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 		colliders[TAIL]->part = TAIL;
 		colliders[TAIL]->SetTag("TAIL");
 	}
-
-
-	//SetState(curState);
-	//PlayClip(3);
 }
 
-Valphalk::~Valphalk()
-{
-	for (CapsuleCollider* capsulCollider : colliders)
-	{
-		delete capsulCollider;
-	}
-	for (Transform* transform : transforms)
-	{
-		delete transform;
-	}
-	
-}
-
-void Valphalk::Update()
-{
-	Move();
-
-	for (CapsuleCollider* capsulCollider : colliders)
-	{
-		capsulCollider->Update();;
-	}
-
-	for (BoxCollider* boxCollider : wings )
-	{
-		boxCollider->UpdateWorld();
-	}
-
-	ColliderNodePos();
-
-	ModelAnimator::Update();
-
-	// Test 샘플 코드
-	//===================================
-	//if (Count <= 0)
-	//{
-	////	colliders[TARGETDOME]->Pos() = GetTranslationByNode(4); // 타겟 보는 범위
-	//	StartRoar();
-	//}
-	//
-	//// 잘 들어갔나 확인하기 용 코드
-	if (KEY_DOWN('1'))
-	{
-		SetState(STUN);
-	//	//PlayClip(0);
-	}
-	//if (KEY_DOWN('2'))
-	//{
-	//	SetState(E_2005);
-	//	//PlayClip(1);
-	//}
-	if (KEY_DOWN('2'))
-	{
-		SetState(E_4013);
-		//PlayClip(1);
-	}
-	if (KEY_DOWN('3'))
-	{
-		SetState(E_0043);
-	}
-	if (KEY_DOWN('4'))
-	{
-		SetState(E_0044);
-	}
-
-	switch (curState)
-	{
-	case STUN:
-		break;
-	case E_2005:
-		break;
-	case E_4013:		
-		break;
-	}
-	//===================================
-	if (curState == E_4013)
-	{
-		if (RATIO > 0.2 && RATIO < 0.28)
-			Sounds::Get()->Play("em086_05_vo_media_10", 0.5f);
-		if(RATIO>0.98)
-		SetState(STUN);
-	}
-}
-
-void Valphalk::PreRender()
-{
-
-}
-
-void Valphalk::Render()
-{
-	for (CapsuleCollider* capsulCollider : colliders)
-	{
-		capsulCollider->Render();
-	}
-
-	for (BoxCollider* boxCollider : wings )
-	{
-		boxCollider->Render();
-	}
-
-	ModelAnimator::Render();
-}
-
-void Valphalk::GUIRender()
-{
-	//ModelAnimator::GUIRender();
-	ImGui::SliderFloat3("ValphalkPos", (float*)&Pos(), 0, 100);
-	for (int i = 0; i < colliders.size(); i++)
-	{
-		colliders[i]->GUIRender();
-		//ImGui::SliderFloat3("ValphalkPos", (float*)&colliders[i]->Rot(), -10, 10);
-		//ImGui::SliderFloat3("ValphalkScale", (float*)&colliders[i]->Scale(), 0, 1000);
-	}
-
-	for (int i = 0; i < wings.size(); i++)
-	{
-		wings[i]->GUIRender();
-	}
-}
-
-void Valphalk::PostRender()
-{
-}
-
-void Valphalk::Hit()
-{
-}
-
-void Valphalk::Spawn(Vector3 pos)
-{
-}
-
-void Valphalk::SetEvent(int clip, Event event, float timeRatio)
-{
-	if (totalEvents[clip].count(timeRatio) > 0)
-		return;
-
-	totalEvents[clip][timeRatio] = event;
-}
-
-void Valphalk::ExecuteEvent()
-{
-	int index = curState;
-
-	if (totalEvents[index].empty()) return; 
-	if (eventIters[index] == totalEvents[index].end()) return;
-	
-	float ratio = motion->runningTime / motion->duration; 
-	
-	if (eventIters[index]->first > ratio) return; 
-	
-	
-	eventIters[index]->second();
-	eventIters[index]++;
-}
 
 void Valphalk::ColliderNodePos()
 {
@@ -430,14 +615,14 @@ void Valphalk::ColliderNodePos()
 	// 왼쪽 날개
 	transforms[LWING]->SetWorld(GetTransformByNode(63));
 	//Wingtransforms[LWING1]->SetWorld(GetTransformByNode(64));
-	 
+
 	// 왼쪽 연결 관절
 	transforms[LWING_RADIUS]->SetWorld(GetTransformByNode(57));
-	
+
 	// 오른쪽 날개
 	transforms[RWING]->SetWorld(GetTransformByNode(83));
 	//Wingtransforms[RWING1]->SetWorld(GetTransformByNode(84));
-	
+
 	// 오른쪽 연결 관절
 	transforms[RWING_RADIUS]->SetWorld(GetTransformByNode(77));
 
@@ -470,91 +655,11 @@ void Valphalk::ColliderNodePos()
 
 	// 꼬리 1/4 끝
 	transforms[TAIL_1]->SetWorld(GetTransformByNode(127));
-	
+
 	// 꼬리 1/2 끝
 	transforms[TAIL_2]->SetWorld(GetTransformByNode(128));
-	
+
 	// 꼬리 끝
 	transforms[TAIL]->SetWorld(GetTransformByNode(130));
-
-}
-
-void Valphalk::EndRoar() // 포효 끝나고 원래 모션으로 돌아옴
-{
-	SetState(STUN);
-	Count = 1;
-	LookatPlayer = false;
-	
-}
-
-void Valphalk::StartRoar()
-{
-	// 플레이어 필요해서 임시로 불러옴
-	//Player* player =
-	//	dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetPlayer();
-	//
-	//float dirB = 1000.0f;
-	//float dirA = Distance(Pos(),player->getCollider()->Pos());
-
-	//if (dirA < dirB)
-	//{
-	//	LookatPlayer = true; // 플레이어를 타겟으로 잡게됨
-	//	SetState(E_4013);
-	//}
-
-	//if (LookatPlayer)
-	//{
-	//	if (RATIO > 0.98)
-	//	{
-	//		EndRoar();
-	//	}
-	//}
-}
-
-
-void Valphalk::SetState(State state)
-{
-	if (state == curState)
-		return;
-	curState = state;
-	PlayClip(state);
-}
-
-void Valphalk::SetType(Type type)
-{
-	if (type == curType)
-		return;
-	curType = type;
-	// 여기는 텍스처 들어갈거 같음
-	// 예를 들면 (*여기서 안할수도 있지만)
-	if (curType == TypeA)
-	{
-		
-	}
-	if (curType == TypeB)
-	{
-
-	}
-	if (curType == TypeC)
-	{
-
-	}
-}
-
-void Valphalk::Move()
-{
-	//Pos() = GetTranslationByNode(0);
-}
-
-void Valphalk::UpdateUI()
-{
-
-}
-
-void Valphalk::E4013()
-{	
-	PLAY;
-	if (RATIO > 0.7)
-		Sounds::Get()->Play("em086_05_vo_media_10", 0.5f);
 
 }
