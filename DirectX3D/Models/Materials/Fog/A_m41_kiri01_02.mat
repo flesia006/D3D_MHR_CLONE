@@ -1,0 +1,10 @@
+<Material Name="A_m41_kiri01_02">
+    <Shader Vertex="" Pixel="Shaders/Light/Light.hlsl"/>
+    <Texture Diffuse="Textures\M41Sky\storm.tga" Specular="Textures/Color/White.png" Normal="Textures/Color/White.png" Emissive="Textures/Color/Black.png"/>
+    <Property Shininess="20" HasNormalMap="0">
+        <Diffuse R="0.36764705" G="0.36764705" B="0.36764705" A="1"/>
+        <Specular R="0.2" G="0.2" B="0.2" A="1"/>
+        <Ambient R="0.2" G="0.2" B="0.2" A="1"/>
+        <Emissive R="0" G="0" B="0" A="1"/>
+    </Property>
+</Material>

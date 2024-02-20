@@ -12,8 +12,8 @@ ShadowScene::ShadowScene()
     ball = new HalfSphere();    
     ball->Scale() *= 150000;
     ball->Pos().y -= 6000;
-    ball->GetMaterial()->SetShader(L"Basic/Texture.hlsl");
-    ball->GetMaterial()->SetDiffuseMap(L"Textures/M41Sky/Sky.tga");
+    //ball->GetMaterial()->SetShader(L"Basic/Texture.hlsl");
+    ball->GetMaterial()->SetDiffuseMap(L"Textures/M41Sky/storm.tga");
     ball->UpdateWorld();
 
     fog = new Model("skydom");
@@ -21,6 +21,11 @@ ShadowScene::ShadowScene()
     fog->Scale() *= 100;
     fog->Pos().y -= 10000;
     fog->UpdateWorld();
+
+    fieldFog = new Model("fog");
+    fieldFog->Pos() = Vector3(2062.1f, 220, 17653.896f);
+    fieldFog->Rot().y = XM_PI;
+    fieldFog->UpdateWorld();
 
     player = new Player();
     player->Pos() = Vector3(2237.314, 460, 6411.237);
@@ -83,10 +88,10 @@ void ShadowScene::Update()
     //if (KEY_DOWN('4')) light->type = 3;
     terrain->Update();
     garuk->Update();
-    objects->Update();
+    //objects->Update();
     valphalk->Update();
     player->Update();
-
+    fieldFog->UpdateWorld();
     
     ball->Rot().y += 0.02 * DELTA;
     ball->UpdateWorld();
@@ -108,10 +113,12 @@ void ShadowScene::PreRender()
     shadow->SetRenderTarget();
 
     //인간한테 뎁스 셰이더를 적용 (조건에 따른 셰이더 변화...등을 가진 조건 함수)
+    objects->SetShader(L"Light/DepthMap.hlsl");
     valphalk->SetShader(L"Light/DepthMap.hlsl");
     player->SetShader(L"Light/DepthMap.hlsl");
     garuk->SetShader(L"Light/DepthMap.hlsl");
     //조건에 따라 픽셀이 바뀐 인간을 렌더...해서 텍스처를 준비
+    objects->Render();
     valphalk->Render();
     player->Render();
     
@@ -127,6 +134,7 @@ void ShadowScene::Render()
 
 
     //그림자를 받기 위한 셰이더 세팅
+    objects->SetShader(L"Light/Shadow.hlsl");
     valphalk->SetShader(L"Light/Shadow.hlsl");
     player->SetShader(L"Light/Shadow.hlsl");
     garuk->SetShader(L"Light/Shadow.hlsl");
@@ -136,21 +144,23 @@ void ShadowScene::Render()
 
     rasterizerState[1]->SetState(); // 후면도 그림
     {
-        objects->Render();
-        ball->Render();
-
-        blendState[1]->SetState(); // 반투명
-        {
-            fog->Render();
-        }
-        blendState[0]->SetState();
-        
-        valphalk->Render();
+        ball->Render();        
     }
     rasterizerState[0]->SetState();
-
+    
+    objects->Render();
+    valphalk->Render();
     player->Render();
     garuk->Render();
+
+    rasterizerState[1]->SetState();
+    blendState[1]->SetState(); // 반투명
+    {
+        fog->Render();
+        fieldFog->Render();
+    }
+    blendState[0]->SetState();
+    rasterizerState[0]->SetState();
 
 }
 
@@ -163,7 +173,7 @@ void ShadowScene::PostRender()
 
 void ShadowScene::GUIRender()
 {
-//    ball->GUIRender();
+      ball->GUIRender();
 //    fog->GUIRender();
 //    cloud->GUIRender();
 //    cloud2->GUIRender();
@@ -171,6 +181,9 @@ void ShadowScene::GUIRender()
 //    cloud4->GUIRender();
 //    forest->GUIRender();
 //    terrain->GUIRender();
+//    valphalk->GUIRender();
+//    player->GUIRender(); // 디버그 조작용
+    fieldFog->GUIRender();
     valphalk->GUIRender();
     //player->GUIRender(); // 디버그 조작용
     //UIManager::Get()->GUIRender();

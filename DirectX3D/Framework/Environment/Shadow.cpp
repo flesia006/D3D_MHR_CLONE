@@ -58,7 +58,7 @@ void Shadow::SetViewProjection()
     Matrix view = XMMatrixLookAtLH(Vector3(light->pos),
         Vector3(), Vector3(0, 1, 0));
     
-    Matrix projection = XMMatrixPerspectiveFovLH(XM_PIDIV2, 1.0f, 0.1f, 5000.0f);
+    Matrix projection = XMMatrixPerspectiveFovLH(XM_PIDIV2, 1.0f, 0.1f, 5000000.0f);
 
     viewBuffer->Set(view, XMMatrixInverse(nullptr, view));
     projectionBuffer->Set(projection);

@@ -29,6 +29,7 @@ private:
 
     HalfSphere* ball;
     Model* fog;
+    Model* fieldFog;
 
     TerrainEditor* terrain;
 
