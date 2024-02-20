@@ -61,6 +61,7 @@ public:
     void Load(string file);
 
     string& GetName() { return name; }
+    string  GetFile() { return file; }
     MaterialBuffer::Data& GetData() { return buffer->Get(); }
 
 private:

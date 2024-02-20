@@ -59,7 +59,10 @@ Texture* Texture::Add(wstring file)
     else
         result = LoadFromWICFile(file.c_str(), WIC_FLAGS_NONE, nullptr, image);
 
-    assert(SUCCEEDED(result));
+    if (!(SUCCEEDED(result)))
+    {
+        file = L"Textures/Color/White.png";
+    }
 
     ID3D11ShaderResourceView* srv;
 
@@ -89,7 +92,10 @@ Texture* Texture::Add(wstring file, wstring key)
     else
         result = LoadFromWICFile(file.c_str(), WIC_FLAGS_NONE, nullptr, image);
 
-    assert(SUCCEEDED(result));
+    if (!(SUCCEEDED(result)))
+    {
+        file = L"Textures/Color/White.png";
+    }
 
     ID3D11ShaderResourceView* srv;
 

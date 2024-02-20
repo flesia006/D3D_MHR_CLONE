@@ -73,15 +73,15 @@ void Model::SetMap(string path)
         string fileName = filePath.substr(startIndex, endIndex - startIndex + 1);
 
         string texPath = path + '/' + fileName;
-        wstring diff = ToWString(texPath + "ALBD.dds");
-        wstring spec = ToWString(texPath + "ALP .dds");
-        wstring norm = ToWString(texPath + "NRMR.dds");
+        wstring diff = ToWString(texPath + "ALBD.tga");
+        wstring spec = ToWString(texPath + "ALP.tga");
+        wstring norm = ToWString(texPath + "NRMR.tga");
 
         materials[i]->SetDiffuseMap(diff);
         materials[i]->SetSpecularMap(spec);
         materials[i]->SetNormalMap(norm);
 
-        materials[i]->Save(materials[i]->file);
+        materials[i]->Save(materials[i]->GetFile());
     }
 }
 

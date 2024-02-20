@@ -91,6 +91,7 @@ float4 PS(PixelInput input) : SV_TARGET
 	float4 ambient = CalcAmbient(material);	
     float4 emissive = CalcEmissive(material);
 	//float4 emissive = mEmissive;
+		
 	
 	color = color + ambient + emissive;
 	
@@ -108,5 +109,9 @@ float4 PS(PixelInput input) : SV_TARGET
 	if (currentDepth > shadowDepth + 0.0001f)
 		return color * 0.5f;
 
+	
+    if (color.r == 0 && color.g == 0 && color.b == 0)
+        discard;
+	
 	return color;
 }
