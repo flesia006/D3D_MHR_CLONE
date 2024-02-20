@@ -62,6 +62,29 @@ Material* Model::AddMaterial(string materialName)
     return material;
 }
 
+void Model::SetMap(string path)
+{
+    for (UINT i = 0; i < materials.size(); i++)
+    {
+        string filePath = materials[i]->GetName();
+        int startIndex = 2;
+        int endIndex = filePath.rfind('_');
+
+        string fileName = filePath.substr(startIndex, endIndex - startIndex + 1);
+
+        string texPath = path + '/' + fileName;
+        wstring diff = ToWString(texPath + "ALBD.dds");
+        wstring spec = ToWString(texPath + "ALP .dds");
+        wstring norm = ToWString(texPath + "NRMR.dds");
+
+        materials[i]->SetDiffuseMap(diff);
+        materials[i]->SetSpecularMap(spec);
+        materials[i]->SetNormalMap(norm);
+
+        materials[i]->Save(materials[i]->file);
+    }
+}
+
 void Model::ReadMaterial()
 {
     string file = "Models/Materials/" + name + "/" + name + ".mats";

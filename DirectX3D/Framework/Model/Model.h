@@ -14,7 +14,8 @@ public:
     Material* AddMaterial(string materialName);
     ModelMesh* GetMesh(UINT index) { return meshes[index]; }
     UINT GetMeshNum() { return meshes.size(); }
-    
+    void SetMap(string path);
+
     string GetName() { return name; }
     vector<Material*> GetMaterials() { return materials; }
     
