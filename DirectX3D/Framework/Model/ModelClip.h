@@ -19,6 +19,7 @@ public:
     bool IsNearEnd(float scale = 1.0f) { return playTime / duration > (0.99f / scale); }
     bool IsEnd() { return playTime / duration > 1.0f; }
     float GetRatio() { return playTime / duration; }
+    void SetRatio(float playTime) { this->playTime = playTime; }
     void ResetPlayTime() { playTime = -100; }
     void SetPlayTime(float time) { playTime = time; }
 

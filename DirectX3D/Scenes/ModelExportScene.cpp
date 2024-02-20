@@ -13,7 +13,7 @@ ModelExportScene::ModelExportScene()
     exporter->ExportMesh();
     delete exporter;    
 
-//    name = "tikei7";
+//    name = "E_0003";
 //    exporter = new ModelExporter(name, file);
 //    exporter->ExportMaterial();
 //    exporter->ExportMesh();
@@ -26,19 +26,19 @@ ModelExportScene::ModelExportScene()
 //    delete exporter;
 
 //    
-//    clipName = "O_002";
+//    clipName = "E_0007";
 //    file = "Models/Animations/" + name + "/" + clipName + ".fbx";
 //    exporter = new ModelExporter(name, file);
 //    exporter->ExportClip(clipName);    
 //    delete exporter;
-
-//    clipName = "L_153";
-//    file = "Models/Animations/" + name + "/" + clipName + ".fbx";
-//    exporter = new ModelExporter(name, file);
-//    exporter->ExportClip(clipName);
-//    delete exporter;
-    
-//    clipName = "G_024";
+//
+    clipName = "E_2054";
+    file = "Models/Animations/" + name + "/" + clipName + ".fbx";
+    exporter = new ModelExporter(name, file);
+    exporter->ExportClip(clipName);
+    delete exporter;
+  
+//    clipName = "E_3001";
 //    file = "Models/Animations/" + name + "/" + clipName + ".fbx";
 //    exporter = new ModelExporter(name, file);
 //    exporter->ExportClip(clipName);

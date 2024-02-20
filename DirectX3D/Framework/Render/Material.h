@@ -63,6 +63,9 @@ public:
     string& GetName() { return name; }
     string  GetFile() { return file; }
     MaterialBuffer::Data& GetData() { return buffer->Get(); }
+    string file;
+
+    string file;
 
 private:
     void SelectMap(string name, MapType type);
@@ -74,7 +77,7 @@ private:
 private:
     string name;
     string editName;
-    string file;
+   
     string projectPath;
 
     VertexShader* vertexShader = nullptr;

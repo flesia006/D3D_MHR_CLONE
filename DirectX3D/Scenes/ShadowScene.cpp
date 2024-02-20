@@ -27,14 +27,19 @@ ShadowScene::ShadowScene()
     fieldFog->Rot().y = XM_PI;
     fieldFog->UpdateWorld();
 
-    garuk = new Garuk();
-    valphalk = new Valphalk();
-    valphalk->Pos().z -= 1500.0f;
-    valphalk->Rot().y += XM_PI;
-    valphalk->UpdateWorld();
-
     player = new Player();
     player->Pos() = Vector3(2237.314, 460, 6411.237);
+
+    garuk = new Garuk();
+    garuk->SetTarget(player);
+
+    valphalk = new Valphalk();
+    valphalk->Pos().x = 3100.0f;
+    valphalk->Pos().z = 4500.0f;
+    valphalk->Rot().y += XM_PI;
+    valphalk->UpdateWorld();
+    valphalk->SetTarget(player);
+
     shadow = new Shadow();
     UIManager::Get();
 
@@ -82,7 +87,6 @@ void ShadowScene::Update()
     //if (KEY_DOWN('3')) light->type = 2;
     //if (KEY_DOWN('4')) light->type = 3;
     terrain->Update();
-    garuk->SetTarget(player);
     garuk->Update();
     //objects->Update();
     valphalk->Update();
@@ -180,6 +184,8 @@ void ShadowScene::GUIRender()
 //    valphalk->GUIRender();
 //    player->GUIRender(); // 디버그 조작용
     fieldFog->GUIRender();
+    valphalk->GUIRender();
+    //player->GUIRender(); // 디버그 조작용
     //UIManager::Get()->GUIRender();
 }
 
