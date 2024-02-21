@@ -126,8 +126,8 @@ void Valphalk::GUIRender()
 	ImGui::SliderFloat3("ValphalkPos", (float*)&Pos(), -5000, 5000);
 	ImGui::DragFloat3("RealPos", (float*)&realPos->Pos());
 	ImGui::Text("RanPatrolNum : %d", ranPatrol);
-	ImGui::Text("PatrolTime : %.3f", stormTime);
-	ImGui::Text("PatrolTime : %.3f", velocity.Length());
+	ImGui::Text("stormTime : %.3f", stormTime);
+	ImGui::Text("Length : %.3f", velocity.Length());
 
 	for (int i = 0; i < colliders.size(); i++)
 	{
@@ -156,6 +156,7 @@ void Valphalk::Spawn(Vector3 pos)
 
 void Valphalk::Storm()
 {
+	combo = true;
 	stormTime += DELTA;
 	if (stormTime < 0.1f)
 		SetState(E_1151);
@@ -165,6 +166,7 @@ void Valphalk::Storm()
 	
 	if (stormTime > 6 && curState != E_1164)
 		SetState(E_1163);
+
 }
 
 void Valphalk::SetEvent(int clip, Event event, float timeRatio)
@@ -194,9 +196,13 @@ void Valphalk::SetState(State state)
 {
 	if (state == curState)
 		return;
-	if (combo == false) // 연계공격중일때는 갱신X
-		Pos() = realPos->Pos();
 
+	Vector3 pos1;
+	if (combo == false) // 연계공격중일때는 갱신X
+	{
+		Pos() = realPos->Pos();
+		Pos().y = pos1.y;
+	}
 	if (Pos().y < 0)
 		Pos().y = 0;
 	//bossRealPos->Pos() = Pos();
@@ -206,12 +212,10 @@ void Valphalk::SetState(State state)
 
 	TerrainEditor* terrain = dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetTerrain();
 
-	Vector3 pos1;
 		
 	terrain->ComputePicking(pos1, head->Pos() + Vector3::Up() * 200, Vector3::Down());
 
 		//	float y = max(pos1.y, pos2.y);	
-	Pos().y = pos1.y;	
 //	TerrainEditor* terrain = dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetTerrain();
 //
 //	Vector3 pos1;
@@ -364,25 +368,31 @@ void Valphalk::E1151() // 습격준비
 void Valphalk::E1155() // 비상
 {
 	Rot().x = 1.2f;
-	Pos().y += 20000 * DELTA;
-	Pos().z += 1000 * DELTA;
+	Pos().y += 30000 * DELTA;
+	Pos().z += 1000 * DELTA;	
+	
 	PLAY;	
 	if (RATIO < 0.1)
 		Sounds::Get()->Play("em086_05_fx_media_22", 0.5f);
+
+	if (Pos().y > 80000)
+		Sounds::Get()->Play("em086_05_fx_media_33", 0.5f);
 }
 
 void Valphalk::E1163() // 하강
 {
 	Player* p = dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetPlayer();
 	Rot().x = -.8f;
-	realPos->Pos().y -= 30000 * DELTA;
+	Pos().y -= 25000 * DELTA;
 	Pos().z += 1000 * DELTA;
-	if (realPos->Pos().y > p->Pos().y)
+	if (Pos().y > p->Pos().y)
 	{
-		realPos->Pos().x = p->Pos().x;
-		realPos->Pos().z = p->Pos().z - 500;
-		Pos() = realPos->Pos();
-		Pos().y = realPos->Pos().y;
+		Pos().x = p->Pos().x;
+		Pos().z = p->Pos().z - 500;
+		//Pos().y = realPos->Pos().y;
+		//realPos->Pos().y = Pos().y;
+		//Pos() = realPos->Pos();
+		//Pos().y = realPos->Pos().y;
 		PLAY;
 	}
 	else 
@@ -390,11 +400,9 @@ void Valphalk::E1163() // 하강
 		SetState(E_1164); 
 		return;
 	}
-	if (realPos->Pos().y > 50000)
-		Sounds::Get()->Play("em086_05_fx_media_33", 0.5f);
-	if (realPos->Pos().y > 13000 && realPos->Pos().y < 13500)
+	if (Pos().y > 25000 && Pos().y < 25500)
 		Sounds::Get()->Play("em086_05_fx_media_19", 0.5f);
-	if (realPos->Pos().y > 3000 && realPos->Pos().y < 3500)
+	if (Pos().y > 3000 && Pos().y < 3500)
 	Sounds::Get()->Play("em086_05_fx_media_20", 0.5f);
 
 }
@@ -407,7 +415,11 @@ void Valphalk::E1164() // 착지
 	PLAY;
 
 	if (RATIO > 0.98)
+	{
+		combo = false;
 		SetState(E_0003);
+	}
+	
 }
 
 void Valphalk::E2038() // 날개 찌르기
