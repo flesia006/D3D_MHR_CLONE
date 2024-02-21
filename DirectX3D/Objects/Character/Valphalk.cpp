@@ -31,6 +31,8 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 
 	realPos = new CapsuleCollider(1, 0.1);
 	realPos->Scale() *= 6.0f;
+
+
 }
 
 Valphalk::~Valphalk()
@@ -50,11 +52,13 @@ Valphalk::~Valphalk()
 void Valphalk::Update()
 {
 	//Pos().x = 2000; // 임시 고정용
+	UpdateWorld();
 	Move();
 	head->Pos() = realPos->Pos() + Vector3::Up() * 200;
 	head->UpdateWorld();
 	realPos->Pos() = GetTranslationByNode(1);
 	realPos->UpdateWorld();
+	
 	velocity = target->GlobalPos() - GlobalPos();
 
 	for (CapsuleCollider* capsulCollider : colliders)	
@@ -191,7 +195,7 @@ void Valphalk::SetState(State state)
 	if (state == curState)
 		return;
 	if (combo == false) // 연계공격중일때는 갱신X
-	Pos() = realPos->Pos();
+		Pos() = realPos->Pos();
 
 	if (Pos().y < 0)
 		Pos().y = 0;
@@ -208,6 +212,13 @@ void Valphalk::SetState(State state)
 
 		//	float y = max(pos1.y, pos2.y);	
 	Pos().y = pos1.y;	
+//	TerrainEditor* terrain = dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetTerrain();
+//
+//	Vector3 pos1;
+//	terrain->ComputePicking(pos1, head->Pos() + Vector3::Up() * 200, Vector3::Down());
+//
+//	//	float y = max(pos1.y, pos2.y);
+//	Pos().y = pos1.y;
 }
 
 void Valphalk::SetType(Type type)
@@ -250,6 +261,22 @@ void Valphalk::Patrol()
 void Valphalk::Fight()
 {
 	SetState(E_2040);
+
+
+
+}
+
+void Valphalk::ChooseNextPattern()
+{
+	// 1. 패턴 대기열에 대기중인 패턴이 있는가? (분노 포효, 흡기, 필살기) 
+	// 2. 싸우는 중인가? (비전투 시에는 패트롤, 인식하면 포효)
+	// 
+	// 3. 거리가 가까운가? (너무 멀면 이동 먼저) 
+	// 4. 참격모드인가 포격모드인가?
+	// 5. 용기 상태인가?
+	// 
+	// 6. 분노했는가? // 이건 패턴에서 따지는게 나을 듯
+	// 7. 그렇다면 가능한 패턴을 리스트업 후에 난수든 뭐든 선택
 
 
 

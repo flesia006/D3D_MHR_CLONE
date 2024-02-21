@@ -108,6 +108,8 @@ private:
 	void Patrol();
 	void Fight();
 
+	void ChooseNextPattern();
+
 	void Move();
 	void UpdateUI(); //캐릭터 UI가 있으면 이후 업데이트
 

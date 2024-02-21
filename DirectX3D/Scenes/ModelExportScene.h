@@ -5,6 +5,8 @@ class ModelExportScene : public Scene
 public:
     ModelExportScene();
     ~ModelExportScene();
+
+    void ExportClip(string name, string clipName);
         
     virtual void Update() override;
     virtual void PreRender() override;

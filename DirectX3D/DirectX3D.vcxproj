@@ -276,6 +276,7 @@
     <ClInclude Include="Scenes\NotUse\TessellationScene.h" />
     <ClInclude Include="Objects\Character\Valphalk.h" />
     <ClInclude Include="Objects\Manager\UIManager.h" />
+    <ClInclude Include="Scenes\ValphalkTestScene.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Scenes\MapDesignScene.cpp" />
@@ -404,6 +405,7 @@
     <ClCompile Include="Scenes\NotUse\TessellationScene.cpp" />
     <ClCompile Include="Objects\Character\Valphalk.cpp" />
     <ClCompile Include="Objects\Manager\UIManager.cpp" />
+    <ClCompile Include="Scenes\ValphalkTestScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DirectX3D.rc" />
