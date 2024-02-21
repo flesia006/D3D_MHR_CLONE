@@ -13,7 +13,9 @@ public:
 
 		// 플레이어 발견 후
 		E_0097 /* 앞으로 포효 준비*/, E_0098 /* 왼쪽으로 포효 준비 */, E_0099, /* 뒤로 돌아서 포효 준비 */
-		// 공격및 피격자세
+		//습격
+		E_1151, E_1155, E_1163, E_1164, 
+		// 공격및 피격자세		
 		E_2038,E_2040,E_2054,
 		E_3001,E_3023,
 		/* 앉아서 포효 자세 */
@@ -92,6 +94,9 @@ public:
 
 	//ColliderName GetName() { return colliderName; }
 	float damage = 0.1f;
+private:
+	// 패턴
+	void Storm();
 
 private:
 	void SetEvent(int clip, Event event, float timeRatio);
@@ -114,6 +119,10 @@ private:
 	void E0097();
 	void E0098();
 	void E0099();
+	void E1151();
+	void E1155();
+	void E1163();
+	void E1164();
 	void E2038();
 	void E2040();
 	void E2054();
@@ -160,6 +169,7 @@ private:
 
 	int ranPatrol = 0;
 	float patrolTime = 0;
+	float stormTime = 0;
 	//ColliderName colliderName;
 	// 파티클 부분
 	bool encounter = false;

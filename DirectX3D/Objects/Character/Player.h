@@ -203,8 +203,8 @@ private:
 	State curState = L_101;
 	State preState = L_101;
 
-	float moveSpeed = 400;
-	float rotSpeed = 10.0f;
+	float moveSpeed = 4000 * DELTA;
+	float rotSpeed = 5.0f;
 	float deceleration = 5;
 
 	const float motionSpeed = 1.5f;

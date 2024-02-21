@@ -14,6 +14,10 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 	ReadClip("E_0097");
 	ReadClip("E_0098");
 	ReadClip("E_0099");
+	ReadClip("E_1151");
+	ReadClip("E_1155");
+	ReadClip("E_1163");
+	ReadClip("E_1164");
 	ReadClip("E_2038");
 	ReadClip("E_2040");
 	ReadClip("E_2054");
@@ -45,6 +49,7 @@ Valphalk::~Valphalk()
 
 void Valphalk::Update()
 {
+	//Pos().x = 2000; // 임시 고정용
 	Move();
 	head->Pos() = realPos->Pos() + Vector3::Up() * 200;
 	head->UpdateWorld();
@@ -72,15 +77,20 @@ void Valphalk::Update()
 	//}
 	//
 	//// 잘 들어갔나 확인하기 용 코드
-	if (patrolTime > 6 && curState==E_0003 || patrolTime > 6 && curState==E_0043)
-		encounter = true;
-	Patrol();
-	if (encounter == true)
-	{
-		SetState(E_4013);
-		encounter = false;
-	}
-		//Fight();
+	//if (patrolTime > 6 && curState==E_0003 || patrolTime > 6 && curState==E_0043)
+	//	encounter = true;
+	//Patrol();
+	//if (encounter == true)
+	//{
+	//	SetState(E_4013);
+	//	encounter = false;
+	//}
+	//Fight();
+
+	if (KEY_DOWN('5') || stormTime > 0.001f)
+		Storm();
+
+	
 
 }
 
@@ -112,7 +122,7 @@ void Valphalk::GUIRender()
 	ImGui::SliderFloat3("ValphalkPos", (float*)&Pos(), -5000, 5000);
 	ImGui::DragFloat3("RealPos", (float*)&realPos->Pos());
 	ImGui::Text("RanPatrolNum : %d", ranPatrol);
-	ImGui::Text("PatrolTime : %.3f", patrolTime);
+	ImGui::Text("PatrolTime : %.3f", stormTime);
 	ImGui::Text("PatrolTime : %.3f", velocity.Length());
 
 	for (int i = 0; i < colliders.size(); i++)
@@ -138,6 +148,19 @@ void Valphalk::Hit()
 
 void Valphalk::Spawn(Vector3 pos)
 {
+}
+
+void Valphalk::Storm()
+{
+	stormTime += DELTA;
+	if (stormTime < 0.1f)
+		SetState(E_1151);
+
+	if (RATIO > 0.98)
+		SetState(E_1155);
+	
+	if (stormTime > 6 && curState != E_1164)
+		SetState(E_1163);
 }
 
 void Valphalk::SetEvent(int clip, Event event, float timeRatio)
@@ -170,6 +193,8 @@ void Valphalk::SetState(State state)
 	if (combo == false) // 연계공격중일때는 갱신X
 	Pos() = realPos->Pos();
 
+	if (Pos().y < 0)
+		Pos().y = 0;
 	//bossRealPos->Pos() = Pos();
 
 	curState = state;
@@ -178,10 +203,11 @@ void Valphalk::SetState(State state)
 	TerrainEditor* terrain = dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetTerrain();
 
 	Vector3 pos1;
+		
 	terrain->ComputePicking(pos1, head->Pos() + Vector3::Up() * 200, Vector3::Down());
 
-	//	float y = max(pos1.y, pos2.y);
-	Pos().y = pos1.y;
+		//	float y = max(pos1.y, pos2.y);	
+	Pos().y = pos1.y;	
 }
 
 void Valphalk::SetType(Type type)
@@ -239,6 +265,10 @@ void Valphalk::Move()
 	case Valphalk::E_0044:	 E0044();		break;
 	case Valphalk::E_0045:	 E0045();		break;
 	case Valphalk::E_0097:	 E0097();		break;
+	case Valphalk::E_1151:	 E1151();		break;
+	case Valphalk::E_1155:	 E1155();		break;
+	case Valphalk::E_1163:	 E1163();		break;
+	case Valphalk::E_1164:	 E1164();		break;
 	case Valphalk::E_2038:	 E2038();		break;
 	case Valphalk::E_2040:	 E2040();		break;
 	case Valphalk::E_2054:	 E2054();		break;
@@ -295,6 +325,62 @@ void Valphalk::E0098() // 급좌회전 턴
 void Valphalk::E0099() // 급뒤로 턴
 {
 	PLAY;
+}
+
+void Valphalk::E1151() // 습격준비
+{
+	PLAY;
+	if(RATIO<0.1)
+	Sounds::Get()->Play("em086_05_fx_media_25", 0.5f);
+}
+
+void Valphalk::E1155() // 비상
+{
+	Rot().x = 1.2f;
+	Pos().y += 20000 * DELTA;
+	Pos().z += 1000 * DELTA;
+	PLAY;	
+	if (RATIO < 0.1)
+		Sounds::Get()->Play("em086_05_fx_media_22", 0.5f);
+}
+
+void Valphalk::E1163() // 하강
+{
+	Player* p = dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetPlayer();
+	Rot().x = -.8f;
+	realPos->Pos().y -= 30000 * DELTA;
+	Pos().z += 1000 * DELTA;
+	if (realPos->Pos().y > p->Pos().y)
+	{
+		realPos->Pos().x = p->Pos().x;
+		realPos->Pos().z = p->Pos().z - 500;
+		Pos() = realPos->Pos();
+		Pos().y = realPos->Pos().y;
+		PLAY;
+	}
+	else 
+	{
+		SetState(E_1164); 
+		return;
+	}
+	if (realPos->Pos().y > 50000)
+		Sounds::Get()->Play("em086_05_fx_media_33", 0.5f);
+	if (realPos->Pos().y > 13000 && realPos->Pos().y < 13500)
+		Sounds::Get()->Play("em086_05_fx_media_19", 0.5f);
+	if (realPos->Pos().y > 3000 && realPos->Pos().y < 3500)
+	Sounds::Get()->Play("em086_05_fx_media_20", 0.5f);
+
+}
+
+void Valphalk::E1164() // 착지
+{
+	Pos().y = 1380.0f;	
+	Rot().x = 0;
+	stormTime = 0;
+	PLAY;
+
+	if (RATIO > 0.98)
+		SetState(E_0003);
 }
 
 void Valphalk::E2038() // 날개 찌르기

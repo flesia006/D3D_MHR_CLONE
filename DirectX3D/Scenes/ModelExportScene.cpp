@@ -3,7 +3,7 @@
 
 ModelExportScene::ModelExportScene()
 {
-    string name = "Fog";
+    string name = "Valphalk";
     string file = "Models/FBX/" + name + ".fbx";
     ModelExporter* exporter;
     string clipName;
@@ -26,29 +26,29 @@ ModelExportScene::ModelExportScene()
 //    delete exporter;
 
 //    
-//    clipName = "E_0007";
+//    clipName = "E_1151";
 //    file = "Models/Animations/" + name + "/" + clipName + ".fbx";
 //    exporter = new ModelExporter(name, file);
 //    exporter->ExportClip(clipName);    
 //    delete exporter;
 //
-    clipName = "E_2054";
+    clipName = "E_1155";
     file = "Models/Animations/" + name + "/" + clipName + ".fbx";
     exporter = new ModelExporter(name, file);
     exporter->ExportClip(clipName);
     delete exporter;
   
-//    clipName = "E_3001";
+//    clipName = "E_1163";
 //    file = "Models/Animations/" + name + "/" + clipName + ".fbx";
 //    exporter = new ModelExporter(name, file);
 //    exporter->ExportClip(clipName);
 //    delete exporter;
-    
-    //clipName = "Walk";
-    //file = "Models/Animations/" + name + "/" + clipName + ".fbx";
-    //exporter = new ModelExporter(name, file);
-    //exporter->ExportClip(clipName);
-    //delete exporter;
+//    
+//    clipName = "E_1164";
+//    file = "Models/Animations/" + name + "/" + clipName + ".fbx";
+//    exporter = new ModelExporter(name, file);
+//    exporter->ExportClip(clipName);
+//    delete exporter;
     //
     //clipName = "Hit";
     //file = "Models/Animations/" + name + "/" + clipName + ".fbx";

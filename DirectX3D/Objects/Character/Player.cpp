@@ -1128,10 +1128,7 @@ void Player::S005() // 대기중 달리기
 	Move();
 	
 	if (moveSpeed <= 400)
-		moveSpeed++;
-
-	if (RATIO > 0.97)
-		moveSpeed++;
+		moveSpeed += 500 * DELTA;
 	
 	//Rotate();
 	if (RATIO > 0.97 && (KEY_PRESS('W') || KEY_PRESS('S') || KEY_PRESS('A') || KEY_PRESS('D')))
@@ -1216,7 +1213,7 @@ void Player::S014() // 달리다 멈춤
 		moveSpeed = 400;
 
 	if (moveSpeed >= 0)
-		moveSpeed-=2;
+		moveSpeed -= 500 * DELTA;
 
 	//Rotate();
 	if (RATIO > 0.97)
@@ -1287,7 +1284,7 @@ void Player::S038() // 전력질주
 	Move();
 	Rotate();
 	if (moveSpeed <= 650)
-		moveSpeed++;
+		moveSpeed += 500 * DELTA;
 	if (UIManager::Get()->curStamina < 0.1f) // 스태미나 일정수치 미만에서는 달리기 막기
 	{
 		SetState(S_118);

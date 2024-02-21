@@ -34,8 +34,8 @@ ShadowScene::ShadowScene()
     garuk->SetTarget(player);
 
     valphalk = new Valphalk();
-    valphalk->Pos().x = 3100.0f;
-    valphalk->Pos().z = 4500.0f;
+    valphalk->Pos().x = 2000;
+    valphalk->Pos().z = 3000;
     valphalk->Rot().y += XM_PI;
     valphalk->UpdateWorld();
     valphalk->SetTarget(player);
@@ -86,7 +86,7 @@ void ShadowScene::Update()
     //if (KEY_DOWN('2')) light->type = 1;
     //if (KEY_DOWN('3')) light->type = 2;
     //if (KEY_DOWN('4')) light->type = 3;
-    terrain->Update();
+    //terrain->Update();
     garuk->Update();
     //objects->Update();
     valphalk->Update();
@@ -221,7 +221,18 @@ void ShadowScene::AddSounds()
 
     /////////////////////////////////////////////////////////////
     // Valphalk
+    // 포효
     sound->AddSound("em086_05_vo_media_10", SoundPath + L"em086_05_vo_media_10.mp3");
+    // 습격 부스터 가동
+    sound->AddSound("em086_05_fx_media_25", SoundPath + L"em086_05_fx_media_25.mp3");
+    // 습격 출발
+    sound->AddSound("em086_05_fx_media_22", SoundPath + L"em086_05_fx_media_22.mp3");
+    // 습격 비행중
+    sound->AddSound("em086_05_fx_media_33", SoundPath + L"em086_05_fx_media_33.mp3");
+    // 습격 낙하직전
+    sound->AddSound("em086_05_fx_media_19", SoundPath + L"em086_05_fx_media_19.mp3");
+    // 습격 낙하
+    sound->AddSound("em086_05_fx_media_20", SoundPath + L"em086_05_fx_media_20.mp3");
 
     /////////////////////////////////////////////////////////////
     // Item
