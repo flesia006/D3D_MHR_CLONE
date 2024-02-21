@@ -8,34 +8,35 @@ ModelExportScene::ModelExportScene()
     //ModelExporter* exporter;
     string clipName;
 
-
-
-    ExportClip(name, "E_2082");
-    ExportClip(name, "E_2091");
-    ExportClip(name, "E_2092");
-    ExportClip(name, "E_2093");
-    ExportClip(name, "E_2103");
-    ExportClip(name, "E_2129");
-    ExportClip(name, "E_2130");
-    ExportClip(name, "E_2131");
-    ExportClip(name, "E_2133");
-    ExportClip(name, "E_2134");
-    ExportClip(name, "E_2144");
-    ExportClip(name, "E_2145");
-    ExportClip(name, "E_2146");
-    ExportClip(name, "E_2151");
-    ExportClip(name, "E_2152");
-    ExportClip(name, "E_2153");
-    ExportClip(name, "E_2381");
-    ExportClip(name, "E_2382");
-    ExportClip(name, "E_2383");
-
-
-
 //    exporter = new ModelExporter(name, file);
 //    exporter->ExportMaterial();
 //    exporter->ExportMesh();
 //    delete exporter;    
+
+
+// Å¬¸³µþ ¶§ ÀÌ°Å ¾²¼À
+//    ExportClip(name, "E_2082");
+//    ExportClip(name, "E_2091");
+//    ExportClip(name, "E_2092");
+//    ExportClip(name, "E_2093");
+//    ExportClip(name, "E_2103");
+//    ExportClip(name, "E_2129");
+//    ExportClip(name, "E_2130");
+//    ExportClip(name, "E_2131");
+//    ExportClip(name, "E_2133");
+//    ExportClip(name, "E_2134");
+//    ExportClip(name, "E_2144");
+//    ExportClip(name, "E_2145");
+//    ExportClip(name, "E_2146");
+//    ExportClip(name, "E_2151");
+//    ExportClip(name, "E_2152");
+//    ExportClip(name, "E_2153");
+//    ExportClip(name, "E_2381");
+//    ExportClip(name, "E_2382");
+//    ExportClip(name, "E_2383");
+
+
+
 
 //    name = "E_0003";
 //    exporter = new ModelExporter(name, file);
