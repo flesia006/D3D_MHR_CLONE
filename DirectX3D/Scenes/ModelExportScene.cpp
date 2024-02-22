@@ -15,28 +15,37 @@ ModelExportScene::ModelExportScene()
 
 
 // Å¬¸³µþ ¶§ ÀÌ°Å ¾²¼À
-//    ExportClip(name, "E_2082");
-//    ExportClip(name, "E_2091");
-//    ExportClip(name, "E_2092");
-//    ExportClip(name, "E_2093");
-//    ExportClip(name, "E_2103");
-//    ExportClip(name, "E_2129");
-//    ExportClip(name, "E_2130");
-//    ExportClip(name, "E_2131");
-//    ExportClip(name, "E_2133");
-//    ExportClip(name, "E_2134");
-//    ExportClip(name, "E_2144");
-//    ExportClip(name, "E_2145");
-//    ExportClip(name, "E_2146");
-//    ExportClip(name, "E_2151");
-//    ExportClip(name, "E_2152");
-//    ExportClip(name, "E_2153");
-//    ExportClip(name, "E_2381");
-//    ExportClip(name, "E_2382");
-//    ExportClip(name, "E_2383");
-
-
-
+    ExportClip(name, "E_0146");
+    ExportClip(name, "E_2001");
+    ExportClip(name, "E_2002");
+    ExportClip(name, "E_2003");
+    ExportClip(name, "E_2013");
+    ExportClip(name, "E_2015");
+    ExportClip(name, "E_2017");
+    ExportClip(name, "E_2019");
+    ExportClip(name, "E_2020");
+    ExportClip(name, "E_2022");
+    ExportClip(name, "E_2044");
+    ExportClip(name, "E_2045");
+    ExportClip(name, "E_2054");
+    ExportClip(name, "E_2056");
+    ExportClip(name, "E_2106");
+    ExportClip(name, "E_2107");
+    ExportClip(name, "E_2108");
+    ExportClip(name, "E_2118");
+    ExportClip(name, "E_2121");
+    ExportClip(name, "E_2173");
+    ExportClip(name, "E_2174");
+    ExportClip(name, "E_2175");
+    ExportClip(name, "E_2185");
+    ExportClip(name, "E_2188");
+    ExportClip(name, "E_2189");
+    ExportClip(name, "E_2190");
+    ExportClip(name, "E_2192");
+    ExportClip(name, "E_2193");
+    ExportClip(name, "E_2200");
+    ExportClip(name, "E_2210");
+    ExportClip(name, "E_2211");
 
 //    name = "E_0003";
 //    exporter = new ModelExporter(name, file);
