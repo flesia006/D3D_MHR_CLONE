@@ -17,6 +17,7 @@ public:
 		E_1151, E_1155, E_1163, E_1164, 
 		// 공격및 피격자세		
 		E_2038,E_2040,E_2054,
+		E_2079,
 		E_3001,E_3023,
 		/* 앉아서 포효 자세 */
 		E_4013,
@@ -95,8 +96,10 @@ public:
 	//ColliderName GetName() { return colliderName; }
 	float damage = 0.1f;
 private:
+	Vector3 GetPlayerPos();
 	// 패턴
 	void Storm();
+	void EnergyBullets();
 
 private:
 	void SetEvent(int clip, Event event, float timeRatio);
@@ -128,6 +131,7 @@ private:
 	void E2038();
 	void E2040();
 	void E2054();
+	void E2079();
 	void E3001();
 	void E3023();
 	void E4013();
@@ -140,6 +144,8 @@ private: // 이벤트 혹은 함수에서 조건이 필요할거 같을때
 	bool LookatPlayer = false;
 	int Count = 0;
 
+	vector<SphereCollider*> bullets;
+	int won;
 private:
 	vector<Transform*> transforms;
 	vector<CapsuleCollider*> colliders;
@@ -171,6 +177,7 @@ private:
 
 	int ranPatrol = 0;
 	float patrolTime = 0;
+	float bulletTime = 0;
 	float stormTime = 0;
 	//ColliderName colliderName;
 	// 파티클 부분

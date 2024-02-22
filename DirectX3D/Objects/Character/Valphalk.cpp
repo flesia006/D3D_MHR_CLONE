@@ -21,6 +21,7 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 	ReadClip("E_2038");
 	ReadClip("E_2040");
 	ReadClip("E_2054");
+	ReadClip("E_2079");
 	ReadClip("E_3001");
 	ReadClip("E_3023");
 	// 아래 있는게 첫 포효
@@ -32,7 +33,14 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 	realPos = new CapsuleCollider(1, 0.1);
 	realPos->Scale() *= 6.0f;
 
-
+	bullets.resize(6);
+	FOR(6)
+	{
+		bullets[i] = new SphereCollider();
+		bullets[i]->Scale() *= 100;
+		bullets[i]->SetColor(1, 0, 0);
+		bullets[i]->SetActive(false);
+	}
 }
 
 Valphalk::~Valphalk()
@@ -45,6 +53,9 @@ Valphalk::~Valphalk()
 	{
 		delete transform;
 	}
+	for (SphereCollider* bullet : bullets)
+		delete bullet;
+
 	delete head;
 	delete realPos;
 }
@@ -66,6 +77,9 @@ void Valphalk::Update()
 
 	for (BoxCollider* boxCollider : wings )	
 		boxCollider->UpdateWorld();	
+
+	for (SphereCollider* bullet : bullets)
+		bullet->UpdateWorld();
 
 	ColliderNodePos();
 
@@ -90,11 +104,15 @@ void Valphalk::Update()
 	//	encounter = false;
 	//}
 	//Fight();
-
-	if (KEY_DOWN('5') || stormTime > 0.001f)
+	if (KEY_DOWN('4'))
+		SetState(E_0003);
+	if (KEY_DOWN('5') || bulletTime > 0.001f)
+		EnergyBullets();
+	if (KEY_DOWN('6') || stormTime > 0.001f)
 		Storm();
 
-	
+
+	//bullets[0]->Pos() = GetTranslationByNode(won);
 
 }
 
@@ -114,6 +132,8 @@ void Valphalk::Render()
 	{
 		boxCollider->Render();
 	}
+	for (int i = 0; i < bullets.size(); ++i)
+		bullets[i]->Render();
 
 	ModelAnimator::Render();
 	realPos->Render();
@@ -128,12 +148,10 @@ void Valphalk::GUIRender()
 	ImGui::Text("RanPatrolNum : %d", ranPatrol);
 	ImGui::Text("stormTime : %.3f", stormTime);
 	ImGui::Text("Length : %.3f", velocity.Length());
-
+	ImGui::DragInt("node", &won,1,0,200);
 	for (int i = 0; i < colliders.size(); i++)
 	{
 		colliders[i]->GUIRender();
-		//ImGui::SliderFloat3("ValphalkPos", (float*)&colliders[i]->Rot(), -10, 10);
-		//ImGui::SliderFloat3("ValphalkScale", (float*)&colliders[i]->Scale(), 0, 1000);
 	}
 
 	for (int i = 0; i < wings.size(); i++)
@@ -154,6 +172,14 @@ void Valphalk::Spawn(Vector3 pos)
 {
 }
 
+Vector3 Valphalk::GetPlayerPos() // 플레이어 위치 추적 함수
+{
+	Player* player = dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetPlayer();
+	Vector3 pos;
+	pos = player->Pos();	
+	return pos;	
+}
+
 void Valphalk::Storm()
 {
 	combo = true;
@@ -167,6 +193,72 @@ void Valphalk::Storm()
 	if (stormTime > 6 && curState != E_1164)
 		SetState(E_1163);
 
+}
+
+void Valphalk::EnergyBullets()
+{
+	Player* player = dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetPlayer();
+
+	bulletTime += DELTA;
+	SetState(E_2079);
+	// 함수 실행시 탄을 위치시키고
+	if (bulletTime < 0.1f)
+	{
+		for (int i = 0; i < bullets.size(); ++i)
+		{
+			bullets[i]->SetActive(true);
+			bullets[0]->Pos() = GetTranslationByNode(61);
+			bullets[1]->Pos() = GetTranslationByNode(64);
+			bullets[2]->Pos() = GetTranslationByNode(67);
+			bullets[3]->Pos() = GetTranslationByNode(81);
+			bullets[4]->Pos() = GetTranslationByNode(84);
+			bullets[5]->Pos() = GetTranslationByNode(87);
+			bullets[i]->Pos().z += 200;
+		}
+	}
+
+	// 발사 (하나씩 순차적으로)
+	for (int i = 0; i < bullets.size(); ++i)
+	{
+		float distanceX = bullets[i]->Pos().x - GetPlayerPos().x;
+		if (RATIO > 0.1 + ((DELTA + (float)i) * 0.03f))
+		{
+			if (bullets[i]->Pos().x > player->Pos().x + 500)
+				bullets[i]->Pos().x -= 2000 * DELTA;
+			else if (bullets[i]->Pos().x < player->Pos().x - 500)
+				bullets[i]->Pos().x += 2000 * DELTA;
+			if (bullets[i]->Pos().z > player->Pos().z + 500)
+				bullets[i]->Pos().z -= 2000 * DELTA;
+			else if (bullets[i]->Pos().z < player->Pos().z - 500)
+				bullets[i]->Pos().z += 2000 * DELTA;
+
+			bullets[i]->Pos().y -= 700 * DELTA;
+			
+
+
+			/*if (GetPlayerPos().x > bullets[i]->Pos().x)
+				bullets[i]->Pos().x += 500 * DELTA;
+			else if (GetPlayerPos().x < bullets[i]->Pos().x)
+				bullets[i]->Pos().x -= 500 * DELTA;
+
+			if (GetPlayerPos().z > bullets[i]->Pos().z)
+				bullets[i]->Pos().x += 500 * DELTA;
+			else if (GetPlayerPos().z < bullets[i]->Pos().z)
+				bullets[i]->Pos().x -= 500 * DELTA;*/
+			//bullets[i]->Pos().z += 1000 * DELTA;
+			//bullets[i]->Pos().y -= 500 * DELTA;
+			//if (bullets[i]->Pos().x > GetPlayerPos().x - (distanceX * 4))
+			//	bullets[i]->Pos().x -= 1500 * DELTA;
+			//if (bullets[i]->Pos().x < GetPlayerPos().x - (distanceX * 4))
+			//	bullets[i]->Pos().x += 1500 * DELTA;
+
+		}
+		if (bullets[i]->Pos().y < 0)
+			bullets[i]->SetActive(false);
+	}
+	if (bulletTime > 3) // 시간이 지나면 초기화 (다시 패턴이 실행될 수 있도록 준비)
+		bulletTime = 0;
+	
 }
 
 void Valphalk::SetEvent(int clip, Event event, float timeRatio)
@@ -381,14 +473,15 @@ void Valphalk::E1155() // 비상
 
 void Valphalk::E1163() // 하강
 {
-	Player* p = dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetPlayer();
+	//Player* player = dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetPlayer();
+
 	Rot().x = -.8f;
 	Pos().y -= 25000 * DELTA;
 	Pos().z += 1000 * DELTA;
-	if (Pos().y > p->Pos().y)
+	if (Pos().y > GetPlayerPos().y)
 	{
-		Pos().x = p->Pos().x;
-		Pos().z = p->Pos().z - 500;
+		Pos().x = GetPlayerPos().x;
+		Pos().z = GetPlayerPos().z - 500;
 		//Pos().y = realPos->Pos().y;
 		//realPos->Pos().y = Pos().y;
 		//Pos() = realPos->Pos();
@@ -448,6 +541,12 @@ void Valphalk::E2054() // 찌르기 날개 회수
 		SetState(E_0003);
 		combo = false; // 콤보 마무리
 	}
+}
+
+void Valphalk::E2079()
+{
+	PLAY;
+
 }
 
 void Valphalk::E3001() // 작은 데미지 피격
