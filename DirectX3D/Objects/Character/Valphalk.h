@@ -13,16 +13,25 @@ public:
 
 		// 플레이어 발견 후
 		E_0097 /* 앞으로 포효 준비*/, E_0098 /* 왼쪽으로 포효 준비 */, E_0099, /* 뒤로 돌아서 포효 준비 */
+		E_0146, // 포격자세 변환
 		//습격
-		E_1151, E_1155, E_1163, E_1164, 
-		// 공격및 피격자세		
-		E_2038,E_2040,E_2054,
+		E_1151, E_1155, E_1163, E_1164,
+		// 공격및 피격자세
+		E_2001, E_2002, E_2003,
+		E_2013, E_2015, E_2017, E_2019,// E_2020, E_2022,
+		//E_2027, E_2032,
+		E_2038, E_2040, //E_2041, E_2042, E_2044, E_2045,
+		E_2054, //E_2056,
 		E_2079,
-		E_3001,E_3023,
+		//E_2106, E_2107, E_2108,
+		//E_2118, E_2121, E_2173, E_2174, E_2175,
+		//E_2185, E_2188, E_2189, E_2190, E_2192, E_2193, E_2200,
+		E_2210, E_2211,
+		E_3001, E_3023,
 		/* 앉아서 포효 자세 */
 		E_4013,
 		/*서서 포효 자세*/
-		E_22005 
+		E_22005
 	};
 
 	enum Type // 어디가 색이 변할건지 
@@ -76,6 +85,33 @@ public:
 	};
 	//UINT Index = 18;
 
+
+	enum Pattern
+	{
+		S_LEGATK,
+		S_STABATK,
+		S_BACKWINGATK,
+		S_SRUSH,
+		S_JETRUSH,
+		S_TRANSFORM,
+		B_SWINGATK,
+		B_WINGATK,
+		B_DOWNBLAST,
+		B_FWDBLAST,
+		B_ENERGYBLAST,
+		B_DUMBLING,
+		B_TRANSFORM,
+		HS_FLYBLAST,
+		HS_FLYFALLATK,
+		HS_FLYWINGBLAST,
+		HB_LASERBLAST,
+		FINDROAR,
+		ANGERROAR,
+		STORM,
+		HUPGI,
+	};
+
+
 public:
 	Valphalk();
 	~Valphalk();
@@ -96,9 +132,31 @@ public:
 	//ColliderName GetName() { return colliderName; }
 	float damage = 0.1f;
 private:
+	// 패턴 함수
+	void S_LegAtk();
+	void S_StabAtk();
+	void S_BackWingAtk();
+	void S_SRush();
+	void S_JetRush();
+	void S_Transform();
+	void B_SwingAtk();
+	void B_WingAtk();
+	void B_DownBlast();
+	void B_FwdBlast();
+	void B_EnergyBlast();
+	void B_Dumbling();
+	void B_Trnasform();
+	void HS_FlyBlast();
+	void HS_FlyFallAtk();
+	void HS_FlyWingBlast();
+	void HB_LaserBlast();
+	void FindRoar();
+	void AngerRoar();
 	Vector3 GetPlayerPos();
-	// 패턴
+	
 	void Storm();
+	void Hupgi();
+
 	void EnergyBullets();
 
 private:
@@ -113,8 +171,14 @@ private:
 
 	void ChooseNextPattern();
 
+	void PlayPattern();
 	void Move();
 	void UpdateUI(); //캐릭터 UI가 있으면 이후 업데이트
+	float GetRadBtwTrgt();
+
+
+
+	// 모션 함수
 
 	void E0003();
 	void E0007();
@@ -124,14 +188,48 @@ private:
 	void E0097();
 	void E0098();
 	void E0099();
+	void E0146();
 	void E1151();
 	void E1155();
 	void E1163();
 	void E1164();
+	void E2001();
+	void E2002();
+	void E2003();
+	void E2013();
+	void E2015();
+	void E2017();
+	void E2019();
+	void E2020();
+	void E2022();
+	void E2027();
+	void E2032();
 	void E2038();
 	void E2040();
+	void E2041();
+	void E2042();
+	void E2044();
+	void E2045();
 	void E2054();
+	void E2056();
 	void E2079();
+	void E2106();
+	void E2107();
+	void E2108();
+	void E2118();
+	void E2121();
+	void E2173();
+	void E2174();
+	void E2175();
+	void E2185();
+	void E2188();
+	void E2189();
+	void E2190();
+	void E2192();
+	void E2193();
+	void E2200();
+	void E2210();
+	void E2211();
 	void E3001();
 	void E3023();
 	void E4013();
@@ -144,8 +242,6 @@ private: // 이벤트 혹은 함수에서 조건이 필요할거 같을때
 	bool LookatPlayer = false;
 	int Count = 0;
 
-	vector<SphereCollider*> bullets;
-	int won;
 private:
 	vector<Transform*> transforms;
 	vector<CapsuleCollider*> colliders;
@@ -168,12 +264,18 @@ private:
 
 	Vector3 velocity; //속력 : 실제 움직임
 
+	Pattern curPattern = B_SWINGATK;
 	State curState = E_0043; //= 기본 스테이트;
 	Type curType; //= 기본 타입;
+
+	UINT sequence = 0;
+
 
 	//스테이트 혹은 움직임에 따른 이벤트 지정
 	vector<map<float, Event>> totalEvents;
 	vector<map<float, Event>::iterator> eventIters;
+
+
 
 	int ranPatrol = 0;
 	float patrolTime = 0;
@@ -185,4 +287,11 @@ private:
 	bool fight = false;
 	bool fight2 = false;
 	bool combo = false;
+
+	bool playOncePerPattern = false;
+
+	float radBtwTarget = 0.0f;
+
+	const float rot135 = 2.36f;
+	const float rot45 = 0.785f;
 };
