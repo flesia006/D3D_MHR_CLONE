@@ -88,6 +88,7 @@ void Valphalk::Update()
 {
 	//Pos().x = 2000; // 임시 고정용
 	UpdateWorld();
+	PlayPattern();
 	Move();
 	head->Pos() = realPos->Pos() + Vector3::Up() * 200;
 	head->UpdateWorld();
@@ -204,6 +205,10 @@ void Valphalk::Storm()
 
 }
 
+void Valphalk::Hupgi()
+{
+}
+
 void Valphalk::SetEvent(int clip, Event event, float timeRatio)
 {
 	if (totalEvents[clip].count(timeRatio) > 0)
@@ -318,6 +323,35 @@ void Valphalk::ChooseNextPattern()
 	// 7. 그렇다면 가능한 패턴을 리스트업 후에 난수든 뭐든 선택
 
 
+	sequence = 0;
+}
+
+void Valphalk::PlayPattern()
+{
+	switch (curPattern)
+	{
+	case Valphalk::S_LEGATK:		S_LegAtk();			break;
+	case Valphalk::S_STABATK:		S_StabAtk();		break;
+	case Valphalk::S_BACKWINGATK:	S_BackWingAtk();	break;
+	case Valphalk::S_SRUSH:		    S_SRush();			break;
+	case Valphalk::S_JETRUSH:		S_JetRush();		break;
+	case Valphalk::S_TRANSFORM:		S_Transform();		break;
+	case Valphalk::B_SWINGATK:		B_SwingAtk();		break;
+	case Valphalk::B_WINGATK:		B_WingAtk();		break;
+	case Valphalk::B_DOWNBLAST:		B_DownBlast();		break;
+	case Valphalk::B_FWDBLAST:		B_FwdBlast();		break;
+	case Valphalk::B_ENERGYBLAST:	B_EnergyBlast();	break;
+	case Valphalk::B_DUMBLING:		B_Dumbling();		break;
+	case Valphalk::B_TRANSFORM:		B_Trnasform();		break;
+	case Valphalk::HS_FLYBLAST:		HS_FlyBlast();		break;
+	case Valphalk::HS_FLYFALLATK:	HS_FlyFallAtk();	break;
+	case Valphalk::HS_FLYWINGBLAST:	HS_FlyWingBlast();	break;
+	case Valphalk::HB_LASERBLAST:	HB_LaserBlast();	break;
+	case Valphalk::FINDROAR:	    FindRoar();  		break;
+	case Valphalk::ANGERROAR:	    AngerRoar();  		break;
+	case Valphalk::HUPGI:		    Hupgi();			break;
+	default:		break;
+	}
 
 }
 
@@ -382,6 +416,125 @@ void Valphalk::Move()
 void Valphalk::UpdateUI()
 {
 
+}
+
+float Valphalk::GetRadBtwTrgt()
+{
+	Vector3 fwd = Forward();
+	Vector3 VtoP = (realPos->Pos() - target->GlobalPos()).GetNormalized();
+	Vector3 rad = XMVector3AngleBetweenVectors(fwd, VtoP);
+	radBtwTarget = rad.x;
+	if (Cross(fwd, VtoP).y < 0)
+		radBtwTarget *= -1;
+
+	return radBtwTarget;
+}
+
+void Valphalk::S_LegAtk()
+{
+}
+
+void Valphalk::S_StabAtk()
+{
+}
+
+void Valphalk::S_BackWingAtk()
+{
+}
+
+void Valphalk::S_SRush()
+{
+}
+
+void Valphalk::S_JetRush()
+{
+}
+
+void Valphalk::S_Transform()
+{
+}
+
+void Valphalk::B_SwingAtk()
+{
+	if (sequence == 0)
+	{
+//		if (radBtwTarget > -rot45 && radBtwTarget <= rot45) // 전방 90도
+//			SetState(E_3001);
+//		else if (radBtwTarget > rot45 && radBtwTarget <= rot135) // 오른쪽 90도
+//			SetState(E_3001);
+//		else if (radBtwTarget > -rot135 && radBtwTarget <= -rot45) // 오른쪽 90도
+//			SetState(E_3001);
+//		else if (radBtwTarget > -XM_PI && radBtwTarget <= -rot135) // 왼쪽 90도
+//			SetState(E_3001);
+//		else
+//			SetState(E_3001);
+
+		sequence++;
+	}
+
+	else if (sequence == 1)
+	{
+
+	}
+
+	else if (sequence == 2)
+	{
+//		SetState(E_3001);
+	}
+
+	else if (sequence == 3)
+	{
+	
+		ChooseNextPattern();
+	}
+}
+
+void Valphalk::B_WingAtk()
+{
+}
+
+void Valphalk::B_DownBlast()
+{
+}
+
+void Valphalk::B_FwdBlast()
+{
+}
+
+void Valphalk::B_EnergyBlast()
+{
+}
+
+void Valphalk::B_Dumbling()
+{
+}
+
+void Valphalk::B_Trnasform()
+{
+}
+
+void Valphalk::HS_FlyBlast()
+{
+}
+
+void Valphalk::HS_FlyFallAtk()
+{
+}
+
+void Valphalk::HS_FlyWingBlast()
+{
+}
+
+void Valphalk::HB_LaserBlast()
+{
+}
+
+void Valphalk::FindRoar()
+{
+}
+
+void Valphalk::AngerRoar()
+{
 }
 
 void Valphalk::E0003() // 평상시 대기

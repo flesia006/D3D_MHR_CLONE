@@ -12,6 +12,7 @@ public:
     virtual void PostRender() override;
     virtual void GUIRender()  override;
 
+    void CapsuleMove();
 
 private:
     Player* player;

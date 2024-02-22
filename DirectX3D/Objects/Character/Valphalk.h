@@ -84,6 +84,33 @@ public:
 	};
 	//UINT Index = 18;
 
+
+	enum Pattern
+	{
+		S_LEGATK,
+		S_STABATK,
+		S_BACKWINGATK,
+		S_SRUSH,
+		S_JETRUSH,
+		S_TRANSFORM,
+		B_SWINGATK,
+		B_WINGATK,
+		B_DOWNBLAST,
+		B_FWDBLAST,
+		B_ENERGYBLAST,
+		B_DUMBLING,
+		B_TRANSFORM,
+		HS_FLYBLAST,
+		HS_FLYFALLATK,
+		HS_FLYWINGBLAST,
+		HB_LASERBLAST,
+		FINDROAR,
+		ANGERROAR,
+		STORM,
+		HUPGI,
+	};
+
+
 public:
 	Valphalk();
 	~Valphalk();
@@ -104,8 +131,29 @@ public:
 	//ColliderName GetName() { return colliderName; }
 	float damage = 0.1f;
 private:
-	// 패턴
+	// 패턴 함수
+	void S_LegAtk();
+	void S_StabAtk();
+	void S_BackWingAtk();
+	void S_SRush();
+	void S_JetRush();
+	void S_Transform();
+	void B_SwingAtk();
+	void B_WingAtk();
+	void B_DownBlast();
+	void B_FwdBlast();
+	void B_EnergyBlast();
+	void B_Dumbling();
+	void B_Trnasform();
+	void HS_FlyBlast();
+	void HS_FlyFallAtk();
+	void HS_FlyWingBlast();
+	void HB_LaserBlast();
+	void FindRoar();
+	void AngerRoar();
 	void Storm();
+	void Hupgi();
+
 
 private:
 	void SetEvent(int clip, Event event, float timeRatio);
@@ -119,8 +167,14 @@ private:
 
 	void ChooseNextPattern();
 
+	void PlayPattern();
 	void Move();
 	void UpdateUI(); //캐릭터 UI가 있으면 이후 업데이트
+	float GetRadBtwTrgt();
+
+
+
+	// 모션 함수
 
 	void E0003();
 	void E0007();
@@ -206,12 +260,18 @@ private:
 
 	Vector3 velocity; //속력 : 실제 움직임
 
+	Pattern curPattern = B_SWINGATK;
 	State curState = E_0043; //= 기본 스테이트;
 	Type curType; //= 기본 타입;
+
+	UINT sequence = 0;
+
 
 	//스테이트 혹은 움직임에 따른 이벤트 지정
 	vector<map<float, Event>> totalEvents;
 	vector<map<float, Event>::iterator> eventIters;
+
+
 
 	int ranPatrol = 0;
 	float patrolTime = 0;
@@ -222,4 +282,11 @@ private:
 	bool fight = false;
 	bool fight2 = false;
 	bool combo = false;
+
+	bool playOncePerPattern = false;
+
+	float radBtwTarget = 0.0f;
+
+	const float rot135 = 2.36f;
+	const float rot45 = 0.785f;
 };
