@@ -41,6 +41,7 @@ void ValphalkTestScene::PostRender()
 
 void ValphalkTestScene::GUIRender()
 {
+	valphalk->GUIRender();
 }
 
 void ValphalkTestScene::CapsuleMove()
