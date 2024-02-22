@@ -23,6 +23,7 @@ public:
 		E_2038, E_2040, //E_2041, E_2042, E_2044, E_2045,
 		E_2054, //E_2056,
 		E_2079,
+		E_2144, E_2145, E_2146,
 		//E_2106, E_2107, E_2108,
 		//E_2118, E_2121, E_2173, E_2174, E_2175,
 		//E_2185, E_2188, E_2189, E_2190, E_2192, E_2193, E_2200,
@@ -88,6 +89,7 @@ public:
 
 	enum Pattern
 	{
+		IDLE,
 		S_LEGATK,
 		S_STABATK,
 		S_BACKWINGATK,
@@ -108,6 +110,7 @@ public:
 		FINDROAR,
 		ANGERROAR,
 		STORM,
+		ENERGYBULLET,
 		HUPGI,
 	};
 
@@ -152,13 +155,13 @@ private:
 	void HB_LaserBlast();
 	void FindRoar();
 	void AngerRoar();
-	Vector3 GetPlayerPos();
 	
 	void Storm();
+	void EnergyBullets();	
+	void ForwardBoom();
 	void Hupgi();
 
-	void EnergyBullets();
-
+	Vector3 GetPlayerPos();
 private:
 	void SetEvent(int clip, Event event, float timeRatio);
 	void ExecuteEvent();
@@ -218,6 +221,9 @@ private:
 	void E2108();
 	void E2118();
 	void E2121();
+	void E2144();
+	void E2145();
+	void E2146();
 	void E2173();
 	void E2174();
 	void E2175();
@@ -264,8 +270,9 @@ private:
 
 	Vector3 velocity; //속력 : 실제 움직임
 
-	Pattern curPattern = B_SWINGATK;
+	Pattern curPattern = IDLE;
 	State curState = E_0043; //= 기본 스테이트;
+	State preState = curState;
 	Type curType; //= 기본 타입;
 
 	UINT sequence = 0;
@@ -275,8 +282,13 @@ private:
 	vector<map<float, Event>> totalEvents;
 	vector<map<float, Event>::iterator> eventIters;
 
+	
+	/////////////////////////////////////
+	// 공격 콜라이더 (투사체, 폭발 등)	
+	vector<SphereCollider*> bullets;
+	CapsuleCollider* forwardBoom;
 
-
+	float rotSpeed = 5.0f;
 	int ranPatrol = 0;
 	float patrolTime = 0;
 	float bulletTime = 0;

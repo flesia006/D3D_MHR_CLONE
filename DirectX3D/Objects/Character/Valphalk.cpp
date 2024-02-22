@@ -36,12 +36,15 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 	//ReadClip("E_2042");
 	//ReadClip("E_2044");
 	//ReadClip("E_2045");
-	//ReadClip("E_2054");
+	ReadClip("E_2054");
 	//ReadClip("E_2056");
 	ReadClip("E_2079");	
 	//ReadClip("E_2106");
 	//ReadClip("E_2107");
 	//ReadClip("E_2108");
+	ReadClip("E_2144");
+	ReadClip("E_2145");
+	ReadClip("E_2146");
 	//ReadClip("E_2118");
 	//ReadClip("E_2121");
 	//ReadClip("E_2173");
@@ -67,6 +70,9 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 	realPos = new CapsuleCollider(1, 0.1);
 	realPos->Scale() *= 6.0f;
 
+	
+	/////////////////////////////////////////////
+	// 공격 콜라이더 (투사체, 폭발 등)	
 	bullets.resize(6);
 	FOR(6)
 	{
@@ -75,6 +81,10 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 		bullets[i]->SetColor(1, 0, 0);
 		bullets[i]->SetActive(false);
 	}
+	forwardBoom = new CapsuleCollider();
+	forwardBoom->Scale() = { 500,100,500 };
+	forwardBoom->SetColor(1, 0, 0);
+	forwardBoom->SetActive(false);
 }
 
 Valphalk::~Valphalk()
@@ -89,7 +99,7 @@ Valphalk::~Valphalk()
 	}
 	for (SphereCollider* bullet : bullets)
 		delete bullet;
-
+	delete forwardBoom;
 	delete head;
 	delete realPos;
 }
@@ -104,7 +114,8 @@ void Valphalk::Update()
 	head->UpdateWorld();
 	realPos->Pos() = GetTranslationByNode(1);
 	realPos->UpdateWorld();
-	
+	forwardBoom->Pos() = { Pos().x,Pos().y,Pos().z + 1000 };
+
 	velocity = target->GlobalPos() - GlobalPos();
 
 	for (CapsuleCollider* capsulCollider : colliders)	
@@ -115,7 +126,7 @@ void Valphalk::Update()
 
 	for (SphereCollider* bullet : bullets)
 		bullet->UpdateWorld();
-
+	forwardBoom->Update();
 	ColliderNodePos();
 
 	ModelAnimator::Update();
@@ -148,7 +159,9 @@ void Valphalk::Update()
 
 	if (KEY_DOWN('7'))
 		SetState(E_2001);
-
+	if (KEY_DOWN('8'))
+		ForwardBoom();
+	
 }
 
 void Valphalk::PreRender()
@@ -168,7 +181,7 @@ void Valphalk::Render()
 	}
 	for (int i = 0; i < bullets.size(); ++i)
 		bullets[i]->Render();
-
+	forwardBoom->Render();
 	ModelAnimator::Render();
 	realPos->Render();
 }
@@ -226,7 +239,6 @@ void Valphalk::Storm()
 	
 	if (stormTime > 6 && curState != E_1164)
 		SetState(E_1163);
-
 }
 
 void Valphalk::EnergyBullets()
@@ -295,6 +307,11 @@ void Valphalk::EnergyBullets()
 	
 }
 
+void Valphalk::ForwardBoom()
+{
+	SetState(E_0146);	
+}
+
 void Valphalk::Hupgi()
 {
 }
@@ -328,6 +345,8 @@ void Valphalk::SetState(State state)
 		return;
 
 	Vector3 pos1;
+	TerrainEditor* terrain = dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetTerrain();
+	terrain->ComputePicking(pos1, head->Pos() + Vector3::Up() * 200, Vector3::Down());
 	if (combo == false) // 연계공격중일때는 갱신X
 	{
 		Pos() = realPos->Pos();
@@ -340,10 +359,8 @@ void Valphalk::SetState(State state)
 	curState = state;
 	PlayClip(state);
 
-	//TerrainEditor* terrain = dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetTerrain();
 	//
 	//	
-	//terrain->ComputePicking(pos1, head->Pos() + Vector3::Up() * 200, Vector3::Down());
 
 		//	float y = max(pos1.y, pos2.y);	
 //	TerrainEditor* terrain = dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetTerrain();
@@ -485,6 +502,9 @@ void Valphalk::Move()
 	//case Valphalk::E_2108:	 E2108();		break;
 	//case Valphalk::E_2118:	 E2118();		break;
 	//case Valphalk::E_2121:	 E2121();		break;
+	case Valphalk::E_2144:	 E2144();		break;
+	case Valphalk::E_2145:	 E2145();		break;
+	case Valphalk::E_2146:	 E2146();		break;		
 	//case Valphalk::E_2173:	 E2173();		break;
 	//case Valphalk::E_2174:	 E2174();		break;
 	//case Valphalk::E_2175:	 E2175();		break;
@@ -513,9 +533,15 @@ float Valphalk::GetRadBtwTrgt()
 	Vector3 fwd = Forward();
 	Vector3 VtoP = (realPos->Pos() - target->GlobalPos()).GetNormalized();
 	Vector3 rad = XMVector3AngleBetweenVectors(fwd, VtoP);
+	Vector3 cross = Cross(fwd, VtoP);
 	radBtwTarget = rad.x;
 	if (Cross(fwd, VtoP).y < 0)
 		radBtwTarget *= -1;
+
+	if (cross.y < 0)
+		Rot().y += rotSpeed * DELTA;
+	else if (cross.y > 0)
+		Rot().y -= rotSpeed * DELTA;
 
 	return radBtwTarget;
 }
@@ -675,8 +701,9 @@ void Valphalk::E0146() //대기상태에서 포격모드로 변환
 {
 	PLAY;
 	if (RATIO > 0.98)
+		SetState(E_2144);
 		//SetState(E_0151); --> 이게 포격형 Idle 자세, 만들어지면 이거로 바꿔야됨
-		SetState(E_0003);
+		//SetState(E_0003);
 }
 
 void Valphalk::E1151() // 습격준비
@@ -880,6 +907,31 @@ void Valphalk::E2118()
 
 void Valphalk::E2121()
 {
+}
+
+void Valphalk::E2144()
+{
+	PLAY;
+	if (RATIO > 0.98)
+		SetState(E_2145);
+}
+
+void Valphalk::E2145()
+{
+	forwardBoom->SetActive(true);
+	PLAY;
+	if(RATIO>0.8f)
+		forwardBoom->SetActive(false);
+
+	if (RATIO > 0.98)
+		SetState(E_2146);
+}
+
+void Valphalk::E2146()
+{
+	PLAY;
+	if (RATIO > 0.98)
+		SetState(E_0003);
 }
 
 void Valphalk::E2173()
