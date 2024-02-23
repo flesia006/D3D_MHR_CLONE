@@ -28,8 +28,8 @@ ModelExportScene::ModelExportScene()
 //    ExportClip(name, "E_2027");
 //    ExportClip(name, "E_2032");
 //    ExportClip(name, "E_2033");
-    ExportClip(name, "E_2041");
-    ExportClip(name, "E_2042");
+    ExportClip(name, "E_2146");
+    //ExportClip(name, "E_2042");
 //    ExportClip(name, "E_2044");
 //    ExportClip(name, "E_2045");
 //    ExportClip(name, "E_2054");

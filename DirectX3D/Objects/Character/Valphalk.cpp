@@ -332,6 +332,7 @@ void Valphalk::EnergyBullets()
 void Valphalk::ForwardBoom()
 {
 	SetState(E_0146);	
+	//2144
 }
 
 void Valphalk::FullBurst()
@@ -1033,7 +1034,9 @@ void Valphalk::E2145() // 전방 폭격 시전 후 백스텝
 		forwardBoom->SetActive(false);
 
 	if (RATIO > 0.98)
+	{
 		SetState(E_2146);
+	}
 }
 
 void Valphalk::E2146() // 전방 폭격 후 날개 접으면서 착지
@@ -1041,8 +1044,8 @@ void Valphalk::E2146() // 전방 폭격 후 날개 접으면서 착지
 	PLAY;
 	if (RATIO > 0.98)
 	{
-		SetState(E_0003);
 		combo = false;
+		SetState(E_0003);
 	}
 }
 
