@@ -14,6 +14,7 @@ public:
 
     float Radius() { return radius * max(GlobalScale().x, max(GlobalScale().y, GlobalScale().z)); }
 
+    bool isAttack = false;
 private:
     virtual void MakeMesh() override;
 

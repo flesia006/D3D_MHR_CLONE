@@ -22,8 +22,12 @@ public:
 		//E_2027, E_2032,
 		E_2038, E_2040, //E_2041, E_2042, E_2044, E_2045,
 		E_2054, //E_2056,
+		E_2091, E_2092, E_2093, E_2103, // 날개 휘둘
 		//E_2106, E_2107, E_2108,
-		//E_2118, E_2121, E_2173, E_2174, E_2175,
+		//E_2118, E_2121, 
+		E_2129, E_2130, E_2131, E_2133, E_2134, E_2141,	 // 앞다리 찍으면서 날개 덮기
+		E_2151, E_2152, E_2153,
+		//E_2173, E_2174, E_2175,
 		//E_2185, E_2188, E_2189, E_2190, E_2192, E_2193, E_2200,
 		E_2210, E_2211,
 		E_3001, E_3023,
@@ -50,7 +54,7 @@ public:
 		// 가슴 부분
 		CHEST,
 		// 몸통부분
-		BODY,		
+		BODY,
 		// 왼쪽 날개
 		LWING,
 		LWING_RADIUS, // 날개 연결 관절
@@ -130,6 +134,7 @@ public:
 
 	//ColliderName GetName() { return colliderName; }
 	float damage = 0.1f;
+
 private:
 	// 패턴 함수
 	void S_LegAtk();
@@ -159,7 +164,7 @@ private:
 	void SetEvent(int clip, Event event, float timeRatio);
 	void ExecuteEvent();
 
-	void SetState(State state);
+	void SetState(State state, float rad = 0);
 	void SetType(Type type);
 
 	void Patrol();
@@ -171,7 +176,8 @@ private:
 	void Move();
 	void UpdateUI(); //캐릭터 UI가 있으면 이후 업데이트
 	float GetRadBtwTrgt();
-
+	void RotateToTarget(float ratio1, float ratio2); // 
+	void SetColliderAttack(ColliderName name, float ratio);
 
 
 	// 모션 함수
@@ -208,11 +214,29 @@ private:
 	void E2045();
 	void E2054();
 	void E2056();
+
+	void E2091();
+	void E2092();
+	void E2093();
+	void E2103();
+
 	void E2106();
 	void E2107();
 	void E2108();
 	void E2118();
 	void E2121();
+
+	void E2129();
+	void E2130();
+	void E2131();
+	void E2133();
+	void E2134();
+	void E2141();
+
+	void E2151();
+	void E2152();
+	void E2153();
+
 	void E2173();
 	void E2174();
 	void E2175();
@@ -259,7 +283,7 @@ private:
 
 	Vector3 velocity; //속력 : 실제 움직임
 
-	Pattern curPattern = B_SWINGATK;
+	Pattern curPattern = B_WINGATK;
 	State curState = E_0043; //= 기본 스테이트;
 	Type curType; //= 기본 타입;
 
@@ -270,11 +294,13 @@ private:
 	vector<map<float, Event>> totalEvents;
 	vector<map<float, Event>::iterator> eventIters;
 
-
+	Vector3 realFwd;
+	float realRot;
 
 	int ranPatrol = 0;
 	float patrolTime = 0;
 	float stormTime = 0;
+
 	//ColliderName colliderName;
 	// 파티클 부분
 	bool encounter = false;
@@ -285,7 +311,10 @@ private:
 	bool playOncePerPattern = false;
 
 	float radBtwTarget = 0.0f;
+	float initialRad = 0.0f;
 
 	const float rot135 = 2.36f;
 	const float rot45 = 0.785f;
+
+	float radDifference = 0.0f;
 };
