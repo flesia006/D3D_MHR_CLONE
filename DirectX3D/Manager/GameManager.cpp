@@ -43,8 +43,8 @@ GameManager::GameManager()
 //    SceneManager::Get()->Add("ModelExport");
 
 
-//    SceneManager::Get()->Create("ShadowScene", new ShadowScene());
-//    SceneManager::Get()->Add("ShadowScene");
+    SceneManager::Get()->Create("ShadowScene", new ShadowScene());
+    SceneManager::Get()->Add("ShadowScene");
 
     SceneManager::Get()->Create("MapDesignScene", new MapDesignScene());
     SceneManager::Get()->Add("MapDesignScene");
