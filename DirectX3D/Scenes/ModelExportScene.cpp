@@ -15,11 +15,8 @@ ModelExportScene::ModelExportScene()
 
 
 // Å¬¸³µþ ¶§ ÀÌ°Å ¾²¼À
-<<<<<<< HEAD
     ExportClip(name, "E_2141");
-=======
 //    ExportClip(name, "E_0146");
->>>>>>> 5adc9cc9e51e92de4bd9d7dbc9645aa12a84ce9d
 //    ExportClip(name, "E_2001");
 //    ExportClip(name, "E_2002");
 //    ExportClip(name, "E_2003");
@@ -29,14 +26,11 @@ ModelExportScene::ModelExportScene()
 //    ExportClip(name, "E_2019");
 //    ExportClip(name, "E_2020");
 //    ExportClip(name, "E_2022");
-<<<<<<< HEAD
-=======
 //    ExportClip(name, "E_2027");
 //    ExportClip(name, "E_2032");
 //    ExportClip(name, "E_2033");
     ExportClip(name, "E_2041");
     ExportClip(name, "E_2042");
->>>>>>> 5adc9cc9e51e92de4bd9d7dbc9645aa12a84ce9d
 //    ExportClip(name, "E_2044");
 //    ExportClip(name, "E_2045");
 //    ExportClip(name, "E_2054");
