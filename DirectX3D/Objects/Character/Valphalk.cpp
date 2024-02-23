@@ -555,7 +555,6 @@ void Valphalk::ChooseNextPattern()
 	//default: curPattern = B_DUMBLING; break;
 	}
 }
-}
 
 void Valphalk::PlayPattern()
 {
@@ -628,36 +627,35 @@ void Valphalk::Move()
 	case Valphalk::E_2003:	 E2003();		break;
 	case Valphalk::E_2013:	 E2013();		break;
 	case Valphalk::E_2015:	 E2015();		break;
+	case Valphalk::E_2017:	 E2017();		break;
+	case Valphalk::E_2019:	 E2019();		break;
 	case Valphalk::E_2020:	 E2020();		break;
 	case Valphalk::E_2022:	 E2022();		break;
 	case Valphalk::E_2027:	 E2027();		break;
 	case Valphalk::E_2032:	 E2032();		break;
 	case Valphalk::E_2033:	 E2033();		break;
-		//case Valphalk::E_2020:	 E2020();		break;
-		//case Valphalk::E_2022:	 E2022();		break;
-		//case Valphalk::E_2027:	 E2027();		break;
-		//case Valphalk::E_2032:	 E2032();		break;
-	//case Valphalk::E_2027:	 E2027();		break;
-	//case Valphalk::E_2032:	 E2032();		break;
 	case Valphalk::E_2041:	 E2041();		break;
 	case Valphalk::E_2042:	 E2042();		break;
 	case Valphalk::E_2044:	 E2044();		break;
 	case Valphalk::E_2045:	 E2045();		break;
-		//case Valphalk::E_2041:	 E2041();		break;
-		//case Valphalk::E_2042:	 E2042();		break;
-		//case Valphalk::E_2044:	 E2044();		break;
-		//case Valphalk::E_2045:	 E2045();		break;
-	//case Valphalk::E_2044:	 E2044();		break;
-	case Valphalk::E_2079:	 E2079();		break;
 	case Valphalk::E_2054:	 E2054();		break;
 	case Valphalk::E_2056:	 E2056();		break;
 	case Valphalk::E_2079:	 E2079();		break;
+	case Valphalk::E_2091:	 E2091();		break;
+	case Valphalk::E_2092:	 E2092();		break;
+	case Valphalk::E_2093:	 E2093();		break;
+	case Valphalk::E_2103:	 E2103();		break;
 	case Valphalk::E_2106:	 E2106();		break;
 	case Valphalk::E_2107:	 E2107();		break;
 	case Valphalk::E_2108:	 E2108();		break;
 	case Valphalk::E_2118:	 E2118();		break;
 	case Valphalk::E_2121:	 E2121();		break;
 	case Valphalk::E_2129:	 E2129();		break;
+	case Valphalk::E_2130:	 E2130();		break;
+	case Valphalk::E_2131:	 E2131();		break;
+	case Valphalk::E_2133:	 E2133();		break;
+	case Valphalk::E_2134:	 E2134();		break;
+	case Valphalk::E_2141:	 E2141();		break;
 	case Valphalk::E_2144:	 E2144();		break;
 	case Valphalk::E_2145:	 E2145();		break;
 	case Valphalk::E_2146:	 E2146();		break;
@@ -671,38 +669,6 @@ void Valphalk::Move()
 	case Valphalk::E_2192:	 E2192();		break;
 	case Valphalk::E_2193:	 E2193();		break;
 	case Valphalk::E_2200:	 E2200();		break;
-		//case Valphalk::E_2056:	 E2056();		break;
-	case Valphalk::E_2091:	 E2091();		break;
-	case Valphalk::E_2092:	 E2092();		break;
-	case Valphalk::E_2093:	 E2093();		break;
-	case Valphalk::E_2103:	 E2103();		break;
-
-
-		//case Valphalk::E_2106:	 E2106();		break;
-		//case Valphalk::E_2107:	 E2107();		break;
-		//case Valphalk::E_2108:	 E2108();		break;		
-
-		//case Valphalk::E_2118:	 E2118();		break;
-		//case Valphalk::E_2121:	 E2121();		break;
-
-	case Valphalk::E_2130:	 E2130();		break;
-	case Valphalk::E_2131:	 E2131();		break;
-	case Valphalk::E_2133:	 E2133();		break;
-	case Valphalk::E_2134:	 E2134();		break;
-	case Valphalk::E_2141:	 E2141();		break;
-
-		//case Valphalk::E_2173:	 E2173();		break;
-		//case Valphalk::E_2174:	 E2174();		break;
-		//case Valphalk::E_2175:	 E2175();		break;
-		//case Valphalk::E_2185:	 E2185();		break;
-		//case Valphalk::E_2188:	 E2188();		break;
-		//case Valphalk::E_2189:	 E2189();		break;
-		//case Valphalk::E_2190:	 E2190();		break;
-		//case Valphalk::E_2192:	 E2192();		break;
-		//case Valphalk::E_2193:	 E2193();		break;
-		//case Valphalk::E_2200:	 E2200();		break;
-	//case Valphalk::E_2193:	 E2193();		break;
-	//case Valphalk::E_2200:	 E2200();		break;
 	case Valphalk::E_2210:	 E2210();		break;
 	case Valphalk::E_2211:	 E2211();		break;
 	case Valphalk::E_2253:	 E2253();		break;
