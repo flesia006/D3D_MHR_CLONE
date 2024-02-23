@@ -10,11 +10,32 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 	ReadClip("E_0043");
 	ReadClip("E_0044");
 	ReadClip("E_0045");
+	ReadClip("E_0055");
 	// 플레이어 발견 후
+	ReadClip("E_0059");
+	ReadClip("E_0060");
+	ReadClip("E_0061");
+	ReadClip("E_0071");
 	ReadClip("E_0097");
 	ReadClip("E_0098");
 	ReadClip("E_0099");
 	ReadClip("E_0146");
+	ReadClip("E_0147");
+	ReadClip("E_0151");
+	ReadClip("E_0152");
+	ReadClip("E_0153");
+	ReadClip("E_0164");
+	ReadClip("E_0165");
+	ReadClip("E_0166");
+	ReadClip("E_0171");
+	ReadClip("E_0172");
+	ReadClip("E_0173");
+	ReadClip("E_0178");
+	ReadClip("E_0179");
+	ReadClip("E_0180");
+	ReadClip("E_0186");
+	ReadClip("E_0187");
+	ReadClip("E_0188");
 	ReadClip("E_1151");
 	ReadClip("E_1155");
 	ReadClip("E_1163");
@@ -39,6 +60,7 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 	ReadClip("E_2045");
 	ReadClip("E_2054");
 	ReadClip("E_2056");
+	ReadClip("E_2079");
 	ReadClip("E_2106");
 	ReadClip("E_2107");
 	ReadClip("E_2108");
@@ -56,6 +78,7 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 	ReadClip("E_2200");
 	ReadClip("E_2210");
 	ReadClip("E_2211");
+	ReadClip("E_2253");
 	ReadClip("E_3001");
 	ReadClip("E_3023");
 	// 아래 있는게 첫 포효
@@ -429,8 +452,6 @@ void Valphalk::ChooseNextPattern()
 	// 6. 분노했는가? // 이건 패턴에서 따지는게 나을 듯
 	// 7. 그렇다면 가능한 패턴을 리스트업 후에 난수든 뭐든 선택
 
-
-	sequence = 0;
 }
 
 void Valphalk::PlayPattern()
@@ -471,8 +492,29 @@ void Valphalk::Move()
 	case Valphalk::E_0043:	 E0043();		break;
 	case Valphalk::E_0044:	 E0044();		break;
 	case Valphalk::E_0045:	 E0045();		break;
+	case Valphalk::E_0055:	 E0055();		break;
+	case Valphalk::E_0059:	 E0059();		break;
+	case Valphalk::E_0060:	 E0060();		break;
+	case Valphalk::E_0061:	 E0061();		break;
+	case Valphalk::E_0071:	 E0071();		break;
 	case Valphalk::E_0097:	 E0097();		break;
 	case Valphalk::E_0146:	 E0146();		break;
+	case Valphalk::E_0147:	 E0147();		break;
+	case Valphalk::E_0151:	 E0151();		break;
+	case Valphalk::E_0152:	 E0152();		break;
+	case Valphalk::E_0153:	 E0153();		break;
+	case Valphalk::E_0164:	 E0164();		break;
+	case Valphalk::E_0165:	 E0165();		break;
+	case Valphalk::E_0166:	 E0166();		break;
+	case Valphalk::E_0171:	 E0171();		break;
+	case Valphalk::E_0172:	 E0172();		break;
+	case Valphalk::E_0173:	 E0173();		break;
+	case Valphalk::E_0178:	 E0178();		break;
+	case Valphalk::E_0179:	 E0179();		break;
+	case Valphalk::E_0180:	 E0180();		break;
+	case Valphalk::E_0186:	 E0186();		break;
+	case Valphalk::E_0187:	 E0187();		break;
+	case Valphalk::E_0188:	 E0188();		break;
 	case Valphalk::E_1151:	 E1151();		break;
 	case Valphalk::E_1155:	 E1155();		break;
 	case Valphalk::E_1163:	 E1163();		break;
@@ -496,8 +538,8 @@ void Valphalk::Move()
 	case Valphalk::E_2044:	 E2044();		break;
 	case Valphalk::E_2045:	 E2045();		break;
 	case Valphalk::E_2054:	 E2054();		break;
-	case Valphalk::E_2079:	 E2079();		break;
 	case Valphalk::E_2056:	 E2056();		break;
+	case Valphalk::E_2079:	 E2079();		break;
 	case Valphalk::E_2106:	 E2106();		break;
 	case Valphalk::E_2107:	 E2107();		break;
 	case Valphalk::E_2108:	 E2108();		break;
@@ -518,6 +560,7 @@ void Valphalk::Move()
 	case Valphalk::E_2200:	 E2200();		break;
 	case Valphalk::E_2210:	 E2210();		break;
 	case Valphalk::E_2211:	 E2211();		break;
+	case Valphalk::E_2253:	 E2253();		break;
 	case Valphalk::E_3001:	 E3001();		break;
 	case Valphalk::E_3023:	 E3023();		break;
 	case Valphalk::E_4013:	 E4013();		break;
@@ -670,17 +713,58 @@ void Valphalk::E0043() // 앞으로 전진
 {
 	PLAY;
 	if (RATIO > 0.98)
-		SetState(E_0003);
+		SetState(E_0055);
 }
 
 void Valphalk::E0044() // 좌회전
 {
 	PLAY;
+	if (RATIO > 0.98)
+		SetState(E_0003);
 }
 
 void Valphalk::E0045() // 뒤로 회전
 {
 	PLAY;
+	if (RATIO > 0.98)
+		SetState(E_0003);
+}
+
+void Valphalk::E0055()//걷기 Loop
+{
+	PLAY;
+	if (RATIO > 0.98)
+		SetState(E_0003);
+		// 계속 걷게 하려면 수정 필요
+}
+
+void Valphalk::E0059()//앞으로 뛰기
+{
+	PLAY;
+	if (RATIO > 0.98)
+		SetState(E_0071);
+}
+
+void Valphalk::E0060()//앞으로 뛰다가 좌회전
+{
+	PLAY;
+	if (RATIO > 0.98)
+		SetState(E_0071);
+}
+
+void Valphalk::E0061()//앞으로 뛰다가 뒤돌기(좌회전)
+{
+	PLAY;
+	if (RATIO > 0.98)
+		SetState(E_0071);
+}
+
+void Valphalk::E0071()//뛰기Loop
+{
+	PLAY;
+	if (RATIO > 0.98)
+		SetState(E_0003);
+		//계속 뛰게 하려면 수정 필요
 }
 
 void Valphalk::E0097() // 정지 (공격 준비)
@@ -702,9 +786,125 @@ void Valphalk::E0146() //대기상태에서 포격모드로 변환
 {
 	PLAY;
 	if (RATIO > 0.98)
-		SetState(E_2144);
-		//SetState(E_0151); --> 이게 포격형 Idle 자세, 만들어지면 이거로 바꿔야됨
+		//SetState(E_2144); --> 변환 후 바로 공격해야한다면 수정 필요
+		SetState(E_0151);
 		//SetState(E_0003);
+}
+
+void Valphalk::E0147()//포격형 -> 참격형 변환
+{
+	PLAY;
+	if (RATIO > 0.98)
+		SetState(E_0003);
+}
+
+void Valphalk::E0151()//포격상태 Idle
+{
+	PLAY;
+	if (RATIO > 0.98)
+	{
+		SetState(E_2144);
+		//참격형으로 다시 변환시키거나 다른 공격패턴 사용하게 변환 필요
+		//SetState(E_0147);
+	}
+}
+
+void Valphalk::E0152()//포격상태 좌회전
+{
+	PLAY;
+	if (RATIO > 0.98)
+		SetState(E_0151);
+}
+
+void Valphalk::E0153()//포격상태 뒤로회전
+{
+	PLAY;
+	if (RATIO > 0.98)
+		SetState(E_0151);
+}
+
+void Valphalk::E0164()//뒷걸음질
+{
+	PLAY;
+	if (RATIO > 0.98)
+		SetState(E_0003);
+}
+
+void Valphalk::E0165()//뒷걸음질 치고 왼쪽봄
+{
+	PLAY;
+	if (RATIO > 0.98)
+		SetState(E_0003);
+}
+
+void Valphalk::E0166()//뒷걸음질 치고 오른쪽 봄
+{
+	PLAY;
+	if (RATIO > 0.98)
+		SetState(E_0003);
+}
+
+void Valphalk::E0171()//포격형 뒷걸음질
+{
+	PLAY;
+	if (RATIO > 0.98)
+		SetState(E_0151);
+}
+
+void Valphalk::E0172()//포격형 뒷걸음질 치고 왼쪽봄
+{
+	PLAY;
+	if (RATIO > 0.98)
+		SetState(E_0151);
+}
+
+void Valphalk::E0173()//포격형 뒷걸음질 치고 오른쪽 봄
+{
+	PLAY;
+	if (RATIO > 0.98)
+		SetState(E_0151);
+}
+
+void Valphalk::E0178()//포격형->참격형 변환하면서 뒷걸음질
+{
+	PLAY;
+	if (RATIO > 0.98)
+		SetState(E_0003);
+}
+
+void Valphalk::E0179()//포격형->참격형 변환하면서 뒷걸음질 치고 왼쪽봄
+{
+	PLAY;
+	if (RATIO > 0.98)
+		SetState(E_0003);
+}
+
+void Valphalk::E0180()//포격형->참격형 변환하면서 뒷걸음질 치고 오른쪽 봄
+{
+	PLAY;
+	if (RATIO > 0.98)
+		SetState(E_0003);
+}
+
+void Valphalk::E0186()//포격형->참격형 변환하면서 앞으로 뛰기
+{
+	PLAY;
+	if (RATIO > 0.98)
+		SetState(E_0003);
+}
+
+void Valphalk::E0187()//포격형->참격형 변환하면서 앞으로 뛰다가 좌회전
+{
+	PLAY;
+	if (RATIO > 0.98)
+		SetState(E_0003);
+}
+
+void Valphalk::E0188()//포격형->참격형 변환하면서 앞으로 뛰다가 뒤돌기
+{
+	PLAY;
+	if (RATIO > 0.98)
+		SetState(E_0003);
 }
 
 void Valphalk::E1151() // 습격준비
@@ -927,6 +1127,8 @@ void Valphalk::E2079()
 {
 	PLAY;
 
+	if (RATIO > 0.98)
+		SetState(E_0003);
 }
 
 void Valphalk::E2056() // 찌르고 그 날개 로 한바퀴 돌기
@@ -1117,6 +1319,13 @@ void Valphalk::E2211()//뒤돌아 날개찍기 공격동작
 		combo = false;
 		SetState(E_0003);
 	}
+}
+
+void Valphalk::E2253()//왼쪽 보면서 오른쪽으로 백스탭
+{
+	PLAY;
+	if (RATIO > 0.98)
+		SetState(E_0151);
 }
 
 void Valphalk::E3001() // 작은 데미지 피격
