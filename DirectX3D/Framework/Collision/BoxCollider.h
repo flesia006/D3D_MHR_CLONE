@@ -23,6 +23,8 @@ public:
     void GetObb(ObbDesc& obbDesc);
     void GUIRender();
 
+
+    bool isAttack = false;
 private:
     bool IsSeperateAxis(Vector3 D, Vector3 axis, ObbDesc box1, ObbDesc box2);
 

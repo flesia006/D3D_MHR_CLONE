@@ -5,30 +5,26 @@ class Valphalk : public ModelAnimator
 public:
 	enum State
 	{
-		E_0003,
-		E_0007,
-
-		// 플레이어 발견 전에 걸으면서 돌아다니기
-		E_0043 /* 앞으로 걷기 */, E_0044 /* 왼쪽 보고 걷기 */, E_0045 /* 뒤로 돌고 걷기 */,
-
-		// 플레이어 발견 후
-		E_0097 /* 앞으로 포효 준비*/, E_0098 /* 왼쪽으로 포효 준비 */, E_0099, /* 뒤로 돌아서 포효 준비 */
-		E_0146, // 포격자세 변환
-		//습격
-		E_1151, E_1155, E_1163, E_1164,
-		// 공격및 피격자세
-		E_2001, E_2002, E_2003,
+		E_0003,	E_0007,	E_0043,	E_0044,	E_0045,
+		E_0055, E_0059, E_0060, E_0061, E_0071, 
+		E_0097,	E_0098,	E_0099,	E_0146,	
+		E_0147,	E_0151,	E_0152,	E_0153,	E_0164,
+		E_0165,	E_0166,	E_0171,	E_0172,	E_0173,
+		E_0178,	E_0179,	E_0180,	E_0186,	E_0187,	E_0188,
+		E_1151, E_1155, E_1163, E_1164,		//습격		
+		E_2001, E_2002, E_2003,				// 공격및 피격자세
 		E_2013, E_2015, E_2017, E_2019, E_2020, E_2022,
 		E_2027, E_2032, E_2033,
 		E_2038, E_2040, E_2041, E_2042, E_2044, E_2045,
 		E_2054, E_2056, E_2079,
-		E_2106, E_2107, E_2108,
-		E_2118, E_2121, E_2129,
+		E_2091, E_2092, E_2093, E_2103, // 날개 휘둘
+		E_2106, E_2107, E_2108,	E_2118, E_2121, 
+		E_2129, E_2130, E_2131, E_2133, E_2134, E_2141,	 // 앞다리 찍으면서 날개 덮기
 		E_2144, E_2145, E_2146,
+		E_2151, E_2152, E_2153,
 		E_2173, E_2174, E_2175, E_2185,
 		E_2188, E_2189, E_2190, E_2192, E_2193, E_2200,
-		E_2210, E_2211,
-		E_2265, E_2267,
+		E_2210, E_2211,  E_2253, E_2265, E_2267,
 		E_2270, E_2271, E_2272, E_2274, E_2275, E_2276, E_2277, E_2278,
 		E_2280, E_2286, E_2288, E_2290,
 		E_2354, E_2356, E_2359, E_2361, E_2367, E_2368,
@@ -58,7 +54,7 @@ public:
 		// 가슴 부분
 		CHEST,
 		// 몸통부분
-		BODY,		
+		BODY,
 		// 왼쪽 날개
 		LWING,
 		LWING_RADIUS, // 날개 연결 관절
@@ -140,6 +136,7 @@ public:
 
 	//ColliderName GetName() { return colliderName; }
 	float damage = 0.1f;
+
 private:
 	// 패턴 함수
 	void S_LegAtk();
@@ -173,7 +170,7 @@ private:
 	void SetEvent(int clip, Event event, float timeRatio);
 	void ExecuteEvent();
 
-	void SetState(State state);
+	void SetState(State state, float rad = 0);
 	void SetType(Type type);
 
 	void Patrol();
@@ -185,7 +182,8 @@ private:
 	void Move();
 	void UpdateUI(); //캐릭터 UI가 있으면 이후 업데이트
 	float GetRadBtwTrgt();
-
+	void RotateToTarget(float ratio1, float ratio2); // 
+	void SetColliderAttack(ColliderName name, float ratio);
 
 
 	// 모션 함수
@@ -195,10 +193,31 @@ private:
 	void E0043();
 	void E0044();
 	void E0045();
+	void E0055();
+	void E0059();
+	void E0060();
+	void E0061();
+	void E0071();
 	void E0097();
 	void E0098();
 	void E0099();
 	void E0146();
+	void E0147();
+	void E0151();
+	void E0152();
+	void E0153();
+	void E0164();
+	void E0165();
+	void E0166();
+	void E0171();
+	void E0172();
+	void E0173();
+	void E0178();
+	void E0179();
+	void E0180();
+	void E0186();
+	void E0187();
+	void E0188();
 	void E1151();
 	void E1155();
 	void E1163();
@@ -223,13 +242,30 @@ private:
 	void E2045();
 	void E2054();
 	void E2056();
+
+	void E2091();
+	void E2092();
+	void E2093();
+	void E2103();
+
 	void E2079();
 	void E2106();
 	void E2107();
 	void E2108();
 	void E2118();
 	void E2121();
+
 	void E2129();
+	void E2130();
+	void E2131();
+	void E2133();
+	void E2134();
+	void E2141();
+
+	void E2151();
+	void E2152();
+	void E2153();
+
 	void E2144();
 	void E2145();
 	void E2146();
@@ -245,6 +281,7 @@ private:
 	void E2200();
 	void E2210();
 	void E2211();
+	void E2253();
 	void E2265();
 	void E2267();
 	void E2270();
@@ -308,7 +345,7 @@ private:
 
 	Vector3 velocity; //속력 : 실제 움직임
 
-	Pattern curPattern = IDLE;
+	Pattern curPattern = B_SWINGATK;
 	State curState = E_0043; //= 기본 스테이트;
 	State preState = curState;
 	Type curType; //= 기본 타입;
@@ -320,7 +357,7 @@ private:
 	vector<map<float, Event>> totalEvents;
 	vector<map<float, Event>::iterator> eventIters;
 
-	
+
 	/////////////////////////////////////
 	// 공격 콜라이더 (투사체, 폭발 등)	
 	vector<SphereCollider*> bullets;
@@ -336,6 +373,7 @@ private:
 	float patrolTime = 0;
 	float bulletTime = 0;
 	float stormTime = 0;
+
 	//ColliderName colliderName;
 	// 파티클 부분
 	bool encounter = false;
@@ -346,7 +384,10 @@ private:
 	bool playOncePerPattern = false;
 
 	float radBtwTarget = 0.0f;
+	float initialRad = 0.0f;
 
 	const float rot135 = 2.36f;
 	const float rot45 = 0.785f;
+
+	float radDifference = 0.0f;
 };

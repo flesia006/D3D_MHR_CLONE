@@ -24,7 +24,7 @@ public:
     void GUIRender();
 
     int part = 0;
-
+    bool isAttack = false;
 private:
     virtual void MakeMesh() override;
 
