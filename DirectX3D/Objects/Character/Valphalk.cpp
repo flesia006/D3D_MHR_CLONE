@@ -39,11 +39,15 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 	ReadClip("E_2045");
 	ReadClip("E_2054");
 	ReadClip("E_2056");
+	ReadClip("E_2079");
 	ReadClip("E_2106");
 	ReadClip("E_2107");
 	ReadClip("E_2108");
 	ReadClip("E_2118");
 	ReadClip("E_2121");
+	ReadClip("E_2144");
+	ReadClip("E_2145");
+	ReadClip("E_2146");
 	ReadClip("E_2173");
 	ReadClip("E_2174");
 	ReadClip("E_2175");
@@ -56,6 +60,12 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 	ReadClip("E_2200");
 	ReadClip("E_2210");
 	ReadClip("E_2211");
+	ReadClip("E_2354");
+	ReadClip("E_2356");
+	ReadClip("E_2359");
+	ReadClip("E_2361");
+	ReadClip("E_2367");
+	ReadClip("E_2368");
 	ReadClip("E_3001");
 	ReadClip("E_3023");
 	// 아래 있는게 첫 포효
@@ -79,9 +89,15 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 		bullets[i]->SetActive(false);
 	}
 	forwardBoom = new CapsuleCollider();
-	forwardBoom->Scale() = { 500,100,500 };
+	forwardBoom->Scale() *=500;
 	forwardBoom->SetColor(1, 0, 0);
 	forwardBoom->SetActive(false);
+
+	fullBurst = new BoxCollider();
+	fullBurst->Scale() *= 500;
+	fullBurst->Scale().z *= 20;
+	fullBurst->SetColor(1, 0, 0);
+	fullBurst->SetActive(false);
 }
 
 Valphalk::~Valphalk()
@@ -97,6 +113,7 @@ Valphalk::~Valphalk()
 	for (SphereCollider* bullet : bullets)
 		delete bullet;
 	delete forwardBoom;
+	delete fullBurst;
 	delete head;
 	delete realPos;
 }
@@ -111,7 +128,6 @@ void Valphalk::Update()
 	head->UpdateWorld();
 	realPos->Pos() = GetTranslationByNode(1);
 	realPos->UpdateWorld();
-	forwardBoom->Pos() = { Pos().x,Pos().y,Pos().z + 1000 };
 
 	velocity = target->GlobalPos() - GlobalPos();
 
@@ -124,6 +140,7 @@ void Valphalk::Update()
 	for (SphereCollider* bullet : bullets)
 		bullet->UpdateWorld();
 	forwardBoom->Update();
+	fullBurst->UpdateWorld();
 	ColliderNodePos();
 
 	ModelAnimator::Update();
@@ -155,7 +172,8 @@ void Valphalk::Update()
 		Storm();
 
 	if (KEY_DOWN('7'))
-		SetState(E_2001);
+		FullBurst();
+		//SetState(E_2001);
 	if (KEY_DOWN('8'))
 		ForwardBoom();
 	
@@ -182,6 +200,8 @@ void Valphalk::Render()
 	for (int i = 0; i < bullets.size(); ++i)
 		bullets[i]->Render();
 	forwardBoom->Render();
+	fullBurst->Render();
+
 	ModelAnimator::Render();
 	realPos->Render();
 }
@@ -195,6 +215,8 @@ void Valphalk::GUIRender()
 	ImGui::Text("RanPatrolNum : %d", ranPatrol);
 	ImGui::Text("stormTime : %.3f", stormTime);
 	ImGui::Text("Length : %.3f", velocity.Length());
+	ImGui::DragFloat3("burstPos", (float*)&fullBurst->Pos());
+	ImGui::DragFloat3("burstRot", (float*)&fullBurst->Rot());
 
 	for (int i = 0; i < colliders.size(); i++)
 	{
@@ -310,6 +332,12 @@ void Valphalk::EnergyBullets()
 void Valphalk::ForwardBoom()
 {
 	SetState(E_0146);	
+}
+
+void Valphalk::FullBurst()
+{
+	combo = true;
+	SetState(E_2354);
 }
 
 void Valphalk::Hupgi()
@@ -518,6 +546,12 @@ void Valphalk::Move()
 	case Valphalk::E_2200:	 E2200();		break;
 	case Valphalk::E_2210:	 E2210();		break;
 	case Valphalk::E_2211:	 E2211();		break;
+	case Valphalk::E_2354:	 E2354();		break;
+	case Valphalk::E_2356:	 E2356();		break;
+	case Valphalk::E_2359:	 E2359();		break;
+	case Valphalk::E_2361:	 E2361();		break;
+	case Valphalk::E_2367:	 E2367();		break;
+	case Valphalk::E_2368:	 E2368();		break;
 	case Valphalk::E_3001:	 E3001();		break;
 	case Valphalk::E_3023:	 E3023();		break;
 	case Valphalk::E_4013:	 E4013();		break;
@@ -981,15 +1015,18 @@ void Valphalk::E2121()//왼쪽 날개 들었다가 찍은다음 살짝 일어나서 다시 자세잡음
 	}
 }
 
-void Valphalk::E2144()
+void Valphalk::E2144() // 전방 폭격 시작
 {
+	combo = true;
 	PLAY;
 	if (RATIO > 0.98)
 		SetState(E_2145);
 }
 
-void Valphalk::E2145()
+void Valphalk::E2145() // 전방 폭격 시전 후 백스텝
 {
+	forwardBoom->Pos() = { Pos().x,Pos().y - 700,Pos().z + 1000 };
+
 	forwardBoom->SetActive(true);
 	PLAY;
 	if(RATIO>0.8f)
@@ -999,11 +1036,14 @@ void Valphalk::E2145()
 		SetState(E_2146);
 }
 
-void Valphalk::E2146()
+void Valphalk::E2146() // 전방 폭격 후 날개 접으면서 착지
 {
 	PLAY;
 	if (RATIO > 0.98)
+	{
 		SetState(E_0003);
+		combo = false;
+	}
 }
 
 void Valphalk::E2173()
@@ -1112,6 +1152,66 @@ void Valphalk::E2211()//뒤돌아 날개찍기 공격동작
 {
 	PLAY;
 	//각도 바꿔주는 Ratio : 0.04 ~ 0.10
+	if (RATIO > 0.98)
+	{
+		combo = false;
+		SetState(E_0003);
+	}
+}
+
+void Valphalk::E2354() // 풀버스트 전방
+{
+	combo = true;
+	PLAY;
+	if (RATIO > 0.98)
+		SetState(E_2361);
+}
+
+void Valphalk::E2356() // 풀버스트 좌회전
+{
+	PLAY;
+}
+
+void Valphalk::E2359() // 풀버스트 우회전
+{
+	PLAY;
+}
+
+void Valphalk::E2361() // 풀버스트 준비
+{
+	PLAY;
+	fullBurst->Pos() = { Pos().x,Pos().y + 100,Pos().z + 5000 };
+	fullBurst->Rot() = 0;
+	if (RATIO > 0.98)
+		SetState(E_2367);
+
+}
+
+void Valphalk::E2367() // 풀버스트 발사
+{
+	PLAY;
+
+	if(RATIO>0.2)
+	fullBurst->SetActive(true);
+
+	if (RATIO > 0.8)
+	{
+		fullBurst->Pos().y += 7000 * DELTA;
+		fullBurst->Rot().x -= 0.82 * DELTA;
+	}
+	if (RATIO > 0.98)
+	{
+
+		SetState(E_2368);
+	}
+}
+
+void Valphalk::E2368() // 풀버스트 마무리
+{
+	PLAY;
+	if(RATIO>0.2)
+	fullBurst->SetActive(false);
+
 	if (RATIO > 0.98)
 	{
 		combo = false;

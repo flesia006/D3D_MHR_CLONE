@@ -21,13 +21,14 @@ public:
 		E_2013, E_2015, E_2017, E_2019, E_2020, E_2022,
 		E_2027, E_2032, E_2033,
 		E_2038, E_2040, E_2041, E_2042, E_2044, E_2045,
-		E_2054, E_2056,
+		E_2054, E_2056, E_2079,
 		E_2106, E_2107, E_2108,
 		E_2118, E_2121,
 		E_2144, E_2145, E_2146,
 		E_2173, E_2174, E_2175, E_2185,
 		E_2188, E_2189, E_2190, E_2192, E_2193, E_2200,
 		E_2210, E_2211,
+		E_2354, E_2356, E_2359, E_2361, E_2367, E_2368,
 		E_3001, E_3023,
 		/* 앉아서 포효 자세 */
 		E_4013,
@@ -159,6 +160,7 @@ private:
 	void Storm();
 	void EnergyBullets();	
 	void ForwardBoom();
+	void FullBurst();
 	void Hupgi();
 
 	Vector3 GetPlayerPos();
@@ -237,6 +239,13 @@ private:
 	void E2200();
 	void E2210();
 	void E2211();
+	void E2354();
+	void E2356();
+	void E2359();
+	void E2361();
+	void E2367();
+	void E2368();
+
 	void E3001();
 	void E3023();
 	void E4013();
@@ -288,6 +297,7 @@ private:
 	// 공격 콜라이더 (투사체, 폭발 등)	
 	vector<SphereCollider*> bullets;
 	CapsuleCollider* forwardBoom;
+	BoxCollider* fullBurst;
 
 	float rotSpeed = 5.0f;
 	int ranPatrol = 0;
