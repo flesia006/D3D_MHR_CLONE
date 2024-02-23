@@ -66,6 +66,10 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 	ReadClip("E_2108");
 	ReadClip("E_2118");
 	ReadClip("E_2121");
+	ReadClip("E_2129");
+	ReadClip("E_2144");
+	ReadClip("E_2145");
+	ReadClip("E_2146");
 	ReadClip("E_2173");
 	ReadClip("E_2174");
 	ReadClip("E_2175");
@@ -78,7 +82,33 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 	ReadClip("E_2200");
 	ReadClip("E_2210");
 	ReadClip("E_2211");
-	ReadClip("E_2253");
+	ReadClip("E_2265");
+	ReadClip("E_2267");
+	ReadClip("E_2270");
+	ReadClip("E_2271");
+	ReadClip("E_2272");
+	ReadClip("E_2274");
+	ReadClip("E_2275");
+	ReadClip("E_2276");
+	ReadClip("E_2277");
+	ReadClip("E_2278");
+	ReadClip("E_2280");
+	ReadClip("E_2286");
+	ReadClip("E_2288");
+	ReadClip("E_2290");
+	ReadClip("E_2354");
+	ReadClip("E_2356");
+	ReadClip("E_2359");
+	ReadClip("E_2361");
+	ReadClip("E_2367");
+	ReadClip("E_2368");
+	ReadClip("E_2371");
+	ReadClip("E_2372");
+	ReadClip("E_2373");
+	ReadClip("E_2374");
+	ReadClip("E_2375");
+	ReadClip("E_2376");
+	ReadClip("E_2403");
 	ReadClip("E_3001");
 	ReadClip("E_3023");
 	// 아래 있는게 첫 포효
@@ -102,9 +132,15 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 		bullets[i]->SetActive(false);
 	}
 	forwardBoom = new CapsuleCollider();
-	forwardBoom->Scale() = { 500,100,500 };
+	forwardBoom->Scale() *=500;
 	forwardBoom->SetColor(1, 0, 0);
 	forwardBoom->SetActive(false);
+
+	fullBurst = new BoxCollider();
+	fullBurst->Scale() *= 500;
+	fullBurst->Scale().z *= 20;
+	fullBurst->SetColor(1, 0, 0);
+	fullBurst->SetActive(false);
 }
 
 Valphalk::~Valphalk()
@@ -120,12 +156,34 @@ Valphalk::~Valphalk()
 	for (SphereCollider* bullet : bullets)
 		delete bullet;
 	delete forwardBoom;
+	delete fullBurst;
 	delete head;
 	delete realPos;
 }
 
 void Valphalk::Update()
 {
+	if (KEY_DOWN('1'))
+	{
+		curState = E_2265;
+		LookatPlayer = false;
+	}
+
+	if (KEY_DOWN('2'))
+	{
+		curState = E_2265;
+		LookatPlayer = true;
+	}
+
+	if (KEY_DOWN('3'))
+	{
+		curState = E_2265;
+		OtherPlay = true;
+	}
+	if (KEY_DOWN('4'))
+	{
+		curState = E_2129;
+	}
 	//Pos().x = 2000; // 임시 고정용
 	UpdateWorld();
 	PlayPattern();
@@ -134,7 +192,6 @@ void Valphalk::Update()
 	head->UpdateWorld();
 	realPos->Pos() = GetTranslationByNode(1);
 	realPos->UpdateWorld();
-	forwardBoom->Pos() = { Pos().x,Pos().y,Pos().z + 1000 };
 
 	velocity = target->GlobalPos() - GlobalPos();
 
@@ -147,6 +204,7 @@ void Valphalk::Update()
 	for (SphereCollider* bullet : bullets)
 		bullet->UpdateWorld();
 	forwardBoom->Update();
+	fullBurst->UpdateWorld();
 	ColliderNodePos();
 
 	ModelAnimator::Update();
@@ -170,15 +228,16 @@ void Valphalk::Update()
 	//	encounter = false;
 	//}
 	//Fight();
-	if (KEY_DOWN('4'))
-		SetState(E_0003);
+	//if (KEY_DOWN('4'))
+	//	SetState(E_0003);
 	if (KEY_DOWN('5') || bulletTime > 0.001f)
 		EnergyBullets();
 	if (KEY_DOWN('6') || stormTime > 0.001f)
 		Storm();
 
 	if (KEY_DOWN('7'))
-		SetState(E_2001);
+		FullBurst();
+		//SetState(E_2001);
 	if (KEY_DOWN('8'))
 		ForwardBoom();
 	
@@ -205,6 +264,8 @@ void Valphalk::Render()
 	for (int i = 0; i < bullets.size(); ++i)
 		bullets[i]->Render();
 	forwardBoom->Render();
+	fullBurst->Render();
+
 	ModelAnimator::Render();
 	realPos->Render();
 }
@@ -218,6 +279,8 @@ void Valphalk::GUIRender()
 	ImGui::Text("RanPatrolNum : %d", ranPatrol);
 	ImGui::Text("stormTime : %.3f", stormTime);
 	ImGui::Text("Length : %.3f", velocity.Length());
+	ImGui::DragFloat3("burstPos", (float*)&fullBurst->Pos());
+	ImGui::DragFloat3("burstRot", (float*)&fullBurst->Rot());
 
 	for (int i = 0; i < colliders.size(); i++)
 	{
@@ -333,6 +396,12 @@ void Valphalk::EnergyBullets()
 void Valphalk::ForwardBoom()
 {
 	SetState(E_0146);	
+}
+
+void Valphalk::FullBurst()
+{
+	combo = true;
+	SetState(E_2354);
 }
 
 void Valphalk::Hupgi()
@@ -545,6 +614,7 @@ void Valphalk::Move()
 	case Valphalk::E_2108:	 E2108();		break;
 	case Valphalk::E_2118:	 E2118();		break;
 	case Valphalk::E_2121:	 E2121();		break;
+	case Valphalk::E_2129:	 E2129();		break;
 	case Valphalk::E_2144:	 E2144();		break;
 	case Valphalk::E_2145:	 E2145();		break;
 	case Valphalk::E_2146:	 E2146();		break;
@@ -560,7 +630,27 @@ void Valphalk::Move()
 	case Valphalk::E_2200:	 E2200();		break;
 	case Valphalk::E_2210:	 E2210();		break;
 	case Valphalk::E_2211:	 E2211();		break;
-	case Valphalk::E_2253:	 E2253();		break;
+	case Valphalk::E_2265:	 E2265();		break;
+	case Valphalk::E_2267:	 E2267();		break;
+	case Valphalk::E_2270:   E2270();       break;
+	case Valphalk::E_2276:   E2276();       break;
+	case Valphalk::E_2277:   E2277();       break;
+	case Valphalk::E_2278:   E2278();       break;
+	case Valphalk::E_2280:   E2280();		break;
+	case Valphalk::E_2286:   E2286();		break;
+	case Valphalk::E_2288:   E2288();		break;
+	case Valphalk::E_2290:   E2290();		break;
+	case Valphalk::E_2354:	 E2354();		break;
+	case Valphalk::E_2356:	 E2356();		break;
+	case Valphalk::E_2359:	 E2359();		break;
+	case Valphalk::E_2361:	 E2361();		break;
+	case Valphalk::E_2367:	 E2367();		break;
+	case Valphalk::E_2368:	 E2368();		break;
+	case Valphalk::E_2371:   E2371();		break;
+	case Valphalk::E_2374:   E2374();		break;
+	case Valphalk::E_2375:   E2375();		break;
+	case Valphalk::E_2376:   E2376();		break;
+	case Valphalk::E_2403:   E2403();       break;
 	case Valphalk::E_3001:	 E3001();		break;
 	case Valphalk::E_3023:	 E3023();		break;
 	case Valphalk::E_4013:	 E4013();		break;
@@ -1183,15 +1273,35 @@ void Valphalk::E2121()//왼쪽 날개 들었다가 찍은다음 살짝 일어나서 다시 자세잡음
 	}
 }
 
-void Valphalk::E2144()
+void Valphalk::E2129()
 {
+	PLAY;
+	if (Count == 0 || Count == 1)
+	{
+		GetClip(E_2129)->SetPlayTime(0.0f);
+		Pos() = GetTranslationByNode(1);
+		Count = 2;
+	}
+
+	if (RATIO > 0.98f)
+	{
+		SetState(E_2403);
+		Count = 1;
+	}
+}
+
+void Valphalk::E2144() // 전방 폭격 시작
+{
+	combo = true;
 	PLAY;
 	if (RATIO > 0.98)
 		SetState(E_2145);
 }
 
-void Valphalk::E2145()
+void Valphalk::E2145() // 전방 폭격 시전 후 백스텝
 {
+	forwardBoom->Pos() = { Pos().x,Pos().y - 700,Pos().z + 1000 };
+
 	forwardBoom->SetActive(true);
 	PLAY;
 	if(RATIO>0.8f)
@@ -1201,11 +1311,14 @@ void Valphalk::E2145()
 		SetState(E_2146);
 }
 
-void Valphalk::E2146()
+void Valphalk::E2146() // 전방 폭격 후 날개 접으면서 착지
 {
 	PLAY;
 	if (RATIO > 0.98)
+	{
 		SetState(E_0003);
+		combo = false;
+	}
 }
 
 void Valphalk::E2173()
@@ -1321,11 +1434,321 @@ void Valphalk::E2211()//뒤돌아 날개찍기 공격동작
 	}
 }
 
+void Valphalk::E2265()
+{
+	PLAY;
+
+	if (Count == 0 || Count == 1)
+	{
+		combo = true;
+		//GetClip(E_2265)->SetPlayTime(0.0f);
+		Count == 2;
+	}
+
+	if (RATIO > 0.98f)
+	{
+		SetState(E_2267);
+
+		Count = 1;
+	}
+}
+
+void Valphalk::E2267()
+{
+	PLAY;
+
+	if (RATIO > 0.98f)
+	{
+		Pos() = GetTranslationByNode(1);
+		if (!LookatPlayer)
+		{
+			SetState(E_2371);
+		}
+		if (LookatPlayer)
+		{
+			SetState(E_2270);
+		}
+		if (OtherPlay)
+		{
+			SetState(E_2280);
+		}
+		Count = 1;
+	}
+}
+
+void Valphalk::E2270()
+{
+	if (Count == 1)
+	{
+		Rot().y = Rot().y - 1.9f;
+		Count = 2;
+	}
+	PLAY;
+
+	if (RATIO > 0.98f)
+	{
+		Pos() = GetTranslationByNode(1);
+		SetState(E_2276);
+		Count = 1;
+	}
+}
+
+void Valphalk::E2271()
+{
+}
+
+void Valphalk::E2272()
+{
+}
+
+void Valphalk::E2274()
+{
+}
+
+void Valphalk::E2275()
+{
+}
+
+void Valphalk::E2276()
+{
+	PLAY;
+
+	if (RATIO > 0.98f)
+	{
+		Pos() = GetTranslationByNode(1);
+		SetState(E_2277);
+		Count = 1;
+	}
+}
+
+void Valphalk::E2277()
+{
+	if (Pos().y > 400.0f)
+	{
+		//Pos().y = GetTranslationByNode(1).y;
+		Pos() = GetTranslationByNode(1);
+		//SetState(E_2277);
+		//SetState(E_2277);
+	}
+	else
+	{
+		SetState(E_2278);
+		Pos().y = 0.0f;
+		Count = 1;
+	}
+}
+
+void Valphalk::E2278()
+{
+
+	if (RATIO > 0.98f)
+	{
+		Pos() = GetTranslationByNode(1);
+		SetState(E_4013);
+		combo = false;
+	}
+}
+
+void Valphalk::E2280()
+{
+	if (Count == 1)
+	{
+		Rot().y = Rot().y - 1.9f;
+		Count = 2;
+	}
+
+	if (RATIO > 0.98f)
+	{
+		SetState(E_2286);
+		Count = 1;
+	}
+}
+
+void Valphalk::E2286()
+{
+	if (RATIO > 0.98f)
+	{
+		Pos() = GetTranslationByNode(1);
+		SetState(E_2288);
+	}
+}
+
+void Valphalk::E2288()
+{
+	PLAY;
+
+
+	if (Pos().y > 500.0f)
+	{
+		Count = 1;
+
+		Pos().y -= GetTranslationByNode(1).y * 10.0f * DELTA;
+	}
+	else
+	{
+		OtherPlay = false;
+		Pos().y = GetTranslationByNode(1).y - 500.0f;
+		//Pos().y = 0.0f;
+		SetState(E_2290);
+		Count = 1;
+
+	}
+}
+
+void Valphalk::E2290()
+{
+	if (Count == 1)
+	{
+		Pos() = GetTranslationByNode(1);
+		Count = 2;
+	}
+
+	if (RATIO > 0.98f)
+	{
+		Pos() = GetTranslationByNode(1);
+		combo = false;
+		SetState(E_4013);
+	}
+}
+
+void Valphalk::E2354() // 풀버스트 전방
+{
+	combo = true;
+	PLAY;
+	if (RATIO > 0.98)
+		SetState(E_2361);
+}
+
+void Valphalk::E2356() // 풀버스트 좌회전
+{
+	PLAY;
+}
+
+void Valphalk::E2359() // 풀버스트 우회전
+{
+	PLAY;
+}
+
+void Valphalk::E2361() // 풀버스트 준비
+{
+	PLAY;
+	fullBurst->Pos() = { Pos().x,Pos().y + 100,Pos().z + 5000 };
+	fullBurst->Rot() = 0;
+	if (RATIO > 0.98)
+		SetState(E_2367);
+
+}
+
+void Valphalk::E2367() // 풀버스트 발사
+{
+	PLAY;
+
+	if(RATIO>0.2)
+	fullBurst->SetActive(true);
+
+	if (RATIO > 0.8)
+	{
+		fullBurst->Pos().y += 7000 * DELTA;
+		fullBurst->Rot().x -= 0.82 * DELTA;
+	}
+	if (RATIO > 0.98)
+	{
+
+		SetState(E_2368);
+	}
+}
+
+void Valphalk::E2368() // 풀버스트 마무리
+{
+	PLAY;
+	if(RATIO>0.2)
+	fullBurst->SetActive(false);
+
+	if (RATIO > 0.98)
+	{
+		combo = false;
+		SetState(E_0003);
+	}
+}
+
 void Valphalk::E2253()//왼쪽 보면서 오른쪽으로 백스탭
 {
 	PLAY;
 	if (RATIO > 0.98)
 		SetState(E_0151);
+}
+
+void Valphalk::E2371()
+{
+	if (Count == 1)
+	{
+		Rot().y = Rot().y - 1.9f;
+		Count = 2;
+	}
+
+	if (RATIO > 0.98f)
+	{
+		Pos() = GetTranslationByNode(1);
+		SetState(E_2374);
+		Count = 1;
+	}
+}
+
+void Valphalk::E2372()
+{
+}
+
+void Valphalk::E2373()
+{
+}
+
+void Valphalk::E2374()
+{
+	if (RATIO > 0.98f)
+	{
+		Pos() = GetTranslationByNode(1);
+
+		SetState(E_2375);
+		Count = 1;
+	}
+}
+
+void Valphalk::E2375()
+{
+	if (Pos().y > 0.98f)
+	{
+		Pos().y = GetTranslationByNode(1).y;
+		Count = 1;
+
+	}
+	else
+	{
+		Pos().y = 0.0f;
+		SetState(E_2376);
+		Count = 1;
+
+	}
+}
+
+void Valphalk::E2376()
+{
+	if (RATIO > 0.98f)
+	{
+		SetState(E_4013);
+		combo = false;
+		Count = 1;
+	}
+}
+
+void Valphalk::E2403()
+{
+	if (RATIO > 0.98f)
+	{
+		Pos() = GetTranslationByNode(1);
+		combo = false;
+		SetState(E_4013);
+		Count = 1;
+	}
 }
 
 void Valphalk::E3001() // 작은 데미지 피격

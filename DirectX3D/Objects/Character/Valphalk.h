@@ -29,12 +29,17 @@ public:
 		E_2038, E_2040, E_2041, E_2042, E_2044, E_2045,
 		E_2054, E_2056, E_2079,
 		E_2106, E_2107, E_2108,
-		E_2118, E_2121,
+		E_2118, E_2121, E_2129,
 		E_2144, E_2145, E_2146,
 		E_2173, E_2174, E_2175, E_2185,
 		E_2188, E_2189, E_2190, E_2192, E_2193, E_2200,
 		E_2210, E_2211,
-		E_2253,//포격자세 왼쪽 보면서 오른쪽으로 백스탭
+		E_2265, E_2267,
+		E_2270, E_2271, E_2272, E_2274, E_2275, E_2276, E_2277, E_2278,
+		E_2280, E_2286, E_2288, E_2290,
+		E_2354, E_2356, E_2359, E_2361, E_2367, E_2368,
+		E_2371, E_2372, E_2373, E_2374, E_2375, E_2376,
+		E_2403,
 		E_3001, E_3023,
 		/* 앉아서 포효 자세 */
 		E_4013,
@@ -166,6 +171,7 @@ private:
 	void Storm();
 	void EnergyBullets();	
 	void ForwardBoom();
+	void FullBurst();
 	void Hupgi();
 
 	Vector3 GetPlayerPos();
@@ -250,6 +256,7 @@ private:
 	void E2108();
 	void E2118();
 	void E2121();
+	void E2129();
 	void E2144();
 	void E2145();
 	void E2146();
@@ -265,7 +272,34 @@ private:
 	void E2200();
 	void E2210();
 	void E2211();
-	void E2253();
+	void E2265();
+	void E2267();
+	void E2270();
+	void E2271();
+	void E2272();
+	void E2274();
+	void E2275();
+	void E2276();
+	void E2277();
+	void E2278();
+	void E2280();
+	void E2286();
+	void E2288();
+	void E2290();
+	void E2354();
+	void E2356();
+	void E2359();
+	void E2361();
+	void E2367();
+	void E2368();
+	void E2371();
+	void E2372();
+	void E2373();
+	void E2374();
+	void E2375();
+	void E2376();
+	void E2403();
+
 	void E3001();
 	void E3023();
 	void E4013();
@@ -276,6 +310,7 @@ private:
 
 private: // 이벤트 혹은 함수에서 조건이 필요할거 같을때
 	bool LookatPlayer = false;
+	bool OtherPlay = false;
 	int Count = 0;
 
 private:
@@ -317,6 +352,7 @@ private:
 	// 공격 콜라이더 (투사체, 폭발 등)	
 	vector<SphereCollider*> bullets;
 	CapsuleCollider* forwardBoom;
+	BoxCollider* fullBurst;
 
 	float rotSpeed = 5.0f;
 	int ranPatrol = 0;
