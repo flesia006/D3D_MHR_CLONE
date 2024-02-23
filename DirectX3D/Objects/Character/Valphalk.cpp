@@ -82,6 +82,7 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 	ReadClip("E_2200");
 	ReadClip("E_2210");
 	ReadClip("E_2211");
+	ReadClip("E_2253");
 	ReadClip("E_2265");
 	ReadClip("E_2267");
 	ReadClip("E_2270");
@@ -630,6 +631,7 @@ void Valphalk::Move()
 	case Valphalk::E_2200:	 E2200();		break;
 	case Valphalk::E_2210:	 E2210();		break;
 	case Valphalk::E_2211:	 E2211();		break;
+	case Valphalk::E_2253:	 E2253();		break;
 	case Valphalk::E_2265:	 E2265();		break;
 	case Valphalk::E_2267:	 E2267();		break;
 	case Valphalk::E_2270:   E2270();       break;
