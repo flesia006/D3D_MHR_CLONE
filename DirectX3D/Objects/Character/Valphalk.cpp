@@ -210,10 +210,7 @@ void Valphalk::Update()
 	{
 		curState = E_2129;
 	}
-		if (KEY_DOWN('5') || bulletTime > 0.001f)
-		EnergyBullets();
-	if (KEY_DOWN('6') || stormTime > 0.001f)
-		Storm();
+	
 
 	if (KEY_DOWN('7'))
 		FullBurst();
@@ -275,6 +272,10 @@ void Valphalk::Update()
 	//Fight();
 	//if (KEY_DOWN('4'))
 	//	SetState(E_0003);
+	if (KEY_DOWN('5') || bulletTime > 0.001f)
+		EnergyBullets();
+	if (KEY_DOWN('6') || stormTime > 0.001f)
+		Storm();
 
 	if (KEY_DOWN('7'))
 		FullBurst();
