@@ -327,6 +327,10 @@ private:
 	CapsuleCollider* forwardBoom;
 	BoxCollider* fullBurst;
 
+	Vector3 fullBurstScale;
+	Vector3 fullBurstPos;
+	Vector3 fullBurstRot;
+
 	float rotSpeed = 5.0f;
 	int ranPatrol = 0;
 	float patrolTime = 0;

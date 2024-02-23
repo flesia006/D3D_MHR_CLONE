@@ -114,12 +114,18 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 	forwardBoom->Scale() *=500;
 	forwardBoom->SetColor(1, 0, 0);
 	forwardBoom->SetActive(false);
-
-	fullBurst = new BoxCollider();
-	fullBurst->Scale() *= 500;
-	fullBurst->Scale().z *= 20;
-	fullBurst->SetColor(1, 0, 0);
-	fullBurst->SetActive(false);
+	{//fullBurst
+		fullBurst = new BoxCollider();
+		fullBurst->Scale() *= 500;
+		fullBurst->Scale().z *= 20;
+		fullBurst->SetParent(head);
+		fullBurst->Pos().z -= 5000;
+		fullBurst->SetColor(1, 0, 0);
+		fullBurst->SetActive(false);
+		fullBurstScale = fullBurst->Scale();
+		fullBurstPos = fullBurst->Pos();
+		fullBurstRot = fullBurst->Rot();
+	}
 }
 
 Valphalk::~Valphalk()
@@ -184,6 +190,8 @@ void Valphalk::Update()
 		bullet->UpdateWorld();
 	forwardBoom->Update();
 	fullBurst->UpdateWorld();
+	head->Rot().y = Rot().y;
+	
 	ColliderNodePos();
 
 	ModelAnimator::Update();
@@ -221,7 +229,8 @@ void Valphalk::Update()
 		ForwardBoom();
 	
 	if (KEY_DOWN('9'))
-		SetState(E_2173);
+		SetState(E_2173);	
+	
 
 }
 
@@ -254,6 +263,7 @@ void Valphalk::GUIRender()
 	//ModelAnimator::GUIRender();
 	Vector3 realpos = realPos->Pos();
 	ImGui::SliderFloat3("ValphalkPos", (float*)&Pos(), -5000, 5000);
+	ImGui::SliderFloat3("ValphalkRot", (float*)&Rot(), 0, 3.14f);
 	ImGui::DragFloat3("RealPos", (float*)&realPos->Pos());
 	ImGui::Text("RanPatrolNum : %d", ranPatrol);
 	ImGui::Text("stormTime : %.3f", stormTime);
@@ -380,7 +390,6 @@ void Valphalk::ForwardBoom()
 
 void Valphalk::FullBurst()
 {
-	combo = true;
 	SetState(E_2354);
 }
 
@@ -1417,7 +1426,7 @@ void Valphalk::E2290()
 
 void Valphalk::E2354() // 풀버스트 전방
 {
-	combo = true;
+	combo = false;
 	PLAY;
 	if (RATIO > 0.98)
 		SetState(E_2361);
@@ -1436,8 +1445,8 @@ void Valphalk::E2359() // 풀버스트 우회전
 void Valphalk::E2361() // 풀버스트 준비
 {
 	PLAY;
-	fullBurst->Pos() = { Pos().x,Pos().y + 100,Pos().z + 5000 };
-	fullBurst->Rot() = 0;
+	//fullBurst->Rot().y = head->Rot().y;
+	fullBurst->Rot() = fullBurstRot;
 	if (RATIO > 0.98)
 		SetState(E_2367);
 
@@ -1453,11 +1462,10 @@ void Valphalk::E2367() // 풀버스트 발사
 	if (RATIO > 0.8)
 	{
 		fullBurst->Pos().y += 7000 * DELTA;
-		fullBurst->Rot().x -= 0.82 * DELTA;
+		fullBurst->Rot().x += 0.82 * DELTA;
 	}
 	if (RATIO > 0.98)
 	{
-
 		SetState(E_2368);
 	}
 }
@@ -1472,6 +1480,9 @@ void Valphalk::E2368() // 풀버스트 마무리
 	{
 		combo = false;
 		SetState(E_0003);
+		fullBurst->Pos() = fullBurstPos;
+		fullBurst->Rot() = fullBurstRot;
+		fullBurst->Scale() = fullBurstScale;		
 	}
 }
 
