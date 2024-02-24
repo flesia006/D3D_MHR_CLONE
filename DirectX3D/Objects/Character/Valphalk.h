@@ -166,6 +166,7 @@ private:
 	void Hupgi();
 
 	Vector3 GetPlayerPos();
+
 private:
 	void SetEvent(int clip, Event event, float timeRatio);
 	void ExecuteEvent();
@@ -184,6 +185,7 @@ private:
 	float GetRadBtwTrgt();
 	void RotateToTarget(float ratio1, float ratio2); // 
 	void SetColliderAttack(ColliderName name, float ratio);
+	int SetRadAndMirror(bool needMirror);
 
 
 	// 모션 함수
