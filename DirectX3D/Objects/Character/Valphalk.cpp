@@ -566,12 +566,13 @@ void Valphalk::ChooseNextPattern()
 	radDifference = 0;
 	initialRad = Rot().y;
 
-	int i = rand() % 2;
+	int i = rand() % 3;
 
 	switch (i)
 	{
 	case 0:	curPattern = B_SWINGATK;  break;
 	case 1:	curPattern = B_WINGATK;	  break;
+	case 2:	curPattern = STORM;	  break;
 	//case 2:	curPattern = B_DUMBLING;  break;
 	//default: curPattern = B_DUMBLING; break;
 	}
@@ -602,6 +603,7 @@ void Valphalk::PlayPattern()
 	case Valphalk::FINDROAR:	    FindRoar();  		break;
 	case Valphalk::ANGERROAR:	    AngerRoar();  		break;
 	case Valphalk::HUPGI:		    Hupgi();			break;
+	case Valphalk::STORM:		    Storm();			break;
 	default:		break; 
 	}
 
