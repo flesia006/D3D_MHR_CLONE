@@ -73,6 +73,7 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 	ReadClip("E_2108");
 	ReadClip("E_2118");
 	ReadClip("E_2121");
+	ReadClip("E_2124");
 
 	ReadClip("E_2129");
 	ReadClip("E_2130");
@@ -138,8 +139,10 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 
 	realPos = new CapsuleCollider(1, 0.1);
 	realPos->Scale() *= 6.0f;
+	realPos->UpdateWorld();
 
-	
+	tempCollider = new CapsuleCollider(6, 0.1);
+	tempCollider->UpdateWorld();
 	/////////////////////////////////////////////
 	// 공격 콜라이더 (투사체, 폭발 등)	
 	bullets.resize(6);
@@ -224,15 +227,20 @@ void Valphalk::Update()
 	//Pos().x = 2000; // 임시 고정용
 	UpdateWorld();
 	PlayPattern();
-
 	if (preState != curState)
 		GetClip(preState)->ResetPlayTime();
 	//Move();
 	// hitCheck() 
 	head->Pos() = realPos->Pos() + Vector3::Up() * 200;
 	head->UpdateWorld();
+
 	realPos->Pos() = GetTranslationByNode(1);
+	Vector3 fwd = (GetTranslationByNode(3) - GetTranslationByNode(5)).GetNormalized();
+	realPos->Rot().y = atan2(fwd.x, fwd.z);
 	realPos->UpdateWorld();
+
+	tempCollider->Pos() = realPos->Pos() + (realPos->Back() + realPos->Right()).GetNormalized() * 1000;
+	tempCollider->UpdateWorld();
 
 	velocity = target->GlobalPos() - GlobalPos();
 
@@ -321,16 +329,16 @@ void Valphalk::Render()
 void Valphalk::GUIRender()
 {
 	//ModelAnimator::GUIRender();
-	Vector3 realpos = realPos->Pos();
-	ImGui::SliderFloat3("ValphalkPos", (float*)&Pos(), -5000, 5000);
-	ImGui::SliderFloat3("ValphalkRot", (float*)&Rot(), 0, 3.14f);
+	//Vector3 realpos = realPos->Pos();
+	//ImGui::SliderFloat3("ValphalkPos", (float*)&Pos(), -5000, 5000);
+	//ImGui::SliderFloat3("ValphalkRot", (float*)&Rot(), 0, 3.14f);
 	ImGui::DragFloat3("RealPos", (float*)&realPos->Pos());
-
-	for (int i = 0; i < colliders.size(); i++)
-	{
-		colliders[i]->GUIRender();
-	}
-	ImGui::DragFloat("radBtwTrgt", &radBtwTarget);
+	ImGui::DragFloat3("RealRot", (float*)&realPos->Rot());
+	//for (int i = 0; i < colliders.size(); i++)
+	//{
+	//	colliders[i]->GUIRender();
+	//}
+	//ImGui::DragFloat("radBtwTrgt", &radBtwTarget);
 		//ImGui::SliderFloat3("ValphalkScale", (float*)&colliders[i]->Scale(), 0, 1000);
 
 
@@ -466,6 +474,32 @@ void Valphalk::Hupgi()
 {
 }
 
+void Valphalk::Sidestep()
+{
+
+	if (sequence == 0)
+	{
+		Vector3 dir = (realPos->Back() + realPos->Right() ).GetNormalized();
+		vecToTagt = target->GlobalPos() - dir * 1000 + realPos->Right() * 1106 + realPos->Forward() * 120;
+		vecToTagt.y = 0;
+
+		sequence++;		
+	}
+	
+	if (sequence == 1) // 스탭 모션
+	{
+		SetState(E_2124);
+		E2124(vecToTagt);
+	}
+
+	if (sequence == 2) // 마무리
+	{		
+		vecToTagt = {0, 0, 0};
+		ChooseNextPattern();
+	}
+
+}
+
 void Valphalk::SetEvent(int clip, Event event, float timeRatio)
 {
 	if (totalEvents[clip].count(timeRatio) > 0)
@@ -566,14 +600,14 @@ void Valphalk::ChooseNextPattern()
 	radDifference = 0;
 	initialRad = Rot().y;
 
-	int i = rand() % 2;
-	switch (i)
-	{
-	case 0:	curPattern = B_SWINGATK;  break;
-	case 1:	curPattern = B_WINGATK;	  break;
-	//case 2:	curPattern = B_DUMBLING;  break;
-	//default: curPattern = B_DUMBLING; break;
-	}
+	//int i = rand() % 2;
+	//switch (i)
+	//{
+	//case 0:	curPattern = B_SWINGATK;  break;
+	//case 1:	curPattern = B_WINGATK;	  break;
+	////case 2:	curPattern = B_DUMBLING;  break;
+	////default: curPattern = B_DUMBLING; break;
+	//}
 }
 
 void Valphalk::PlayPattern()
@@ -601,6 +635,7 @@ void Valphalk::PlayPattern()
 	case Valphalk::FINDROAR:	    FindRoar();  		break;
 	case Valphalk::ANGERROAR:	    AngerRoar();  		break;
 	case Valphalk::HUPGI:		    Hupgi();			break;
+	case Valphalk::SIDESTEP:		Sidestep();			break;
 	default:		break; 
 	}
 
@@ -879,12 +914,12 @@ void Valphalk::B_SwingAtk()
 	{
 		switch (whichPattern)
 		{
-		case 1:		SetState(E_2091);  E2091();  break;
-		case 2:		SetState(E_2092);  E2092(-XM_PIDIV2);  break; // 왼쪽 90
-		case 3:		SetState(E_2093);  E2093(-XM_PI);  break;
-		case 4:		SetState(E_2091);  E2091();  break;
-		case 5:		SetState(E_2092);  E2092(XM_PIDIV2);  break;
-		case 6:		SetState(E_2093);  E2093(XM_PI);  break;
+		case 1:		SetState(E_2091);  E2091();				break;
+		case 2:		SetState(E_2092);  E2092(-XM_PIDIV2);	break; // 왼쪽 90
+		case 3:		SetState(E_2093);  E2093(-XM_PI);		break; // 왼쪽 180
+		case 4:		SetState(E_2091);  E2091();				break;
+		case 5:		SetState(E_2092);  E2092(XM_PIDIV2);	break;
+		case 6:		SetState(E_2093);  E2093(XM_PI);		break;
 		}
 	}
 
@@ -1492,6 +1527,25 @@ void Valphalk::E2121()//왼쪽 날개 들었다가 찍은다음 살짝 일어나서 다시 자세잡음
 	{
 		combo = false;
 		SetState(E_0003);
+	}
+}
+
+void Valphalk::E2124(Vector3 destVec)
+{
+	PLAY;
+
+	if (RATIO > 0.074f && RATIO < 0.37f)
+	{
+		Pos() = Lerp(Pos(), destVec, 3 * DELTA);
+
+	}
+
+
+	if (RATIO > 0.98)
+	{
+		sequence++;
+
+		Rot().y -= XM_PIDIV4;
 	}
 }
 

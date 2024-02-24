@@ -18,7 +18,7 @@ public:
 		E_2038, E_2040, E_2041, E_2042, E_2044, E_2045,
 		E_2054, E_2056, E_2079,
 		E_2091, E_2092, E_2093, E_2103, // 날개 휘둘
-		E_2106, E_2107, E_2108,	E_2118, E_2121, 
+		E_2106, E_2107, E_2108,	E_2118, E_2121, E_2124,
 		E_2129, E_2130, E_2131, E_2133, E_2134, E_2141,	 // 앞다리 찍으면서 날개 덮기
 		E_2144, E_2145, E_2146,
 		E_2151, E_2152, E_2153,
@@ -114,6 +114,7 @@ public:
 		STORM,
 		ENERGYBULLET,
 		HUPGI,
+		SIDESTEP
 	};
 
 
@@ -131,7 +132,7 @@ public:
 	void Spawn(Vector3 pos); // 스폰위치
 	void SetTarget(Transform* target) { this->target = target; } // 타겟 설정
 
-	Transform* GetTransform(int index) { return transforms[index]; }
+	Transform* GetTransform(int index) { return transforms[index]; }	
 	vector<CapsuleCollider*> GetCollider() { return colliders; }
 
 	//ColliderName GetName() { return colliderName; }
@@ -164,6 +165,7 @@ private:
 	void ForwardBoom();
 	void FullBurst();
 	void Hupgi();
+	void Sidestep();
 
 	Vector3 GetPlayerPos();
 
@@ -257,6 +259,8 @@ private:
 	void E2118();
 	void E2121();
 
+	void E2124(Vector3 destVec);
+
 	void E2129();
 	void E2130();
 	void E2131();
@@ -336,9 +340,12 @@ private:
 	ModelAnimatorInstancing::Motion* motion;
 
 	Transform* target;
+	Vector3 initPos = Vector3::Zero();
+	Vector3 vecToTagt = Vector3::Zero();
 	Vector3 initForward = Vector3::Zero();
 	Transform* head = nullptr;
 	CapsuleCollider* realPos = nullptr;
+	CapsuleCollider* tempCollider = nullptr;
 
 	// 샘플 무조건 바뀜
 	//float speed = 50; //속력 : 기본 스탯
@@ -347,7 +354,7 @@ private:
 
 	Vector3 velocity; //속력 : 실제 움직임
 
-	Pattern curPattern = B_SWINGATK;
+	Pattern curPattern = SIDESTEP;
 	State curState = E_0043; //= 기본 스테이트;
 	State preState = curState;
 	Type curType; //= 기본 타입;
