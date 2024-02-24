@@ -145,11 +145,11 @@ void ShadowScene::Render()
     rasterizerState[1]->SetState(); // 후면도 그림
     {
         ball->Render();        
+        valphalk->Render();
+        objects->Render();
     }
     rasterizerState[0]->SetState();
     
-    objects->Render();
-    valphalk->Render();
     player->Render();
     garuk->Render();
 
