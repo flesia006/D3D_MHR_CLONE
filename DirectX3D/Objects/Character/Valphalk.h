@@ -244,9 +244,9 @@ private:
 	void E2056();
 
 	void E2091();
-	void E2092();
-	void E2093();
-	void E2103();
+	void E2092(float degree = 0);
+	void E2093(float degree = 0);
+	void E2103(float degree = 0);
 
 	void E2079();
 	void E2106();

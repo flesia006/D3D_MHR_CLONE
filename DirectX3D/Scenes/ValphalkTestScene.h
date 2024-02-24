@@ -13,6 +13,8 @@ public:
     virtual void GUIRender()  override;
 
     void CapsuleMove();
+    RasterizerState* rasterizer;
+
 
 private:
     Player* player;

@@ -7,11 +7,15 @@ ValphalkTestScene::ValphalkTestScene()
 	valphalk->Pos().z = -1500.0f;
 	
 	capsule = new CapsuleCollider(10, 50);
-	capsule->Pos().y += 50;
+	capsule->Pos().y += 150;
 	capsule->UpdateWorld();
 	valphalk->SetTarget(capsule);
 	
 	//player = new Player();
+
+	rasterizer = new RasterizerState();
+	rasterizer->CullMode(D3D11_CULL_NONE);
+
 }
 
 ValphalkTestScene::~ValphalkTestScene()
@@ -32,7 +36,9 @@ void ValphalkTestScene::PreRender()
 
 void ValphalkTestScene::Render()
 {
+	rasterizer->SetState();
 	valphalk->Render();
+
 	capsule->Render();
 }
 
