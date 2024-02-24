@@ -500,6 +500,30 @@ void Valphalk::Sidestep()
 
 }
 
+void Valphalk::B_Sidestep()
+{
+	if (sequence == 0)
+	{
+		Vector3 dir = (realPos->Back() + realPos->Right()).GetNormalized();
+		vecToTagt = target->GlobalPos() - dir * 1000 + realPos->Right() * 1106 + realPos->Forward() * 120;
+		vecToTagt.y = 0;
+
+		sequence++;
+	}
+
+	if (sequence == 1) // 스탭 모션
+	{
+		SetState(E_2253);
+		E2253(vecToTagt);
+	}
+
+	if (sequence == 2) // 마무리
+	{
+		vecToTagt = { 0, 0, 0 };
+		ChooseNextPattern();
+	}
+}
+
 void Valphalk::SetEvent(int clip, Event event, float timeRatio)
 {
 	if (totalEvents[clip].count(timeRatio) > 0)
@@ -600,14 +624,13 @@ void Valphalk::ChooseNextPattern()
 	radDifference = 0;
 	initialRad = Rot().y;
 
-	//int i = rand() % 2;
-	//switch (i)
-	//{
-	//case 0:	curPattern = B_SWINGATK;  break;
-	//case 1:	curPattern = B_WINGATK;	  break;
-	////case 2:	curPattern = B_DUMBLING;  break;
-	////default: curPattern = B_DUMBLING; break;
-	//}
+	int i = rand() % 2;
+	switch (i)
+	{
+	case 0:	curPattern = B_SWINGATK;  break;
+	case 1:	curPattern = B_WINGATK;	  break;
+	//default: curPattern = B_DUMBLING; break;
+	}
 }
 
 void Valphalk::PlayPattern()
@@ -636,6 +659,7 @@ void Valphalk::PlayPattern()
 	case Valphalk::ANGERROAR:	    AngerRoar();  		break;
 	case Valphalk::HUPGI:		    Hupgi();			break;
 	case Valphalk::SIDESTEP:		Sidestep();			break;
+	case Valphalk::B_SIDESTEP:		B_Sidestep();			break;
 	default:		break; 
 	}
 
@@ -726,7 +750,6 @@ void Valphalk::Move()
 	case Valphalk::E_2200:	 E2200();		break;
 	case Valphalk::E_2210:	 E2210();		break;
 	case Valphalk::E_2211:	 E2211();		break;
-	case Valphalk::E_2253:	 E2253();		break;
 	case Valphalk::E_2265:	 E2265();		break;
 	case Valphalk::E_2267:	 E2267();		break;
 	case Valphalk::E_2270:   E2270();       break;
@@ -906,8 +929,13 @@ void Valphalk::B_SwingAtk()
 	
 	if (sequence == 0) // 각도 정하기
 	{
-		whichPattern = SetRadAndMirror(true);
-		sequence++;
+		if ((realPos->Pos() - target->GlobalPos()).Length() < 600)
+			sequence = 4;
+		else
+		{
+			whichPattern = SetRadAndMirror(true);
+			sequence++;
+		}
 	}
 
 	if (sequence == 1) // 각도 정했으면 방향 전환함수
@@ -939,6 +967,26 @@ void Valphalk::B_SwingAtk()
 		whichPattern = 0;
 		ChooseNextPattern();
 	}
+
+	if (sequence == 4) // 백스탭
+	{
+		Vector3 dir = (realPos->Back() + realPos->Right()).GetNormalized();
+		vecToTagt = target->GlobalPos() - dir * 1300 + realPos->Right() * 1106 + realPos->Forward() * 120;
+		vecToTagt.y = 0;
+
+		sequence++;
+	}
+
+	if (sequence == 5) // 백스탭
+	{
+		SetState(E_2253);
+		E2253(vecToTagt);
+	}
+
+	if (sequence == 6) // 백스탭마무리
+	{
+		sequence = 0;
+	}
 }
 
 void Valphalk::B_WingAtk()
@@ -947,7 +995,10 @@ void Valphalk::B_WingAtk()
 	if (sequence == 0) // 각도 정하기
 	{
 		whichPattern = SetRadAndMirror(false);
-		sequence++;
+		if ((realPos->Pos() - target->GlobalPos()).Length() < 400)
+			sequence = 4;
+		else
+			sequence++;
 	}
 
 	if (sequence == 1) // 각도 정했으면 방향 전환함수
@@ -974,6 +1025,28 @@ void Valphalk::B_WingAtk()
 		whichPattern = 0;
 		ChooseNextPattern();
 	}
+
+	if (sequence == 4) // 백스탭
+	{
+		Vector3 dir = (realPos->Back() + realPos->Right()).GetNormalized();
+		vecToTagt = target->GlobalPos() - dir * 1000 + realPos->Right() * 1106 + realPos->Forward() * 120;
+		vecToTagt.y = 0;
+
+		sequence++;
+	}
+
+	if (sequence == 5) // 백스탭
+	{
+		SetState(E_2253);
+		E2253(vecToTagt);
+	}
+
+	if (sequence == 6) // 백스탭마무리
+	{
+		sequence = 0;
+	}
+
+
 }
 
 void Valphalk::B_DownBlast()
@@ -1556,7 +1629,7 @@ void Valphalk::E2091()
 	if (RATIO > 0.0134f && RATIO < 0.414f)
 		RotateToTarget(0.0134f, 0.414f);
 
-	if (RATIO > 0.99)
+	if (RATIO > 0.98)
 	{
 		sequence++;
 	}
@@ -1569,7 +1642,7 @@ void Valphalk::E2092(float degree) //90도 회전
 	if (RATIO > 0.0176f && RATIO < 0.176f)
 		RotateToTarget(0.0176f, 0.176f);
 
-	if (RATIO > 0.99)
+	if (RATIO > 0.98)
 	{
 		sequence++;
 		Rot().y += degree;
@@ -1583,7 +1656,7 @@ void Valphalk::E2093(float degree) // 180도
 	if (RATIO > 0.0176f && RATIO < 0.53f)
 		RotateToTarget(0.0176f, 0.53f);
 
-	if (RATIO > 0.99)
+	if (RATIO > 0.98)
 	{
 		sequence++;
 		Rot().y += degree;
@@ -1599,7 +1672,7 @@ void Valphalk::E2103(float degree) // 휘두르기 공격
 		SetColliderAttack(RWING, 0.15);
 	}
 
-	if (RATIO > 0.99)
+	if (RATIO > 0.98)
 	{
 		sequence++;
 		Rot().y += degree;
@@ -2114,11 +2187,21 @@ void Valphalk::E2368() // 풀버스트 마무리
 	}
 }
 
-void Valphalk::E2253()//왼쪽 보면서 오른쪽으로 백스탭
+void Valphalk::E2253(Vector3 destVec)//왼쪽 보면서 오른쪽으로 백스탭
 {
 	PLAY;
+
+	if (RATIO > 0.074f && RATIO < 0.37f)
+	{
+		Pos() = Lerp(Pos(), destVec, 3 * DELTA);
+	}
+
+
 	if (RATIO > 0.98)
-		SetState(E_0151);
+	{
+		sequence++;
+		Rot().y -= XM_PIDIV4;
+	}
 }
 
 void Valphalk::E2371()

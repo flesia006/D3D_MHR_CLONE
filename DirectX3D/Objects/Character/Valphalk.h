@@ -24,7 +24,7 @@ public:
 		E_2151, E_2152, E_2153,
 		E_2173, E_2174, E_2175, E_2185,
 		E_2188, E_2189, E_2190, E_2192, E_2193, E_2200,
-		E_2210, E_2211,  E_2253, E_2265, E_2267,
+		E_2210, E_2211, E_2253, E_2265, E_2267,
 		E_2270, E_2271, E_2272, E_2274, E_2275, E_2276, E_2277, E_2278,
 		E_2280, E_2286, E_2288, E_2290,
 		E_2354, E_2356, E_2359, E_2361, E_2367, E_2368,
@@ -114,7 +114,8 @@ public:
 		STORM,
 		ENERGYBULLET,
 		HUPGI,
-		SIDESTEP
+		SIDESTEP,
+		B_SIDESTEP
 	};
 
 
@@ -166,6 +167,7 @@ private:
 	void FullBurst();
 	void Hupgi();
 	void Sidestep();
+	void B_Sidestep();
 
 	Vector3 GetPlayerPos();
 
@@ -287,7 +289,7 @@ private:
 	void E2200();
 	void E2210();
 	void E2211();
-	void E2253();
+	void E2253(Vector3 destVec);
 	void E2265();
 	void E2267();
 	void E2270();
@@ -354,7 +356,7 @@ private:
 
 	Vector3 velocity; //속력 : 실제 움직임
 
-	Pattern curPattern = SIDESTEP;
+	Pattern curPattern = B_SIDESTEP;
 	State curState = E_0043; //= 기본 스테이트;
 	State preState = curState;
 	Type curType; //= 기본 타입;
