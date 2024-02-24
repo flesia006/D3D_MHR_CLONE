@@ -29,11 +29,11 @@ ModelExportScene::ModelExportScene()
 //    ExportClip(name, "E_2027");
 //    ExportClip(name, "E_2032");
 //    ExportClip(name, "E_2033");
-    ExportClip(name, "E_2041");
-    ExportClip(name, "E_2042");
-//    ExportClip(name, "E_2044");
-//    ExportClip(name, "E_2045");
-//    ExportClip(name, "E_2054");
+    ExportClip(name, "E_2356");
+    ExportClip(name, "E_2359");
+    ExportClip(name, "E_2361");
+    ExportClip(name, "E_2367");
+    ExportClip(name, "E_2368");
 //    ExportClip(name, "E_2056");
 //    ExportClip(name, "E_2106");
 //    ExportClip(name, "E_2107");
