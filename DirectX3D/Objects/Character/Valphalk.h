@@ -16,7 +16,7 @@ public:
 		E_2013, E_2015, E_2017, E_2019, E_2020, E_2022,
 		E_2027, E_2032, E_2033,
 		E_2038, E_2040, E_2041, E_2042, E_2044, E_2045,
-		E_2054, E_2056, E_2079,
+		E_2054, E_2056, E_2079, E_2082,
 		E_2091, E_2092, E_2093, E_2103, // 날개 휘둘
 		E_2106, E_2107, E_2108,	E_2118, E_2121, E_2124,
 		E_2129, E_2130, E_2131, E_2133, E_2134, E_2141,	 // 앞다리 찍으면서 날개 덮기
@@ -24,25 +24,18 @@ public:
 		E_2151, E_2152, E_2153,
 		E_2173, E_2174, E_2175, E_2185,
 		E_2188, E_2189, E_2190, E_2192, E_2193, E_2200,
-		E_2210, E_2211,  E_2253, E_2265, E_2267,
+		E_2210, E_2211, E_2253, E_2265, E_2267,
 		E_2270, E_2271, E_2272, E_2274, E_2275, E_2276, E_2277, E_2278,
 		E_2280, E_2286, E_2288, E_2290,
 		E_2354, E_2356, E_2359, E_2361, E_2367, E_2368,
 		E_2371, E_2372, E_2373, E_2374, E_2375, E_2376,
+		E_2381, E_2382, E_2383,
 		E_2403,
 		E_3001, E_3023,
 		/* 앉아서 포효 자세 */
 		E_4013,
 		/*서서 포효 자세*/
 		E_22005
-	};
-
-	enum Type // 어디가 색이 변할건지 
-	{
-		// 예를 든거임
-		TypeA, // 이건 머리만 빨간색
-		TypeB, // 이건 날개 빨간색
-		TypeC // 이건 둘다 빨간색
 	};
 
 	enum ColliderName // 콜리더의 내용
@@ -116,7 +109,8 @@ public:
 		HUPGI,
 		FULLBURST,
 		SIDESTEP,
-		FORWARDBOOM
+		B_SIDESTEP
+		FORWARDBOOM,
 	};
 
 
@@ -168,6 +162,7 @@ private:
 	void FullBurst();
 	void Hupgi();
 	void Sidestep();
+	void B_Sidestep();
 
 	Vector3 GetPlayerPos();
 
@@ -176,7 +171,6 @@ private:
 	void ExecuteEvent();
 
 	void SetState(State state, float rad = 0);
-	void SetType(Type type);
 
 	void Patrol();
 	void Fight();
@@ -248,7 +242,6 @@ private:
 	void E2045();
 	void E2054();
 	void E2056();
-
 	void E2091();
 	void E2092(float degree = 0);
 	void E2093(float degree = 0);
@@ -289,7 +282,8 @@ private:
 	void E2200();
 	void E2210();
 	void E2211();
-	void E2253();
+	void E2253(Vector3 destVec);
+
 	void E2265();
 	void E2267();
 	void E2270();
@@ -297,6 +291,15 @@ private:
 	void E2272();
 	void E2274();
 	void E2275();
+
+	void EX2265();
+	void EX2267();
+	void EX2270();
+	void EX2271();
+	void EX2272();
+	void EX2274();
+	void EX2275();
+
 	void E2276();
 	void E2277();
 	void E2278();
@@ -316,6 +319,12 @@ private:
 	void E2374();
 	void E2375();
 	void E2376();
+
+	void E2381();
+	void E2382();
+	void E2383();
+	void E2082();
+
 	void E2403();
 
 	void E3001();
@@ -359,7 +368,6 @@ private:
 	Pattern curPattern = ENERGYBULLET;
 	State curState = E_0152; //= 기본 스테이트;
 	State preState = curState;
-	Type curType; //= 기본 타입;
 
 	UINT sequence = 0;
 
