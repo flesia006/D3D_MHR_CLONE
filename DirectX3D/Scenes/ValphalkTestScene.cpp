@@ -61,6 +61,8 @@ void ValphalkTestScene::CapsuleMove()
 	if (KEY_DOWN(VK_F5)) CAM->SetTarget(capsule);
 	if (KEY_DOWN(VK_F6)) CAM->SetTarget(nullptr);
 
+	if (KEY_PRESS('Z')) valphalk->curHP -= 1000;
+
 
 	capsule->Update();
 }
