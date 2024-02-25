@@ -14,7 +14,7 @@ public:
 
     void CapsuleMove();
     RasterizerState* rasterizer;
-    CapsuleCollider* GetCapsuleCollider() { return capsule; }
+
 
 private:
     Player* player;
