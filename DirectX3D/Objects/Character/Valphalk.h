@@ -109,7 +109,9 @@ public:
 		HUPGI,
 		FULLBURST,
 		SIDESTEP,
-		B_SIDESTEP
+		B_SIDESTEP,
+		FORWARDBOOM,
+		DEAD,
 	};
 
 
@@ -162,7 +164,7 @@ private:
 	void Hupgi();
 	void Sidestep();
 	void B_Sidestep();
-
+	void Dead();
 	Vector3 GetPlayerPos();
 
 private:
@@ -183,7 +185,7 @@ private:
 	void RotateToTarget(float ratio1, float ratio2); // 
 	void SetColliderAttack(ColliderName name, float ratio);
 	int SetRadAndMirror(bool needMirror);
-
+	void Loop() { GetClip(curState)->ResetPlayTime(); Pos() = realPos->Pos(); }
 
 	// 모션 함수
 
@@ -281,7 +283,7 @@ private:
 	void E2200();
 	void E2210();
 	void E2211();
-	void E2253(Vector3 destVec);
+	void E2253(Vector3 destVec = 0);
 
 	void E2265();
 	void E2267();
@@ -293,11 +295,14 @@ private:
 
 	void EX2265();
 	void EX2267();
-	void EX2270();
-	void EX2271();
-	void EX2272();
-	void EX2274();
-	void EX2275();
+	void EX2270(float degree = 0);
+	void EX2271(float degree = 0);
+	void EX2272(float degree = 0);
+	void EX2274(float degree = 0);
+	void EX2275(float degree = 0);
+	void EX2276();
+	void EX2277();
+	void EX2278();
 
 	void E2276();
 	void E2277();
@@ -359,13 +364,13 @@ private:
 
 	// 샘플 무조건 바뀜
 	//float speed = 50; //속력 : 기본 스탯
-	//float maxHP = 100;
-	//float curHP = 100;
+	//float maxHP = 5000;
+	//float curHP = 5000;
 
 	Vector3 velocity; //속력 : 실제 움직임
 
-	Pattern curPattern = B_DUMBLING;
-	State curState = E_0043; //= 기본 스테이트;
+	Pattern curPattern = ENERGYBULLET;
+	State curState = E_0152; //= 기본 스테이트;
 	State preState = curState;
 
 	UINT sequence = 0;
@@ -408,4 +413,8 @@ private:
 	const float rot45 = 0.785f;
 
 	float radDifference = 0.0f;
+
+public:
+	float maxHP = 5000;
+	float curHP = 5000;
 };
