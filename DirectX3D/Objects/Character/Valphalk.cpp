@@ -63,6 +63,7 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 	ReadClip("E_2054");
 	ReadClip("E_2056");
 	ReadClip("E_2079");
+	ReadClip("E_2082");
 	ReadClip("E_2091");
 	ReadClip("E_2092");
 	ReadClip("E_2093");
@@ -128,6 +129,11 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 	ReadClip("E_2374");
 	ReadClip("E_2375");
 	ReadClip("E_2376");
+
+	ReadClip("E_2381");
+	ReadClip("E_2382");
+	ReadClip("E_2383");
+
 	ReadClip("E_2403");
 	ReadClip("E_3001");
 	ReadClip("E_3023");
@@ -563,27 +569,6 @@ void Valphalk::SetState(State state, float rad)
 	//PlayClip(state);
 }
 
-void Valphalk::SetType(Type type)
-{
-	if (type == curType)
-		return;
-	curType = type;
-	// 여기는 텍스처 들어갈거 같음
-	// 예를 들면 (*여기서 안할수도 있지만)
-	if (curType == TypeA)
-	{
-
-	}
-	if (curType == TypeB)
-	{
-
-	}
-	if (curType == TypeC)
-	{
-
-	}
-}
-
 void Valphalk::Patrol()
 {
 	if (velocity.Length() < 2000) return;
@@ -619,18 +604,20 @@ void Valphalk::ChooseNextPattern()
 	// 
 	// 6. 분노했는가? // 이건 패턴에서 따지는게 나을 듯
 	// 7. 그렇다면 가능한 패턴을 리스트업 후에 난수든 뭐든 선택
+
 	SetState(E_2091);
 	sequence = 0;
 	radDifference = 0;
 	initialRad = Rot().y;
 
-	int i = rand() % 2;
-	switch (i)
-	{
-	case 0:	curPattern = B_SWINGATK;  break;
-	case 1:	curPattern = B_WINGATK;	  break;
-	//default: curPattern = B_DUMBLING; break;
-	}
+//	int i = rand() % 3;
+//	switch (i)
+//	{
+//	case 0:	curPattern = B_SWINGATK;  break;
+//	case 1:	curPattern = B_WINGATK;	  break;
+//	case 2:	curPattern = B_DOWNBLAST;	  break;
+//	//default: curPattern = B_DUMBLING; break;
+//	}
 }
 
 void Valphalk::PlayPattern()
@@ -651,6 +638,7 @@ void Valphalk::PlayPattern()
 	case Valphalk::B_ENERGYBLAST:	B_EnergyBlast();	break;
 	case Valphalk::B_DUMBLING:		B_Dumbling();		break;
 	case Valphalk::B_TRANSFORM:		B_Trnasform();		break;
+	case Valphalk::B_SIDESTEP:		B_Sidestep();		break;
 	case Valphalk::HS_FLYBLAST:		HS_FlyBlast();		break;
 	case Valphalk::HS_FLYFALLATK:	HS_FlyFallAtk();	break;
 	case Valphalk::HS_FLYWINGBLAST:	HS_FlyWingBlast();	break;
@@ -659,7 +647,6 @@ void Valphalk::PlayPattern()
 	case Valphalk::ANGERROAR:	    AngerRoar();  		break;
 	case Valphalk::HUPGI:		    Hupgi();			break;
 	case Valphalk::SIDESTEP:		Sidestep();			break;
-	case Valphalk::B_SIDESTEP:		B_Sidestep();			break;
 	default:		break; 
 	}
 
@@ -929,7 +916,7 @@ void Valphalk::B_SwingAtk()
 	
 	if (sequence == 0) // 각도 정하기
 	{
-		if ((realPos->Pos() - target->GlobalPos()).Length() < 600)
+		if ((realPos->Pos() - target->GlobalPos()).Length() < 900) // 지나치게 가까운 경우
 			sequence = 4;
 		else
 		{
@@ -971,7 +958,7 @@ void Valphalk::B_SwingAtk()
 	if (sequence == 4) // 백스탭
 	{
 		Vector3 dir = (realPos->Back() + realPos->Right()).GetNormalized();
-		vecToTagt = target->GlobalPos() - dir * 1300 + realPos->Right() * 1106 + realPos->Forward() * 120;
+		vecToTagt = target->GlobalPos() - dir * 1600 + realPos->Right() * 1106 + realPos->Forward() * 120;
 		vecToTagt.y = 0;
 
 		sequence++;
@@ -1029,7 +1016,7 @@ void Valphalk::B_WingAtk()
 	if (sequence == 4) // 백스탭
 	{
 		Vector3 dir = (realPos->Back() + realPos->Right()).GetNormalized();
-		vecToTagt = target->GlobalPos() - dir * 1000 + realPos->Right() * 1106 + realPos->Forward() * 120;
+		vecToTagt = target->GlobalPos() - dir * 900 + realPos->Right() * 1106 + realPos->Forward() * 120;
 		vecToTagt.y = 0;
 
 		sequence++;
@@ -1051,6 +1038,38 @@ void Valphalk::B_WingAtk()
 
 void Valphalk::B_DownBlast()
 {
+	static int whichPattern = 0;
+	if (sequence == 0) // 각도 정하기
+	{
+		whichPattern = SetRadAndMirror(false);
+		sequence++;
+	}
+
+	if (sequence == 1) // 각도 정했으면 방향 전환함수
+	{
+		switch (whichPattern)
+		{
+		case 1:	SetState(E_2381); E2381();  break;
+		case 2:	SetState(E_2382); E2382();  break;
+		case 3:	SetState(E_2131); E2381();  break;
+		case 4:	SetState(E_2381); E2381();  break;
+		case 5:	SetState(E_2383); E2383();  break;
+		case 6:	SetState(E_2381); E2381();  break;
+		}
+	}
+
+	if (sequence == 2) // 공격 모션
+	{
+		SetState(E_2082);
+		E2082();
+	}
+
+	if (sequence == 3) // 마무리
+	{
+		whichPattern = 0;
+		ChooseNextPattern();
+	}
+
 }
 
 void Valphalk::B_FwdBlast()
@@ -1063,27 +1082,55 @@ void Valphalk::B_EnergyBlast()
 
 void Valphalk::B_Dumbling()
 {
-
-
+	static int whichPattern = 0;
 	if (sequence == 0) // 각도 정했으면 방향 전환함수
 	{
-		SetState(E_2151);
-		E2151();
+		whichPattern = SetRadAndMirror(true);
+		sequence++;
 	}
 
-	if (sequence == 1) // 공격 모션
+	if (sequence == 1) // 각도 정했으면 방향 전환함수
+	{
+		switch (whichPattern)
+		{
+		case 1:		SetState(E_0151);  E0151();				break;
+		case 2:		SetState(E_0152);  E0152(-XM_PIDIV2);	break; // 왼쪽 90
+		case 3:		SetState(E_0153);  E0153(-XM_PI);		break; // 왼쪽 180
+		case 4:		SetState(E_0151);  E0151();				break;
+		case 5:		SetState(E_0152);  E0152(XM_PIDIV2);	break;
+		case 6:		SetState(E_0153);  E0153(XM_PI);		break;
+		}
+	}
+
+	if (sequence == 2) // 공격 모션
+	{
+		if (whichPattern == 4 || whichPattern == 5 || whichPattern == 6)
+			Scale().x *= -1;
+		sequence++;
+	}
+
+	if (sequence == 3) // 공격 모션
+	{
+
+		SetState(E_2151);
+		E2151();
+
+	}
+
+	if (sequence == 4) // 공격 모션
 	{
 		SetState(E_2152);
 		E2152();
 	}
 
-	if (sequence == 2) // 공격 모션
+
+	if (sequence == 5) // 공격 모션
 	{
 		SetState(E_2153);
 		E2153();
 	}
 
-	if (sequence == 3) // 마무리
+	if (sequence == 6) // 마무리
 	{
 		ChooseNextPattern();
 	}
@@ -1099,6 +1146,73 @@ void Valphalk::HS_FlyBlast()
 
 void Valphalk::HS_FlyFallAtk()
 {
+	static int whichPattern = 0;
+
+	if (sequence == 0) // 각도 정했으면 방향 전환함수
+	{
+		SetState(E_2265);
+		EX2265();
+	}
+
+	if (sequence == 1) // 각도 정했으면 방향 전환함수
+	{
+		SetState(E_2267);
+		EX2267();
+	}
+
+
+	if (sequence == 2) // 각도 정했으면 방향 전환함수
+	{
+		whichPattern = SetRadAndMirror(false);
+		sequence++;
+	}
+
+	if (sequence == 1) // 각도 정했으면 방향 전환함수
+	{
+		switch (whichPattern)
+		{
+		case 1:		SetState(E_0151);  E0151();				break;
+		case 2:		SetState(E_0152);  E0152(-XM_PIDIV2);	break; // 왼쪽 90
+		case 3:		SetState(E_0153);  E0153(-XM_PI);		break; // 왼쪽 180
+		case 4:		SetState(E_0151);  E0151();				break;
+		case 5:		SetState(E_0152);  E0152(XM_PIDIV2);	break;
+		case 6:		SetState(E_0153);  E0153(XM_PI);		break;
+		}
+	}
+
+	if (sequence == 2) // 공격 모션
+	{
+		if (whichPattern == 4 || whichPattern == 5 || whichPattern == 6)
+			Scale().x *= -1;
+		sequence++;
+	}
+
+	if (sequence == 3) // 공격 모션
+	{
+
+		SetState(E_2151);
+		E2151();
+
+	}
+
+	if (sequence == 4) // 공격 모션
+	{
+		SetState(E_2152);
+		E2152();
+	}
+
+
+	if (sequence == 5) // 공격 모션
+	{
+		SetState(E_2153);
+		E2153();
+	}
+
+	if (sequence == 6) // 마무리
+	{
+		ChooseNextPattern();
+	}
+
 }
 
 void Valphalk::HS_FlyWingBlast()
@@ -1221,26 +1335,42 @@ void Valphalk::E0147()//포격형 -> 참격형 변환
 void Valphalk::E0151()//포격상태 Idle
 {
 	PLAY;
+
+	if (RATIO > 0.22f && RATIO < 0.49f)
+		RotateToTarget(0.22f, 0.49f);
+
 	if (RATIO > 0.98)
 	{
-		SetState(E_2144);
-		//참격형으로 다시 변환시키거나 다른 공격패턴 사용하게 변환 필요
-		//SetState(E_0147);
+		sequence++;
 	}
 }
 
-void Valphalk::E0152()//포격상태 좌회전
+void Valphalk::E0152(float degree)//포격상태 좌회전
 {
 	PLAY;
+
+	if (RATIO > 0.32f && RATIO < 0.53f)
+		RotateToTarget(0.32f, 0.53f);
+
 	if (RATIO > 0.98)
-		SetState(E_0151);
+	{
+		Rot().y += degree;
+		sequence++;
+	}
 }
 
-void Valphalk::E0153()//포격상태 뒤로회전
+void Valphalk::E0153(float degree)//포격상태 뒤로회전
 {
 	PLAY;
+
+	if (RATIO > 0.0879f && RATIO < 0.495f)
+		RotateToTarget(0.0879f, 0.495f);
+
 	if (RATIO > 0.98)
-		SetState(E_0151);
+	{
+		Rot().y += degree;
+		sequence++;
+	}
 }
 
 void Valphalk::E0164()//뒷걸음질
@@ -1810,17 +1940,17 @@ void Valphalk::E2151()
 	if (RATIO > 0.97)
 	{
 		sequence++;
-		Pos() = realPos->Pos();
 	}
 }
 
 void Valphalk::E2152()
 {
 	PLAY;
+
+
 	if (RATIO > 0.97)
 	{
 		sequence++;
-		Pos() = realPos->Pos();
 	}
 }
 
@@ -1830,7 +1960,6 @@ void Valphalk::E2153()
 	if (RATIO > 0.97)
 	{
 		sequence++;
-		Pos() = realPos->Pos();
 		Rot().y += XM_PI;
 	}
 }
@@ -1988,6 +2117,37 @@ void Valphalk::E2267()
 		}
 		Count = 1;
 	}
+}
+
+void Valphalk::EX2265()
+{
+}
+
+void Valphalk::EX2267()
+{
+	PLAY;
+
+	//if(RATIO > )
+}
+
+void Valphalk::EX2270()
+{
+}
+
+void Valphalk::EX2271()
+{
+}
+
+void Valphalk::EX2272()
+{
+}
+
+void Valphalk::EX2274()
+{
+}
+
+void Valphalk::EX2275()
+{
 }
 
 void Valphalk::E2270()
@@ -2263,6 +2423,46 @@ void Valphalk::E2376()
 		SetState(E_4013);
 		combo = false;
 		Count = 1;
+	}
+}
+
+void Valphalk::E2381()
+{
+	PLAY;
+
+	if (RATIO > 0.98)
+		sequence++;
+}
+
+void Valphalk::E2382()
+{
+	PLAY;
+
+	if (RATIO > 0.98)
+	{
+		Rot().y -= XM_PIDIV2;
+		sequence++;
+	}
+}
+
+void Valphalk::E2383()
+{
+	PLAY;
+
+	if (RATIO > 0.98)
+	{
+		Rot().y += XM_PIDIV2;
+		sequence++;
+	}
+}
+
+void Valphalk::E2082()
+{
+	PLAY;
+
+	if (RATIO > 0.98)
+	{
+		sequence++;
 	}
 }
 
