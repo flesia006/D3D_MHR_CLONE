@@ -115,7 +115,8 @@ public:
 		ENERGYBULLET,
 		HUPGI,
 		FULLBURST,
-		SIDESTEP
+		SIDESTEP,
+		FORWARDBOOM
 	};
 
 
@@ -355,8 +356,8 @@ private:
 
 	Vector3 velocity; //속력 : 실제 움직임
 
-	Pattern curPattern = SIDESTEP;
-	State curState = E_0043; //= 기본 스테이트;
+	Pattern curPattern = ENERGYBULLET;
+	State curState = E_0152; //= 기본 스테이트;
 	State preState = curState;
 	Type curType; //= 기본 타입;
 
