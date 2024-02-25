@@ -184,7 +184,7 @@ private:
 	float GetRadBtwTrgt();
 	void RotateToTarget(float ratio1, float ratio2); // 
 	void SetColliderAttack(ColliderName name, float ratio);
-	int SetRadAndMirror(bool needMirror);
+	int  SetRadAndMirror(bool needMirror);
 	void Loop() { GetClip(curState)->ResetPlayTime(); Pos() = realPos->Pos(); }
 
 	// 모션 함수
@@ -237,10 +237,10 @@ private:
 	void E2033();
 	void E2038();
 	void E2040();
-	void E2041();
-	void E2042();
-	void E2044();
-	void E2045();
+	void E2041(float degree = 0);
+	void E2042(float degree = 0);
+	void E2044(float degree = 0);
+	void E2045(float degree = 0);
 	void E2054();
 	void E2056();
 	void E2091();
@@ -250,8 +250,8 @@ private:
 
 	void E2079();
 	void E2106();
-	void E2107();
-	void E2108();
+	void E2107(float degree = 0);
+	void E2108(float degree = 0);
 	void E2118();
 	void E2121();
 
@@ -301,7 +301,7 @@ private:
 	void EX2274(float degree = 0);
 	void EX2275(float degree = 0);
 	void EX2276();
-	void EX2277();
+	void EX2277(float y = 0);
 	void EX2278();
 
 	void E2276();
@@ -317,12 +317,22 @@ private:
 	void E2361();
 	void E2367();
 	void E2368();
+	
 	void E2371();
 	void E2372();
 	void E2373();
+
+	void EX2371();
+	void EX2372(float degree = 0);
+	void EX2373(float degree = 0);
+
 	void E2374();
 	void E2375();
 	void E2376();
+
+	void EX2374();
+	void EX2375();
+	void EX2376();
 
 	void E2381();
 	void E2382();
@@ -409,7 +419,7 @@ private:
 	float radBtwTarget = 0.0f;
 	float initialRad = 0.0f;
 
-	const float rot135 = 2.36f;
+	const float rot135 = 2.36f;	
 	const float rot45 = 0.785f;
 
 	float radDifference = 0.0f;
@@ -417,4 +427,5 @@ private:
 public:
 	float maxHP = 5000;
 	float curHP = 5000;
+	float yDifference = 0.0f;
 };
