@@ -182,7 +182,7 @@ private:
 	float GetRadBtwTrgt();
 	void RotateToTarget(float ratio1, float ratio2); // 
 	void SetColliderAttack(ColliderName name, float ratio);
-	int SetRadAndMirror(bool needMirror);
+	int  SetRadAndMirror(bool needMirror);
 	void Loop() { GetClip(curState)->ResetPlayTime(); Pos() = realPos->Pos(); }
 
 	// 모션 함수
@@ -299,7 +299,7 @@ private:
 	void EX2274(float degree = 0);
 	void EX2275(float degree = 0);
 	void EX2276();
-	void EX2277();
+	void EX2277(float y = 0);
 	void EX2278();
 
 	void E2276();
@@ -315,12 +315,22 @@ private:
 	void E2361();
 	void E2367();
 	void E2368();
+	
 	void E2371();
 	void E2372();
 	void E2373();
+
+	void EX2371();
+	void EX2372(float degree = 0);
+	void EX2373(float degree = 0);
+
 	void E2374();
 	void E2375();
 	void E2376();
+
+	void EX2374();
+	void EX2375();
+	void EX2376();
 
 	void E2381();
 	void E2382();
@@ -407,8 +417,9 @@ private:
 	float radBtwTarget = 0.0f;
 	float initialRad = 0.0f;
 
-	const float rot135 = 2.36f;
+	const float rot135 = 2.36f;	
 	const float rot45 = 0.785f;
 
 	float radDifference = 0.0f;
+	float yDifference = 0.0f;
 };
