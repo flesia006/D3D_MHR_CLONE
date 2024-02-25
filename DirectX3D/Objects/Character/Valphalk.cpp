@@ -626,14 +626,14 @@ void Valphalk::ChooseNextPattern()
 	radDifference = 0;
 	initialRad = Rot().y;
 
-//	int i = rand() % 3;
-//	switch (i)
-//	{
-//	case 0:	curPattern = B_SWINGATK;  break;
-//	case 1:	curPattern = B_WINGATK;	  break;
-//	case 2:	curPattern = B_DOWNBLAST;	  break;
-//	//default: curPattern = B_DUMBLING; break;
-//	}
+	int i = rand() % 2;
+	switch (i)
+	{
+	case 0:	curPattern = S_LEGATK;  break;///////////////////
+	case 1:	curPattern = S_LEGATK;	  break;
+	//case 2:	curPattern = B_DUMBLING;  break;
+	//default: curPattern = B_DUMBLING; break;
+	}
 }
 
 void Valphalk::PlayPattern()
@@ -719,10 +719,6 @@ void Valphalk::Move()
 	case Valphalk::E_2027:	 E2027();		break;
 	case Valphalk::E_2032:	 E2032();		break;
 	case Valphalk::E_2033:	 E2033();		break;
-	case Valphalk::E_2041:	 E2041();		break;
-	case Valphalk::E_2042:	 E2042();		break;
-	case Valphalk::E_2044:	 E2044();		break;
-	case Valphalk::E_2045:	 E2045();		break;
 	case Valphalk::E_2054:	 E2054();		break;
 	case Valphalk::E_2056:	 E2056();		break;
 	case Valphalk::E_2079:	 E2079();		break;
@@ -731,8 +727,6 @@ void Valphalk::Move()
 	case Valphalk::E_2093:	 E2093();		break;
 	case Valphalk::E_2103:	 E2103();		break;
 	case Valphalk::E_2106:	 E2106();		break;
-	case Valphalk::E_2107:	 E2107();		break;
-	case Valphalk::E_2108:	 E2108();		break;
 	case Valphalk::E_2118:	 E2118();		break;
 	case Valphalk::E_2121:	 E2121();		break;
 	case Valphalk::E_2129:	 E2129();		break;
@@ -902,15 +896,103 @@ int Valphalk::SetRadAndMirror(bool needMirror)
 	initialRad = Rot().y;
 	return whichPattern;
 }
+
 void Valphalk::S_LegAtk()
 {
+	static int whichPattern = 0;
 
+	if (sequence == 0) // 사이드스텝
+	{
+		Vector3 dir = (realPos->Back() + realPos->Right()).GetNormalized();
+		vecToTagt = target->GlobalPos() - dir * 2000 + realPos->Right() * 1106 + realPos->Forward() * 120;
+		vecToTagt.y = 0;
 
+		sequence++;
+	}
 
+	if (sequence == 1) // 스탭 모션
+	{
+		SetState(E_2124);
+		E2124(vecToTagt);
+	}
+
+	if (sequence == 2) // 앞다리 찍기 각도 정하기
+	{
+		vecToTagt = { 0, 0, 0 };
+		whichPattern = SetRadAndMirror(true);
+		sequence++;
+	}
+
+	if (sequence == 3) // 각도 정했으면 방향 전환함수
+	{
+		switch (whichPattern)
+		{
+		case 1:		SetState(E_2106);  E2106();  break;
+		case 2:		SetState(E_2107);  E2107(-XM_PIDIV2);  break;
+		case 3:		SetState(E_2108);  E2108(-XM_PI);	break;
+		case 4:		SetState(E_2106);  E2106();  break;
+		case 5:		SetState(E_2107);  E2107(XM_PIDIV2);  break;
+		case 6:		SetState(E_2108);  E2108(XM_PI);	break;
+		}
+	}
+
+	if (sequence == 4) // 공격 모션
+	{
+		SetState(E_2118);	E2118();
+	}
+
+	if (sequence == 5) // 앞다리 찍기 마무리 + 왼날개 찍기
+	{
+		SetState(E_2121);	E2121();
+	}
+
+	if (sequence == 6)
+	{
+		if (whichPattern == 4 || whichPattern == 5 || whichPattern == 6)
+			Scale().x *= -1;
+		whichPattern = 0;
+		ChooseNextPattern();
+	}
 }
 
 void Valphalk::S_StabAtk()
 {
+	static int whichPattern = 0;
+
+	if (sequence == 0) // 각도 정하기
+	{
+		whichPattern = SetRadAndMirror(false);
+		sequence++;
+	}
+
+	if (sequence == 1) // 각도 정했으면 방향 전환함수
+	{
+		switch (whichPattern)
+		{
+		case 1:		SetState(E_2040);  E2040();  break;
+		case 2:		SetState(E_2041);  E2041(-XM_PIDIV2);  break;
+		case 3:		sequence = 0;	Sidestep();  break;
+		case 4:		SetState(E_2040);  E2040();  break;
+		case 5:		SetState(E_2044);  E2044(XM_PIDIV2);  break;
+		case 6:		sequence = 0;	Sidestep();  break;
+		}
+	}
+
+	if (sequence == 2) // 공격 모션
+	{
+		SetState(E_2038);	E2038();
+	}
+
+	if (sequence == 3) // 공격모션 후동작
+	{
+		SetState(E_2054);	E2054();
+	}
+
+	if (sequence == 4) // 마무리
+	{
+		whichPattern = 0;
+		ChooseNextPattern();
+	}
 }
 
 void Valphalk::S_BackWingAtk()
@@ -1253,8 +1335,9 @@ void Valphalk::AngerRoar()
 void Valphalk::E0003() // 평상시 대기
 {
 	PLAY;
+
 	if (RATIO > 0.98)
-		SetState(E_0003);
+		sequence++;
 }
 
 void Valphalk::E0007() // 탈진
@@ -1659,46 +1742,82 @@ void Valphalk::E2038() // 날개 찌르기
 
 	PLAY;
 
-	if (RATIO > 0.98)
+	if (RATIO > 0.644 && RATIO < 0.99)
 	{
-		SetState(E_2054); // 날개 찌르기 후 끝낼건지
-		//SetState(E_2056); // 이후 찌른 날개로 1바퀴 회전시킬지 정해야함
+		SetColliderAttack(RWING, 0.99);
 	}
+
+	if (RATIO > 0.99)
+		sequence++;
 }
 
 void Valphalk::E2040() // 찌르기 준비
 {
 	PLAY;
-	if (RATIO > 0.98)
-		SetState(E_2038);
+
+	if (RATIO > 0.358f && RATIO < 0.698f)
+		RotateToTarget(0.358f, 0.698f);
+
+	if (RATIO > 0.99)
+	{
+		sequence++;
+	}
 }
 
-void Valphalk::E2041()//왼쪽보고 찌르기 준비
+void Valphalk::E2041(float degree)//왼쪽보고 찌르기 준비
 {
 	PLAY;
-	if (RATIO > 0.98)
-		SetState(E_2038);
+
+	if (RATIO > 0.293f && RATIO < 0.724f)
+		RotateToTarget(0.293f, 0.724f);
+
+	if (RATIO > 0.99)
+	{
+		sequence++;
+		Rot().y += degree;
+	}
 }
 
-void Valphalk::E2042()//왼쪽으로 뒤돌고 찌르기 준비
+void Valphalk::E2042(float degree)//왼쪽으로 뒤돌고 찌르기 준비
 {
 	PLAY;
-	if (RATIO > 0.98)
-		SetState(E_2038);
+
+	if (RATIO > 0.286f && RATIO < 0.746f)
+		RotateToTarget(0.286f, 0.746f);
+
+	if (RATIO > 0.99)
+	{
+		sequence++;
+		Rot().y += degree;
+	}
 }
 
-void Valphalk::E2044()//오른쪽보고 찌르기 준비
+void Valphalk::E2044(float degree)//오른쪽보고 찌르기 준비
 {
 	PLAY;
-	if (RATIO > 0.98)
-		SetState(E_2038);
+
+	if (RATIO > 0.293f && RATIO < 0.724f)
+		RotateToTarget(0.293f, 0.724f);
+
+	if (RATIO > 0.99)
+	{
+		sequence++;
+		Rot().y += degree;
+	}
 }
 
-void Valphalk::E2045()//오른쪽으로 뒤돌고 찌르기 준비
+void Valphalk::E2045(float degree)//오른쪽으로 뒤돌고 찌르기 준비
 {
 	PLAY;
-	if (RATIO > 0.98)
-		SetState(E_2038);
+
+	if (RATIO > 0.286f && RATIO < 0.746f)
+		RotateToTarget(0.286f, 0.746f);
+
+	if (RATIO > 0.99)
+	{
+		sequence++;
+		Rot().y += degree;
+	}
 }
 
 void Valphalk::E2054() // 찌르기 날개 회수
@@ -1708,7 +1827,7 @@ void Valphalk::E2054() // 찌르기 날개 회수
 	if (RATIO > 0.98)
 	{
 		combo = false;
-		SetState(E_0003);
+		sequence++;
 	}
 }
 
@@ -1735,42 +1854,77 @@ void Valphalk::E2056() // 찌르고 그 날개 로 한바퀴 돌기
 
 void Valphalk::E2106()// 오른발 들고 정면 찍기 준비 자세
 {
+	combo = true;
+
 	PLAY;
-	if (RATIO > 0.98)
-		SetState(E_2118);
+
+	if (RATIO > 0.222f && RATIO < 0.481f)
+		RotateToTarget(0.222f, 0.481f);
+
+	if (RATIO > 0.99)
+	{
+		sequence++;
+	}
 }
 
-void Valphalk::E2107()//오른발 들고 정면에서 왼쪽 보고 찍기 준비 자세
+void Valphalk::E2107(float degree)//오른발 들고 정면에서 왼쪽 보고 찍기 준비 자세
 {
+	combo = true;
+
 	PLAY;
-	if (RATIO > 0.98)
-		SetState(E_2118);
+
+	if (RATIO > 0.222f && RATIO < 0.481f)
+		RotateToTarget(0.222f, 0.481f);
+
+	if (RATIO > 0.99)
+	{
+		sequence++;
+		Rot().y += degree;
+	}
 }
 
-void Valphalk::E2108()//오른발 들고 정면에서 왼쪽 보고 찍기 준비 자세
+void Valphalk::E2108(float degree)//오른발 들고 정면에서 뒤쪽 보고 찍기 준비 자세
 {
+	combo = true;
+
 	PLAY;
-	if (RATIO > 0.98)
-		SetState(E_2118);
+
+	if (RATIO > 0.250f && RATIO < 0.730f)
+		RotateToTarget(0.250f, 0.730f);
+
+	if (RATIO > 0.99)
+	{
+		sequence++;
+		Rot().y += degree;
+	}
 }
 
 void Valphalk::E2118()//앞다리 찍기 공격
 {
 	PLAY;
-	if (RATIO > 0.98)
+
+	if (RATIO > 0.167 && RATIO < 0.367)
 	{
-		combo = true;
-		SetState(E_2121);
+		SetColliderAttack(RLEG1_FOOT, 0.367);
 	}
+
+	if (RATIO > 0.99)
+		sequence++;
 }
 
 void Valphalk::E2121()//왼쪽 날개 들었다가 찍은다음 살짝 일어나서 다시 자세잡음
 {
 	PLAY;
+
+	if (RATIO > 0.277 && RATIO < 0.526)
+	{
+		SetColliderAttack(LWING, 0.526);
+	}
+
 	if (RATIO > 0.98)
 	{
 		combo = false;
-		SetState(E_0003);
+		sequence++;
 	}
 }
 

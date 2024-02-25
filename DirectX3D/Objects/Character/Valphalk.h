@@ -235,10 +235,10 @@ private:
 	void E2033();
 	void E2038();
 	void E2040();
-	void E2041();
-	void E2042();
-	void E2044();
-	void E2045();
+	void E2041(float degree = 0);
+	void E2042(float degree = 0);
+	void E2044(float degree = 0);
+	void E2045(float degree = 0);
 	void E2054();
 	void E2056();
 	void E2091();
@@ -248,8 +248,8 @@ private:
 
 	void E2079();
 	void E2106();
-	void E2107();
-	void E2108();
+	void E2107(float degree = 0);
+	void E2108(float degree = 0);
 	void E2118();
 	void E2121();
 
