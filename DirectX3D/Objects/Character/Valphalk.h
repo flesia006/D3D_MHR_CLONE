@@ -107,6 +107,7 @@ public:
 		STORM,
 		ENERGYBULLET,
 		HUPGI,
+		FULLBURST,
 		SIDESTEP,
 		B_SIDESTEP
 	};
@@ -197,8 +198,8 @@ private:
 	void E0061();
 	void E0071();
 	void E0097();
-	void E0098();
-	void E0099();
+	void E0098(float degree = 0);
+	void E0099(float degree = 0);
 	void E0146();
 	void E0147();
 	void E0151();
