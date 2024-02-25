@@ -183,7 +183,7 @@ private:
 	void RotateToTarget(float ratio1, float ratio2); // 
 	void SetColliderAttack(ColliderName name, float ratio);
 	int SetRadAndMirror(bool needMirror);
-
+	void Loop() { GetClip(curState)->ResetPlayTime(); Pos() = realPos->Pos(); }
 
 	// 모션 함수
 
@@ -293,11 +293,14 @@ private:
 
 	void EX2265();
 	void EX2267();
-	void EX2270();
-	void EX2271();
-	void EX2272();
-	void EX2274();
-	void EX2275();
+	void EX2270(float degree = 0);
+	void EX2271(float degree = 0);
+	void EX2272(float degree = 0);
+	void EX2274(float degree = 0);
+	void EX2275(float degree = 0);
+	void EX2276();
+	void EX2277();
+	void EX2278();
 
 	void E2276();
 	void E2277();
@@ -364,7 +367,7 @@ private:
 
 	Vector3 velocity; //속력 : 실제 움직임
 
-	Pattern curPattern = B_DUMBLING;
+	Pattern curPattern = HS_FLYFALLATK;
 	State curState = E_0043; //= 기본 스테이트;
 	State preState = curState;
 
