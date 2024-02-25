@@ -18,7 +18,6 @@ public:
 
 private:
     void AddSounds();
-
 private:
     Player* player;
     Valphalk* valphalk = nullptr;

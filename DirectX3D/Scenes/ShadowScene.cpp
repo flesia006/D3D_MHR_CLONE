@@ -105,6 +105,8 @@ void ShadowScene::Update()
     {
         UIManager::Get()->Hit(valphalk->damage);
     }
+    if (KEY_PRESS('Z')) valphalk->curHP -= 1000;
+
 }
 
 void ShadowScene::PreRender()

@@ -109,8 +109,9 @@ public:
 		HUPGI,
 		FULLBURST,
 		SIDESTEP,
-		B_SIDESTEP
+		B_SIDESTEP,
 		FORWARDBOOM,
+		DEAD,
 	};
 
 
@@ -163,7 +164,7 @@ private:
 	void Hupgi();
 	void Sidestep();
 	void B_Sidestep();
-
+	void Dead();
 	Vector3 GetPlayerPos();
 
 private:
@@ -282,7 +283,7 @@ private:
 	void E2200();
 	void E2210();
 	void E2211();
-	void E2253(Vector3 destVec);
+	void E2253(Vector3 destVec = 0);
 
 	void E2265();
 	void E2267();
@@ -360,8 +361,8 @@ private:
 
 	// 샘플 무조건 바뀜
 	//float speed = 50; //속력 : 기본 스탯
-	//float maxHP = 100;
-	//float curHP = 100;
+	//float maxHP = 5000;
+	//float curHP = 5000;
 
 	Vector3 velocity; //속력 : 실제 움직임
 
@@ -409,4 +410,8 @@ private:
 	const float rot45 = 0.785f;
 
 	float radDifference = 0.0f;
+
+public:
+	float maxHP = 5000;
+	float curHP = 5000;
 };

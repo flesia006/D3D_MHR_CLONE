@@ -233,10 +233,11 @@ void Valphalk::Update()
 	*/
 	//Pos().x = 2000; // 임시 고정용
 	UpdateWorld();
-	PlayPattern();
 	if (preState != curState)
 		GetClip(preState)->ResetPlayTime();
+		
 	Move();
+	PlayPattern();
 	// hitCheck() 
 	head->Pos() = realPos->Pos() + Vector3::Up() * 200;
 	head->UpdateWorld();
@@ -341,7 +342,7 @@ void Valphalk::GUIRender()
 	//ImGui::SliderFloat3("ValphalkRot", (float*)&Rot(), 0, 3.14f);
 	ImGui::DragFloat3("RealPos", (float*)&realPos->Pos());
 	ImGui::DragFloat3("RealRot", (float*)&realPos->Rot());
-	
+	ImGui::Text("curHP : %f", curHP);
 	//for (int i = 0; i < colliders.size(); i++)
 	//{
 	//	colliders[i]->GUIRender();
@@ -531,7 +532,6 @@ void Valphalk::Hupgi()
 
 void Valphalk::Sidestep()
 {
-
 	if (sequence == 0)
 	{
 		Vector3 dir = (realPos->Back() + realPos->Right() ).GetNormalized();
@@ -577,6 +577,11 @@ void Valphalk::B_Sidestep()
 		vecToTagt = { 0, 0, 0 };
 		ChooseNextPattern();
 	}
+}
+
+void Valphalk::Dead()
+{
+	SetState(E_3023);
 }
 
 void Valphalk::SetEvent(int clip, Event event, float timeRatio)
@@ -659,24 +664,28 @@ void Valphalk::ChooseNextPattern()
 	radDifference = 0;
 	initialRad = Rot().y;
 
-	int i = rand() % 4;
+	int i = rand() % 6;
 
-	switch (5)
+	if (curHP <= 0)
+		i = 6;
+	switch (i)
 	{
 	case 0:	curPattern = B_SWINGATK;  break;
 	case 1:	curPattern = B_WINGATK;	  break;
-	case 2:	curPattern = STORM;		  break;
-	case 3:	curPattern = FULLBURST;	  break;	
-	case 4:	curPattern = ENERGYBULLET;break;
-	case 5: curPattern = FORWARDBOOM; break;
-	//case 2:	curPattern = B_DUMBLING;  break;
-	//default: curPattern = B_DUMBLING; break;
+	case 2:	curPattern = FULLBURST;	  break;
+	case 3:	curPattern = ENERGYBULLET; break;
+	case 4: curPattern = FORWARDBOOM; break;
+	case 5:	curPattern = B_DUMBLING;  break;
+	case 6: curPattern = DEAD; break;
+	//case 2:	curPattern = STORM;		  break;
+		//default: curPattern = B_DUMBLING; break;
 	}
+	
 }
 
 void Valphalk::PlayPattern()
 {
-
+	
 	switch (curPattern)
 	{
 	case Valphalk::S_LEGATK:		S_LegAtk();			break;
@@ -704,10 +713,10 @@ void Valphalk::PlayPattern()
 	case Valphalk::ENERGYBULLET:	EnergyBullets();	break;
 	case Valphalk::FULLBURST:		FullBurst();		break;
 	case Valphalk::SIDESTEP:		Sidestep();			break;
-	case Valphalk::FORWARDBOOM:		ForwardBoom();			break;
-	default:		break; 
-	}
-
+	case Valphalk::FORWARDBOOM:		ForwardBoom();		break;
+	case Valphalk::DEAD:			Dead();				break;
+	default:		break;
+	}	
 }
 
 void Valphalk::Move()
@@ -2600,8 +2609,11 @@ void Valphalk::E3001() // 작은 데미지 피격
 void Valphalk::E3023() // 사망
 {
 	PLAY;
-	if (RATIO > 0.98)
-		GetClip(curState)->SetRatio(0.98); // 사망시 애니메이션 정지	
+	if (RATIO > 0.99)			
+	isPlay = false;
+	
+	//if (RATIO > 0.98)
+		
 }
 
 void Valphalk::E4013() // 조우 포효
