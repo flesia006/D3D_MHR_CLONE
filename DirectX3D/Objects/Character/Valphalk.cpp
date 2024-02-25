@@ -629,8 +629,8 @@ void Valphalk::ChooseNextPattern()
 	int i = rand() % 2;
 	switch (i)
 	{
-	case 0:	curPattern = S_LEGATK;  break;///////////////////
-	case 1:	curPattern = S_LEGATK;	  break;
+	case 0:	curPattern = S_LEGATK;  break;
+	case 1:	curPattern = S_STABATK;	  break;
 	//case 2:	curPattern = B_DUMBLING;  break;
 	//default: curPattern = B_DUMBLING; break;
 	}
@@ -784,6 +784,7 @@ void Valphalk::UpdateUI()
 
 float Valphalk::GetRadBtwTrgt()
 {
+	UpdateWorld();
 	Vector3 fwd = Forward();
 	Vector3 VtoP = (realPos->Pos() - target->GlobalPos()).GetNormalized();
 	Vector3 rad = XMVector3AngleBetweenVectors(fwd, VtoP);
@@ -901,29 +902,21 @@ void Valphalk::S_LegAtk()
 {
 	static int whichPattern = 0;
 
-	if (sequence == 0) // 사이드스텝
+	if (sequence == 0) // 사이드스탭 할지 앞다리 찍기 할지 판단
 	{
-		Vector3 dir = (realPos->Back() + realPos->Right()).GetNormalized();
-		vecToTagt = target->GlobalPos() - dir * 2000 + realPos->Right() * 1106 + realPos->Forward() * 120;
-		vecToTagt.y = 0;
-
-		sequence++;
+		if ((realPos->Pos() - target->GlobalPos()).Length() < 500)
+			sequence = 6;
+		else
+			sequence++;
 	}
 
-	if (sequence == 1) // 스탭 모션
+	if (sequence == 1) // 앞다리 찍기 각도 정하기
 	{
-		SetState(E_2124);
-		E2124(vecToTagt);
-	}
-
-	if (sequence == 2) // 앞다리 찍기 각도 정하기
-	{
-		vecToTagt = { 0, 0, 0 };
 		whichPattern = SetRadAndMirror(true);
 		sequence++;
 	}
 
-	if (sequence == 3) // 각도 정했으면 방향 전환함수
+	if (sequence == 2) // 각도 정했으면 방향 전환함수
 	{
 		switch (whichPattern)
 		{
@@ -936,22 +929,43 @@ void Valphalk::S_LegAtk()
 		}
 	}
 
-	if (sequence == 4) // 공격 모션
+	if (sequence == 3) // 공격 모션
 	{
 		SetState(E_2118);	E2118();
 	}
 
-	if (sequence == 5) // 앞다리 찍기 마무리 + 왼날개 찍기
+	if (sequence == 4) // 앞다리 찍기 마무리 + 왼날개 찍기
 	{
 		SetState(E_2121);	E2121();
 	}
 
-	if (sequence == 6)
+	if (sequence == 5)
 	{
 		if (whichPattern == 4 || whichPattern == 5 || whichPattern == 6)
 			Scale().x *= -1;
 		whichPattern = 0;
 		ChooseNextPattern();
+	}
+
+	if (sequence == 6) // 백스탭 위치 계산
+	{
+		Vector3 dir = (realPos->Back() + realPos->Right()).GetNormalized();
+		vecToTagt = target->GlobalPos() - dir * 300 + realPos->Right() * 606 + realPos->Forward() * 120;
+		vecToTagt.y = 0;
+
+		sequence++;
+	}
+
+	if (sequence == 7) // 백스탭
+	{
+		SetState(E_2124);
+		E2124(vecToTagt);
+	}
+
+	if (sequence == 8) // 백스탭마무리
+	{
+		vecToTagt = { 0,0,0 };
+		sequence = 1;
 	}
 }
 
@@ -959,39 +973,68 @@ void Valphalk::S_StabAtk()
 {
 	static int whichPattern = 0;
 
-	if (sequence == 0) // 각도 정하기
+	if (sequence == 0) // 사이드스탭 할지 앞다리 찍기 할지 판단
+	{
+		if ((realPos->Pos() - target->GlobalPos()).Length() < 1000)
+			sequence = 6;
+		else
+			sequence++;
+	}
+
+	if (sequence == 1) // 날개찌르기 각도 정하기
 	{
 		whichPattern = SetRadAndMirror(false);
 		sequence++;
 	}
 
-	if (sequence == 1) // 각도 정했으면 방향 전환함수
+	if (sequence == 2) // 각도 정했으면 방향 전환함수
 	{
 		switch (whichPattern)
 		{
 		case 1:		SetState(E_2040);  E2040();  break;
 		case 2:		SetState(E_2041);  E2041(-XM_PIDIV2);  break;
-		case 3:		sequence = 0;	Sidestep();  break;
+		case 3:		SetState(E_2042);  E2042(-XM_PI);  break;
 		case 4:		SetState(E_2040);  E2040();  break;
 		case 5:		SetState(E_2044);  E2044(XM_PIDIV2);  break;
-		case 6:		sequence = 0;	Sidestep();  break;
+		case 6:		SetState(E_2045);  E2045(XM_PI);  break;
 		}
 	}
 
-	if (sequence == 2) // 공격 모션
+	if (sequence == 3) // 공격 모션
 	{
 		SetState(E_2038);	E2038();
 	}
 
-	if (sequence == 3) // 공격모션 후동작
+	if (sequence == 4) // 공격 모션2 - 휘두르기
 	{
-		SetState(E_2054);	E2054();
+		SetState(E_2056);	E2056();
 	}
 
-	if (sequence == 4) // 마무리
+	if (sequence == 5)
 	{
 		whichPattern = 0;
 		ChooseNextPattern();
+	}
+
+	if (sequence == 6) // 백스탭 위치 계산
+	{
+		Vector3 dir = (realPos->Back() + realPos->Right()).GetNormalized();
+		vecToTagt = target->GlobalPos() - dir * 2500 + realPos->Right() * 1106 + realPos->Forward() * 120;
+		vecToTagt.y = 0;
+
+		sequence++;
+	}
+
+	if (sequence == 7) // 백스탭
+	{
+		SetState(E_2124);
+		E2124(vecToTagt);
+	}
+
+	if (sequence == 8) // 백스탭마무리
+	{
+		vecToTagt = { 0,0,0 };
+		sequence = 1;
 	}
 }
 
@@ -1738,17 +1781,19 @@ void Valphalk::E2033()//오른쪽으로 뛰다가 돌진준비
 
 void Valphalk::E2038() // 날개 찌르기
 {
-	combo = true;
+	combo = false;
 
 	PLAY;
 
-	if (RATIO > 0.644 && RATIO < 0.99)
+	if (RATIO > 0.644 && RATIO < 0.95)
 	{
-		SetColliderAttack(RWING, 0.99);
+		SetColliderAttack(RWING, 0.95);
 	}
 
-	if (RATIO > 0.99)
+	if (RATIO > 0.97)
+	{
 		sequence++;
+	}
 }
 
 void Valphalk::E2040() // 찌르기 준비
@@ -1758,7 +1803,7 @@ void Valphalk::E2040() // 찌르기 준비
 	if (RATIO > 0.358f && RATIO < 0.698f)
 		RotateToTarget(0.358f, 0.698f);
 
-	if (RATIO > 0.99)
+	if (RATIO > 0.97)
 	{
 		sequence++;
 	}
@@ -1771,7 +1816,7 @@ void Valphalk::E2041(float degree)//왼쪽보고 찌르기 준비
 	if (RATIO > 0.293f && RATIO < 0.724f)
 		RotateToTarget(0.293f, 0.724f);
 
-	if (RATIO > 0.99)
+	if (RATIO > 0.97)
 	{
 		sequence++;
 		Rot().y += degree;
@@ -1785,7 +1830,7 @@ void Valphalk::E2042(float degree)//왼쪽으로 뒤돌고 찌르기 준비
 	if (RATIO > 0.286f && RATIO < 0.746f)
 		RotateToTarget(0.286f, 0.746f);
 
-	if (RATIO > 0.99)
+	if (RATIO > 0.97)
 	{
 		sequence++;
 		Rot().y += degree;
@@ -1799,7 +1844,7 @@ void Valphalk::E2044(float degree)//오른쪽보고 찌르기 준비
 	if (RATIO > 0.293f && RATIO < 0.724f)
 		RotateToTarget(0.293f, 0.724f);
 
-	if (RATIO > 0.99)
+	if (RATIO > 0.97)
 	{
 		sequence++;
 		Rot().y += degree;
@@ -1813,7 +1858,7 @@ void Valphalk::E2045(float degree)//오른쪽으로 뒤돌고 찌르기 준비
 	if (RATIO > 0.286f && RATIO < 0.746f)
 		RotateToTarget(0.286f, 0.746f);
 
-	if (RATIO > 0.99)
+	if (RATIO > 0.97)
 	{
 		sequence++;
 		Rot().y += degree;
@@ -1824,11 +1869,8 @@ void Valphalk::E2054() // 찌르기 날개 회수
 {
 	PLAY;
 
-	if (RATIO > 0.98)
-	{
-		combo = false;
+	if (RATIO > 0.97)
 		sequence++;
-	}
 }
 
 void Valphalk::E2079()
@@ -1845,10 +1887,15 @@ void Valphalk::E2056() // 찌르고 그 날개 로 한바퀴 돌기
 {
 	PLAY;
 
-	if (RATIO > 0.98)
+	if (RATIO > 0.361 && RATIO < 0.617)
 	{
-		combo = false;
-		SetState(E_0003);
+		SetColliderAttack(RWING, 0.617);
+	}
+
+	if (RATIO > 0.97)
+	{
+		sequence++;
+		Rot().y += XM_PIDIV2;
 	}
 }
 
@@ -1861,7 +1908,7 @@ void Valphalk::E2106()// 오른발 들고 정면 찍기 준비 자세
 	if (RATIO > 0.222f && RATIO < 0.481f)
 		RotateToTarget(0.222f, 0.481f);
 
-	if (RATIO > 0.99)
+	if (RATIO > 0.97)
 	{
 		sequence++;
 	}
@@ -1876,7 +1923,7 @@ void Valphalk::E2107(float degree)//오른발 들고 정면에서 왼쪽 보고 찍기 준비 자�
 	if (RATIO > 0.222f && RATIO < 0.481f)
 		RotateToTarget(0.222f, 0.481f);
 
-	if (RATIO > 0.99)
+	if (RATIO > 0.97)
 	{
 		sequence++;
 		Rot().y += degree;
@@ -1892,7 +1939,7 @@ void Valphalk::E2108(float degree)//오른발 들고 정면에서 뒤쪽 보고 찍기 준비 자�
 	if (RATIO > 0.250f && RATIO < 0.730f)
 		RotateToTarget(0.250f, 0.730f);
 
-	if (RATIO > 0.99)
+	if (RATIO > 0.97)
 	{
 		sequence++;
 		Rot().y += degree;
@@ -1908,7 +1955,7 @@ void Valphalk::E2118()//앞다리 찍기 공격
 		SetColliderAttack(RLEG1_FOOT, 0.367);
 	}
 
-	if (RATIO > 0.99)
+	if (RATIO > 0.97)
 		sequence++;
 }
 
@@ -1916,15 +1963,15 @@ void Valphalk::E2121()//왼쪽 날개 들었다가 찍은다음 살짝 일어나서 다시 자세잡음
 {
 	PLAY;
 
-	if (RATIO > 0.277 && RATIO < 0.526)
+	if (RATIO > 0.277 && RATIO < 0.408)
 	{
-		SetColliderAttack(LWING, 0.526);
+		SetColliderAttack(LWING, 0.408);
 	}
 
-	if (RATIO > 0.98)
+	if (RATIO > 0.97)
 	{
-		combo = false;
 		sequence++;
+		combo = false;
 	}
 }
 
@@ -1939,7 +1986,7 @@ void Valphalk::E2124(Vector3 destVec)
 	}
 
 
-	if (RATIO > 0.98)
+	if (RATIO > 0.97)
 	{
 		sequence++;
 
