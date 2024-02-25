@@ -53,10 +53,14 @@ void ValphalkTestScene::GUIRender()
 
 void ValphalkTestScene::CapsuleMove()
 {
-	if (KEY_PRESS('W')) capsule->Pos().z += 1300 * DELTA;
-	if (KEY_PRESS('S')) capsule->Pos().z -= 1300 * DELTA;
-	if (KEY_PRESS('A')) capsule->Pos().x -= 1300 * DELTA;
-	if (KEY_PRESS('D')) capsule->Pos().x += 1300 * DELTA;
+	if (!KEY_PRESS(VK_RBUTTON))
+	{
+		if (KEY_PRESS('W')) capsule->Pos().z -= 1300 * DELTA;
+		if (KEY_PRESS('S')) capsule->Pos().z += 1300 * DELTA;
+		if (KEY_PRESS('A')) capsule->Pos().x += 1300 * DELTA;
+		if (KEY_PRESS('D')) capsule->Pos().x -= 1300 * DELTA;
+	}
+	
 
 	if (KEY_DOWN(VK_F5)) CAM->SetTarget(capsule);
 	if (KEY_DOWN(VK_F6)) CAM->SetTarget(nullptr);
