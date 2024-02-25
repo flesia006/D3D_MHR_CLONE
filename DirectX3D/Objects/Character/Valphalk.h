@@ -369,7 +369,7 @@ private:
 
 	Vector3 velocity; //속력 : 실제 움직임
 
-	Pattern curPattern = ENERGYBULLET;
+	Pattern curPattern = B_SWINGATK;
 	State curState = E_0152; //= 기본 스테이트;
 	State preState = curState;
 
