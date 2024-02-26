@@ -26,7 +26,7 @@ public:
 		E_2188, E_2189, E_2190, E_2192, E_2193, E_2200,
 		E_2210, E_2211, E_2253, E_2265, E_2267,
 		E_2270, E_2271, E_2272, E_2274, E_2275, E_2276, E_2277, E_2278,
-		E_2280, E_2286, E_2288, E_2290,
+		E_2280, E_2281, E_2282, E_2286, E_2288, E_2290,
 		E_2354, E_2356, E_2359, E_2361, E_2367, E_2368,
 		E_2371, E_2372, E_2373, E_2374, E_2375, E_2376,
 		E_2381, E_2382, E_2383,
@@ -185,7 +185,7 @@ private:
 	float GetRadBtwTrgt();
 	void RotateToTarget(float ratio1, float ratio2); // 
 	void SetColliderAttack(ColliderName name, float ratio);
-	int SetRadAndMirror(bool needMirror);
+	int  SetRadAndMirror(bool needMirror);
 	void Loop() { GetClip(curState)->ResetPlayTime(); Pos() = realPos->Pos(); }
 
 	// 모션 함수
@@ -286,6 +286,7 @@ private:
 	void E2211(float degree = 0);
 	void E2253(Vector3 destVec = 0);
 
+	void E2253(Vector3 destVec = 0);
 	void E2265();
 	void E2267();
 	void E2270();
@@ -302,28 +303,40 @@ private:
 	void EX2274(float degree = 0);
 	void EX2275(float degree = 0);
 	void EX2276();
-	void EX2277();
+	void EX2277(float y = 0);
 	void EX2278();
 
 	void E2276();
 	void E2277();
 	void E2278();
 	void E2280();
+	void E2281(float degree = 0);
+	void E2282(float degree = 0);
 	void E2286();
 	void E2288();
 	void E2290();
-	void E2354();
-	void E2356();
-	void E2359();
+	void E2354(float degree = 0);
+	void E2356(float degree = 0);
+	void E2359(float degree = 0);
 	void E2361();
 	void E2367();
 	void E2368();
+	
 	void E2371();
 	void E2372();
 	void E2373();
+
+	void EX2371();
+	void EX2372(float degree = 0);
+	void EX2373(float degree = 0);
+
 	void E2374();
 	void E2375();
 	void E2376();
+
+	void EX2374();
+	void EX2375();
+	void EX2376();
 
 	void E2381();
 	void E2382();
@@ -343,6 +356,7 @@ private:
 private: // 이벤트 혹은 함수에서 조건이 필요할거 같을때
 	bool LookatPlayer = false;
 	bool OtherPlay = false;
+	bool OtherPlay2 = false;
 	int Count = 0;
 
 private:
@@ -370,8 +384,9 @@ private:
 
 	Vector3 velocity; //속력 : 실제 움직임
 
-	Pattern curPattern = ENERGYBULLET;
-	State curState = E_0152; //= 기본 스테이트;
+
+	Pattern curPattern = STORM;
+	State curState = E_0043; //= 기본 스테이트;
 	State preState = curState;
 
 	UINT sequence = 0;
@@ -385,7 +400,8 @@ private:
 	/////////////////////////////////////
 	// 공격 콜라이더 (투사체, 폭발 등)	
 	vector<SphereCollider*> bullets;
-	CapsuleCollider* forwardBoom;
+	SphereCollider* forwardBoom;
+	Vector3 forwardBoomPosInit = { 0,-300,-1000 };
 	BoxCollider* fullBurst;
 
 	Vector3 fullBurstScale;
@@ -410,7 +426,7 @@ private:
 	float radBtwTarget = 0.0f;
 	float initialRad = 0.0f;
 
-	const float rot135 = 2.36f;
+	const float rot135 = 2.36f;	
 	const float rot45 = 0.785f;
 
 	float radDifference = 0.0f;
@@ -420,4 +436,5 @@ private:
 public:
 	float maxHP = 5000;
 	float curHP = 5000;
+	float yDifference = 0.0f;
 };
