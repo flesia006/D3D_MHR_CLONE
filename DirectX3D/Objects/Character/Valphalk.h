@@ -283,8 +283,8 @@ private:
 	void E2200();
 	void E2210();
 	void E2211();
-
 	void E2253(Vector3 destVec = 0);
+
 	void E2265();
 	void E2267();
 	void E2270();
@@ -308,8 +308,8 @@ private:
 	void E2277();
 	void E2278();
 	void E2280();
-	void E2281(float degree = 0);
-	void E2282(float degree = 0);
+	void E2281(float degree);
+	void E2282(float degree);
 	void E2286();
 	void E2288();
 	void E2290();
@@ -383,7 +383,7 @@ private:
 	Vector3 velocity; //속력 : 실제 움직임
 
 	Pattern curPattern = HS_FLYBLAST;
-	State curState = E_0043; //= 기본 스테이트;
+	State curState = E_0152; //= 기본 스테이트;
 	State preState = curState;
 
 	UINT sequence = 0;
