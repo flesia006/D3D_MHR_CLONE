@@ -23,7 +23,7 @@ public:
 		E_2144, E_2145, E_2146,
 		E_2151, E_2152, E_2153,
 		E_2173, E_2174, E_2175, E_2185,
-		E_2188, E_2189, E_2190, E_2192, E_2193, E_2200,
+		E_2188, E_2189, E_2190, E_2192, E_2193, E_2200, E_2200fix,
 		E_2210, E_2211, E_2253, E_2265, E_2267,
 		E_2270, E_2271, E_2272, E_2274, E_2275, E_2276, E_2277, E_2278,
 		E_2280, E_2286, E_2288, E_2290,
@@ -179,7 +179,6 @@ private:
 	void ChooseNextPattern();
 
 	void PlayPattern();
-	void Move();
 	void UpdateUI(); //캐릭터 UI가 있으면 이후 업데이트
 	float GetRadBtwTrgt();
 	void RotateToTarget(float ratio1, float ratio2); // 
@@ -379,7 +378,7 @@ private:
 
 	Vector3 velocity; //속력 : 실제 움직임
 
-	Pattern curPattern = ENERGYBULLET;
+	Pattern curPattern = S_SRUSH;
 	State curState = E_0152; //= 기본 스테이트;
 	State preState = curState;
 
@@ -423,6 +422,8 @@ private:
 	const float rot45 = 0.785f;
 
 	float radDifference = 0.0f;
+
+	int whichPat = 0;
 
 public:
 	float maxHP = 5000;

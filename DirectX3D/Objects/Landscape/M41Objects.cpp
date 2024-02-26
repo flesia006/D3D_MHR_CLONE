@@ -30,6 +30,11 @@ M41Objects::M41Objects()
     sm414_005_04->Pos() = Vector3(3809, 231.7, 395.1);
     sm414_005_04->Rot() = Vector3(0.034, XM_PI, 0);
     sm414_005_04->UpdateWorld();
+
+    sm414_007_00_2 = new Model("sm414_007_00");
+    sm414_007_00_2->SetTag("sm414_007_00_2");
+    sm414_007_00_2->Pos() = Vector3(-373.4, 209.3, 2854.1);
+    sm414_007_00_2->UpdateWorld();
 }
 
 M41Objects::~M41Objects()
@@ -38,7 +43,8 @@ M41Objects::~M41Objects()
 
 void M41Objects::Update()
 {
-    sm414_005_04->UpdateWorld();
+    
+    
 }
 
 void M41Objects::Render()
@@ -48,6 +54,8 @@ void M41Objects::Render()
     sm415_000_01->Render();
     sm414_007_00->Render();
     sm414_005_04->Render();
+
+    sm414_007_00_2->Render();
     M42A01->Render();
 
     grass->SetShader(L"Basic/Texture2.hlsl");
