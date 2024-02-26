@@ -586,6 +586,7 @@ void Valphalk::B_Sidestep()
 void Valphalk::Dead()
 {
 	SetState(E_3023);
+	E3023();
 }
 
 void Valphalk::SetEvent(int clip, Event event, float timeRatio)
@@ -670,19 +671,23 @@ void Valphalk::ChooseNextPattern()
 
 	int i = rand() % 2;
 
-	switch (2)
+	switch (i)
 	{
-	case 0:	curPattern = FORWARDBOOM;	  break;
-	case 1:	curPattern = B_DUMBLING;	  break;
-	case 2:	curPattern = B_DOWNBLAST;	  break;
-		//case 0:	curPattern = S_LEGATK;  break;
-		//case 1:	curPattern = S_STABATK;	  break;
-		//case 2:	curPattern = ENERGYBULLET;	  break;
-		//case 4:	curPattern = SIDESTEP;	  break;
-		//case 6:	curPattern = FULLBURST;	  break;
-		//case 7:	curPattern = HS_FLYFALLATK;	  break;
-		//case 9:	curPattern = B_WINGATK;	  break;
-		//case 10:curPattern = B_SWINGATK;	  break;
+	//case 0:	curPattern = S_LEGATK;	  break;
+	//case 1:	curPattern = S_STABATK;	  break;
+	//case 2:	curPattern = B_SWINGATK;	  break;
+	//case 3:	curPattern = B_WINGATK;		  break;
+	//case 4:	curPattern = B_DOWNBLAST;		  break;
+	//case 5:	curPattern = B_DUMBLING;	  break;
+	//case 6:	curPattern = HS_FLYBLAST;		  break;
+	//case 7:	curPattern = HS_FLYFALLATK;		  break;
+	//case 8:	curPattern = HB_LASERBLAST;	  break;
+	//case 9:	curPattern = ENERGYBULLET;		  break;
+	//case 10:curPattern = FULLBURST;	  break;
+	//case 11:curPattern = SIDESTEP;	  break;
+	//case 12:curPattern = FORWARDBOOM;	  break;
+	case 0:curPattern = STORM;	  break;
+	case 1:curPattern = DEAD;	  break;
 	}
 }
 
@@ -958,7 +963,6 @@ int Valphalk::SetRadAndMirror(bool needMirror)
 void Valphalk::S_LegAtk()
 {
 	static int whichPattern = 0;
-
 	if (sequence == 0) // 사이드스탭 할지 앞다리 찍기 할지 판단
 	{
 		if ((realPos->Pos() - target->GlobalPos()).Length() < 500)
