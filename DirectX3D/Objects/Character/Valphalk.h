@@ -26,7 +26,7 @@ public:
 		E_2188, E_2189, E_2190, E_2192, E_2193, E_2200, E_2200fix,
 		E_2210, E_2211, E_2253, E_2265, E_2267,
 		E_2270, E_2271, E_2272, E_2274, E_2275, E_2276, E_2277, E_2278,
-		E_2280, E_2286, E_2288, E_2290,
+		E_2280, E_2281, E_2282, E_2286, E_2288, E_2290,
 		E_2354, E_2356, E_2359, E_2361, E_2367, E_2368,
 		E_2371, E_2372, E_2373, E_2374, E_2375, E_2376,
 		E_2381, E_2382, E_2383,
@@ -90,6 +90,7 @@ public:
 		S_BACKWINGATK,
 		S_SRUSH,
 		S_JETRUSH,
+		S_BITE,
 		S_TRANSFORM,
 		S_RUNANDBITE,
 		B_SWINGATK,
@@ -143,6 +144,7 @@ private:
 	void S_BackWingAtk();
 	void S_SRush();
 	void S_JetRush();
+	void S_Bite();
 	void S_Transform();
 	void S_RunAndBite();
 	void B_SwingAtk();
@@ -225,8 +227,8 @@ private:
 	void E1163();
 	void E1164();
 	void E2001();
-	void E2002();
-	void E2003();
+	void E2002(float degree = 0);
+	void E2003(float degree = 0);
 	void E2013();
 	void E2015();
 	void E2017();
@@ -276,8 +278,8 @@ private:
 	void E2171();
 
 	void E2173();
-	void E2174();
-	void E2175();
+	void E2174(float degree = 0);
+	void E2175(float degree = 0);
 	void E2185();
 	void E2188();
 	void E2189();
@@ -286,9 +288,10 @@ private:
 	void E2193();
 	void E2200();
 	void E2210();
-	void E2211();
+	void E2211(float degree = 0);
 	void E2253(Vector3 destVec = 0);
 
+	void E2253(Vector3 destVec = 0);
 	void E2265();
 	void E2267();
 	void E2270();
@@ -312,12 +315,14 @@ private:
 	void E2277();
 	void E2278();
 	void E2280();
+	void E2281(float degree = 0);
+	void E2282(float degree = 0);
 	void E2286();
 	void E2288();
 	void E2290();
-	void E2354();
-	void E2356();
-	void E2359();
+	void E2354(float degree = 0);
+	void E2356(float degree = 0);
+	void E2359(float degree = 0);
 	void E2361();
 	void E2367();
 	void E2368();
@@ -356,6 +361,7 @@ private:
 private: // 이벤트 혹은 함수에서 조건이 필요할거 같을때
 	bool LookatPlayer = false;
 	bool OtherPlay = false;
+	bool OtherPlay2 = false;
 	int Count = 0;
 
 private:
@@ -398,7 +404,8 @@ private:
 	/////////////////////////////////////
 	// 공격 콜라이더 (투사체, 폭발 등)	
 	vector<SphereCollider*> bullets;
-	CapsuleCollider* forwardBoom;
+	SphereCollider* forwardBoom;
+	Vector3 forwardBoomPosInit = { 0,-300,-1000 };
 	BoxCollider* fullBurst;
 
 	Vector3 fullBurstScale;
@@ -430,6 +437,8 @@ private:
 	float playRatioForE0071 = 0.0f;
 
 	int whichPat = 0;
+
+	bool isReverse = false;
 
 public:
 	float maxHP = 5000;
