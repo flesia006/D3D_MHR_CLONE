@@ -89,6 +89,8 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 	ReadClip("E_2151");
 	ReadClip("E_2152");
 	ReadClip("E_2153");
+	ReadClip("E_2171");
+
 	ReadClip("E_2173");
 	ReadClip("E_2174");
 	ReadClip("E_2175");
@@ -688,6 +690,7 @@ void Valphalk::PlayPattern()
 	case Valphalk::S_SRUSH:		    S_SRush();			break;
 	case Valphalk::S_JETRUSH:		S_JetRush();		break;
 	case Valphalk::S_TRANSFORM:		S_Transform();		break;
+	case Valphalk::S_RUNANDBITE:	S_RunAndBite();		break;
 	case Valphalk::B_SWINGATK:		B_SwingAtk();		break;
 	case Valphalk::B_WINGATK:		B_WingAtk();		break;
 	case Valphalk::B_DOWNBLAST:		B_DownBlast();		break;
@@ -1024,6 +1027,52 @@ void Valphalk::S_JetRush()
 
 void Valphalk::S_Transform()
 {
+}
+
+void Valphalk::S_RunAndBite()
+{
+	static int whichPattern = 0;
+
+	if (sequence == 0) // 각도 정하기
+	{
+		whichPattern = SetRadAndMirror(true);
+		sequence++;
+	}
+
+	if (sequence == 1) // 각도 정했으면 방향 전환함수
+	{
+		switch (whichPattern)
+		{
+		case 1:		SetState(E_0059);  E0059();				break;
+		case 2:		SetState(E_0060);  E0060(-XM_PIDIV2);	break; // 왼쪽 90
+		case 3:		SetState(E_0061);  E0061(-XM_PI);		break; // 왼쪽 180
+		case 4:		SetState(E_0059);  E0059();				break;
+		case 5:		SetState(E_0060);  E0060(XM_PIDIV2);	break;
+		case 6:		SetState(E_0061);  E0061(XM_PI);		break;
+		}
+	}
+
+	if (sequence == 2) // 공격 모션
+	{
+		SetState(E_0071);
+		E0071();
+	}
+
+	if (sequence == 3) // 공격 모션
+	{
+		SetState(E_2171);
+		E2171();
+	}
+
+	if (sequence == 4) // 마무리
+	{
+		if (whichPattern == 4 || whichPattern == 5 || whichPattern == 6)
+			Scale().x *= -1;
+		whichPattern = 0;
+		ChooseNextPattern();
+	}
+
+
 }
 
 void Valphalk::B_SwingAtk() 
@@ -1454,29 +1503,83 @@ void Valphalk::E0055()//걷기 Loop
 void Valphalk::E0059()//앞으로 뛰기
 {
 	PLAY;
+
+	if (RATIO > 0.0134f && RATIO < 0.5)
+		RotateToTarget(0.0134f, 0.414f);
+
+
 	if (RATIO > 0.98)
-		SetState(E_0071);
+	{
+		sequence++;
+	}
 }
 
-void Valphalk::E0060()//앞으로 뛰다가 좌회전
+void Valphalk::E0060(float degree)//앞으로 뛰다가 좌회전
 {
 	PLAY;
+
+	if (RATIO > 0.0134f && RATIO < 0.5f)
+		RotateToTarget(0.0134f, 0.414f);
+
+
 	if (RATIO > 0.98)
-		SetState(E_0071);
+	{
+		sequence++;
+		Rot().y += degree;
+	}
 }
 
-void Valphalk::E0061()//앞으로 뛰다가 뒤돌기(좌회전)
+void Valphalk::E0061(float degree)//앞으로 뛰다가 뒤돌기(좌회전)
 {
 	PLAY;
+
+	if (RATIO > 0.0134f && RATIO < 0.5f)
+		RotateToTarget(0.0134f, 0.414f);
+
+
 	if (RATIO > 0.98)
-		SetState(E_0071);
+	{
+		sequence++;
+		Rot().y += degree;
+	}
 }
 
 void Valphalk::E0071()//뛰기Loop
 {
 	PLAY;
-	if (RATIO > 0.98)
-		SetState(E_0003);
+	
+	if ((target->GlobalPos() - realPos->Pos()).Length() < 3000.0f)
+	{
+		if (!playOncePerPattern)
+		{
+			if (RATIO < 0.106)
+				playRatioForE0071 = 0.106;
+			else if (RATIO > 0.106 && RATIO < 0.36)
+				playRatioForE0071 = 0.36;
+			else if (RATIO > 0.36 && RATIO < 0.62)
+				playRatioForE0071 = 0.62;
+			else if (RATIO > 0.62 && RATIO < 0.88)
+				playRatioForE0071 = 0.88;
+			else 
+				playRatioForE0071 = 0.106;
+
+			playOncePerPattern = true;
+		}
+
+		if (RATIO > playRatioForE0071)
+		{
+			sequence++;
+			playRatioForE0071 = 0.0f;
+			playOncePerPattern = false;
+		}
+	}
+
+
+
+	if (RATIO > 0.96)
+	{
+		Loop();
+	}
 		//계속 뛰게 하려면 수정 필요
 }
 
@@ -2140,6 +2243,16 @@ void Valphalk::E2146() // 전방 폭격 후 날개 접으면서 착지
 	}
 }
 
+void Valphalk::E2171()
+{
+	PLAY;
+
+	if (RATIO > 0.97)
+	{
+		sequence++;
+	}
+}
+
 void Valphalk::E2129()  // 전방 앞다리 치기 준비
 {
 	PLAY;
@@ -2303,7 +2416,7 @@ void Valphalk::E2188()//정면 보고 왼발 들기
 {
 	PLAY;
 
-	if (RATIO > 0.16 && RATIO > 0.8)
+	if (RATIO > 0.16 && RATIO > 0.8) 
 		RotateToTarget(0.16, 0.7);
 
 

@@ -15,7 +15,7 @@ ModelExportScene::ModelExportScene()
 
 
 // Å¬¸³µþ ¶§ ÀÌ°Å ¾²¼À
-    ExportClip(name, "E_2200fix");
+    ExportClip(name, "E_2171");
 //    ExportClip(name, "E_2374");
 //    ExportClip(name, "E_2375");
 //    ExportClip(name, "E_2376");
