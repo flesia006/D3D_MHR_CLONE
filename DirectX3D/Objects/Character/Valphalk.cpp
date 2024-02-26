@@ -160,9 +160,11 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 		bullets[i]->SetActive(true);
 	}
 
-	forwardBoom = new CapsuleCollider();
+	forwardBoom = new SphereCollider();
 	forwardBoom->Scale() *=500;
 	forwardBoom->SetColor(1, 0, 0);
+	forwardBoom->Pos() = forwardBoomPosInit;
+	forwardBoom->SetParent(head);
 	forwardBoom->SetActive(false);
 	{//fullBurst
 		fullBurst = new BoxCollider();
@@ -171,7 +173,7 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 		fullBurst->SetParent(head);
 		fullBurst->Pos().z -= 5000;
 		fullBurst->SetColor(1, 0, 0);
-		fullBurst->SetActive(false);
+		fullBurst->SetActive(false);		
 		fullBurstScale = fullBurst->Scale();
 		fullBurstPos = fullBurst->Pos();
 		fullBurstRot = fullBurst->Rot();
@@ -198,45 +200,11 @@ Valphalk::~Valphalk()
 
 void Valphalk::Update()
 {
-	/*
-	if (KEY_DOWN('1'))
-	{
-		curState = E_2265;
-		LookatPlayer = false;
-	}
-
-	if (KEY_DOWN('2'))
-	{
-		curState = E_2265;
-		LookatPlayer = true;
-	}
-
-	if (KEY_DOWN('3'))
-	{
-		curState = E_2265;
-		OtherPlay = true;
-	}
-	if (KEY_DOWN('4'))
-	{
-		curState = E_2129;
-	}
-	
-
-	if (KEY_DOWN('7'))
-		FullBurst();
-		//SetState(E_2001);
-	if (KEY_DOWN('8'))
-		ForwardBoom();
-
-	if (KEY_DOWN('9'))
-		SetState(E_2173);
-	*/
-	//Pos().x = 2000; // 임시 고정용
 	UpdateWorld();
 	if (preState != curState)
 		GetClip(preState)->ResetPlayTime();
 		
-	Move();
+	//Move();
 	PlayPattern();
 	// hitCheck() 
 	head->Pos() = realPos->Pos() + Vector3::Up() * 200;
@@ -261,7 +229,7 @@ void Valphalk::Update()
 	for (SphereCollider* bullet : bullets)
 		bullet->UpdateWorld();
 	
-	forwardBoom->Update();
+	forwardBoom->UpdateWorld();
 	fullBurst->UpdateWorld();
 
 	head->Rot().y = Rot().y;
@@ -419,11 +387,19 @@ void Valphalk::EnergyBullets()
 		case 2:		SetState(E_0152);  E0152(-XM_PIDIV2);	break; // 왼쪽 90
 		case 3:		SetState(E_0153);  E0153(-XM_PI);		break;
 		case 4:		SetState(E_0151);  E0151();				break;//;  E2091();  break;
-		case 5:		SetState(E_0152);  E0152(XM_PIDIV2);	break;
-		case 6:		SetState(E_0153);  E0153(XM_PI);		break;
+		case 5:		SetState(E_0152);  E0152(+XM_PIDIV2);	break;
+		case 6:		SetState(E_0153);  E0153(+XM_PI);		break;
 		}	
 	}
+
 	if (sequence == 2)
+	{
+		if (whichPattern == 4 || whichPattern == 5 || whichPattern == 6)
+			Scale().x *= -1;
+		sequence++;
+	}
+
+	if (sequence == 3)
 	{
 		for (int i = 0; i < bullets.size(); ++i)
 		{
@@ -437,19 +413,14 @@ void Valphalk::EnergyBullets()
 		}
 		sequence++;
 	}
-	if (sequence == 3)
-	{
-		bulletTime += DELTA;
-		SetState(E_2079); E2079();		
-
-		if (bulletTime > 2.5f)
-			sequence++;
-	}
-
 	if (sequence == 4)
-	{ 
-		if (whichPattern == 4 || whichPattern == 5 || whichPattern == 6)
-			Scale().x *= -1;
+	{
+		SetState(E_2079); E2079();		
+		bulletTime += DELTA;
+
+	}
+	if (sequence == 5)
+	{ 	
 		bulletTime = 0; 
 		whichPattern = 0; 
 		ChooseNextPattern(); 
@@ -459,19 +430,20 @@ void Valphalk::EnergyBullets()
 void Valphalk::ForwardBoom()
 {
 	static int whichPattern = 0;
-	if (sequence == 0) // 각도 정하기
+	if (sequence == 0) // 각도 정했으면 방향 전환함수
 	{
 		whichPattern = SetRadAndMirror(true);
 		sequence++;
 	}
+
 	if (sequence == 1) // 각도 정했으면 방향 전환함수
 	{
 		switch (whichPattern)
 		{
-		case 1:		SetState(E_0151);  E0151();				break;// SetState(E_2091);  E2091();  break;
+		case 1:		SetState(E_0151);  E0151();				break;
 		case 2:		SetState(E_0152);  E0152(-XM_PIDIV2);	break; // 왼쪽 90
-		case 3:		SetState(E_0153);  E0153(-XM_PI);		break;
-		case 4:		SetState(E_0151);  E0151();				break;//;  E2091();  break;
+		case 3:		SetState(E_0153);  E0153(-XM_PI);		break; // 왼쪽 180
+		case 4:		SetState(E_0151);  E0151();				break;
 		case 5:		SetState(E_0152);  E0152(XM_PIDIV2);	break;
 		case 6:		SetState(E_0153);  E0153(XM_PI);		break;
 		}
@@ -498,33 +470,64 @@ void Valphalk::FullBurst()
 		whichPattern = SetRadAndMirror(true);
 		sequence++;
 	}
-	if (sequence == 1) // 각도 정했으면 방향 전환함수
+	if (sequence == 1)
+	{
+		if (radBtwTarget > -XM_PIDIV2 && radBtwTarget <= 0) // 왼쪽 90도
+		{
+			whichPattern = 1;
+			radDifference = radBtwTarget;
+		}
+		else if (radBtwTarget > -XM_PI && radBtwTarget <= -XM_PIDIV2) // 왼뒤쪽 90도 
+		{
+			whichPattern = 2;
+			radDifference = radBtwTarget + XM_PI;
+		}
+		else if (radBtwTarget > 0 && radBtwTarget <= XM_PIDIV2) // 전방 오쪽 90도
+		{
+			whichPattern = 3;
+			radDifference = radBtwTarget;
+		}
+		else if (radBtwTarget > XM_PIDIV2 && radBtwTarget <= XM_PI) // 오른뒤쪽 90도
+		{
+			whichPattern = 4;
+			radDifference = radBtwTarget - XM_PI;
+		}
+
+		sequence++;
+	}
+
+	if (sequence == 2)
 	{
 		switch (whichPattern)
 		{
-		case 1:		SetState(E_2354);  E2354(); break;// SetState(E_0098);  E0098(-0.1f);  break;
-		case 2:		SetState(E_0098);  E0098(-XM_PIDIV2);  break; // 왼쪽 90
-		case 3:		SetState(E_0099);  E0099(-XM_PI);  break;
-		case 4:		SetState(E_2354);  E2354(); break; //SetState(E_0098);  E0098(0.1f);  break;
-		case 5:		SetState(E_0098);  E0098(+XM_PIDIV2);  break;
-		case 6:		SetState(E_0099);  E0099(+XM_PI);  break;
+		case 1:		SetState(E_2354);  E2354();			break;
+		case 2:		SetState(E_2356);  E2356(-XM_PI);	break;
+		case 3:		SetState(E_2354);  E2354();			break;
+		case 4:		SetState(E_2356);  E2356(XM_PI);	break;
 		}
 	}
-	if (sequence == 2)
+	//if (sequence == 1) // 각도 정했으면 방향 전환함수
+	//{
+	//	switch (whichPattern)
+	//	{
+	//	case 1:		SetState(E_2354);  E2354(); break;// SetState(E_0098);  E0098(-0.1f);  break;
+	//	case 2:		SetState(E_2354);  E2354(-XM_PIDIV2);  break; // 왼쪽 90
+	//	case 3:		SetState(E_2356);  E2356(-XM_PI);  break;
+	//	case 4:		SetState(E_2354);  E2354(); break; //SetState(E_0098);  E0098(0.1f);  break;
+	//	case 5:		SetState(E_2354);  E2354(+XM_PIDIV2);  break;
+	//	case 6:		SetState(E_2359);  E2359(+XM_PI);  break;
+	//	}
+	//}
+	if (sequence == 3)
 	{
-		if (whichPattern == 4 || whichPattern == 5 || whichPattern == 6)
+		if (whichPattern == 3 || whichPattern == 4)
 			Scale().x *= -1;
 		sequence++;
 	}
-	if (sequence == 3)
-	{
-		if (whichPattern != 1 && whichPattern != 4) { SetState(E_2361); E2361(); }
-	}
-	if (sequence == 4) { SetState(E_2367); E2367(); }
-	if (sequence == 5) 
-	{ 
-		SetState(E_2368); E2368(); 
-	}
+	if (sequence == 4){ SetState(E_2361); E2361(); }	
+	if (sequence == 5){ SetState(E_2367); E2367(); }
+	if (sequence == 6){ SetState(E_2368); E2368(); }
+	if (sequence == 7) ChooseNextPattern();
 }
 
 void Valphalk::Hupgi()
@@ -668,8 +671,18 @@ void Valphalk::ChooseNextPattern()
 	int i = rand() % 2;
 	switch (i)
 	{
-	case 0:	curPattern = S_LEGATK;  break;
-	case 1:	curPattern = S_STABATK;	  break;
+	case 0:	curPattern = FORWARDBOOM;	  break;
+	case 1:	curPattern = B_DUMBLING;	  break;
+	//case 0:	curPattern = S_LEGATK;  break;
+	//case 1:	curPattern = S_STABATK;	  break;
+	//case 2:	curPattern = ENERGYBULLET;	  break;
+	//case 4:	curPattern = SIDESTEP;	  break;
+	//case 6:	curPattern = FULLBURST;	  break;
+	//case 7:	curPattern = HS_FLYFALLATK;	  break;
+	//case 8:	curPattern = B_DOWNBLAST;	  break;
+	//case 9:	curPattern = B_WINGATK;	  break;
+	//case 10:curPattern = B_SWINGATK;	  break;
+
 	//case 2:	curPattern = B_DUMBLING;  break;
 	//default: curPattern = B_DUMBLING; break;
 	}
@@ -710,113 +723,113 @@ void Valphalk::PlayPattern()
 	default:		break;
 	}	
 }
-
-void Valphalk::Move()
-{
-	switch (curState)
-	{
-	case Valphalk::E_0003:	 E0003();		break;
-	case Valphalk::E_0007:	 E0007();		break;
-	case Valphalk::E_0043:	 E0043();		break;
-	case Valphalk::E_0044:	 E0044();		break;
-	case Valphalk::E_0045:	 E0045();		break;
-	case Valphalk::E_0055:	 E0055();		break;
-	case Valphalk::E_0059:	 E0059();		break;
-	case Valphalk::E_0060:	 E0060();		break;
-	case Valphalk::E_0061:	 E0061();		break;
-	case Valphalk::E_0071:	 E0071();		break;
-	case Valphalk::E_0097:	 E0097();		break;
-	case Valphalk::E_0146:	 E0146();		break;
-	case Valphalk::E_0147:	 E0147();		break;
-	case Valphalk::E_0151:	 E0151();		break;
-	case Valphalk::E_0152:	 E0152();		break;
-	case Valphalk::E_0153:	 E0153();		break;
-	case Valphalk::E_0164:	 E0164();		break;
-	case Valphalk::E_0165:	 E0165();		break;
-	case Valphalk::E_0166:	 E0166();		break;
-	case Valphalk::E_0171:	 E0171();		break;
-	case Valphalk::E_0172:	 E0172();		break;
-	case Valphalk::E_0173:	 E0173();		break;
-	case Valphalk::E_0178:	 E0178();		break;
-	case Valphalk::E_0179:	 E0179();		break;
-	case Valphalk::E_0180:	 E0180();		break;
-	case Valphalk::E_0186:	 E0186();		break;
-	case Valphalk::E_0187:	 E0187();		break;
-	case Valphalk::E_0188:	 E0188();		break;
-	case Valphalk::E_1151:	 E1151();		break;
-	case Valphalk::E_1155:	 E1155();		break;
-	case Valphalk::E_1163:	 E1163();		break;
-	case Valphalk::E_1164:	 E1164();		break;
-	case Valphalk::E_2001:	 E2001();		break;
-	case Valphalk::E_2002:	 E2002();		break;
-	case Valphalk::E_2003:	 E2003();		break;
-	case Valphalk::E_2013:	 E2013();		break;
-	case Valphalk::E_2015:	 E2015();		break;
-	case Valphalk::E_2017:	 E2017();		break;
-	case Valphalk::E_2019:	 E2019();		break;
-	case Valphalk::E_2020:	 E2020();		break;
-	case Valphalk::E_2022:	 E2022();		break;
-	case Valphalk::E_2027:	 E2027();		break;
-	case Valphalk::E_2032:	 E2032();		break;
-	case Valphalk::E_2033:	 E2033();		break;
-	case Valphalk::E_2054:	 E2054();		break;
-	case Valphalk::E_2056:	 E2056();		break;
-	case Valphalk::E_2079:	 E2079();		break;
-	case Valphalk::E_2091:	 E2091();		break;
-	case Valphalk::E_2092:	 E2092();		break;
-	case Valphalk::E_2093:	 E2093();		break;
-	case Valphalk::E_2103:	 E2103();		break;
-	case Valphalk::E_2106:	 E2106();		break;
-	case Valphalk::E_2118:	 E2118();		break;
-	case Valphalk::E_2121:	 E2121();		break;
-	case Valphalk::E_2129:	 E2129();		break;
-	case Valphalk::E_2130:	 E2130();		break;
-	case Valphalk::E_2131:	 E2131();		break;
-	case Valphalk::E_2133:	 E2133();		break;
-	case Valphalk::E_2134:	 E2134();		break;
-	case Valphalk::E_2141:	 E2141();		break;
-	case Valphalk::E_2144:	 E2144();		break;
-	case Valphalk::E_2145:	 E2145();		break;
-	case Valphalk::E_2146:	 E2146();		break;
-	case Valphalk::E_2173:	 E2173();		break;
-	case Valphalk::E_2174:	 E2174();		break;
-	case Valphalk::E_2175:	 E2175();		break;
-	case Valphalk::E_2185:	 E2185();		break;
-	case Valphalk::E_2188:	 E2188();		break;
-	case Valphalk::E_2189:	 E2189();		break;
-	case Valphalk::E_2190:	 E2190();		break;
-	case Valphalk::E_2192:	 E2192();		break;
-	case Valphalk::E_2193:	 E2193();		break;
-	case Valphalk::E_2200:	 E2200();		break;
-	case Valphalk::E_2210:	 E2210();		break;
-	case Valphalk::E_2211:	 E2211();		break;
-	case Valphalk::E_2253:	 E2253();		break;
-	case Valphalk::E_2265:	 E2265();		break;
-	case Valphalk::E_2267:	 E2267();		break;
-	case Valphalk::E_2270:   E2270();       break;
-	case Valphalk::E_2276:   E2276();       break;
-	case Valphalk::E_2277:   E2277();       break;
-	case Valphalk::E_2278:   E2278();       break;
-	case Valphalk::E_2280:   E2280();		break;
-	case Valphalk::E_2286:   E2286();		break;
-	case Valphalk::E_2288:   E2288();		break;
-	case Valphalk::E_2290:   E2290();		break;
-	case Valphalk::E_2354:	 E2354();		break;
-	case Valphalk::E_2356:	 E2356();		break;
-	case Valphalk::E_2359:	 E2359();		break;
-	case Valphalk::E_2361:	 E2361();		break;
-	case Valphalk::E_2367:	 E2367();		break;
-	case Valphalk::E_2368:	 E2368();		break;
-	case Valphalk::E_2371:   E2371();		break;
-	case Valphalk::E_2374:   E2374();		break;
-	case Valphalk::E_2375:   E2375();		break;
-	case Valphalk::E_2376:   E2376();		break;
-	case Valphalk::E_2403:   E2403();       break;
-	case Valphalk::E_3001:	 E3001();		break;
-	case Valphalk::E_3023:	 E3023();		break;
-	case Valphalk::E_4013:	 E4013();		break;
-	}
-}
+//
+//void Valphalk::Move()
+//{
+//	switch (curState)
+//	{
+//	case Valphalk::E_0003:	 E0003();		break;
+//	case Valphalk::E_0007:	 E0007();		break;
+//	case Valphalk::E_0043:	 E0043();		break;
+//	case Valphalk::E_0044:	 E0044();		break;
+//	case Valphalk::E_0045:	 E0045();		break;
+//	case Valphalk::E_0055:	 E0055();		break;
+//	case Valphalk::E_0059:	 E0059();		break;
+//	case Valphalk::E_0060:	 E0060();		break;
+//	case Valphalk::E_0061:	 E0061();		break;
+//	case Valphalk::E_0071:	 E0071();		break;
+//	case Valphalk::E_0097:	 E0097();		break;
+//	case Valphalk::E_0146:	 E0146();		break;
+//	case Valphalk::E_0147:	 E0147();		break;
+//	//case Valphalk::E_0151:	 E0151();		break;
+//	//case Valphalk::E_0152:	 E0152();		break;
+//	//case Valphalk::E_0153:	 E0153();		break;
+//	case Valphalk::E_0164:	 E0164();		break;
+//	case Valphalk::E_0165:	 E0165();		break;
+//	case Valphalk::E_0166:	 E0166();		break;
+//	case Valphalk::E_0171:	 E0171();		break;
+//	case Valphalk::E_0172:	 E0172();		break;
+//	case Valphalk::E_0173:	 E0173();		break;
+//	case Valphalk::E_0178:	 E0178();		break;
+//	case Valphalk::E_0179:	 E0179();		break;
+//	case Valphalk::E_0180:	 E0180();		break;
+//	case Valphalk::E_0186:	 E0186();		break;
+//	case Valphalk::E_0187:	 E0187();		break;
+//	case Valphalk::E_0188:	 E0188();		break;
+//	case Valphalk::E_1151:	 E1151();		break;
+//	case Valphalk::E_1155:	 E1155();		break;
+//	case Valphalk::E_1163:	 E1163();		break;
+//	case Valphalk::E_1164:	 E1164();		break;
+//	case Valphalk::E_2001:	 E2001();		break;
+//	case Valphalk::E_2002:	 E2002();		break;
+//	case Valphalk::E_2003:	 E2003();		break;
+//	case Valphalk::E_2013:	 E2013();		break;
+//	case Valphalk::E_2015:	 E2015();		break;
+//	case Valphalk::E_2017:	 E2017();		break;
+//	case Valphalk::E_2019:	 E2019();		break;
+//	case Valphalk::E_2020:	 E2020();		break;
+//	case Valphalk::E_2022:	 E2022();		break;
+//	case Valphalk::E_2027:	 E2027();		break;
+//	case Valphalk::E_2032:	 E2032();		break;
+//	case Valphalk::E_2033:	 E2033();		break;
+//	case Valphalk::E_2054:	 E2054();		break;
+//	case Valphalk::E_2056:	 E2056();		break;
+//	case Valphalk::E_2079:	 E2079();		break;
+//	case Valphalk::E_2091:	 E2091();		break;
+//	case Valphalk::E_2092:	 E2092();		break;
+//	case Valphalk::E_2093:	 E2093();		break;
+//	case Valphalk::E_2103:	 E2103();		break;
+//	case Valphalk::E_2106:	 E2106();		break;
+//	case Valphalk::E_2118:	 E2118();		break;
+//	case Valphalk::E_2121:	 E2121();		break;
+//	case Valphalk::E_2129:	 E2129();		break;
+//	case Valphalk::E_2130:	 E2130();		break;
+//	case Valphalk::E_2131:	 E2131();		break;
+//	case Valphalk::E_2133:	 E2133();		break;
+//	case Valphalk::E_2134:	 E2134();		break;
+//	case Valphalk::E_2141:	 E2141();		break;
+//	case Valphalk::E_2144:	 E2144();		break;
+//	case Valphalk::E_2145:	 E2145();		break;
+//	case Valphalk::E_2146:	 E2146();		break;
+//	case Valphalk::E_2173:	 E2173();		break;
+//	case Valphalk::E_2174:	 E2174();		break;
+//	case Valphalk::E_2175:	 E2175();		break;
+//	case Valphalk::E_2185:	 E2185();		break;
+//	case Valphalk::E_2188:	 E2188();		break;
+//	case Valphalk::E_2189:	 E2189();		break;
+//	case Valphalk::E_2190:	 E2190();		break;
+//	case Valphalk::E_2192:	 E2192();		break;
+//	case Valphalk::E_2193:	 E2193();		break;
+//	case Valphalk::E_2200:	 E2200();		break;
+//	case Valphalk::E_2210:	 E2210();		break;
+//	case Valphalk::E_2211:	 E2211();		break;
+//	case Valphalk::E_2253:	 E2253();		break;
+//	case Valphalk::E_2265:	 E2265();		break;
+//	case Valphalk::E_2267:	 E2267();		break;
+//	case Valphalk::E_2270:   E2270();       break;
+//	case Valphalk::E_2276:   E2276();       break;
+//	case Valphalk::E_2277:   E2277();       break;
+//	case Valphalk::E_2278:   E2278();       break;
+//	case Valphalk::E_2280:   E2280();		break;
+//	case Valphalk::E_2286:   E2286();		break;
+//	case Valphalk::E_2288:   E2288();		break;
+//	case Valphalk::E_2290:   E2290();		break;
+//	case Valphalk::E_2354:	 E2354();		break;
+//	case Valphalk::E_2356:	 E2356();		break;
+//	case Valphalk::E_2359:	 E2359();		break;
+//	case Valphalk::E_2361:	 E2361();		break;
+//	case Valphalk::E_2367:	 E2367();		break;
+//	case Valphalk::E_2368:	 E2368();		break;
+//	case Valphalk::E_2371:   E2371();		break;
+//	case Valphalk::E_2374:   E2374();		break;
+//	case Valphalk::E_2375:   E2375();		break;
+//	case Valphalk::E_2376:   E2376();		break;
+//	case Valphalk::E_2403:   E2403();       break;
+//	case Valphalk::E_3001:	 E3001();		break;
+//	case Valphalk::E_3023:	 E3023();		break;
+//	case Valphalk::E_4013:	 E4013();		break;
+//	}
+//}
 
 void Valphalk::UpdateUI()
 {
@@ -888,7 +901,7 @@ int Valphalk::SetRadAndMirror(bool needMirror)
 			radDifference = radBtwTarget - XM_PIDIV2;
 			Scale().x *= -1;
 		}
-		else if (radBtwTarget > rot135 && radBtwTarget <= -XM_PI) // 오른뒤쪽 45도
+		else if (radBtwTarget > rot135 && radBtwTarget <= XM_PI) // 오른뒤쪽 45도
 		{
 			whichPattern = 6;
 			radDifference = radBtwTarget - XM_PI;
@@ -1302,8 +1315,9 @@ void Valphalk::B_Dumbling()
 
 	}
 
-	if (sequence == 4) // 공격 모션
+	if (sequence == 4) // 공격 모션 + 포격
 	{
+		forwardBoom->Pos() = 0;		
 		SetState(E_2152);
 		E2152();
 	}
@@ -1311,6 +1325,7 @@ void Valphalk::B_Dumbling()
 
 	if (sequence == 5) // 공격 모션
 	{
+		forwardBoom->Pos() = forwardBoomPosInit;
 		SetState(E_2153);
 		E2153();
 	}
@@ -1600,7 +1615,7 @@ void Valphalk::E0151()//포격상태 Idle
 	if (RATIO > 0.22f && RATIO < 0.49f)
 		RotateToTarget(0.22f, 0.49f);
 
-	if (RATIO > 0.98)
+	if (RATIO > 0.97)
 	{
 		sequence++;
 	}
@@ -1610,13 +1625,13 @@ void Valphalk::E0152(float degree)//포격상태 좌회전
 {
 	PLAY;
 
-	if (RATIO > 0.32f && RATIO < 0.53f)
-		RotateToTarget(0.32f, 0.53f);
+	if (RATIO > 0.22f && RATIO < 0.49f)
+		RotateToTarget(0.22f, 0.49f);
 
 	if (RATIO > 0.98)
 	{
-		sequence++;
 		Rot().y += degree;
+		sequence++;
 	}
 }
 
@@ -1624,13 +1639,13 @@ void Valphalk::E0153(float degree)//포격상태 뒤로회전
 {
 	PLAY;
 
-	if (RATIO > 0.0879f && RATIO < 0.495f)
-		RotateToTarget(0.0879f, 0.495f);
+	if (RATIO > 0.22f && RATIO < 0.49f)
+		RotateToTarget(0.22f, 0.49f);
 
-	if (RATIO > 0.98)
+	if (RATIO > 0.99)
 	{
-		sequence++;
 		Rot().y += degree;
+		sequence++;
 	}
 }
 
@@ -1999,7 +2014,6 @@ void Valphalk::E2079()
 	if (RATIO > 0.98)
 	{
 		sequence++;
-		SetState(E_0151);
 	}
 }
 
@@ -2183,11 +2197,9 @@ void Valphalk::E2144() // 전방 폭격 시작
 
 void Valphalk::E2145() // 전방 폭격 시전 후 백스텝
 {
-	forwardBoom->Pos() = { Pos().x,Pos().y - 700,Pos().z + 1000 };
-
 	forwardBoom->SetActive(true);
 	PLAY;
-	if (RATIO > 0.8f)
+	if (RATIO > 0.6f)
 		forwardBoom->SetActive(false);
 
 	if (RATIO > 0.98)
@@ -2313,7 +2325,10 @@ void Valphalk::E2151()
 void Valphalk::E2152()
 {
 	PLAY;
-
+	if (RATIO > 0.5 && RATIO < 0.51)
+		forwardBoom->SetActive(true);
+	if (RATIO > 0.6)
+		forwardBoom->SetActive(false);
 
 	if (RATIO > 0.97)
 	{
@@ -2324,6 +2339,7 @@ void Valphalk::E2152()
 void Valphalk::E2153()
 {
 	PLAY;
+
 	if (RATIO > 0.97)
 	{
 		sequence++;
@@ -2775,28 +2791,47 @@ void Valphalk::E2290()
 	}
 }
 
-void Valphalk::E2354() // 풀버스트 전방
+void Valphalk::E2354(float degree) // 풀버스트 전방
 {
 	combo = false;
 	PLAY;
-	if (RATIO > 0.0176f && RATIO < 0.176f)
-		RotateToTarget(0.0176f, 0.176f);
+	if (RATIO > 0.0176f && RATIO < 0.876f)
+		RotateToTarget(0.0176f, 0.876f);
+
 	if (RATIO > 0.98)
 	{
 		sequence++;
-		Pos() = realPos->Pos();
+		Rot().y += degree;
+
+		//Pos() = realPos->Pos();
 	}
 		
 }
 
-void Valphalk::E2356() // 풀버스트 좌회전 뒤로 돌기
+void Valphalk::E2356(float degree) // 풀버스트 좌회전 뒤로 돌기
 {
 	PLAY;
+	if (RATIO > 0.17 && RATIO < 0.56)
+		RotateToTarget(0.17, 0.56);
+
+	if (RATIO > 0.98)
+	{
+		sequence++;
+		Rot().y += degree;
+	}
 }
 
-void Valphalk::E2359() // 풀버스트 우회전 뒤로 돌기
+void Valphalk::E2359(float degree) // 풀버스트 우회전 뒤로 돌기
 {
 	PLAY;
+	if (RATIO > 0.17 && RATIO < 0.56)
+		RotateToTarget(0.17, 0.56);
+
+	if (RATIO > 0.98)
+	{
+		sequence++;
+		Rot().y += degree;
+	}
 }
 
 void Valphalk::E2361() // 풀버스트 준비
@@ -2807,7 +2842,7 @@ void Valphalk::E2361() // 풀버스트 준비
 	if (RATIO > 0.98)
 	{
 		sequence++;
-		Pos() = realPos->Pos();
+		//Pos() = realPos->Pos();
 	}
 
 }
@@ -2827,7 +2862,7 @@ void Valphalk::E2367() // 풀버스트 발사
 	if (RATIO > 0.98)
 	{
 		sequence++;
-		Pos() = realPos->Pos();
+		//Pos() = realPos->Pos();
 	}
 	
 }

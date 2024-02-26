@@ -179,7 +179,7 @@ private:
 	void ChooseNextPattern();
 
 	void PlayPattern();
-	void Move();
+	//void Move();
 	void UpdateUI(); //캐릭터 UI가 있으면 이후 업데이트
 	float GetRadBtwTrgt();
 	void RotateToTarget(float ratio1, float ratio2); // 
@@ -311,9 +311,9 @@ private:
 	void E2286();
 	void E2288();
 	void E2290();
-	void E2354();
-	void E2356();
-	void E2359();
+	void E2354(float degree = 0);
+	void E2356(float degree = 0);
+	void E2359(float degree = 0);
 	void E2361();
 	void E2367();
 	void E2368();
@@ -394,7 +394,8 @@ private:
 	/////////////////////////////////////
 	// 공격 콜라이더 (투사체, 폭발 등)	
 	vector<SphereCollider*> bullets;
-	CapsuleCollider* forwardBoom;
+	SphereCollider* forwardBoom;
+	Vector3 forwardBoomPosInit = { 0,-300,-1000 };
 	BoxCollider* fullBurst;
 
 	Vector3 fullBurstScale;
