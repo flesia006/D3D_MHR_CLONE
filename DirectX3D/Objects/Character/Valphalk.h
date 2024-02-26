@@ -90,6 +90,7 @@ public:
 		S_BACKWINGATK,
 		S_SRUSH,
 		S_JETRUSH,
+		S_BITE,
 		S_TRANSFORM,
 		B_SWINGATK,
 		B_WINGATK,
@@ -142,6 +143,7 @@ private:
 	void S_BackWingAtk();
 	void S_SRush();
 	void S_JetRush();
+	void S_Bite();
 	void S_Transform();
 	void B_SwingAtk();
 	void B_WingAtk();
@@ -179,7 +181,6 @@ private:
 	void ChooseNextPattern();
 
 	void PlayPattern();
-	void Move();
 	void UpdateUI(); //캐릭터 UI가 있으면 이후 업데이트
 	float GetRadBtwTrgt();
 	void RotateToTarget(float ratio1, float ratio2); // 
@@ -224,8 +225,8 @@ private:
 	void E1163();
 	void E1164();
 	void E2001();
-	void E2002();
-	void E2003();
+	void E2002(float degree = 0);
+	void E2003(float degree = 0);
 	void E2013();
 	void E2015();
 	void E2017();
@@ -272,8 +273,8 @@ private:
 	void E2145();
 	void E2146();
 	void E2173();
-	void E2174();
-	void E2175();
+	void E2174(float degree = 0);
+	void E2175(float degree = 0);
 	void E2185();
 	void E2188();
 	void E2189();
@@ -282,7 +283,7 @@ private:
 	void E2193();
 	void E2200();
 	void E2210();
-	void E2211();
+	void E2211(float degree = 0);
 	void E2253(Vector3 destVec = 0);
 
 	void E2265();
@@ -413,6 +414,8 @@ private:
 	const float rot45 = 0.785f;
 
 	float radDifference = 0.0f;
+
+	bool isReverse = false;
 
 public:
 	float maxHP = 5000;
