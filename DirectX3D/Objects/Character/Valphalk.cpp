@@ -684,7 +684,7 @@ void Valphalk::ChooseNextPattern()
 
 void Valphalk::PlayPattern()
 {
-	
+
 	switch (curPattern)
 	{
 	case Valphalk::S_LEGATK:		S_LegAtk();			break;
@@ -718,6 +718,7 @@ void Valphalk::PlayPattern()
 	case Valphalk::DEAD:			Dead();				break;
 	default:		break;
 	}
+}
 
 void Valphalk::UpdateUI()
 {
@@ -1800,7 +1801,7 @@ void Valphalk::E0071()//¶Ù±âLoop
 {
 	PLAY;
 	
-	if ((target->GlobalPos() - realPos->Pos()).Length() < 3000.0f)
+	if ((target->GlobalPos() - realPos->Pos()).Length() < 4500.0f)
 	{
 		if (!playOncePerPattern)
 		{
@@ -1825,7 +1826,6 @@ void Valphalk::E0071()//¶Ù±âLoop
 			playOncePerPattern = false;
 		}
 	}
-
 
 
 	if (RATIO > 0.96)
