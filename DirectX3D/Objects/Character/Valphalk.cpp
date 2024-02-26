@@ -669,17 +669,17 @@ void Valphalk::ChooseNextPattern()
 	initialRad = Rot().y;
 
 	int i = rand() % 2;
-	switch (i)
+	switch (2)
 	{
 	case 0:	curPattern = FORWARDBOOM;	  break;
 	case 1:	curPattern = B_DUMBLING;	  break;
+	case 2:	curPattern = B_DOWNBLAST;	  break;
 	//case 0:	curPattern = S_LEGATK;  break;
 	//case 1:	curPattern = S_STABATK;	  break;
 	//case 2:	curPattern = ENERGYBULLET;	  break;
 	//case 4:	curPattern = SIDESTEP;	  break;
 	//case 6:	curPattern = FULLBURST;	  break;
 	//case 7:	curPattern = HS_FLYFALLATK;	  break;
-	//case 8:	curPattern = B_DOWNBLAST;	  break;
 	//case 9:	curPattern = B_WINGATK;	  break;
 	//case 10:curPattern = B_SWINGATK;	  break;
 
@@ -852,7 +852,10 @@ float Valphalk::GetRadBtwTrgt()
 
 void Valphalk::RotateToTarget(float ratio1, float ratio2)
 {
-	float rad = ((RATIO - ratio1) / (ratio2 - ratio1)) * radDifference; 
+	float curRatio = RATIO;
+	curRatio = Clamp(ratio1, ratio2, curRatio);
+
+	float rad = ((curRatio - ratio1) / (ratio2 - ratio1)) * radDifference;
 
 	Rot().y = initialRad + rad;
 }
@@ -1612,7 +1615,7 @@ void Valphalk::E0151()//포격상태 Idle
 {
 	PLAY;
 
-	if (RATIO > 0.22f && RATIO < 0.49f)
+	if (RATIO > 0.22f && RATIO < 0.62f)
 		RotateToTarget(0.22f, 0.49f);
 
 	if (RATIO > 0.97)
@@ -1625,7 +1628,7 @@ void Valphalk::E0152(float degree)//포격상태 좌회전
 {
 	PLAY;
 
-	if (RATIO > 0.22f && RATIO < 0.49f)
+	if (RATIO > 0.22f && RATIO < 0.62f)
 		RotateToTarget(0.22f, 0.49f);
 
 	if (RATIO > 0.98)
@@ -1639,7 +1642,7 @@ void Valphalk::E0153(float degree)//포격상태 뒤로회전
 {
 	PLAY;
 
-	if (RATIO > 0.22f && RATIO < 0.49f)
+	if (RATIO > 0.22f && RATIO < 0.62f)
 		RotateToTarget(0.22f, 0.49f);
 
 	if (RATIO > 0.99)
