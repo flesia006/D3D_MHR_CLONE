@@ -362,6 +362,7 @@ private: // 이벤트 혹은 함수에서 조건이 필요할거 같을때
 	bool OtherPlay = false;
 	bool OtherPlay2 = false;
 	int Count = 0;
+	float timer = 0.0f;
 
 private:
 	vector<Transform*> transforms;
@@ -388,8 +389,9 @@ private:
 
 	Vector3 velocity; //속력 : 실제 움직임
 
-	Pattern curPattern = S_RUNANDBITE;
-	State curState = E_0152; //= 기본 스테이트;
+
+	Pattern curPattern = HB_LASERBLAST;
+	State curState = E_0043; //= 기본 스테이트;
 	State preState = curState;
 
 	UINT sequence = 0;
@@ -406,6 +408,9 @@ private:
 	SphereCollider* forwardBoom;
 	Vector3 forwardBoomPosInit = { 0,-300,-1000 };
 	BoxCollider* fullBurst;
+	BoxCollider* effectBox1;
+	BoxCollider* effectBox2;
+	BoxCollider* effectBox3;
 
 	Vector3 fullBurstScale;
 	Vector3 fullBurstPos;

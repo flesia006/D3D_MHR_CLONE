@@ -163,7 +163,7 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 		bullets[i] = new SphereCollider();
 		bullets[i]->Scale() *= 100;
 		bullets[i]->SetColor(1, 0, 0);
-		bullets[i]->SetActive(true);
+		bullets[i]->SetActive(false);
 	}
 
 	forwardBoom = new SphereCollider();
@@ -184,6 +184,47 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 		fullBurstPos = fullBurst->Pos();
 		fullBurstRot = fullBurst->Rot();
 	}
+
+	effectBox1 = new BoxCollider();
+	effectBox2 = new BoxCollider();
+	effectBox3 = new BoxCollider();
+	effectBox1->Scale().x = 1500;
+	effectBox1->Scale().y = 450;
+	effectBox1->Scale().z = 400;
+	effectBox1->SetParent(transforms[RWING]);
+	effectBox1->Pos().x -= 1500;
+	effectBox1->Pos().z -= 265;
+	effectBox1->Rot().x = 0.1f;
+	effectBox1->Rot().y -= 0.25f;
+	effectBox1->SetColor(1, 0, 0);
+	effectBox1->UpdateWorld();
+	effectBox1->SetActive(false);
+	effectBox2->Scale().x = 1500;
+	effectBox2->Scale().y = 450;
+	effectBox2->Scale().z = 400;
+	effectBox2->SetParent(transforms[RWING]);
+	effectBox2->Pos().x -= 1230;
+	effectBox2->Pos().y -= 830;
+	effectBox2->Pos().z -= 250;
+	effectBox2->Rot().x = 0.1f;
+	effectBox2->Rot().y -= 0.25f;
+	effectBox2->Rot().z = 0.6f;
+	effectBox2->SetColor(1, 0, 0);
+	effectBox2->UpdateWorld();
+	effectBox2->SetActive(false);
+	effectBox3->Scale().x = 1500;
+	effectBox3->Scale().y = 450;
+	effectBox3->Scale().z = 400;
+	effectBox3->SetParent(transforms[RWING]);
+	effectBox3->Pos().x -= 1270;
+	effectBox3->Pos().y = 830;
+	effectBox3->Pos().z -= 105;
+	effectBox3->Rot().x = 0.1f;
+	effectBox3->Rot().y -= 0.25f;
+	effectBox3->Rot().z -= 0.6f;
+	effectBox3->SetColor(1, 0, 0);
+	effectBox3->UpdateWorld();
+	effectBox3->SetActive(false);
 }
 
 Valphalk::~Valphalk()
@@ -202,6 +243,9 @@ Valphalk::~Valphalk()
 	delete fullBurst;
 	delete head;
 	delete realPos;
+	delete effectBox1;
+	delete effectBox2;
+	delete effectBox3;
 }
 
 void Valphalk::Update()
@@ -236,6 +280,10 @@ void Valphalk::Update()
 	
 	forwardBoom->UpdateWorld();
 	fullBurst->UpdateWorld();
+
+	effectBox1->UpdateWorld();
+	effectBox2->UpdateWorld();
+	effectBox3->UpdateWorld();
 
 	head->Rot().y = Rot().y;
 	
@@ -286,10 +334,12 @@ void Valphalk::Render()
 			boxCollider->Render();
 	}
 	for (int i = 0; i < bullets.size(); ++i)
-		bullets[i]->Render();
+	bullets[i]->Render();
 	forwardBoom->Render();
 	fullBurst->Render();
-
+	effectBox1->Render();
+	effectBox2->Render();
+	effectBox3->Render();
 	ModelAnimator::Render();
 	realPos->Render();
 }
@@ -660,7 +710,7 @@ void Valphalk::ChooseNextPattern()
 
 	int i = rand() % 2;
 
-	switch (i)
+	switch (0)
 	{
 	//case 0:	curPattern = S_LEGATK;	  break;
 	//case 1:	curPattern = S_STABATK;	  break;
@@ -675,8 +725,9 @@ void Valphalk::ChooseNextPattern()
 	//case 10:curPattern = FULLBURST;	  break;
 	//case 11:curPattern = SIDESTEP;	  break;
 	//case 12:curPattern = FORWARDBOOM;	  break;
-	case 0:curPattern = S_SRUSH;	  break;////////////////////
-	case 1:curPattern = DEAD;	  break;
+	case 0:curPattern = HB_LASERBLAST;	  break;
+	//case 1:curPattern = HS_FLYBLAST;	  break;
+	//case 1:curPattern = DEAD;	  break;
 	}
 }
 
@@ -1437,7 +1488,7 @@ void Valphalk::B_Dumbling()
 
 	}
 
-	if (sequence == 4) // 공격 모션 + 포격
+	if (sequence == 4) // 공격 모션 + 포격otherplay
 	{
 		forwardBoom->Pos() = 0;		
 		SetState(E_2152);
@@ -1495,6 +1546,55 @@ void Valphalk::HS_FlyBlast()
 		case 4:	SetState(E_2280); E2280(); break;
 		case 5:	SetState(E_2281); E2281(XM_PIDIV2); break;
 		case 6:	SetState(E_2282); E2282(XM_PI); break;
+		}
+	}
+
+	if (sequence == 3 && 
+		GetClip(E_2280)->GetPlaytime() > 0.723f ||
+		GetClip(E_2281)->GetPlaytime() > 0.723f ||
+		GetClip(E_2282)->GetPlaytime() > 0.723f)
+	{
+		for (int i = 0; i < bullets.size(); ++i)
+		{
+			bullets[0]->Pos() = GetTranslationByNode(61);
+			bullets[1]->Pos() = GetTranslationByNode(64);
+			bullets[2]->Pos() = GetTranslationByNode(67);
+			bullets[3]->Pos() = GetTranslationByNode(81);
+			bullets[4]->Pos() = GetTranslationByNode(84);
+			bullets[5]->Pos() = GetTranslationByNode(87);
+			bullets[i]->SetActive(true);
+		}
+		//sequence++;
+		LookatPlayer = true;
+
+		if (LookatPlayer)
+		{
+			timer += DELTA;
+		}
+	}
+
+	if (LookatPlayer)
+	{
+		float randX = Random(target->Pos().x - 10, target->Pos().x + 10);
+		float randZ = Random(target->Pos().z - 10, target->Pos().z + 10);
+		
+		if (sequence >= 3)
+		{
+			for (int i = 0; i < bullets.size(); ++i)
+			{
+				bullets[i]->Pos().x = Lerp(bullets[i]->Pos().x, randX, 0.021f);
+				bullets[i]->Pos().z = Lerp(bullets[i]->Pos().z, randZ, 0.021f);
+				
+				bullets[i]->Pos().y -= 1500 * DELTA;
+			}
+		}
+		for (int i = 0; i < bullets.size(); ++i)
+		{
+			if (bullets[i]->Pos().y < 0)
+			{
+				bullets[i]->SetActive(false);
+				LookatPlayer = false;
+			}
 		}
 	}
 
@@ -3181,7 +3281,7 @@ void Valphalk::E2290()
 
 	if (RATIO > 0.98f)
 	{
-		Pos() = GetTranslationByNode(1);
+		//Pos() = GetTranslationByNode(1);
 		combo = false;
 		sequence++;
 	}
@@ -3486,7 +3586,17 @@ void Valphalk::E2403()
 
 	if (RATIO > 0.256f && RATIO < 0.684f)
 	{
+		effectBox1->SetActive(true);
+		effectBox2->SetActive(true);
+		effectBox3->SetActive(true);
 		SetColliderAttack(RWING, 0.684f);
+	}
+
+	if (RATIO > 0.69f)
+	{
+		effectBox1->SetActive(false);
+		effectBox2->SetActive(false);
+		effectBox3->SetActive(false);
 	}
 
 	if (RATIO > 0.97f)
