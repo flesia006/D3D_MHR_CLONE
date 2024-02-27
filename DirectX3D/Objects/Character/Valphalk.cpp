@@ -193,7 +193,7 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 	effectBox1->Scale().z = 400;
 	effectBox1->SetParent(transforms[RWING]);
 	effectBox1->Pos().x -= 1500;
-	effectBox1->Pos().z -= 265;
+	effectBox1->Pos().z -= 250;
 	effectBox1->Rot().x = 0.1f;
 	effectBox1->Rot().y -= 0.25f;
 	effectBox1->SetColor(1, 0, 0);
@@ -205,7 +205,7 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 	effectBox2->SetParent(transforms[RWING]);
 	effectBox2->Pos().x -= 1230;
 	effectBox2->Pos().y -= 830;
-	effectBox2->Pos().z -= 250;
+	effectBox2->Pos().z -= 265;
 	effectBox2->Rot().x = 0.1f;
 	effectBox2->Rot().y -= 0.25f;
 	effectBox2->Rot().z = 0.6f;
@@ -218,7 +218,7 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 	effectBox3->SetParent(transforms[RWING]);
 	effectBox3->Pos().x -= 1270;
 	effectBox3->Pos().y = 830;
-	effectBox3->Pos().z -= 105;
+	effectBox3->Pos().z -= 110;
 	effectBox3->Rot().x = 0.1f;
 	effectBox3->Rot().y -= 0.25f;
 	effectBox3->Rot().z -= 0.6f;
@@ -313,7 +313,6 @@ void Valphalk::Update()
 	//}
 	//Fight();
 	//if (KEY_DOWN('4'))
-	//	SetState(E_0003);
 }
 
 void Valphalk::PreRender()
