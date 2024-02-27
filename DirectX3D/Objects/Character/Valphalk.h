@@ -371,6 +371,7 @@ private: // 이벤트 혹은 함수에서 조건이 필요할거 같을때
 	bool OtherPlay = false;
 	bool OtherPlay2 = false;
 	int Count = 0;
+	float timer = 0.0f;
 
 private:
 	vector<Transform*> transforms;
@@ -416,6 +417,9 @@ private:
 	SphereCollider* forwardBoom;
 	Vector3 forwardBoomPosInit = { 0,-300,-1000 };
 	BoxCollider* fullBurst;
+	BoxCollider* effectBox1;
+	BoxCollider* effectBox2;
+	BoxCollider* effectBox3;
 
 	Vector3 fullBurstScale;
 	Vector3 fullBurstPos;
