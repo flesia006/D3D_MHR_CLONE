@@ -21,6 +21,7 @@ ValphalkTestScene::ValphalkTestScene()
 ValphalkTestScene::~ValphalkTestScene()
 {
 	delete valphalk;
+	delete capsule;
 	//delete player;
 }
 
