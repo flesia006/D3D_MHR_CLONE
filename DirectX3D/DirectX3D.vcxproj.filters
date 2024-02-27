@@ -849,4 +849,7 @@
     <None Include="Shaders\VertexHeader.hlsli" />
     <None Include="Shaders\PixelHeader.hlsli" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="패턴.txt" />
+  </ItemGroup>
 </Project>

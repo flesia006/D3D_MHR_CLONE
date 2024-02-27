@@ -34,6 +34,7 @@ public:
 		E_3001, E_3023,
 		/* 앉아서 포효 자세 */
 		E_4013,
+		E_4071, E_4073, E_4074, 
 		/*서서 포효 자세*/
 		E_22005
 	};
@@ -93,6 +94,7 @@ public:
 		S_BITE,
 		S_TRANSFORM,
 		S_RUNANDBITE,
+		S_RUNTOTRGT,
 		B_SWINGATK,
 		B_WINGATK,
 		B_DOWNBLAST,
@@ -103,7 +105,7 @@ public:
 		HS_FLYBLAST,
 		HS_FLYFALLATK,
 		HS_FLYWINGBLAST,
-		HB_LASERBLAST,
+		HB_WINGATK,
 		FINDROAR,
 		ANGERROAR,
 		STORM,
@@ -114,6 +116,7 @@ public:
 		B_SIDESTEP,
 		FORWARDBOOM,
 		DEAD,
+		PATROL
 	};
 
 
@@ -178,9 +181,9 @@ private:
 	void SetState(State state, float rad = 0);
 
 	void Patrol();
-	void Fight();
 
 	void ChooseNextPattern();
+	void ConditionCheck();
 
 	void PlayPattern();
 	void UpdateUI(); //캐릭터 UI가 있으면 이후 업데이트
@@ -352,6 +355,12 @@ private:
 	void E3001();
 	void E3023();
 	void E4013();
+
+	void E4071();
+	void E4073();
+	void E4074();
+
+
 	void E22005();
 
 	void ColliderAdd();
@@ -362,6 +371,7 @@ private: // 이벤트 혹은 함수에서 조건이 필요할거 같을때
 	bool OtherPlay = false;
 	bool OtherPlay2 = false;
 	int Count = 0;
+	float timer = 0.0f;
 
 private:
 	vector<Transform*> transforms;
@@ -379,6 +389,7 @@ private:
 	Vector3 initForward = Vector3::Zero();
 	Transform* head = nullptr;
 	CapsuleCollider* realPos = nullptr;
+	Transform* realPosition = nullptr;
 	CapsuleCollider* tempCollider = nullptr;
 
 	// 샘플 무조건 바뀜
@@ -388,7 +399,7 @@ private:
 
 	Vector3 velocity; //속력 : 실제 움직임
 
-	Pattern curPattern = S_RUNANDBITE;
+	Pattern curPattern = S_LEGATK;
 	State curState = E_0152; //= 기본 스테이트;
 	State preState = curState;
 
@@ -406,6 +417,9 @@ private:
 	SphereCollider* forwardBoom;
 	Vector3 forwardBoomPosInit = { 0,-300,-1000 };
 	BoxCollider* fullBurst;
+	BoxCollider* effectBox1;
+	BoxCollider* effectBox2;
+	BoxCollider* effectBox3;
 
 	Vector3 fullBurstScale;
 	Vector3 fullBurstPos;
@@ -419,10 +433,27 @@ private:
 
 	//ColliderName colliderName;
 	// 파티클 부분
-	bool encounter = false;
-	bool fight = false;
-	bool fight2 = false;
+//	bool encounter = false;
+//	bool fight = false;
+//	bool fight2 = false;
 	bool combo = false;
+
+	bool isSlashMode = true;
+	bool isHupGi = true;
+
+	bool  isFindTrgt = false;
+	float roarAfterTimer = 0.0f;  // 인식 포효 이후부터 타이머 시작
+	float hupGiTimer = 0.0f;	  //  2분 지나면 끝
+	bool  needHupGi = false;
+
+	bool angerRoar90 = false;
+	bool angerRoar40 = false;
+	float angerTimer = 0.0f;
+	bool isAnger = false;
+
+	bool  ult50 = false;
+
+
 
 	bool playOncePerPattern = false;
 
