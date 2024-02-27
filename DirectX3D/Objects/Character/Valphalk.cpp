@@ -658,8 +658,8 @@ void Valphalk::ChooseNextPattern()
 	radDifference = 0;
 	initialRad = Rot().y;
 
-	int i = rand() % 2;
-
+	int i = rand() % 4;
+	
 	switch (i)
 	{
 	//case 0:	curPattern = S_LEGATK;	  break;
@@ -675,8 +675,10 @@ void Valphalk::ChooseNextPattern()
 	//case 10:curPattern = FULLBURST;	  break;
 	//case 11:curPattern = SIDESTEP;	  break;
 	//case 12:curPattern = FORWARDBOOM;	  break;
-	case 0:curPattern = S_SRUSH;	  break;////////////////////
-	case 1:curPattern = DEAD;	  break;
+	case 0:curPattern = B_DOWNBLAST;	  break;////////////
+	case 1:curPattern = ENERGYBULLET;	  break;
+	case 2:curPattern = FORWARDBOOM;	  break;
+	case 3:curPattern = B_DUMBLING;	  break;
 	}
 }
 
@@ -696,8 +698,6 @@ void Valphalk::PlayPattern()
 	case Valphalk::B_SWINGATK:		B_SwingAtk();		break;
 	case Valphalk::B_WINGATK:		B_WingAtk();		break;
 	case Valphalk::B_DOWNBLAST:		B_DownBlast();		break;
-	case Valphalk::B_FWDBLAST:		B_FwdBlast();		break;
-	case Valphalk::B_ENERGYBLAST:	B_EnergyBlast();	break;
 	case Valphalk::B_DUMBLING:		B_Dumbling();		break;
 	case Valphalk::B_TRANSFORM:		B_Trnasform();		break;
 	case Valphalk::B_SIDESTEP:		B_Sidestep();		break;
@@ -1207,7 +1207,7 @@ void Valphalk::S_RunAndBite()
 		}
 	}
 
-	if (sequence == 2) // 공격 모션
+	if (sequence == 2) // 달리기 모션
 	{
 		SetState(E_0071);
 		E0071();
@@ -1460,6 +1460,17 @@ void Valphalk::B_Dumbling()
 
 void Valphalk::B_Trnasform()
 {
+	if (sequence == 0) // 모션
+	{
+		SetState(E_0147);	E0147();
+		sequence++;
+	}
+
+	if (sequence == 1)
+	{
+		//isSlashmode = true;
+		ChooseNextPattern();
+	}
 }
 
 void Valphalk::HS_FlyBlast()
@@ -1873,8 +1884,9 @@ void Valphalk::E0146() //대기상태에서 포격모드로 변환
 void Valphalk::E0147()//포격형 -> 참격형 변환
 {
 	PLAY;
+
 	if (RATIO > 0.98)
-		SetState(E_0003);
+		sequence++;
 }
 
 void Valphalk::E0151()//포격상태 Idle
@@ -2539,6 +2551,13 @@ void Valphalk::E2171()
 {
 	PLAY;
 
+	if (RATIO > 0.237 && RATIO < 0.417)
+	{
+		SetColliderAttack(HEAD, 0.417);
+		SetColliderAttack(NECK, 0.417);
+		SetColliderAttack(CHEST, 0.417);
+	}
+
 	if (RATIO > 0.97)
 	{
 		sequence++;
@@ -2738,7 +2757,7 @@ void Valphalk::E2188()//정면 보고 왼발 들기
 {
 	PLAY;
 
-	if (RATIO > 0.16 && RATIO > 0.8) 
+	if (RATIO > 0.16 && RATIO < 0.8) 
 		RotateToTarget(0.16, 0.7);
 
 
@@ -2750,7 +2769,7 @@ void Valphalk::E2189()//정면에서 왼쪽 보고 왼발 들기
 {
 	PLAY;
 
-	if (RATIO > 0.19 && RATIO > 0.8)
+	if (RATIO > 0.19 && RATIO < 0.8)
 		RotateToTarget(0.19, 0.7);
 
 	if (RATIO > 0.97)
@@ -2764,7 +2783,7 @@ void Valphalk::E2190()//정면에서 왼쪽으로 돌면서 뒤보고 왼발 들기
 {
 	PLAY;
 
-	if (RATIO > 0.1 && RATIO > 0.8)
+	if (RATIO > 0.1 && RATIO < 0.8)
 		RotateToTarget(0.1, 0.7);
 
 	if (RATIO > 0.97)
@@ -2778,7 +2797,7 @@ void Valphalk::E2192()//정면에서 오른쪽 보고 왼발 들기
 {
 	PLAY;
 
-	if (RATIO > 0.19 && RATIO > 0.8)
+	if (RATIO > 0.19 && RATIO < 0.8)
 		RotateToTarget(0.19, 0.7);
 
 	if (RATIO > 0.97)
@@ -2792,7 +2811,7 @@ void Valphalk::E2193()//정면에서 오른쪽으로 돌면서 뒤보고 왼발 들기
 {
 	PLAY;
 
-	if (RATIO > 0.1 && RATIO > 0.8)
+	if (RATIO > 0.1 && RATIO < 0.8)
 		RotateToTarget(0.1, 0.7);
 
 	if (RATIO > 0.97)
@@ -2806,6 +2825,19 @@ void Valphalk::E2200()//S자 몸통박치기
 {
 	PLAY;
 
+	if (RATIO > 0.073 && RATIO < 0.197)
+	{
+		SetColliderAttack(HEAD, 0.197);
+		SetColliderAttack(NECK, 0.197);
+		SetColliderAttack(CHEST, 0.197);
+	}
+
+	if (RATIO > 0.277 && RATIO < 0.445)
+	{
+		SetColliderAttack(HEAD, 0.445);
+		SetColliderAttack(NECK, 0.445);
+		SetColliderAttack(CHEST, 0.445);
+	}
 
 	if (RATIO > 0.98)
 	{
