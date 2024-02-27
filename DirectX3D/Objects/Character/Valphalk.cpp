@@ -1822,8 +1822,8 @@ void Valphalk::HS_FlyBlast()
 		{
 			for (int i = 0; i < bullets.size(); ++i)
 			{
-				bullets[i]->Pos().x = Lerp(bullets[i]->Pos().x, randX, 0.021f);
-				bullets[i]->Pos().z = Lerp(bullets[i]->Pos().z, randZ, 0.021f);
+				bullets[i]->Pos().x = Lerp(bullets[i]->Pos().x, randX, 0.002f);
+				bullets[i]->Pos().z = Lerp(bullets[i]->Pos().z, randZ, 0.002f);
 				
 				bullets[i]->Pos().y -= 1500 * DELTA;
 			}
