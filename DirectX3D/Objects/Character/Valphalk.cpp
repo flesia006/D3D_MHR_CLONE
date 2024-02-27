@@ -263,20 +263,6 @@ void Valphalk::Update()
 	//Fight();
 	//if (KEY_DOWN('4'))
 	//	SetState(E_0003);
-	if (KEY_DOWN('5') || bulletTime > 0.001f)
-		EnergyBullets();
-	if (KEY_DOWN('6') || stormTime > 0.001f)
-		Storm();
-
-	if (KEY_DOWN('7'))
-		FullBurst();
-		//SetState(E_2001);
-	if (KEY_DOWN('8'))
-		ForwardBoom();
-	
-	if (KEY_DOWN('9'))
-		SetState(E_2173);		
-
 }
 
 void Valphalk::PreRender()
@@ -684,7 +670,7 @@ void Valphalk::ChooseNextPattern()
 	//case 10:curPattern = FULLBURST;	  break;
 	//case 11:curPattern = SIDESTEP;	  break;
 	//case 12:curPattern = FORWARDBOOM;	  break;
-	case 0:curPattern = STORM;	  break;
+	case 0:curPattern = S_SRUSH;	  break;////////////////////
 	case 1:curPattern = DEAD;	  break;
 	}
 }

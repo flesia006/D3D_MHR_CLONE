@@ -286,7 +286,6 @@ private:
 	void E2211(float degree = 0);
 	void E2253(Vector3 destVec = 0);
 
-	void E2253(Vector3 destVec = 0);
 	void E2265();
 	void E2267();
 	void E2270();

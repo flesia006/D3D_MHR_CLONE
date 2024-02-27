@@ -3,7 +3,7 @@
 
 ModelExportScene::ModelExportScene()
 {
-    string name = "Valphalk";
+    string name = "Player";
     string file = "Models/FBX/" + name + ".fbx";
     //ModelExporter* exporter;
     string clipName;
@@ -15,35 +15,20 @@ ModelExportScene::ModelExportScene()
 
 
 // Å¬¸³µþ ¶§ ÀÌ°Å ¾²¼À
-//    ExportClip(name, "E_2265");
-//    ExportClip(name, "E_2374");
-//    ExportClip(name, "E_2375");
-//    ExportClip(name, "E_2376");
-//    ExportClip(name, "E_2272");
-//    ExportClip(name, "E_2274");
-//    ExportClip(name, "E_2275");
-//    ExportClip(name, "E_2276");
-//    ExportClip(name, "E_2277");
-//    ExportClip(name, "E_2278");
-//    ExportClip(name, "E_0146");
-//    ExportClip(name, "E_2001");
-//    ExportClip(name, "E_2002");
-//    ExportClip(name, "E_2003");
-//    ExportClip(name, "E_2013");
-//    ExportClip(name, "E_2015");
-//    ExportClip(name, "E_2017");
-//    ExportClip(name, "E_2019");
-//    ExportClip(name, "E_2020");
-//    ExportClip(name, "E_2022");
-//    ExportClip(name, "E_2027");
-//    ExportClip(name, "E_2032");
-//    ExportClip(name, "E_2033");
-//    ExportClip(name, "E_2359");
-//    ExportClip(name, "E_2361");
-//    ExportClip(name, "E_2367");
-//    ExportClip(name, "E_2368");
-//    ExportClip(name, "E_2356");
-//    ExportClip(name, "E_2056");
+    ExportClip(name, "R_013");
+    ExportClip(name, "R_024");
+    ExportClip(name, "R_031");
+    ExportClip(name, "R_041");
+    ExportClip(name, "R_104");
+    ExportClip(name, "R_142");
+    ExportClip(name, "R_143");
+    ExportClip(name, "R_144");
+    ExportClip(name, "R_400");
+    ExportClip(name, "R_401");
+    ExportClip(name, "R_402");
+    ExportClip(name, "R_600");
+    ExportClip(name, "R_601");
+    ExportClip(name, "R_602");
 //    ExportClip(name, "E_2106");
 //    ExportClip(name, "E_2107");
 //    ExportClip(name, "E_2108");
@@ -60,7 +45,7 @@ ModelExportScene::ModelExportScene()
 //    ExportClip(name, "E_2193");
 //    ExportClip(name, "E_2200");
 //    ExportClip(name, "E_2210");
-    ExportClip(name, "E_2288");
+//    ExportClip(name, "E_2288");
 
 //    name = "E_0003";
 //    exporter = new ModelExporter(name, file);
