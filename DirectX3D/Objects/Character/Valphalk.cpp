@@ -672,8 +672,8 @@ void Valphalk::ChooseNextPattern()
 	radDifference = 0;
 	initialRad = Rot().y;
 
-	int i = rand() % 11;
-	switch (0)
+	int i = rand() % 12;
+	switch (i)
 	{
 	case 0:	curPattern = STORM;	  break;
 	case 1:	curPattern = B_DUMBLING;	  break;
@@ -686,7 +686,8 @@ void Valphalk::ChooseNextPattern()
 	case 8:	curPattern = HS_FLYFALLATK;	  break;
 	case 9:	curPattern = B_WINGATK;	  break;
 	case 10:curPattern = B_SWINGATK;	  break;
-
+	case 11:curPattern = S_JETRUSH;	  break;
+	}
 	//case 2:	curPattern = B_DUMBLING;  break;
 	//default: curPattern = B_DUMBLING; break;
 //	}
