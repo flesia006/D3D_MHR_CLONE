@@ -89,6 +89,8 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 	ReadClip("E_2151");
 	ReadClip("E_2152");
 	ReadClip("E_2153");
+	ReadClip("E_2171");
+
 	ReadClip("E_2173");
 	ReadClip("E_2174");
 	ReadClip("E_2175");
@@ -99,6 +101,7 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 	ReadClip("E_2192");
 	ReadClip("E_2193");
 	ReadClip("E_2200");
+	ReadClip("E_2200fix");
 
 	ReadClip("E_2210");
 	ReadClip("E_2211");
@@ -206,7 +209,7 @@ void Valphalk::Update()
 	UpdateWorld();
 	if (preState != curState)
 		GetClip(preState)->ResetPlayTime();
-		
+
 	PlayPattern();
 	// hitCheck() 
 	head->Pos() = realPos->Pos() + Vector3::Up() * 200;
@@ -299,6 +302,8 @@ void Valphalk::GUIRender()
 	ImGui::DragFloat3("RealPos", (float*)&realPos->Pos());
 	ImGui::DragFloat3("RealRot", (float*)&realPos->Rot());
 	ImGui::DragFloat("radbtwTrgt", (float*)&radBtwTarget);
+
+	ImGui::DragInt("whichPat", &whichPat);
 	ImGui::Text("curHP : %f", curHP);
 	//for (int i = 0; i < colliders.size(); i++)
 	//{
@@ -677,7 +682,7 @@ void Valphalk::ChooseNextPattern()
 
 void Valphalk::PlayPattern()
 {
-	
+
 	switch (curPattern)
 	{
 	case Valphalk::S_LEGATK:		S_LegAtk();			break;
@@ -687,6 +692,7 @@ void Valphalk::PlayPattern()
 	case Valphalk::S_JETRUSH:		S_JetRush();		break;
 	case Valphalk::S_BITE:			S_Bite();			break;
 	case Valphalk::S_TRANSFORM:		S_Transform();		break;
+	case Valphalk::S_RUNANDBITE:	S_RunAndBite();		break;
 	case Valphalk::B_SWINGATK:		B_SwingAtk();		break;
 	case Valphalk::B_WINGATK:		B_WingAtk();		break;
 	case Valphalk::B_DOWNBLAST:		B_DownBlast();		break;
@@ -710,7 +716,6 @@ void Valphalk::PlayPattern()
 	case Valphalk::DEAD:			Dead();				break;
 	default:		break;
 	}
-
 }
 
 void Valphalk::UpdateUI()
@@ -1025,6 +1030,39 @@ void Valphalk::S_BackWingAtk()
 
 void Valphalk::S_SRush()
 {
+	static int whichPattern = 0;
+	if (sequence == 0) // 각도 정하기
+	{
+		whichPat = SetRadAndMirror(false);
+		sequence++;
+	}
+
+	if (sequence == 1) // 각도 정했으면 방향 전환함수
+	{
+
+		switch (whichPat)
+		{
+		case 1:	SetState(E_2188); E2188();  break;
+		case 2:	SetState(E_2189); E2189();  break; // 왼 90
+		case 3:	SetState(E_2190); E2190();  break; // 왼 180
+		case 4:	SetState(E_2188); E2188();  break;
+		case 5:	SetState(E_2192); E2192();  break; // 오 90
+		case 6:	SetState(E_2193); E2193();  break; // 오 180
+		}
+	}
+
+	if (sequence == 2) // 공격 모션
+	{
+		SetState(E_2200);
+		E2200();
+	}
+
+	if (sequence == 3) // 마무리
+	{
+		whichPat = 0;
+		ChooseNextPattern();
+	}
+
 }
 
 void Valphalk::S_JetRush()
@@ -1144,6 +1182,52 @@ void Valphalk::S_Bite()
 
 void Valphalk::S_Transform()
 {
+}
+
+void Valphalk::S_RunAndBite()
+{
+	static int whichPattern = 0;
+
+	if (sequence == 0) // 각도 정하기
+	{
+		whichPattern = SetRadAndMirror(true);
+		sequence++;
+	}
+
+	if (sequence == 1) // 각도 정했으면 방향 전환함수
+	{
+		switch (whichPattern)
+		{
+		case 1:		SetState(E_0059);  E0059();				break;
+		case 2:		SetState(E_0060);  E0060(-XM_PIDIV2);	break; // 왼쪽 90
+		case 3:		SetState(E_0061);  E0061(-XM_PI);		break; // 왼쪽 180
+		case 4:		SetState(E_0059);  E0059();				break;
+		case 5:		SetState(E_0060);  E0060(XM_PIDIV2);	break;
+		case 6:		SetState(E_0061);  E0061(XM_PI);		break;
+		}
+	}
+
+	if (sequence == 2) // 공격 모션
+	{
+		SetState(E_0071);
+		E0071();
+	}
+
+	if (sequence == 3) // 공격 모션
+	{
+		SetState(E_2171);
+		E2171();
+	}
+
+	if (sequence == 4) // 마무리
+	{
+		if (whichPattern == 4 || whichPattern == 5 || whichPattern == 6)
+			Scale().x *= -1;
+		whichPattern = 0;
+		ChooseNextPattern();
+	}
+
+
 }
 
 void Valphalk::B_SwingAtk() 
@@ -1670,29 +1754,82 @@ void Valphalk::E0055()//걷기 Loop
 void Valphalk::E0059()//앞으로 뛰기
 {
 	PLAY;
+
+	if (RATIO > 0.0134f && RATIO < 0.5)
+		RotateToTarget(0.0134f, 0.414f);
+
+
 	if (RATIO > 0.98)
-		SetState(E_0071);
+	{
+		sequence++;
+	}
 }
 
-void Valphalk::E0060()//앞으로 뛰다가 좌회전
+void Valphalk::E0060(float degree)//앞으로 뛰다가 좌회전
 {
 	PLAY;
+
+	if (RATIO > 0.0134f && RATIO < 0.5f)
+		RotateToTarget(0.0134f, 0.414f);
+
+
 	if (RATIO > 0.98)
-		SetState(E_0071);
+	{
+		sequence++;
+		Rot().y += degree;
+	}
 }
 
-void Valphalk::E0061()//앞으로 뛰다가 뒤돌기(좌회전)
+void Valphalk::E0061(float degree)//앞으로 뛰다가 뒤돌기(좌회전)
 {
 	PLAY;
+
+	if (RATIO > 0.0134f && RATIO < 0.5f)
+		RotateToTarget(0.0134f, 0.414f);
+
+
 	if (RATIO > 0.98)
-		SetState(E_0071);
+	{
+		sequence++;
+		Rot().y += degree;
+	}
 }
 
 void Valphalk::E0071()//뛰기Loop
 {
 	PLAY;
-	if (RATIO > 0.98)
-		SetState(E_0003);
+	
+	if ((target->GlobalPos() - realPos->Pos()).Length() < 4500.0f)
+	{
+		if (!playOncePerPattern)
+		{
+			if (RATIO < 0.106)
+				playRatioForE0071 = 0.106;
+			else if (RATIO > 0.106 && RATIO < 0.36)
+				playRatioForE0071 = 0.36;
+			else if (RATIO > 0.36 && RATIO < 0.62)
+				playRatioForE0071 = 0.62;
+			else if (RATIO > 0.62 && RATIO < 0.88)
+				playRatioForE0071 = 0.88;
+			else 
+				playRatioForE0071 = 0.106;
+
+			playOncePerPattern = true;
+		}
+
+		if (RATIO > playRatioForE0071)
+		{
+			sequence++;
+			playRatioForE0071 = 0.0f;
+			playOncePerPattern = false;
+		}
+	}
+
+
+	if (RATIO > 0.96)
+	{
+		Loop();
+	}
 		//계속 뛰게 하려면 수정 필요
 }
 
@@ -2398,6 +2535,16 @@ void Valphalk::E2146() // 전방 폭격 후 날개 접으면서 착지
 	}
 }
 
+void Valphalk::E2171()
+{
+	PLAY;
+
+	if (RATIO > 0.97)
+	{
+		sequence++;
+	}
+}
+
 void Valphalk::E2129()  // 전방 앞다리 치기 준비
 {
 	PLAY;
@@ -2589,57 +2736,80 @@ void Valphalk::E2185()// 들었던 발을 내려찍으며 깨물기
 
 void Valphalk::E2188()//정면 보고 왼발 들기
 {
-	combo = true;
-
 	PLAY;
-	if (RATIO > 0.98)
-		SetState(E_2200);
+
+	if (RATIO > 0.16 && RATIO > 0.8) 
+		RotateToTarget(0.16, 0.7);
+
+
+	if (RATIO > 0.97)
+		sequence++;
 }
 
 void Valphalk::E2189()//정면에서 왼쪽 보고 왼발 들기
 {
-	combo = true;
-
 	PLAY;
-	if (RATIO > 0.98)
-		SetState(E_2200);
+
+	if (RATIO > 0.19 && RATIO > 0.8)
+		RotateToTarget(0.19, 0.7);
+
+	if (RATIO > 0.97)
+	{
+		sequence++;
+		Rot().y -= XM_PIDIV2;
+	}
 }
 
 void Valphalk::E2190()//정면에서 왼쪽으로 돌면서 뒤보고 왼발 들기
 {
-	combo = true;
-
 	PLAY;
-	if (RATIO > 0.98)
-		SetState(E_2200);
+
+	if (RATIO > 0.1 && RATIO > 0.8)
+		RotateToTarget(0.1, 0.7);
+
+	if (RATIO > 0.97)
+	{
+		sequence++;
+		Rot().y -= XM_PI;
+	}
 }
 
 void Valphalk::E2192()//정면에서 오른쪽 보고 왼발 들기
 {
-	combo = true;
-
 	PLAY;
-	if (RATIO > 0.98)
-		SetState(E_2200);
+
+	if (RATIO > 0.19 && RATIO > 0.8)
+		RotateToTarget(0.19, 0.7);
+
+	if (RATIO > 0.97)
+	{
+		sequence++;
+		Rot().y += XM_PIDIV2;
+	}
 }
 
 void Valphalk::E2193()//정면에서 오른쪽으로 돌면서 뒤보고 왼발 들기
 {
-	combo = true;
-
 	PLAY;
-	if (RATIO > 0.98)
-		SetState(E_2200);
+
+	if (RATIO > 0.1 && RATIO > 0.8)
+		RotateToTarget(0.1, 0.7);
+
+	if (RATIO > 0.97)
+	{
+		sequence++;
+		Rot().y += XM_PI;
+	}
 }
 
 void Valphalk::E2200()//S자 몸통박치기
-//TODO : 2188 동작 후 뒤로 더 빠져서 위치보정 필요
 {
 	PLAY;
+
+
 	if (RATIO > 0.98)
 	{
-		combo = false;
-		SetState(E_0003);
+		sequence++;
 	}
 }
 

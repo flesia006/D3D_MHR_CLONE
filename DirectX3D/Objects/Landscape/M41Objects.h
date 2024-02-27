@@ -15,6 +15,7 @@ private:
 	Model* grass;
 	Model* sm415_000_01;
 	Model* sm414_007_00;
+	Model* sm414_007_00_2;
 
 	Model* sm414_005_04;
 
