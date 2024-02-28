@@ -3,7 +3,7 @@
 
 HitBoomParticle::HitBoomParticle()
 {
-	hit = new ParticleSystem("TextData/Particles/hhit.fx");		
+	hit = new ParticleSystem("TextData/Particles/hhhit.fx");		
 }
 
 HitBoomParticle::~HitBoomParticle()

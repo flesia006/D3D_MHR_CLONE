@@ -106,6 +106,19 @@ void ParticleSystem::Stop()
     quad->SetActive(false);
 }
 
+void ParticleSystem::ParticleRotate()
+{
+    float randX = Random(0.f, 3.14f);
+    quad->Rot().x = randX;
+}
+
+void ParticleSystem::HaloPos()
+{
+    quad->Pos().x += 100;
+    quad->Pos().y -= 100;
+    //quad->Pos().z -= 50;
+}
+
 //아래 두 함수 = 파티클 (개별 내부 데이터) 업데이트
 void ParticleSystem::UpdatePhysical()
 {

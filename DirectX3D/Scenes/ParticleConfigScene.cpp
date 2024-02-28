@@ -30,7 +30,6 @@ ParticleConfigScene::ParticleConfigScene()
     char path[128];
     GetCurrentDirectoryA(sizeof(path), path);
     projectPath = path;
-
     Init();
 }
 
@@ -53,6 +52,7 @@ void ParticleConfigScene::Update()
     UpdatePhysical();
     UpdateColor();
     quad->UpdateWorld();
+
     if (lifeTime > data.duration)
     {
         Init();
