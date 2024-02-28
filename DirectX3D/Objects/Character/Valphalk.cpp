@@ -169,8 +169,8 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 		bullets[i]->SetActive(false);
 	}
 
-	forwardBoom = new SphereCollider();
-	forwardBoom->Scale() *=500;
+	forwardBoom = new BoxCollider();
+	forwardBoom->Scale() *=700;
 	forwardBoom->SetColor(1, 0, 0);
 	forwardBoom->Pos() = forwardBoomPosInit;
 	forwardBoom->SetParent(head);
@@ -1672,23 +1672,26 @@ void Valphalk::B_DownBlast()
 	{
 		switch (whichPattern)
 		{
-		case 1:	SetState(E_2381); E2381();  break;
-		case 2:	SetState(E_2382); E2382();  break;
-		case 3:	SetState(E_2131); E2381();  break;
-		case 4:	SetState(E_2381); E2381();  break;
-		case 5:	SetState(E_2383); E2383();  break;
-		case 6:	SetState(E_2381); E2381();  break;
+		case 1:	SetState(E_2383); E2383();  break;
+		case 2:	SetState(E_2381); E2381();  break;
+		case 3:	SetState(E_2383); E2383();  break;
+		case 4:	SetState(E_2382); E2382();  break;
+		case 5:	SetState(E_2381); E2381();  break;
+		case 6:	SetState(E_2382); E2382();  break;
 		}
 	}
 
 	if (sequence == 2) // 공격 모션
-	{
+	{	
 		SetState(E_2082);
 		E2082();
 	}
 
 	if (sequence == 3) // 마무리
 	{
+		forwardBoom->Pos() = forwardBoomPosInit;
+		forwardBoom->Scale().x = 700;
+
 		whichPattern = 0;
 		ChooseNextPattern();
 	}
@@ -1742,7 +1745,8 @@ void Valphalk::B_Dumbling()
 
 	if (sequence == 4) // 공격 모션 + 포격otherplay
 	{
-		forwardBoom->Pos() = 0;		
+		forwardBoom->Pos() = 0;
+		forwardBoom->Pos().z = +500;
 		SetState(E_2152);
 		E2152();
 	}
@@ -3817,7 +3821,8 @@ void Valphalk::EX2376()
 void Valphalk::E2381()
 {
 	PLAY;
-
+	if (RATIO > 0.16 && RATIO < 0.79)
+		RotateToTarget(0.16, 0.59);
 	if (RATIO > 0.98)
 		sequence++;
 }
@@ -3825,7 +3830,8 @@ void Valphalk::E2381()
 void Valphalk::E2382()
 {
 	PLAY;
-
+	if (RATIO > 0.16 && RATIO < 0.79)
+		RotateToTarget(0.16, 0.59);
 	if (RATIO > 0.98)
 	{
 		Rot().y -= XM_PIDIV2;
@@ -3836,7 +3842,8 @@ void Valphalk::E2382()
 void Valphalk::E2383()
 {
 	PLAY;
-
+	if (RATIO > 0.16 && RATIO < 0.79)
+		RotateToTarget(0.16, 0.59);
 	if (RATIO > 0.98)
 	{
 		Rot().y += XM_PIDIV2;
@@ -3847,6 +3854,12 @@ void Valphalk::E2383()
 void Valphalk::E2082()
 {
 	PLAY;
+	forwardBoom->Pos() = 0;
+	forwardBoom->Scale().x = 3000;
+	if (RATIO > 0.2 && RATIO < 0.21)
+		forwardBoom->SetActive(true);
+	if (RATIO > 0.4 && RATIO < 0.41)
+		forwardBoom->SetActive(false);
 
 	if (RATIO > 0.98)
 	{

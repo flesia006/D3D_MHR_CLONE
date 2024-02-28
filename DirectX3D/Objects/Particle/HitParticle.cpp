@@ -6,6 +6,7 @@ HitParticle::HitParticle()
 	hit1 = new ParticleSystem("TextData/Particles/Hit1_fix.fx");
 	hit2 = new ParticleSystem("TextData/Particles/Hit2_fix.fx");
 
+
 }
 
 HitParticle::~HitParticle()
