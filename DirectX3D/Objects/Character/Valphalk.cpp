@@ -640,15 +640,8 @@ void Valphalk::Hupgi()
 	}
 	if (sequence == 4)
 	{
-
-	}
-	if (sequence == 5)
-	{
-
-	}
-	if (sequence == 6)
-	{
-
+		curPattern = S_HUGESTAGGER;
+		sequence = 0;
 	}
 }
 
@@ -3809,7 +3802,7 @@ void Valphalk::EX2278()
 	if (RATIO > 0.457f)
 	{
 		//effectBox1->SetActive(true);
-		GetClip(E_2278)->SetPlayTime(0.1f);
+		//GetClip(E_2278)->SetPlayTime(0.1f);
 	}
 
 	if (RATIO > 0.98)
