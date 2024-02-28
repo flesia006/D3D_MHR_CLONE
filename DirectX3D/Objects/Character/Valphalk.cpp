@@ -138,10 +138,18 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 	ReadClip("E_2381");
 	ReadClip("E_2382");
 	ReadClip("E_2383");
-
 	ReadClip("E_2403");
+
 	ReadClip("E_3001");
+	ReadClip("E_3006");
+	ReadClip("E_3015");
+	ReadClip("E_3016");
+	ReadClip("E_3017");
 	ReadClip("E_3023");
+	ReadClip("E_3101");
+	ReadClip("E_3106");
+	ReadClip("E_3114");
+	ReadClip("E_3118");
 	// 아래 있는게 첫 포효
 	ReadClip("E_4013");
 //	ReadClip("E_22005");
@@ -645,10 +653,78 @@ void Valphalk::B_Sidestep()
 	}
 }
 
-void Valphalk::Dead()
+void Valphalk::S_Dead()
 {
-	SetState(E_3023);
-	E3023();
+	SetState(E_3023);	E3023();
+}
+
+void Valphalk::S_SmallStagger()
+{
+	if (sequence == 0)// 소경직
+	{
+		SetState(E_3001);	E3001();
+	}
+
+	if (sequence == 1)// 대경직 루프
+		ChooseNextPattern();
+}
+
+void Valphalk::S_HugeStagger()
+{
+	if (sequence == 0)// 대경직 시작
+	{
+		SetState(E_3015);	E3015();
+	}
+
+	if (sequence == 1)// 대경직 루프
+	{
+		SetState(E_3016);	E3016();
+	}
+
+	if (sequence == 2)// 대경직 회복
+	{
+		SetState(E_3017);	E3017();
+	}
+
+	if (sequence == 3)
+		ChooseNextPattern();
+}
+
+void Valphalk::B_Dead()
+{
+	SetState(E_3118);	E3118();
+}
+
+void Valphalk::B_SmallStagger()
+{
+	if (sequence == 0)// 소경직
+	{
+		SetState(E_3101);	E3101();
+	}
+
+	if (sequence == 1)// 대경직 루프
+		ChooseNextPattern();
+}
+
+void Valphalk::B_HugeStagger()
+{
+	if (sequence == 0)// 대경직 시작
+	{
+		SetState(E_3114);	E3114();
+	}
+
+	if (sequence == 1)// 대경직 루프
+	{
+		SetState(E_3016);	E3016();
+	}
+
+	if (sequence == 2)// 대경직 회복
+	{
+		SetState(E_3017);	E3017();
+	}
+
+	if (sequence == 3)
+		ChooseNextPattern();
 }
 
 void Valphalk::SetEvent(int clip, Event event, float timeRatio)
@@ -793,10 +869,17 @@ void Valphalk::ChooseNextPattern()
 		return;
 	}
 
-	if (!needHupGi && !angerRoar90 && !angerRoar40 && !ult50)
+	int i = rand() % 2;
+	switch (i)
+	{
+	case 0:	curPattern = B_SMALLSTAGGER;	 break;
+	case 1:	curPattern = B_HUGESTAGGER;		 break;
+	}
+
+	/*if (!needHupGi && !angerRoar90 && !angerRoar40 && !ult50)
 	{
 
-		if (distance < 800)    // 근
+		if (distance < 2000)    // 근
 		{
 			if (isSlashMode)	   // 참
 			{
@@ -852,7 +935,7 @@ void Valphalk::ChooseNextPattern()
 
 		}
 
-		else if (distance >= 800 && distance < 2000)  // 중
+		else if (distance >= 2000 && distance < 4000)  // 중
 		{
 			if (isSlashMode) // 참
 			{
@@ -958,7 +1041,7 @@ void Valphalk::ChooseNextPattern()
 			}
 
 		}
-	}
+	}*/
 
 
 }
@@ -993,7 +1076,12 @@ void Valphalk::PlayPattern()
 	case Valphalk::FULLBURST:		FullBurst();		break;
 	case Valphalk::SIDESTEP:		Sidestep();			break;
 	case Valphalk::FORWARDBOOM:		ForwardBoom();		break;
-	case Valphalk::DEAD:			Dead();				break;
+	case Valphalk::S_DEAD:			S_Dead();			break;
+	case Valphalk::S_SMALLSTAGGER:	S_SmallStagger();	break;
+	case Valphalk::S_HUGESTAGGER:	S_HugeStagger();	break;
+	case Valphalk::B_DEAD:			B_Dead();			break;
+	case Valphalk::B_SMALLSTAGGER:	B_SmallStagger();	break;
+	case Valphalk::B_HUGESTAGGER:	B_HugeStagger();	break;
 	default:		break;
 	}
 }
@@ -1164,8 +1252,6 @@ void Valphalk::S_LegAtk()
 
 	if (sequence == 5)
 	{
-		if (whichPattern == 4 || whichPattern == 5 || whichPattern == 6)
-			Scale().x *= -1;
 		whichPattern = 0;
 		ChooseNextPattern();
 	}
@@ -1269,7 +1355,33 @@ void Valphalk::S_BackWingAtk()
 
 	if (sequence == 0) //각도 정하기
 	{
-		whichPattern = SetRadAndMirror(true);
+		GetRadBtwTrgt();
+		if (radBtwTarget > -rot45 && radBtwTarget <= 0) // 전방 왼쪽 45도
+		{
+			whichPattern = 1;
+			radDifference = radBtwTarget;
+		}
+		else if (radBtwTarget > -XM_PI && radBtwTarget <= -rot45) // 왼쪽 90도 && 왼뒤쪽 45도
+		{
+			whichPattern = 2;
+			radDifference = radBtwTarget + XM_PIDIV2;
+		}
+		else if (radBtwTarget > 0 && radBtwTarget <= rot45) // 전방 오른쪽 45도
+		{
+			whichPattern = 3;
+			radDifference = radBtwTarget;
+			Scale().x *= -1;
+		}
+		else if (radBtwTarget > rot45 && radBtwTarget <= XM_PI) // 오른쪽 90도 && 오른뒤쪽 45도
+		{
+			whichPattern = 4;
+			radDifference = radBtwTarget - XM_PIDIV2;
+			Scale().x *= -1;
+		}
+		else
+			whichPattern = 1;
+
+		initialRad = Rot().y;
 		sequence++;
 	}
 
@@ -1279,10 +1391,8 @@ void Valphalk::S_BackWingAtk()
 		{
 		case 1:		sequence = 3;
 		case 2:		SetState(E_2210);	E2210();  break;
-		case 3:		SetState(E_2210);	E2210();  break;
-		case 4:		sequence = 3;
-		case 5:		SetState(E_2210);	E2210();  break;
-		case 6:		SetState(E_2210);	E2210();  break;
+		case 3:		sequence = 3;
+		case 4:		SetState(E_2210);	E2210();  break;
 		}
 	}
 
@@ -1292,16 +1402,14 @@ void Valphalk::S_BackWingAtk()
 		{
 		case 1:		sequence = 3;
 		case 2:		SetState(E_2211);	E2211(-XM_PIDIV2);  break;
-		case 3:		SetState(E_2211);	E2211(-XM_PIDIV2);  break;
-		case 4:		sequence = 3;
-		case 5:		SetState(E_2211);	E2211(XM_PIDIV2);  break;
-		case 6:		SetState(E_2211);	E2211(XM_PIDIV2);  break;
+		case 3:		sequence = 3;
+		case 4:		SetState(E_2211);	E2211(XM_PIDIV2);  break;
 		}
 	}
 
 	if (sequence == 3)
 	{
-		if (whichPattern == 5 || whichPattern == 6)
+		if (whichPattern == 3 || whichPattern == 4)
 			Scale().x *= -1;
 		whichPattern = 0;
 		ChooseNextPattern();
@@ -3186,14 +3294,12 @@ void Valphalk::E2200()//S자 몸통박치기
 
 void Valphalk::E2210()//왼쪽 90도 날개찍기 준비동작
 {
-	combo = true;
-
 	PLAY;
 
 	if (RATIO > 0.700f && RATIO < 0.97f)
 		RotateToTarget(0.700f, 0.97f);
 
-	if (RATIO > 0.97)
+	if (RATIO > 0.96)
 	{
 		sequence++;
 	}
@@ -3211,9 +3317,8 @@ void Valphalk::E2211(float degree)//왼쪽 90도 날개찍기 공격동작
 		SetColliderAttack(RWING, 0.185);
 	}
 
-	if (RATIO > 0.97)
+	if (RATIO > 0.96)
 	{
-		combo = false;
 		Rot().y += degree;
 		sequence++;
 	}
@@ -3890,16 +3995,83 @@ void Valphalk::E2403()
 void Valphalk::E3001() // 작은 데미지 피격
 {
 	PLAY;
+
+	if (RATIO > 0.98)
+		sequence++;
+}
+
+void Valphalk::E3006()
+{
+}
+
+void Valphalk::E3015()
+{
+	combo = true;
+
+	PLAY;
+
+	if (RATIO > 0.97)
+		sequence++;
+}
+
+void Valphalk::E3016()
+{
+	PLAY;
+
+	if (RATIO > 0.97)
+		sequence++;
+}
+
+void Valphalk::E3017()
+{
+	PLAY;
+
+	if (RATIO > 0.97)
+	{
+		combo = false;
+		sequence++;
+	}
 }
 
 void Valphalk::E3023() // 사망
 {
 	PLAY;
-	if (RATIO > 0.99)			
-	isPlay = false;
-	
-	//if (RATIO > 0.98)
-		
+
+	if (RATIO > 0.98)
+		isPlay = false;
+}
+
+void Valphalk::E3101()
+{
+	PLAY;
+
+	if (RATIO > 0.98)
+		sequence++;
+}
+
+void Valphalk::E3106()
+{
+}
+
+void Valphalk::E3114()
+{
+	combo = true;
+
+	PLAY;
+
+	if (RATIO > 0.97)
+	{
+		isSlashMode = true;
+		sequence++;
+	}
+}
+
+void Valphalk::E3118()
+{
+	PLAY;
+
+	if (RATIO > 0.98)
+		isPlay = false;
 }
 
 void Valphalk::E4013() // 조우 포효
