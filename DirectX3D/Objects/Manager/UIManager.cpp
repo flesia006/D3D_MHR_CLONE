@@ -219,6 +219,10 @@ UIManager::UIManager()
 		L"Textures/UI/LSCoting_none.png"
 	);
 
+	// 아이템 아이콘 추가
+	potionIcon = new Quad(L"Textures/UI/Potion.png");
+	whetstoneIcon = new Quad(L"Textures/UI/Whetstone-icon.png");
+
 	// hp bar ui
 	hp->Scale() = { 2.625f,0.03f,0 };
 	hp->Pos() = hpBar->Pos();
@@ -299,6 +303,8 @@ UIManager::~UIManager()
 	delete dragSlotBox;
 	delete slotName1;
 	delete slotName2;
+	delete potionIcon;
+	delete whetstoneIcon;
 }
 
 void UIManager::Update()
@@ -336,8 +342,12 @@ void UIManager::Update()
 	dragSlotBox->UpdateWorld();
 
 	// 잠시 넣음
+	//===================
 	slotName1->UpdateWorld();
 	slotName2->UpdateWorld();
+	potionIcon->UpdateWorld();
+	whetstoneIcon->UpdateWorld();
+	//===================
 
 	FOR(selectBoxs.size())
 	{
@@ -633,6 +643,9 @@ void UIManager::PostRender()
 		orangeRightHalfCircle3->Render();
 
 	QuickSlot();
+
+	potionIcon->Render();
+	whetstoneIcon->Render();
 }
 
 void UIManager::GUIRender()
@@ -983,7 +996,7 @@ void UIManager::DragSlot()
 {
 	if (KEY_PRESS('C') && useSlotUse && !useSelectBar)
 	{
-		dragSlotBox->Render();
+		//dragSlotBox->Render();
 	}
 
 	if (WM_MOUSEHWHEEL)

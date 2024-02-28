@@ -138,10 +138,18 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 	ReadClip("E_2381");
 	ReadClip("E_2382");
 	ReadClip("E_2383");
-
 	ReadClip("E_2403");
+
 	ReadClip("E_3001");
+	ReadClip("E_3006");
+	ReadClip("E_3015");
+	ReadClip("E_3016");
+	ReadClip("E_3017");
 	ReadClip("E_3023");
+	ReadClip("E_3101");
+	ReadClip("E_3106");
+	ReadClip("E_3114");
+	ReadClip("E_3118");
 	// 아래 있는게 첫 포효
 	ReadClip("E_4001");
 	ReadClip("E_4013");
@@ -173,8 +181,8 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 		bullets[i]->SetActive(false);
 	}
 
-	forwardBoom = new SphereCollider();
-	forwardBoom->Scale() *= 500;
+	forwardBoom = new BoxCollider();
+	forwardBoom->Scale() *=700;
 	forwardBoom->SetColor(1, 0, 0);
 	forwardBoom->Pos() = forwardBoomPosInit;
 	forwardBoom->SetParent(head);
@@ -429,7 +437,7 @@ void Valphalk::EnergyBullets()
 		sequence++;
 	}
 
-	if (sequence == 3)
+	if (sequence == 3) // 탄의 포지션 잡아주기
 	{
 		bullets[0]->Pos() = GetTranslationByNode(61);
 		bullets[1]->Pos() = GetTranslationByNode(64);
@@ -444,17 +452,28 @@ void Valphalk::EnergyBullets()
 		}
 		sequence++;
 	}
-	if (sequence == 4)
+	if (sequence == 4) // 각각 탄이 도착할 지역 랜덤으로 지정하기
 	{
-		SetState(E_2079); E2079();
-		bulletTime += DELTA;
-
+		for (int i = 0; i < 6; ++i)
+		{
+			randX[i] = Random(target->Pos().x - 250, target->Pos().x + 250);
+			randZ[i] = Random(target->Pos().z - 250, target->Pos().z + 250);
+		}
+		sequence++;
 	}
 	if (sequence == 5)
 	{
-		bulletTime = 0;
-		whichPattern = 0;
-		ChooseNextPattern();
+		SetState(E_2079); E2079();	
+	}
+	if (sequence == 6) // 값 초기화 및 패턴 넘기기
+	{ 	
+		for (int i = 0; i < 6; ++i)
+		{
+			randX[i] = 0;
+			randZ[i] = 0;
+		}
+		whichPattern = 0; 
+		ChooseNextPattern(); 
 	}
 }
 
@@ -643,10 +662,78 @@ void Valphalk::B_Sidestep()
 	}
 }
 
-void Valphalk::Dead()
+void Valphalk::S_Dead()
 {
-	SetState(E_3023);
-	E3023();
+	SetState(E_3023);	E3023();
+}
+
+void Valphalk::S_SmallStagger()
+{
+	if (sequence == 0)// 소경직
+	{
+		SetState(E_3001);	E3001();
+	}
+
+	if (sequence == 1)// 대경직 루프
+		ChooseNextPattern();
+}
+
+void Valphalk::S_HugeStagger()
+{
+	if (sequence == 0)// 대경직 시작
+	{
+		SetState(E_3015);	E3015();
+	}
+
+	if (sequence == 1)// 대경직 루프
+	{
+		SetState(E_3016);	E3016();
+	}
+
+	if (sequence == 2)// 대경직 회복
+	{
+		SetState(E_3017);	E3017();
+	}
+
+	if (sequence == 3)
+		ChooseNextPattern();
+}
+
+void Valphalk::B_Dead()
+{
+	SetState(E_3118);	E3118();
+}
+
+void Valphalk::B_SmallStagger()
+{
+	if (sequence == 0)// 소경직
+	{
+		SetState(E_3101);	E3101();
+	}
+
+	if (sequence == 1)// 대경직 루프
+		ChooseNextPattern();
+}
+
+void Valphalk::B_HugeStagger()
+{
+	if (sequence == 0)// 대경직 시작
+	{
+		SetState(E_3114);	E3114();
+	}
+
+	if (sequence == 1)// 대경직 루프
+	{
+		SetState(E_3016);	E3016();
+	}
+
+	if (sequence == 2)// 대경직 회복
+	{
+		SetState(E_3017);	E3017();
+	}
+
+	if (sequence == 3)
+		ChooseNextPattern();
 }
 
 void Valphalk::SetEvent(int clip, Event event, float timeRatio)
@@ -931,10 +1018,17 @@ void Valphalk::ChooseNextPattern()
 		return;
 	}
 
-	if (!needHupGi && !angerRoar90 && !angerRoar40 && !ult50)
+	int i = rand() % 2;
+	switch (i)
+	{
+	case 0:	curPattern = B_SMALLSTAGGER;	 break;
+	case 1:	curPattern = B_HUGESTAGGER;		 break;
+	}
+
+	/*if (!needHupGi && !angerRoar90 && !angerRoar40 && !ult50)
 	{
 
-		if (distance < 800)    // 근
+		if (distance < 2000)    // 근
 		{
 			if (isSlashMode)	   // 참
 			{
@@ -990,7 +1084,7 @@ void Valphalk::ChooseNextPattern()
 
 		}
 
-		else if (distance >= 800 && distance < 2000)  // 중
+		else if (distance >= 2000 && distance < 4000)  // 중
 		{
 			if (isSlashMode) // 참
 			{
@@ -1116,7 +1210,7 @@ void Valphalk::ChooseNextPattern()
 			}
 
 		}
-	}
+	}*/
 
 }
 
@@ -1150,8 +1244,12 @@ void Valphalk::PlayPattern()
 	case Valphalk::FULLBURST:		FullBurst();		break;
 	case Valphalk::SIDESTEP:		Sidestep();			break;
 	case Valphalk::FORWARDBOOM:		ForwardBoom();		break;
-	case Valphalk::DEAD:			Dead();				break;
-	case Valphalk::PATROL:			Patrol();			break;
+	case Valphalk::S_DEAD:			S_Dead();			break;
+	case Valphalk::S_SMALLSTAGGER:	S_SmallStagger();	break;
+	case Valphalk::S_HUGESTAGGER:	S_HugeStagger();	break;
+	case Valphalk::B_DEAD:			B_Dead();			break;
+	case Valphalk::B_SMALLSTAGGER:	B_SmallStagger();	break;
+	case Valphalk::B_HUGESTAGGER:	B_HugeStagger();	break;
 	default:		break;
 	}
 }
@@ -1322,8 +1420,6 @@ void Valphalk::S_LegAtk()
 
 	if (sequence == 5)
 	{
-		if (whichPattern == 4 || whichPattern == 5 || whichPattern == 6)
-			Scale().x *= -1;
 		whichPattern = 0;
 		ChooseNextPattern();
 	}
@@ -1429,7 +1525,33 @@ void Valphalk::S_BackWingAtk()
 
 	if (sequence == 0) //각도 정하기
 	{
-		whichPattern = SetRadAndMirror(true);
+		GetRadBtwTrgt();
+		if (radBtwTarget > -rot45 && radBtwTarget <= 0) // 전방 왼쪽 45도
+		{
+			whichPattern = 1;
+			radDifference = radBtwTarget;
+		}
+		else if (radBtwTarget > -XM_PI && radBtwTarget <= -rot45) // 왼쪽 90도 && 왼뒤쪽 45도
+		{
+			whichPattern = 2;
+			radDifference = radBtwTarget + XM_PIDIV2;
+		}
+		else if (radBtwTarget > 0 && radBtwTarget <= rot45) // 전방 오른쪽 45도
+		{
+			whichPattern = 3;
+			radDifference = radBtwTarget;
+			Scale().x *= -1;
+		}
+		else if (radBtwTarget > rot45 && radBtwTarget <= XM_PI) // 오른쪽 90도 && 오른뒤쪽 45도
+		{
+			whichPattern = 4;
+			radDifference = radBtwTarget - XM_PIDIV2;
+			Scale().x *= -1;
+		}
+		else
+			whichPattern = 1;
+
+		initialRad = Rot().y;
 		sequence++;
 	}
 
@@ -1439,10 +1561,8 @@ void Valphalk::S_BackWingAtk()
 		{
 		case 1:		sequence = 3;
 		case 2:		SetState(E_2210);	E2210();  break;
-		case 3:		SetState(E_2210);	E2210();  break;
-		case 4:		sequence = 3;
-		case 5:		SetState(E_2210);	E2210();  break;
-		case 6:		SetState(E_2210);	E2210();  break;
+		case 3:		sequence = 3;
+		case 4:		SetState(E_2210);	E2210();  break;
 		}
 	}
 
@@ -1452,16 +1572,14 @@ void Valphalk::S_BackWingAtk()
 		{
 		case 1:		sequence = 3;
 		case 2:		SetState(E_2211);	E2211(-XM_PIDIV2);  break;
-		case 3:		SetState(E_2211);	E2211(-XM_PIDIV2);  break;
-		case 4:		sequence = 3;
-		case 5:		SetState(E_2211);	E2211(XM_PIDIV2);  break;
-		case 6:		SetState(E_2211);	E2211(XM_PIDIV2);  break;
+		case 3:		sequence = 3;
+		case 4:		SetState(E_2211);	E2211(XM_PIDIV2);  break;
 		}
 	}
 
 	if (sequence == 3)
 	{
-		if (whichPattern == 5 || whichPattern == 6)
+		if (whichPattern == 3 || whichPattern == 4)
 			Scale().x *= -1;
 		whichPattern = 0;
 		ChooseNextPattern();
@@ -1659,7 +1777,7 @@ void Valphalk::S_RunAndBite()
 		}
 	}
 
-	if (sequence == 2) // 공격 모션
+	if (sequence == 2) // 달리기 모션
 	{
 		SetState(E_0071);
 		E0071();
@@ -1820,23 +1938,26 @@ void Valphalk::B_DownBlast()
 	{
 		switch (whichPattern)
 		{
-		case 1:	SetState(E_2381); E2381();  break;
-		case 2:	SetState(E_2382); E2382();  break;
-		case 3:	SetState(E_2131); E2381();  break;
-		case 4:	SetState(E_2381); E2381();  break;
-		case 5:	SetState(E_2383); E2383();  break;
-		case 6:	SetState(E_2381); E2381();  break;
+		case 1:	SetState(E_2383); E2383();  break;
+		case 2:	SetState(E_2381); E2381();  break;
+		case 3:	SetState(E_2383); E2383();  break;
+		case 4:	SetState(E_2382); E2382();  break;
+		case 5:	SetState(E_2381); E2381();  break;
+		case 6:	SetState(E_2382); E2382();  break;
 		}
 	}
 
 	if (sequence == 2) // 공격 모션
-	{
+	{	
 		SetState(E_2082);
 		E2082();
 	}
 
 	if (sequence == 3) // 마무리
 	{
+		forwardBoom->Pos() = forwardBoomPosInit;
+		forwardBoom->Scale().x = 700;
+
 		whichPattern = 0;
 		ChooseNextPattern();
 	}
@@ -1891,6 +2012,7 @@ void Valphalk::B_Dumbling()
 	if (sequence == 4) // 공격 모션 + 포격otherplay
 	{
 		forwardBoom->Pos() = 0;
+		forwardBoom->Pos().z = +500;
 		SetState(E_2152);
 		E2152();
 	}
@@ -1994,9 +2116,9 @@ void Valphalk::HS_FlyBlast()
 		{
 			for (int i = 0; i < bullets.size(); ++i)
 			{
-				bullets[i]->Pos().x = Lerp(bullets[i]->Pos().x, randX, 0.021f);
-				bullets[i]->Pos().z = Lerp(bullets[i]->Pos().z, randZ, 0.021f);
-
+				bullets[i]->Pos().x = Lerp(bullets[i]->Pos().x, randX, 0.002f);
+				bullets[i]->Pos().z = Lerp(bullets[i]->Pos().z, randZ, 0.002f);
+				
 				bullets[i]->Pos().y -= 1500 * DELTA;
 			}
 		}
@@ -2476,6 +2598,7 @@ void Valphalk::E0146() //대기상태에서 포격모드로 변환
 void Valphalk::E0147()//포격형 -> 참격형 변환
 {
 	PLAY;
+
 	if (RATIO > 0.98)
 		sequence++;
 }
@@ -2912,17 +3035,15 @@ void Valphalk::E2054() // 찌르기 날개 회수
 void Valphalk::E2079()
 {
 	PLAY;
-	float randX = Random(target->Pos().x - 10, target->Pos().x + 10);
-	float randY = Random(target->Pos().z - 10, target->Pos().z + 10);
-
+	
 	for (int i = 0; i < bullets.size(); ++i)
 	{
 		if (RATIO > 0.1 + ((DELTA + (float)i) * 0.03f))
 		{
-			bullets[i]->Pos().x = Lerp(bullets[i]->Pos().x, randX, 0.0007f);
-			bullets[i]->Pos().z = Lerp(bullets[i]->Pos().z, randY, 0.0007f);
+			bullets[i]->Pos().x = Lerp(bullets[i]->Pos().x, randX[i], 0.0017f);
+			bullets[i]->Pos().z = Lerp(bullets[i]->Pos().z, randZ[i], 0.0017f);
 
-			bullets[i]->Pos().y -= 500 * DELTA;
+			bullets[i]->Pos().y -= 400 * DELTA;
 		}
 
 		if (bullets[i]->Pos().y < 0)
@@ -3141,6 +3262,13 @@ void Valphalk::E2171()
 {
 	PLAY;
 
+	if (RATIO > 0.237 && RATIO < 0.417)
+	{
+		SetColliderAttack(HEAD, 0.417);
+		SetColliderAttack(NECK, 0.417);
+		SetColliderAttack(CHEST, 0.417);
+	}
+
 	if (RATIO > 0.97)
 	{
 		sequence++;
@@ -3340,7 +3468,7 @@ void Valphalk::E2188()//정면 보고 왼발 들기
 {
 	PLAY;
 
-	if (RATIO > 0.16 && RATIO > 0.8)
+	if (RATIO > 0.16 && RATIO < 0.8) 
 		RotateToTarget(0.16, 0.7);
 
 
@@ -3352,7 +3480,7 @@ void Valphalk::E2189()//정면에서 왼쪽 보고 왼발 들기
 {
 	PLAY;
 
-	if (RATIO > 0.19 && RATIO > 0.8)
+	if (RATIO > 0.19 && RATIO < 0.8)
 		RotateToTarget(0.19, 0.7);
 
 	if (RATIO > 0.97)
@@ -3366,7 +3494,7 @@ void Valphalk::E2190()//정면에서 왼쪽으로 돌면서 뒤보고 왼발 들기
 {
 	PLAY;
 
-	if (RATIO > 0.1 && RATIO > 0.8)
+	if (RATIO > 0.1 && RATIO < 0.8)
 		RotateToTarget(0.1, 0.7);
 
 	if (RATIO > 0.97)
@@ -3380,7 +3508,7 @@ void Valphalk::E2192()//정면에서 오른쪽 보고 왼발 들기
 {
 	PLAY;
 
-	if (RATIO > 0.19 && RATIO > 0.8)
+	if (RATIO > 0.19 && RATIO < 0.8)
 		RotateToTarget(0.19, 0.7);
 
 	if (RATIO > 0.97)
@@ -3394,7 +3522,7 @@ void Valphalk::E2193()//정면에서 오른쪽으로 돌면서 뒤보고 왼발 들기
 {
 	PLAY;
 
-	if (RATIO > 0.1 && RATIO > 0.8)
+	if (RATIO > 0.1 && RATIO < 0.8)
 		RotateToTarget(0.1, 0.7);
 
 	if (RATIO > 0.97)
@@ -3408,6 +3536,19 @@ void Valphalk::E2200()//S자 몸통박치기
 {
 	PLAY;
 
+	if (RATIO > 0.073 && RATIO < 0.197)
+	{
+		SetColliderAttack(HEAD, 0.197);
+		SetColliderAttack(NECK, 0.197);
+		SetColliderAttack(CHEST, 0.197);
+	}
+
+	if (RATIO > 0.277 && RATIO < 0.445)
+	{
+		SetColliderAttack(HEAD, 0.445);
+		SetColliderAttack(NECK, 0.445);
+		SetColliderAttack(CHEST, 0.445);
+	}
 
 	if (RATIO > 0.98)
 	{
@@ -3417,14 +3558,12 @@ void Valphalk::E2200()//S자 몸통박치기
 
 void Valphalk::E2210()//왼쪽 90도 날개찍기 준비동작
 {
-	combo = true;
-
 	PLAY;
 
 	if (RATIO > 0.700f && RATIO < 0.97f)
 		RotateToTarget(0.700f, 0.97f);
 
-	if (RATIO > 0.97)
+	if (RATIO > 0.96)
 	{
 		sequence++;
 	}
@@ -3442,9 +3581,8 @@ void Valphalk::E2211(float degree)//왼쪽 90도 날개찍기 공격동작
 		SetColliderAttack(RWING, 0.185);
 	}
 
-	if (RATIO > 0.97)
+	if (RATIO > 0.96)
 	{
-		combo = false;
 		Rot().y += degree;
 		sequence++;
 	}
@@ -4041,7 +4179,8 @@ void Valphalk::EX2376()
 void Valphalk::E2381()
 {
 	PLAY;
-
+	if (RATIO > 0.16 && RATIO < 0.79)
+		RotateToTarget(0.16, 0.59);
 	if (RATIO > 0.98)
 		sequence++;
 }
@@ -4049,7 +4188,8 @@ void Valphalk::E2381()
 void Valphalk::E2382()
 {
 	PLAY;
-
+	if (RATIO > 0.16 && RATIO < 0.79)
+		RotateToTarget(0.16, 0.59);
 	if (RATIO > 0.98)
 	{
 		Rot().y -= XM_PIDIV2;
@@ -4060,7 +4200,8 @@ void Valphalk::E2382()
 void Valphalk::E2383()
 {
 	PLAY;
-
+	if (RATIO > 0.16 && RATIO < 0.79)
+		RotateToTarget(0.16, 0.59);
 	if (RATIO > 0.98)
 	{
 		Rot().y += XM_PIDIV2;
@@ -4071,6 +4212,12 @@ void Valphalk::E2383()
 void Valphalk::E2082()
 {
 	PLAY;
+	forwardBoom->Pos() = 0;
+	forwardBoom->Scale().x = 3000;
+	if (RATIO > 0.2 && RATIO < 0.21)
+		forwardBoom->SetActive(true);
+	if (RATIO > 0.4 && RATIO < 0.41)
+		forwardBoom->SetActive(false);
 
 	if (RATIO > 0.98)
 	{
@@ -4113,16 +4260,83 @@ void Valphalk::E2403()
 void Valphalk::E3001() // 작은 데미지 피격
 {
 	PLAY;
+
+	if (RATIO > 0.98)
+		sequence++;
+}
+
+void Valphalk::E3006()
+{
+}
+
+void Valphalk::E3015()
+{
+	combo = true;
+
+	PLAY;
+
+	if (RATIO > 0.97)
+		sequence++;
+}
+
+void Valphalk::E3016()
+{
+	PLAY;
+
+	if (RATIO > 0.97)
+		sequence++;
+}
+
+void Valphalk::E3017()
+{
+	PLAY;
+
+	if (RATIO > 0.97)
+	{
+		combo = false;
+		sequence++;
+	}
 }
 
 void Valphalk::E3023() // 사망
 {
 	PLAY;
-	if (RATIO > 0.99)
+
+	if (RATIO > 0.98)
 		isPlay = false;
+}
 
-	//if (RATIO > 0.98)
+void Valphalk::E3101()
+{
+	PLAY;
 
+	if (RATIO > 0.98)
+		sequence++;
+}
+
+void Valphalk::E3106()
+{
+}
+
+void Valphalk::E3114()
+{
+	combo = true;
+
+	PLAY;
+
+	if (RATIO > 0.97)
+	{
+		isSlashMode = true;
+		sequence++;
+	}
+}
+
+void Valphalk::E3118()
+{
+	PLAY;
+
+	if (RATIO > 0.98)
+		isPlay = false;
 }
 
 void Valphalk::E4001()

@@ -53,7 +53,6 @@ void ParticleConfigScene::Update()
     UpdatePhysical();
     UpdateColor();
     quad->UpdateWorld();
-
     if (lifeTime > data.duration)
     {
         Init();
@@ -92,20 +91,20 @@ void ParticleConfigScene::GUIRender()
     ImGui::DragFloat("Duration", &data.duration, 0.1f, 10.0f);
     ImGui::ColorEdit4("StartColor", (float*)&data.startColor);
     ImGui::ColorEdit4("EndColor", (float*)&data.endColor);
-    ImGui::SliderFloat3("MinVelocity", (float*)&data.minVelocity, -1, 1);
-    ImGui::SliderFloat3("MaxVelocity", (float*)&data.maxVelocity, -1, 1);
-    ImGui::SliderFloat3("MinAccelation", (float*)&data.minAccelation, -50, 50);
-    ImGui::SliderFloat3("MaxAccelation", (float*)&data.maxAccelation, -50, 50);
-    ImGui::SliderFloat3("MinStartScale", (float*)&data.minStartScale, 0, 100);
-    ImGui::SliderFloat3("MaxStartScale", (float*)&data.maxStartScale, 0, 100);
-    ImGui::SliderFloat3("MinEndScale", (float*)&data.minEndScale, 0, 100);
-    ImGui::SliderFloat3("MaxEndScale", (float*)&data.maxEndScale, 0, 100);
-    ImGui::SliderFloat("MinAngularVelocity", (float*)&data.minAngularVelocity, -10, 10);
-    ImGui::SliderFloat("MaxAngularVelocity", (float*)&data.maxAngularVelocity, -10, 10);
-    ImGui::SliderFloat("MinSpeed", (float*)&data.minSpeed, 0, data.maxSpeed);
-    ImGui::SliderFloat("MaxSpeed", (float*)&data.maxSpeed, data.minSpeed, 20000);
-    ImGui::SliderFloat("MinStartTime", (float*)&data.minStartTime, 0.0f, data.maxStartTime);
-    ImGui::SliderFloat("MaxStartTime", (float*)&data.maxStartTime, data.minStartTime, data.duration);
+    ImGui::DragFloat3("MinVelocity", (float*)&data.minVelocity, -1, 1);
+    ImGui::DragFloat3("MaxVelocity", (float*)&data.maxVelocity, -1, 1);
+    ImGui::DragFloat3("MinAccelation", (float*)&data.minAccelation, -50, 50);
+    ImGui::DragFloat3("MaxAccelation", (float*)&data.maxAccelation, -50, 50);
+    ImGui::DragFloat3("MinStartScale", (float*)&data.minStartScale, 0, 100);
+    ImGui::DragFloat3("MaxStartScale", (float*)&data.maxStartScale, 0, 100);
+    ImGui::DragFloat3("MinEndScale", (float*)&data.minEndScale, 0, 100);
+    ImGui::DragFloat3("MaxEndScale", (float*)&data.maxEndScale, 0, 100);
+    ImGui::DragFloat("MinAngularVelocity", (float*)&data.minAngularVelocity, -10, 10);
+    ImGui::DragFloat("MaxAngularVelocity", (float*)&data.maxAngularVelocity, -10, 10);
+    ImGui::DragFloat("MinSpeed", (float*)&data.minSpeed, 0, data.maxSpeed);
+    ImGui::DragFloat("MaxSpeed", (float*)&data.maxSpeed, data.minSpeed, 20000);
+    ImGui::DragFloat("MinStartTime", (float*)&data.minStartTime, 0.0f, data.maxStartTime);
+    ImGui::DragFloat("MaxStartTime", (float*)&data.maxStartTime, data.minStartTime, data.duration);
 
     SaveDialog();
     ImGui::SameLine();
@@ -173,10 +172,11 @@ void ParticleConfigScene::Init()
     for (ParticleInfo& info : particleInfos)
     {
         info.transform.Pos() = {};
+        info.transform.Rot() = 0;
 
         info.velocity = Random(data.minVelocity, data.maxVelocity);
         info.accelation = Random(data.minAccelation, data.maxAccelation);
-        info.angularVelocity = Random(data.minAngularVelocity, data.maxAngularVelocity);
+        info.angularVelocity = 0;// Random(data.minAngularVelocity, data.maxAngularVelocity);
         info.speed = Random(data.minSpeed, data.maxSpeed);
         info.startTime = Random(data.minStartTime, data.maxStartTime);
         info.startScale = Random(data.minStartScale, data.maxStartScale);

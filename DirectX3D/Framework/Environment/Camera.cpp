@@ -181,6 +181,11 @@ void Camera::FreeMode()
         if (KEY_PRESS('Q'))
             Pos() += Up() * moveSpeed * DELTA;
 
+        if (KEY_PRESS('Z'))
+            Pos() += Forward() * 500 * DELTA;
+        if (KEY_PRESS('C'))
+            Pos() += Right() * 500 * DELTA;
+
         Rot().x -= delta.y * rotSpeed * DELTA;
         Rot().y += delta.x * rotSpeed * DELTA;
     }
