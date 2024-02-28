@@ -372,6 +372,7 @@ private: // 이벤트 혹은 함수에서 조건이 필요할거 같을때
 	bool OtherPlay2 = false;
 	int Count = 0;
 	float timer = 0.0f;
+	int randX[6], randZ[6];
 
 private:
 	vector<Transform*> transforms;

@@ -425,7 +425,7 @@ void Valphalk::EnergyBullets()
 		sequence++;
 	}
 
-	if (sequence == 3)
+	if (sequence == 3) // 탄의 포지션 잡아주기
 	{
 		for (int i = 0; i < bullets.size(); ++i)
 		{
@@ -439,15 +439,26 @@ void Valphalk::EnergyBullets()
 		}
 		sequence++;
 	}
-	if (sequence == 4)
+	if (sequence == 4) // 각각 탄이 도착할 지역 랜덤으로 지정하기
 	{
-		SetState(E_2079); E2079();		
-		bulletTime += DELTA;
-
+		for (int i = 0; i < 6; ++i)
+		{
+			randX[i] = Random(target->Pos().x - 250, target->Pos().x + 250);
+			randZ[i] = Random(target->Pos().z - 250, target->Pos().z + 250);
+		}
+		sequence++;
 	}
 	if (sequence == 5)
+	{
+		SetState(E_2079); E2079();	
+	}
+	if (sequence == 6) // 값 초기화 및 패턴 넘기기
 	{ 	
-		bulletTime = 0; 
+		for (int i = 0; i < 6; ++i)
+		{
+			randX[i] = 0;
+			randZ[i] = 0;
+		}
 		whichPattern = 0; 
 		ChooseNextPattern(); 
 	}
@@ -753,201 +764,204 @@ void Valphalk::ChooseNextPattern()
 	// 흡기 : 인식 포효로부터  1분 후
 	// 분노 : 90 ㅇㅣ하    40 일때 한번
 	// 필살기 : 체력 50 언더라면
-
-	if (needHupGi)
+	switch (0)
 	{
-		curPattern = HUPGI;
-		needHupGi = false;
-		return;
+	case 0: curPattern = B_ENERGYBLAST; break;
 	}
-	
-	if (angerRoar90)
-	{
-		curPattern = ANGERROAR;
-		angerRoar90 = false;
-		return;
-	}
+	//if (needHupGi)
+	//{
+	//	curPattern = HUPGI;
+	//	needHupGi = false;
+	//	return;
+	//}
+	//
+	//if (angerRoar90)
+	//{
+	//	curPattern = ANGERROAR;
+	//	angerRoar90 = false;
+	//	return;
+	//}
 
-	if (angerRoar40)
-	{
-		curPattern = ANGERROAR;
-		angerRoar40 = false;
-		return;
-	}
+	//if (angerRoar40)
+	//{
+	//	curPattern = ANGERROAR;
+	//	angerRoar40 = false;
+	//	return;
+	//}
 
-	if (ult50)
-	{
-		curPattern = STORM;
-		ult50 = false;
-		return;
-	}
+	//if (ult50)
+	//{
+	//	curPattern = STORM;
+	//	ult50 = false;
+	//	return;
+	//}
 
-	if (!needHupGi && !angerRoar90 && !angerRoar40 && !ult50)
-	{
+	//if (!needHupGi && !angerRoar90 && !angerRoar40 && !ult50)
+	//{
 
-		if (distance < 800)    // 근
-		{
-			if (isSlashMode)	   // 참
-			{
-				if (isHupGi)    // 흡
-				{
-					int i = rand() % 4;
-					switch (i)
-					{
-					case 0:	curPattern = S_LEGATK;		 break;
-					case 1:	curPattern = S_STABATK;		 break;
-					case 2:	curPattern = S_BACKWINGATK;  break;
-					case 3:	curPattern = HS_FLYFALLATK;  break;  // 호버링
-					}
-				}
-				else           // ㄴ흡
-				{
-					int i = rand() % 4;
-					switch (i)
-					{
-					case 0:	curPattern = S_LEGATK;	  break;
-					case 1:	curPattern = S_STABATK;	  break;
-					case 2:	curPattern = S_BACKWINGATK;  break;
-					case 3:	curPattern = S_BITE;		break;
-					}
-				}
-			}
-			else               // 포
-			{
-				if (isHupGi)   // 흡
-				{
-					int i = rand() % 5;
-					switch (i)
-					{
-					case 0:	curPattern = HB_WINGATK;	  break;
-					case 1:	curPattern = B_DOWNBLAST;	  break;
-					case 2:	curPattern = FORWARDBOOM;	break;
-					case 3:	curPattern = HS_FLYFALLATK;	break;
-					case 4:	curPattern = FULLBURST;	break;
-					}
-				}
-				else           // ㄴ흡
-				{
-					int i = rand() % 4;
-					switch (i)
-					{
-					case 0:	curPattern = B_SWINGATK;	  break;
-					case 1:	curPattern = B_WINGATK;	  break;
-					case 2:	curPattern = B_DOWNBLAST;  break;
-					case 3:	curPattern = FORWARDBOOM;  break;
-					}
-				}
-			}
+	//	if (distance < 800)    // 근
+	//	{
+	//		if (isSlashMode)	   // 참
+	//		{
+	//			if (isHupGi)    // 흡
+	//			{
+	//				int i = rand() % 4;
+	//				switch (i)
+	//				{
+	//				case 0:	curPattern = S_LEGATK;		 break;
+	//				case 1:	curPattern = S_STABATK;		 break;
+	//				case 2:	curPattern = S_BACKWINGATK;  break;
+	//				case 3:	curPattern = HS_FLYFALLATK;  break;  // 호버링
+	//				}
+	//			}
+	//			else           // ㄴ흡
+	//			{
+	//				int i = rand() % 4;
+	//				switch (i)
+	//				{
+	//				case 0:	curPattern = S_LEGATK;	  break;
+	//				case 1:	curPattern = S_STABATK;	  break;
+	//				case 2:	curPattern = S_BACKWINGATK;  break;
+	//				case 3:	curPattern = S_BITE;		break;
+	//				}
+	//			}
+	//		}
+	//		else               // 포
+	//		{
+	//			if (isHupGi)   // 흡
+	//			{
+	//				int i = rand() % 5;
+	//				switch (i)
+	//				{
+	//				case 0:	curPattern = HB_WINGATK;	  break;
+	//				case 1:	curPattern = B_DOWNBLAST;	  break;
+	//				case 2:	curPattern = FORWARDBOOM;	break;
+	//				case 3:	curPattern = HS_FLYFALLATK;	break;
+	//				case 4:	curPattern = FULLBURST;	break;
+	//				}
+	//			}
+	//			else           // ㄴ흡
+	//			{
+	//				int i = rand() % 4;
+	//				switch (i)
+	//				{
+	//				case 0:	curPattern = B_SWINGATK;	  break;
+	//				case 1:	curPattern = B_WINGATK;	  break;
+	//				case 2:	curPattern = B_DOWNBLAST;  break;
+	//				case 3:	curPattern = FORWARDBOOM;  break;
+	//				}
+	//			}
+	//		}
 
-		}
+	//	}
 
-		else if (distance >= 800 && distance < 2000)  // 중
-		{
-			if (isSlashMode) // 참
-			{
-				if (isHupGi) // 흡
-				{
-					int i = rand() % 4;
-					switch (i)
-					{
-					case 0:	curPattern = S_STABATK;	  break;
-					case 1:	curPattern = S_SRUSH;  break;
-					case 2:	curPattern = HS_FLYFALLATK;	  break;
-					case 3:	curPattern = S_TRANSFORM;	  break;
-					}
-				}
-				else		// 흡ㄴ
-				{
-					int i = rand() % 3;
-					switch (i)
-					{
-					case 0:	curPattern = S_STABATK;	  break;
-					case 1:	curPattern = S_SRUSH;	  break;
-					case 2:	curPattern = S_TRANSFORM;	  break;
-					}
-				}
-			}
-			else			  // 포
-			{
-				if (isHupGi)  // 흡
-				{
-					int i = rand() % 5;
-					switch (i)
-					{
-					case 0:	curPattern = B_DOWNBLAST;	  break;
-					case 1:	curPattern = FORWARDBOOM;	  break;
-					case 2:	curPattern = HS_FLYFALLATK;	  break;
-					case 3:	curPattern = FULLBURST;	break;
-					case 4:	curPattern = B_DUMBLING;  break;
-					}
-				}
-				else		  // 흡 ㄴ
-				{
-					int i = rand() % 5;
-					switch (i)
-					{
-					case 0:	curPattern = B_SWINGATK;	  break;
-					case 1:	curPattern = FORWARDBOOM;	  break;
-					case 2:	curPattern = B_ENERGYBLAST;  break;
-					case 3:	curPattern = B_DUMBLING;  break;
-					case 4:	curPattern = B_TRANSFORM;  break;
-					}
-				}
-			}
+	//	else if (distance >= 800 && distance < 2000)  // 중
+	//	{
+	//		if (isSlashMode) // 참
+	//		{
+	//			if (isHupGi) // 흡
+	//			{
+	//				int i = rand() % 4;
+	//				switch (i)
+	//				{
+	//				case 0:	curPattern = S_STABATK;	  break;
+	//				case 1:	curPattern = S_SRUSH;  break;
+	//				case 2:	curPattern = HS_FLYFALLATK;	  break;
+	//				case 3:	curPattern = S_TRANSFORM;	  break;
+	//				}
+	//			}
+	//			else		// 흡ㄴ
+	//			{
+	//				int i = rand() % 3;
+	//				switch (i)
+	//				{
+	//				case 0:	curPattern = S_STABATK;	  break;
+	//				case 1:	curPattern = S_SRUSH;	  break;
+	//				case 2:	curPattern = S_TRANSFORM;	  break;
+	//				}
+	//			}
+	//		}
+	//		else			  // 포
+	//		{
+	//			if (isHupGi)  // 흡
+	//			{
+	//				int i = rand() % 5;
+	//				switch (i)
+	//				{
+	//				case 0:	curPattern = B_DOWNBLAST;	  break;
+	//				case 1:	curPattern = FORWARDBOOM;	  break;
+	//				case 2:	curPattern = HS_FLYFALLATK;	  break;
+	//				case 3:	curPattern = FULLBURST;	break;
+	//				case 4:	curPattern = B_DUMBLING;  break;
+	//				}
+	//			}
+	//			else		  // 흡 ㄴ
+	//			{
+	//				int i = rand() % 5;
+	//				switch (i)
+	//				{
+	//				case 0:	curPattern = B_SWINGATK;	  break;
+	//				case 1:	curPattern = FORWARDBOOM;	  break;
+	//				case 2:	curPattern = B_ENERGYBLAST;  break;
+	//				case 3:	curPattern = B_DUMBLING;  break;
+	//				case 4:	curPattern = B_TRANSFORM;  break;
+	//				}
+	//			}
+	//		}
 
-		}
+	//	}
 
-		else if (distance > 2000)   // 원
-		{
-			if (isSlashMode)        // 참
-			{
-				if (isHupGi)        // 흡
-				{
-					int i = rand() % 2;
-					switch (i)
-					{
-					case 0:	curPattern = S_JETRUSH;	  break;
-					case 1:	curPattern = HS_FLYFALLATK;	  break;
-					}
-				}
-				else                // 흡ㄴ
-				{
-					int i = rand() % 3;
-					switch (i)
-					{
-					case 0:	curPattern = S_JETRUSH;	  break;
-					case 1:	curPattern = S_RUNANDBITE;	  break;
-					//case 2:	curPattern = S_RUNTOTRGT;  break; //TODO
-					case 2:	curPattern = S_TRANSFORM;	  break;
-					}
-				}
-			}
-			else                   //포
-			{
-				if (isHupGi)       // 흡
-				{
-					int i = rand() % 3;
-					switch (i)
-					{
-					case 0:	curPattern = FULLBURST;		break;
-					case 1:	curPattern = B_DUMBLING;  break;
-					case 2:	curPattern = HS_FLYFALLATK;  break; // 트랜스폼 하고 날게 수정
-					}
-				}
-				else              // 흡ㄴ
-				{
-					int i = rand() % 3;
-					switch (i)
-					{
-					case 0:	curPattern = B_ENERGYBLAST;		break;
-					case 1:	curPattern = B_DUMBLING;		break;
-					case 2:	curPattern = B_TRANSFORM;		break;
-					}
-				}
-			}
+	//	else if (distance > 2000)   // 원
+	//	{
+	//		if (isSlashMode)        // 참
+	//		{
+	//			if (isHupGi)        // 흡
+	//			{
+	//				int i = rand() % 2;
+	//				switch (i)
+	//				{
+	//				case 0:	curPattern = S_JETRUSH;	  break;
+	//				case 1:	curPattern = HS_FLYFALLATK;	  break;
+	//				}
+	//			}
+	//			else                // 흡ㄴ
+	//			{
+	//				int i = rand() % 3;
+	//				switch (i)
+	//				{
+	//				case 0:	curPattern = S_JETRUSH;	  break;
+	//				case 1:	curPattern = S_RUNANDBITE;	  break;
+	//				//case 2:	curPattern = S_RUNTOTRGT;  break; //TODO
+	//				case 2:	curPattern = S_TRANSFORM;	  break;
+	//				}
+	//			}
+	//		}
+	//		else                   //포
+	//		{
+	//			if (isHupGi)       // 흡
+	//			{
+	//				int i = rand() % 3;
+	//				switch (i)
+	//				{
+	//				case 0:	curPattern = FULLBURST;		break;
+	//				case 1:	curPattern = B_DUMBLING;  break;
+	//				case 2:	curPattern = HS_FLYFALLATK;  break; // 트랜스폼 하고 날게 수정
+	//				}
+	//			}
+	//			else              // 흡ㄴ
+	//			{
+	//				int i = rand() % 3;
+	//				switch (i)
+	//				{
+	//				case 0:	curPattern = B_ENERGYBLAST;		break;
+	//				case 1:	curPattern = B_DUMBLING;		break;
+	//				case 2:	curPattern = B_TRANSFORM;		break;
+	//				}
+	//			}
+	//		}
 
-		}
-	}
+	//	}
+	//}
 
 
 }
@@ -2652,17 +2666,15 @@ void Valphalk::E2054() // 찌르기 날개 회수
 void Valphalk::E2079()
 {
 	PLAY;
-	float randX = Random(target->Pos().x - 10, target->Pos().x + 10);
-	float randY = Random(target->Pos().z - 10, target->Pos().z + 10);	
 	
 	for (int i = 0; i < bullets.size(); ++i)
 	{
 		if (RATIO > 0.1 + ((DELTA + (float)i) * 0.03f))
 		{
-			bullets[i]->Pos().x = Lerp(bullets[i]->Pos().x, randX, 0.0007f);
-			bullets[i]->Pos().z = Lerp(bullets[i]->Pos().z, randY, 0.0007f);
+			bullets[i]->Pos().x = Lerp(bullets[i]->Pos().x, randX[i], 0.0017f);
+			bullets[i]->Pos().z = Lerp(bullets[i]->Pos().z, randZ[i], 0.0017f);
 
-			bullets[i]->Pos().y -= 500 * DELTA;
+			bullets[i]->Pos().y -= 400 * DELTA;
 		}
 
 		if (bullets[i]->Pos().y < 0)
