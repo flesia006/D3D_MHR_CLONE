@@ -5,12 +5,12 @@ class Valphalk : public ModelAnimator
 public:
 	enum State
 	{
-		E_0003,	E_0007,	E_0043,	E_0044,	E_0045,
-		E_0055, E_0059, E_0060, E_0061, E_0071, 
-		E_0097,	E_0098,	E_0099,	E_0146,	
-		E_0147,	E_0151,	E_0152,	E_0153,	E_0164,
-		E_0165,	E_0166,	E_0171,	E_0172,	E_0173,
-		E_0178,	E_0179,	E_0180,	E_0186,	E_0187,	E_0188,
+		E_0003, E_0007, E_0043, E_0044, E_0045,
+		E_0055, E_0059, E_0060, E_0061, E_0071,
+		E_0097, E_0098, E_0099, E_0146,
+		E_0147, E_0151, E_0152, E_0153, E_0164,
+		E_0165, E_0166, E_0171, E_0172, E_0173,
+		E_0178, E_0179, E_0180, E_0186, E_0187, E_0188,
 		E_1151, E_1155, E_1163, E_1164,		//습격		
 		E_2001, E_2002, E_2003,				// 공격및 피격자세
 		E_2013, E_2015, E_2017, E_2019, E_2020, E_2022,
@@ -18,7 +18,7 @@ public:
 		E_2038, E_2040, E_2041, E_2042, E_2044, E_2045,
 		E_2054, E_2056, E_2079, E_2082,
 		E_2091, E_2092, E_2093, E_2103, // 날개 휘둘
-		E_2106, E_2107, E_2108,	E_2118, E_2121, E_2124,
+		E_2106, E_2107, E_2108, E_2118, E_2121, E_2124,
 		E_2129, E_2130, E_2131, E_2133, E_2134, E_2141,	 // 앞다리 찍으면서 날개 덮기
 		E_2144, E_2145, E_2146,
 		E_2151, E_2152, E_2153, E_2171,
@@ -33,8 +33,8 @@ public:
 		E_2403,
 		E_3001, E_3023,
 		/* 앉아서 포효 자세 */
-		E_4013,
-		E_4071, E_4073, E_4074, 
+		E_4001, E_4013,
+		E_4071, E_4073, E_4074,
 		/*서서 포효 자세*/
 		E_22005
 	};
@@ -134,7 +134,7 @@ public:
 	void Spawn(Vector3 pos); // 스폰위치
 	void SetTarget(Transform* target) { this->target = target; } // 타겟 설정
 
-	Transform* GetTransform(int index) { return transforms[index]; }	
+	Transform* GetTransform(int index) { return transforms[index]; }
 	vector<CapsuleCollider*> GetCollider() { return colliders; }
 
 	//ColliderName GetName() { return colliderName; }
@@ -163,15 +163,16 @@ private:
 	void HB_LaserBlast();
 	void FindRoar();
 	void AngerRoar();
-	
+
 	void Storm();
-	void EnergyBullets();	
+	void EnergyBullets();
 	void ForwardBoom();
 	void FullBurst();
 	void Hupgi();
 	void Sidestep();
 	void B_Sidestep();
 	void Dead();
+	void Patrol();
 	Vector3 GetPlayerPos();
 
 private:
@@ -180,7 +181,6 @@ private:
 
 	void SetState(State state, float rad = 0);
 
-	void Patrol();
 
 	void ChooseNextPattern();
 	void ConditionCheck();
@@ -198,8 +198,8 @@ private:
 	void E0003();
 	void E0007();
 	void E0043();
-	void E0044();
-	void E0045();
+	void E0044(float degree);
+	void E0045(float degree);
 	void E0055();
 	void E0059();
 	void E0060(float degree = 0);
@@ -328,7 +328,7 @@ private:
 	void E2361();
 	void E2367();
 	void E2368();
-	
+
 	void E2371();
 	void E2372();
 	void E2373();
@@ -354,6 +354,8 @@ private:
 
 	void E3001();
 	void E3023();
+	
+	void E4001();
 	void E4013();
 
 	void E4071();
@@ -399,7 +401,7 @@ private:
 
 	Vector3 velocity; //속력 : 실제 움직임
 
-	Pattern curPattern = S_LEGATK;
+	Pattern curPattern = PATROL;
 	State curState = E_0152; //= 기본 스테이트;
 	State preState = curState;
 
@@ -439,7 +441,7 @@ private:
 	bool combo = false;
 
 	bool isSlashMode = true;
-	bool isHupGi = true;
+	bool isHupGi = false;
 
 	bool  isFindTrgt = false;
 	float roarAfterTimer = 0.0f;  // 인식 포효 이후부터 타이머 시작
@@ -460,7 +462,7 @@ private:
 	float radBtwTarget = 0.0f;
 	float initialRad = 0.0f;
 
-	const float rot135 = 2.36f;	
+	const float rot135 = 2.36f;
 	const float rot45 = 0.785f;
 
 	float radDifference = 0.0f;
