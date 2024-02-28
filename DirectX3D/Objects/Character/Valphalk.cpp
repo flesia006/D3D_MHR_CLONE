@@ -153,6 +153,9 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 	// 아래 있는게 첫 포효
 	ReadClip("E_4001");
 	ReadClip("E_4013");
+	ReadClip("E_4071");
+	ReadClip("E_4073");
+	ReadClip("E_4074");
 	//	ReadClip("E_22005");
 
 	ColliderAdd();
@@ -1025,7 +1028,7 @@ void Valphalk::ChooseNextPattern()
 	case 1:	curPattern = B_HUGESTAGGER;		 break;
 	}
 
-	/*if (!needHupGi && !angerRoar90 && !angerRoar40 && !ult50)
+	if (!needHupGi && !angerRoar90 && !angerRoar40 && !ult50)
 	{
 
 		if (distance < 2000)    // 근
@@ -1210,7 +1213,7 @@ void Valphalk::ChooseNextPattern()
 			}
 
 		}
-	}*/
+	}
 
 }
 
@@ -1250,6 +1253,7 @@ void Valphalk::PlayPattern()
 	case Valphalk::B_DEAD:			B_Dead();			break;
 	case Valphalk::B_SMALLSTAGGER:	B_SmallStagger();	break;
 	case Valphalk::B_HUGESTAGGER:	B_HugeStagger();	break;
+	case Valphalk::PATROL:			Patrol();			break;
 	default:		break;
 	}
 }
