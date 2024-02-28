@@ -439,7 +439,7 @@ private:
 	bool combo = false;
 
 	bool isSlashMode = true;
-	bool isHupGi = true;
+	bool isHupGi = false;
 
 	bool  isFindTrgt = false;
 	float roarAfterTimer = 0.0f;  // 인식 포효 이후부터 타이머 시작
