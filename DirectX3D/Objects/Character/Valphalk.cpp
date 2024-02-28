@@ -138,10 +138,18 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 	ReadClip("E_2381");
 	ReadClip("E_2382");
 	ReadClip("E_2383");
-
 	ReadClip("E_2403");
+
 	ReadClip("E_3001");
+	ReadClip("E_3006");
+	ReadClip("E_3015");
+	ReadClip("E_3016");
+	ReadClip("E_3017");
 	ReadClip("E_3023");
+	ReadClip("E_3101");
+	ReadClip("E_3106");
+	ReadClip("E_3114");
+	ReadClip("E_3118");
 	// 아래 있는게 첫 포효
 	ReadClip("E_4013");
 //	ReadClip("E_22005");
@@ -634,10 +642,78 @@ void Valphalk::B_Sidestep()
 	}
 }
 
-void Valphalk::Dead()
+void Valphalk::S_Dead()
 {
-	SetState(E_3023);
-	E3023();
+	SetState(E_3023);	E3023();
+}
+
+void Valphalk::S_SmallStagger()
+{
+	if (sequence == 0)// 소경직
+	{
+		SetState(E_3001);	E3001();
+	}
+
+	if (sequence == 1)// 대경직 루프
+		ChooseNextPattern();
+}
+
+void Valphalk::S_HugeStagger()
+{
+	if (sequence == 0)// 대경직 시작
+	{
+		SetState(E_3015);	E3015();
+	}
+
+	if (sequence == 1)// 대경직 루프
+	{
+		SetState(E_3016);	E3016();
+	}
+
+	if (sequence == 2)// 대경직 회복
+	{
+		SetState(E_3017);	E3017();
+	}
+
+	if (sequence == 3)
+		ChooseNextPattern();
+}
+
+void Valphalk::B_Dead()
+{
+	SetState(E_3118);	E3118();
+}
+
+void Valphalk::B_SmallStagger()
+{
+	if (sequence == 0)// 소경직
+	{
+		SetState(E_3101);	E3101();
+	}
+
+	if (sequence == 1)// 대경직 루프
+		ChooseNextPattern();
+}
+
+void Valphalk::B_HugeStagger()
+{
+	if (sequence == 0)// 대경직 시작
+	{
+		SetState(E_3114);	E3114();
+	}
+
+	if (sequence == 1)// 대경직 루프
+	{
+		SetState(E_3016);	E3016();
+	}
+
+	if (sequence == 2)// 대경직 회복
+	{
+		SetState(E_3017);	E3017();
+	}
+
+	if (sequence == 3)
+		ChooseNextPattern();
 }
 
 void Valphalk::SetEvent(int clip, Event event, float timeRatio)
@@ -782,7 +858,14 @@ void Valphalk::ChooseNextPattern()
 		return;
 	}
 
-	if (!needHupGi && !angerRoar90 && !angerRoar40 && !ult50)
+	int i = rand() % 2;
+	switch (i)
+	{
+	case 0:	curPattern = B_SMALLSTAGGER;	 break;
+	case 1:	curPattern = B_HUGESTAGGER;		 break;
+	}
+
+	/*if (!needHupGi && !angerRoar90 && !angerRoar40 && !ult50)
 	{
 
 		if (distance < 2000)    // 근
@@ -802,15 +885,13 @@ void Valphalk::ChooseNextPattern()
 				}
 				else           // ㄴ흡
 				{
-					//int i = rand() % 4;
-					int i = rand() % 2;
+					int i = rand() % 4;
 					switch (i)
 					{
-					//case 0:	curPattern = S_LEGATK;	  break;
-					//case 1:	curPattern = S_STABATK;	  break;
-					case 0:	curPattern = S_LEGATK;  break;
-					case 1:	curPattern = S_BACKWINGATK;  break;
-					//case 3:	curPattern = S_BITE;		break;
+					case 0:	curPattern = S_LEGATK;	  break;
+					case 1:	curPattern = S_STABATK;	  break;
+					case 2:	curPattern = S_BACKWINGATK;  break;
+					case 3:	curPattern = S_BITE;		break;
 					}
 				}
 			}
@@ -949,7 +1030,7 @@ void Valphalk::ChooseNextPattern()
 			}
 
 		}
-	}
+	}*/
 
 
 }
@@ -984,7 +1065,12 @@ void Valphalk::PlayPattern()
 	case Valphalk::FULLBURST:		FullBurst();		break;
 	case Valphalk::SIDESTEP:		Sidestep();			break;
 	case Valphalk::FORWARDBOOM:		ForwardBoom();		break;
-	case Valphalk::DEAD:			Dead();				break;
+	case Valphalk::S_DEAD:			S_Dead();			break;
+	case Valphalk::S_SMALLSTAGGER:	S_SmallStagger();	break;
+	case Valphalk::S_HUGESTAGGER:	S_HugeStagger();	break;
+	case Valphalk::B_DEAD:			B_Dead();			break;
+	case Valphalk::B_SMALLSTAGGER:	B_SmallStagger();	break;
+	case Valphalk::B_HUGESTAGGER:	B_HugeStagger();	break;
 	default:		break;
 	}
 }
@@ -1155,8 +1241,6 @@ void Valphalk::S_LegAtk()
 
 	if (sequence == 5)
 	{
-		if (whichPattern == 4 || whichPattern == 5 || whichPattern == 6)
-			Scale().x *= -1;
 		whichPattern = 0;
 		ChooseNextPattern();
 	}
@@ -3902,16 +3986,83 @@ void Valphalk::E2403()
 void Valphalk::E3001() // 작은 데미지 피격
 {
 	PLAY;
+
+	if (RATIO > 0.98)
+		sequence++;
+}
+
+void Valphalk::E3006()
+{
+}
+
+void Valphalk::E3015()
+{
+	combo = true;
+
+	PLAY;
+
+	if (RATIO > 0.97)
+		sequence++;
+}
+
+void Valphalk::E3016()
+{
+	PLAY;
+
+	if (RATIO > 0.97)
+		sequence++;
+}
+
+void Valphalk::E3017()
+{
+	PLAY;
+
+	if (RATIO > 0.97)
+	{
+		combo = false;
+		sequence++;
+	}
 }
 
 void Valphalk::E3023() // 사망
 {
 	PLAY;
-	if (RATIO > 0.99)			
-	isPlay = false;
-	
-	//if (RATIO > 0.98)
-		
+
+	if (RATIO > 0.98)
+		isPlay = false;
+}
+
+void Valphalk::E3101()
+{
+	PLAY;
+
+	if (RATIO > 0.98)
+		sequence++;
+}
+
+void Valphalk::E3106()
+{
+}
+
+void Valphalk::E3114()
+{
+	combo = true;
+
+	PLAY;
+
+	if (RATIO > 0.97)
+	{
+		isSlashMode = true;
+		sequence++;
+	}
+}
+
+void Valphalk::E3118()
+{
+	PLAY;
+
+	if (RATIO > 0.98)
+		isPlay = false;
 }
 
 void Valphalk::E4013() // 조우 포효

@@ -31,7 +31,8 @@ public:
 		E_2371, E_2372, E_2373, E_2374, E_2375, E_2376,
 		E_2381, E_2382, E_2383,
 		E_2403,
-		E_3001, E_3023,
+		E_3001, E_3006, E_3015, E_3016, E_3017, E_3023,
+		E_3101, E_3106, E_3114, E_3118,
 		/* 앉아서 포효 자세 */
 		E_4013,
 		E_4071, E_4073, E_4074, 
@@ -115,7 +116,12 @@ public:
 		SIDESTEP,
 		B_SIDESTEP,
 		FORWARDBOOM,
-		DEAD,
+		S_DEAD,
+		S_SMALLSTAGGER,
+		S_HUGESTAGGER,
+		B_DEAD,
+		B_SMALLSTAGGER,
+		B_HUGESTAGGER,
 		PATROL
 	};
 
@@ -171,7 +177,12 @@ private:
 	void Hupgi();
 	void Sidestep();
 	void B_Sidestep();
-	void Dead();
+	void S_Dead();
+	void S_SmallStagger();
+	void S_HugeStagger();
+	void B_Dead();
+	void B_SmallStagger();
+	void B_HugeStagger();
 	Vector3 GetPlayerPos();
 
 private:
@@ -353,9 +364,17 @@ private:
 	void E2403();
 
 	void E3001();
+	void E3006();
+	void E3015();
+	void E3016();
+	void E3017();
 	void E3023();
-	void E4013();
+	void E3101();
+	void E3106();
+	void E3114();
+	void E3118();
 
+	void E4013();
 	void E4071();
 	void E4073();
 	void E4074();
