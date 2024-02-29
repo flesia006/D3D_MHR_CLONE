@@ -861,8 +861,8 @@ void Valphalk::ChooseNextPattern()
 	int i = rand() % 2;
 	switch (i)
 	{
-	case 0:	curPattern = B_SMALLSTAGGER;	 break;
-	case 1:	curPattern = B_HUGESTAGGER;		 break;
+	case 0:	curPattern = S_DEAD;	break;
+	case 1:	curPattern = B_DEAD;	break;
 	}
 
 	/*if (!needHupGi && !angerRoar90 && !angerRoar40 && !ult50)
