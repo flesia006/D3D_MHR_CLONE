@@ -246,10 +246,8 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 
 	effectSphere1 = new SphereCollider();
 	effectSphere2 = new SphereCollider();
-	effectSphere1->Scale() *= 500;
 	effectSphere1->UpdateWorld();
 	effectSphere1->SetActive(false);
-	effectSphere2->Scale() *= 500;
 	effectSphere2->UpdateWorld();
 	effectSphere2->SetActive(false);
 }
@@ -987,9 +985,12 @@ void Valphalk::ConditionCheck()
 	// 타이머에 따른 조건 갱신
 
 	if (angerTimer > 120.0f)	// 분노 2분 지속 후 꺼짐
+	{
 		isAnger = false;
+		angerTimer = 0.0f;
+	}
 
-	if (roarAfterTimer > 60.0f)  // 인식 포효 1분 후 흡기 시작
+	if (roarAfterTimer > 60.0f && roarAfterTimer < 61.0f)  // 인식 포효 1분 후 흡기 시작
 		needHupGi = true;
 
 	if (hupGiTimer > 120.0f)   // 흡기 2분 지속 후 꺼짐
@@ -1018,6 +1019,11 @@ void Valphalk::ChooseNextPattern()
 	initialRad = Rot().y;
 	float distance = (target->GlobalPos() - Pos()).Length();
 
+	//switch (0)
+	//{
+	//case 0: curPattern = HS_FLYBLAST; break;
+	//}
+
 	// 흡기 : 인식 포효로부터  1분 후
 	// 분노 : 90 ㅇㅣ하    40 일때 한번
 	// 필살기 : 체력 50 언더라면
@@ -1028,35 +1034,35 @@ void Valphalk::ChooseNextPattern()
 		needHupGi = false;
 		return;
 	}
-
+	
 	if (angerRoar90)
 	{
 		curPattern = ANGERROAR;
 		angerRoar90 = false;
 		return;
 	}
-
+	
 	if (angerRoar40)
 	{
 		curPattern = ANGERROAR;
 		angerRoar40 = false;
 		return;
 	}
-
+	
 	if (ult50)
 	{
 		curPattern = STORM;
 		ult50 = false;
 		return;
 	}
-
-	int i = rand() % 2;
-	switch (i)
-	{
-	case 0:	curPattern = S_DEAD;	break;
-	case 1:	curPattern = B_DEAD;	break;
-	}
-
+	
+	//int i = rand() % 2;
+	//switch (i)
+	//{
+	//case 0:	curPattern = B_SMALLSTAGGER;	 break;
+	//case 1:	curPattern = B_HUGESTAGGER;		 break;
+	//}
+	
 	if (!needHupGi && !angerRoar90 && !angerRoar40 && !ult50)
 	{
 	
@@ -2149,8 +2155,8 @@ void Valphalk::HS_FlyBlast()
 		{
 			for (int i = 0; i < bullets.size(); ++i)
 			{
-				bullets[i]->Pos().x = Lerp(bullets[i]->Pos().x, randX, 0.002f);
-				bullets[i]->Pos().z = Lerp(bullets[i]->Pos().z, randZ, 0.002f);
+				bullets[i]->Pos().x = Lerp(bullets[i]->Pos().x, randX, 0.0024f);
+				bullets[i]->Pos().z = Lerp(bullets[i]->Pos().z, randZ, 0.0024f);
 				
 				bullets[i]->Pos().y -= 1500 * DELTA;
 			}
@@ -2259,7 +2265,6 @@ void Valphalk::HS_FlyFallAtk()
 
 	if (sequence == 7) // 마무리
 	{
-
 		whichPattern = 0;
 		isSlashMode = false;
 		ChooseNextPattern();
@@ -3799,14 +3804,23 @@ void Valphalk::EX2278()
 {
 	PLAY;
 
-	if (RATIO > 0.457f)
+	if (RATIO > 0.234f)
 	{
-		//effectBox1->SetActive(true);
-		//GetClip(E_2278)->SetPlayTime(0.1f);
+		if (RATIO < 0.24f)
+		{
+			effectSphere1->Scale() = { 400, 400, 400 };
+			effectSphere1->Pos() = GetTranslationByNode(83) + Back() * 100;
+			effectSphere2->Scale() = { 400, 400, 400 };
+			effectSphere2->Pos() = effectSphere1->Pos() + Back() * 700;
+		}
+		effectSphere1->SetActive(true);
+		effectSphere2->SetActive(true);
 	}
 
 	if (RATIO > 0.98)
 	{
+		effectSphere1->SetActive(false);
+		effectSphere2->SetActive(false);
 		sequence++;
 	}
 }
@@ -4213,23 +4227,24 @@ void Valphalk::EX2376()
 {
 	PLAY;
 
-	if (RATIO > 0.21f)
+	if (RATIO > 0.19f)
 	{
-		if (RATIO < 0.22f)
+		if (RATIO < 0.20f )
 		{
-			effectSphere1->Pos() = GetTranslationByNode(64);
-			effectSphere2->Pos() = GetTranslationByNode(84);
+			effectSphere1->Scale() = { 500, 500, 500 };
+			effectSphere1->Pos() = GetTranslationByNode(64) + Back() * 100;
+			effectSphere2->Scale() = { 500, 500, 500 };
+			effectSphere2->Pos() = GetTranslationByNode(84) + Back() * 100;
 		}
 		effectSphere1->SetActive(true);
-		effectSphere2->SetActive(true);
-		//GetClip(E_2376)->SetPlayTime(0.001f);
+		effectSphere2->SetActive(true);;
 	}
 
 	if (RATIO > 0.98)
 	{
-		sequence++;
 		effectSphere1->SetActive(false);
 		effectSphere2->SetActive(false);
+		sequence++;
 	}
 }
 
@@ -4442,7 +4457,8 @@ void Valphalk::E4073(float timer, float checkHp)
 void Valphalk::E4074()
 {
 	PLAY;
-	if (RATIO > 0.97f)
+
+	if (RATIO > 0.9f)
 	{
 		sequence++;
 	}

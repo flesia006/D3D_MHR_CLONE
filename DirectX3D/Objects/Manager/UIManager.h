@@ -115,12 +115,17 @@ private:
     Quad* orangeLeftHalfCircle3;
     Quad* orangeRightHalfCircle3;
 
-    // 아이템 아이콘 추가
+    // 아이템 아이콘 추가 ( 이건 퀵 슬롯에 있는것들 )
     //===================
-    Quad* potionIcon;
-    Quad* whetstoneIcon;
+    Quad* potionIcon_Q;
+    Quad* greatepotionIcon_Q;
+    Quad* whetstoneIcon_Q;
+    //=================== ( 아래는 다른 슬롯 쪽)
+    Quad* potionIcon_D;
+    Quad* greatepotionIcon_D;
+    Quad* whetstoneIcon_D;
     //===================
-
+    
     //액터의 UI
     ProgressBar* hp;
     Vector3 hpPos; //체력바의 위치를 수치화한 것 (진짜 위치를 위한 중간계산용)

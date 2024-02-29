@@ -183,7 +183,7 @@ void Player::Potion()
 {
 	time += DELTA;
 
-	if (KEY_DOWN('E'))
+	if (UIManager::Get()->useQuickSlot1 && UIManager::Get()->useSlotUse)
 	{
 		Sounds::Get()->Play("health_potion", 0.3f);
 		cure = true;
@@ -202,7 +202,7 @@ void Player::Potion()
 		}
 	}
 
-	if (KEY_DOWN('R'))
+	if (UIManager::Get()->useQuickSlot2)
 	{
 		Sounds::Get()->Play("health_potion", 0.3f);
 		Lcure = true;
@@ -2696,14 +2696,14 @@ bool Player::Jump(float moveSpeed)
 
 void Player::GroundCheck()
 {
-	TerrainEditor* terrain = dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetTerrain();
-
-	Vector3 pos1;
-	terrain->ComputePicking(pos1, realPos->Pos() + Vector3::Up() * 200, Vector3::Down());
+	//TerrainEditor* terrain = dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetTerrain();
+	//
+	//Vector3 pos1;
+	//terrain->ComputePicking(pos1, realPos->Pos() + Vector3::Up() * 200, Vector3::Down());
 
 //	Vector3 pos2;
 //	terrain->ComputePicking(pos2, realPos->Pos(), Vector3::Up());
 
 //	float y = max(pos1.y, pos2.y);
-	Pos().y = pos1.y;
+	//Pos().y = pos1.y;
 }

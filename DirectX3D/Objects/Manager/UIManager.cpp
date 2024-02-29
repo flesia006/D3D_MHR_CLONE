@@ -220,8 +220,15 @@ UIManager::UIManager()
 	);
 
 	// 아이템 아이콘 추가
-	potionIcon = new Quad(L"Textures/UI/Potion.png");
-	whetstoneIcon = new Quad(L"Textures/UI/Whetstone-icon.png");
+	potionIcon_Q = new Quad(L"Textures/UI/Potion.png");
+	potionIcon_Q->Pos() = { 1312, 348, 0 };
+	potionIcon_Q->Scale() *= 0.9;
+	greatepotionIcon_Q = new Quad(L"Textures/UI/GreatePotion.png");
+	greatepotionIcon_Q->Pos() = { 1221, 392, 0 };
+	greatepotionIcon_Q->Scale() *= 0.9;
+	whetstoneIcon_Q = new Quad(L"Textures/UI/Whetstone-icon.png");
+	whetstoneIcon_Q->Pos() = { 1351, 262, 0 };
+	whetstoneIcon_Q->Scale() *= 0.85;
 
 	// hp bar ui
 	hp->Scale() = { 2.625f,0.03f,0 };
@@ -303,8 +310,9 @@ UIManager::~UIManager()
 	delete dragSlotBox;
 	delete slotName1;
 	delete slotName2;
-	delete potionIcon;
-	delete whetstoneIcon;
+	delete potionIcon_Q;
+	delete greatepotionIcon_Q;
+	delete whetstoneIcon_Q;
 }
 
 void UIManager::Update()
@@ -345,8 +353,9 @@ void UIManager::Update()
 	//===================
 	slotName1->UpdateWorld();
 	slotName2->UpdateWorld();
-	potionIcon->UpdateWorld();
-	whetstoneIcon->UpdateWorld();
+	potionIcon_Q->UpdateWorld();
+	greatepotionIcon_Q->UpdateWorld();
+	whetstoneIcon_Q->UpdateWorld();
 	//===================
 
 	FOR(selectBoxs.size())
@@ -643,9 +652,6 @@ void UIManager::PostRender()
 		orangeRightHalfCircle3->Render();
 
 	QuickSlot();
-
-	potionIcon->Render();
-	whetstoneIcon->Render();
 }
 
 void UIManager::GUIRender()
@@ -783,7 +789,10 @@ void UIManager::QuickSlot()
 		{
 			quickSlot_Select->Render();
 		}
-	
+
+		potionIcon_Q->Render();
+		greatepotionIcon_Q->Render();
+		whetstoneIcon_Q->Render();
 	}
 	
 }
@@ -803,13 +812,13 @@ void UIManager::QuickSlotBar()
 	if (KEY_DOWN('X'))
 	{
 		MousePos = mousePos;
-		useSlotUse = true;
+		//useSlotUse = true;
 	}
 	else if (KEY_UP('X'))
 	{
 		//SetCursorPos(MousePos.x + 8.0f, MousePos.y);
 		useSelectBar = false;
-		useSlotUse = false;
+		//useSlotUse = false;
 		if (MousePos.y > CENTER_Y)
 		{
 			SetCursorPos(MousePos.x + 8.0f, CENTER_Y - Distance(MousePos.y, CENTER_Y) + 31.0f);
@@ -954,7 +963,7 @@ void UIManager::QuickSlotBar()
 		}
 	}
 
-	if (KEY_PRESS('X') && !KEY_PRESS(VK_MBUTTON)) // C 누르기 에서 마우스 휠 버튼 누르기로
+	if (KEY_PRESS('X') && KEY_UP(VK_MBUTTON)) // C 누르기 에서 마우스 휠 버튼 누르기로
 		// X 를 누른 상태에서 C 를 누르면 지금 선택 되어있는 슬롯을 잡아줌
 	{
 		if (quickSlot_Select->Rot().z > -0.42f || quickSlot_Select->Rot().z < -5.98f)
@@ -994,15 +1003,15 @@ void UIManager::QuickSlotBar()
 
 void UIManager::DragSlot()
 {
-	if (KEY_PRESS('C') && useSlotUse && !useSelectBar)
-	{
-		//dragSlotBox->Render();
-	}
+	//if (KEY_PRESS('C') && useSlotUse && !useSelectBar)
+	//{
+	//	//dragSlotBox->Render();
+	//}
 
-	if (WM_MOUSEHWHEEL)
-	{
-		dragSlotBox->Render();
-	}
+	//if (WM_MOUSEHWHEEL)
+	//{
+	//	dragSlotBox->Render();
+	//}
 }
 
 bool UIManager::IsAbleBugSkill()
