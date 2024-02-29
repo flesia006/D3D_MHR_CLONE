@@ -221,14 +221,14 @@ UIManager::UIManager()
 
 	// 아이템 아이콘 추가
 	potionIcon_Q = new Quad(L"Textures/UI/Potion.png");
-	potionIcon_Q->Pos() = { 1312, 348, 0 };
+	potionIcon_Q->Pos() = { 1313.5, 347, 0 };
 	potionIcon_Q->Scale() *= 0.9;
 	greatepotionIcon_Q = new Quad(L"Textures/UI/GreatePotion.png");
-	greatepotionIcon_Q->Pos() = { 1221, 392, 0 };
+	greatepotionIcon_Q->Pos() = { 1219.5, 393.5, 0 };
 	greatepotionIcon_Q->Scale() *= 0.9;
 	whetstoneIcon_Q = new Quad(L"Textures/UI/Whetstone-icon.png");
-	whetstoneIcon_Q->Pos() = { 1351, 262, 0 };
-	whetstoneIcon_Q->Scale() *= 0.85;
+	whetstoneIcon_Q->Pos() = { 1351.5, 262.5, 0 };
+	whetstoneIcon_Q->Scale() *= 0.95;
 
 	// hp bar ui
 	hp->Scale() = { 2.625f,0.03f,0 };

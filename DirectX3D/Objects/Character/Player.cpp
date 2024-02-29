@@ -2,6 +2,7 @@
 #include "Framework.h"
 #include "Player.h"
 #include "Scenes/ShadowScene.h"
+#include "Scenes/ValphalkTestScene.h"
 
 Player::Player() : ModelAnimator("Player")
 {
@@ -603,8 +604,11 @@ bool Player::Attack(float power, bool push, UINT useOtherCollider) // Ãæµ¹ÆÇÁ¤ Ç
 {
 	renderEffect = true;
 
+	//Valphalk* val =
+	//	dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetValphalk();
 	Valphalk* val =
-		dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetValphalk();
+		dynamic_cast<ValphalkTestScene*>(SceneManager::Get()->Add("ValphalkTestScene"))->GetValphalk();
+
 
 	Contact contact;
 
@@ -695,8 +699,11 @@ bool Player::Attack(float power, bool push, UINT useOtherCollider) // Ãæµ¹ÆÇÁ¤ Ç
 
 void Player::AttackWOCollision(float power)
 {
+//	Valphalk* val =
+//		dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetValphalk();
 	Valphalk* val =
-		dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetValphalk();
+		dynamic_cast<ValphalkTestScene*>(SceneManager::Get()->Add("ValphalkTestScene"))->GetValphalk();
+
 	auto colliders = val->GetCollider();
 
 	int hitPart = lastHitPart;
@@ -748,8 +755,10 @@ void Player::AttackWOCollision(float power)
 
 bool Player::CollisionCheck()
 {
+	//Valphalk* val =
+	//	dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetValphalk();
 	Valphalk* val =
-		dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetValphalk();
+		dynamic_cast<ValphalkTestScene*>(SceneManager::Get()->Add("ValphalkTestScene"))->GetValphalk();
 	auto colliders = val->GetCollider();
 
 	for (auto collider : colliders)
