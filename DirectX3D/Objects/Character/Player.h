@@ -195,7 +195,6 @@ private:
 	Shadow* shadow;
 	LightBuffer::Light* light;
 	Trail* trail;
-	vector<HitParticle*> hitParticle;
 	UINT lastParticleIndex = 0;
 	UINT lastHitPart = 0;
 	Vector3 lastSwordDir;
@@ -266,5 +265,14 @@ private:
 	Vector3 initForward = Vector3::Zero();
 
 	vector<Damage> damages;
+
+	
+	///////////////////////////////////////////
+	// Particle
+	vector<HitParticle*> hitParticle;
+	HitBoomParticle* hitBoomParticle;
+	CriticalParticle* criticalParticle;
+	Sp_atk_ready_Particle* spAtkParticle;
+
 };
 
