@@ -125,10 +125,14 @@ UIManager::UIManager()
 	//quickSlot_Select->Rot().z;
 	
 	// 드래그 UI 추가
-	dragSlotBox = new Quad(L"Textures/UI/DragSlotBox2.png");
+	//dragSlotBox = new Quad(L"Textures/UI/DragSlotBox.png");
+	//dragSlotBox->Scale() *= 2.3f;
+	//dragSlotBox->Scale().x *= 1.2f;
+	//dragSlotBox->Pos() = { 1500,140,0 };
+	dragSlotBox = new Quad(L"Textures/UI/DragSlotBox.png");
 	dragSlotBox->Scale() *= 2.3f;
 	dragSlotBox->Scale().x *= 1.2f;
-	dragSlotBox->Pos() = { 1500,140,0 };
+	dragSlotBox->Pos() = { 1750,140,0 };
 
 	// 슬롯 내임 들어갈 박스 추가
 	slotName1 = new Quad(L"Textures/UI/SlotName.png");
@@ -219,9 +223,26 @@ UIManager::UIManager()
 		L"Textures/UI/LSCoting_none.png"
 	);
 
-	// 아이템 아이콘 추가
-	potionIcon = new Quad(L"Textures/UI/Potion.png");
-	whetstoneIcon = new Quad(L"Textures/UI/Whetstone-icon.png");
+	// 아이템 아이콘 추가 (퀵슬롯 쪽)
+	potionIcon_Q = new Quad(L"Textures/UI/Potion.png");
+	potionIcon_Q->Pos() = { 1313.5, 347, 0 };
+	potionIcon_Q->Scale() *= 0.9;
+	greatepotionIcon_Q = new Quad(L"Textures/UI/GreatePotion.png");
+	greatepotionIcon_Q->Pos() = { 1219.5, 393.5, 0 };
+	greatepotionIcon_Q->Scale() *= 0.9;
+	whetstoneIcon_Q = new Quad(L"Textures/UI/Whetstone-icon.png");
+	whetstoneIcon_Q->Pos() = { 1351.5, 262.5, 0 };
+	whetstoneIcon_Q->Scale() *= 0.95;
+	// 아이템 아이콘 추가 (드래그 슬롯 쪽)
+	potionIcon_D = new Quad(L"Textures/UI/Potion.png");
+	potionIcon_D->Pos() = { 1313.5, 347, 0 };
+	potionIcon_D->Scale() *= 0.9;
+	greatepotionIcon_D = new Quad(L"Textures/UI/GreatePotion.png");
+	greatepotionIcon_D->Pos() = { 1219.5, 393.5, 0 };
+	greatepotionIcon_D->Scale() *= 0.9;
+	whetstoneIcon_D = new Quad(L"Textures/UI/Whetstone-icon.png");
+	whetstoneIcon_D->Pos() = { 1351.5, 262.5, 0 };
+	whetstoneIcon_D->Scale() *= 0.95;
 
 	// hp bar ui
 	hp->Scale() = { 2.625f,0.03f,0 };
@@ -303,12 +324,17 @@ UIManager::~UIManager()
 	delete dragSlotBox;
 	delete slotName1;
 	delete slotName2;
-	delete potionIcon;
-	delete whetstoneIcon;
+	delete potionIcon_Q;
+	delete greatepotionIcon_Q;
+	delete whetstoneIcon_Q;
+	delete potionIcon_D;
+	delete greatepotionIcon_D;
+	delete whetstoneIcon_D;
 }
 
 void UIManager::Update()
 {
+	DragSlotBar();
 	QuickSlotBar();
 
 	stamina->UpdateWorld();
@@ -345,8 +371,12 @@ void UIManager::Update()
 	//===================
 	slotName1->UpdateWorld();
 	slotName2->UpdateWorld();
-	potionIcon->UpdateWorld();
-	whetstoneIcon->UpdateWorld();
+	potionIcon_Q->UpdateWorld();
+	greatepotionIcon_Q->UpdateWorld();
+	whetstoneIcon_Q->UpdateWorld();
+	potionIcon_D->UpdateWorld();
+	greatepotionIcon_D->UpdateWorld();
+	whetstoneIcon_D->UpdateWorld();
 	//===================
 
 	FOR(selectBoxs.size())
@@ -643,9 +673,6 @@ void UIManager::PostRender()
 		orangeRightHalfCircle3->Render();
 
 	QuickSlot();
-
-	potionIcon->Render();
-	whetstoneIcon->Render();
 }
 
 void UIManager::GUIRender()
@@ -655,7 +682,7 @@ void UIManager::GUIRender()
 	//ImGui::SliderFloat3("selectBoxs", (float*)&selectBoxs[5]->Pos(), 100, 1500);
 	//ImGui::SliderFloat3("selectBoxFrames", (float*)&selectBoxFrames[5]->Pos(), 100, 1500);
 
-	//ImGui::SliderFloat3("DragSlotBox", (float*)&dragSlotBox->Pos(), 100, 1500);
+	//ImGui::SliderFloat3("DragSlotBox", (float*)&dragSlotBox->Pos(), 1500, 2000);
 	//ImGui::SliderFloat3("SlotName1", (float*)&slotName1->Pos(), 100, 1500);
 	//ImGui::SliderFloat3("SlotName2", (float*)&slotName2->Pos(), 100, 1500);
 	//
@@ -747,43 +774,91 @@ void UIManager::QuickSlot()
 			selectBoxs[i]->Render();
 		}
 	
-		if (useQuickSlot1)
+		//if (useQuickSlot1)
+		//{
+		//
+		//	useQuickSlot1 = true;
+		//	useQuickSlot2 = false;
+		//	useQuickSlot3 = false;
+		//	useQuickSlot4 = false;
+		//	useQuickSlot5 = false;
+		//	useQuickSlot6 = false;
+		//	useQuickSlot7 = false;
+		//	useQuickSlot8 = false;
+		//}
+		//if (useQuickSlot2)
+		//{
+		//}
+		//if (useQuickSlot3)
+		//{
+		//}
+		//if (useQuickSlot4)
+		//{
+		//}
+		//if (useQuickSlot5)
+		//{
+		//}
+		//if (useQuickSlot6)
+		//{
+		//}
+		//if (useQuickSlot7)
+		//{
+		//}
+		//if (useQuickSlot8)
+		//{
+		//}
+
+		if (quickSlot_Select->Rot().z > -0.42f && useSelectBar)
 		{
 			selectBoxFrames[0]->Render();
 		}
-		if (useQuickSlot2)
+		if (quickSlot_Select->Rot().z < -5.98f && useSelectBar)
+		{
+			selectBoxFrames[0]->Render();
+		}
+		if (quickSlot_Select->Rot().z <= -0.42f && quickSlot_Select->Rot().z > -1.2f && useSelectBar)
 		{
 			selectBoxFrames[1]->Render();
+
 		}
-		if (useQuickSlot3)
+		if (quickSlot_Select->Rot().z <= -1.2f && quickSlot_Select->Rot().z > -1.98f && useSelectBar)
 		{
 			selectBoxFrames[2]->Render();
+
 		}
-		if (useQuickSlot4)
+		if (quickSlot_Select->Rot().z <= -1.98f && quickSlot_Select->Rot().z > -2.78f && useSelectBar)
 		{
 			selectBoxFrames[3]->Render();
+
 		}
-		if (useQuickSlot5)
+		if (quickSlot_Select->Rot().z <= -2.78f && quickSlot_Select->Rot().z > -3.6f && useSelectBar)
 		{
 			selectBoxFrames[4]->Render();
+
 		}
-		if (useQuickSlot6)
+		if (quickSlot_Select->Rot().z <= -3.6f && quickSlot_Select->Rot().z > -4.38f && useSelectBar)
 		{
 			selectBoxFrames[5]->Render();
+
 		}
-		if (useQuickSlot7)
+		if (quickSlot_Select->Rot().z <= -4.38f && quickSlot_Select->Rot().z > -5.12f && useSelectBar)
 		{
 			selectBoxFrames[6]->Render();
+
 		}
-		if (useQuickSlot8)
+		if (quickSlot_Select->Rot().z <= -5.12f && quickSlot_Select->Rot().z > -5.98f && useSelectBar)
 		{
 			selectBoxFrames[7]->Render();
+
 		}
 		if (useSelectBar)
 		{
 			quickSlot_Select->Render();
 		}
-	
+
+		potionIcon_Q->Render();
+		greatepotionIcon_Q->Render();
+		whetstoneIcon_Q->Render();
 	}
 	
 }
@@ -803,13 +878,10 @@ void UIManager::QuickSlotBar()
 	if (KEY_DOWN('X'))
 	{
 		MousePos = mousePos;
-		useSlotUse = true;
 	}
 	else if (KEY_UP('X'))
 	{
-		//SetCursorPos(MousePos.x + 8.0f, MousePos.y);
 		useSelectBar = false;
-		useSlotUse = false;
 		if (MousePos.y > CENTER_Y)
 		{
 			SetCursorPos(MousePos.x + 8.0f, CENTER_Y - Distance(MousePos.y, CENTER_Y) + 31.0f);
@@ -863,146 +935,68 @@ void UIManager::QuickSlotBar()
 		{
 			quickSlot_Select->Rot().z = 0.0f;
 		}
-
-		if (quickSlot_Select->Rot().z > -0.42f || quickSlot_Select->Rot().z < -5.98f)
-		{
-			useQuickSlot1 = true;
-			useQuickSlot2 = false;
-			useQuickSlot3 = false;
-			useQuickSlot4 = false;
-			useQuickSlot5 = false;
-			useQuickSlot6 = false;
-			useQuickSlot7 = false;
-			useQuickSlot8 = false;
-		}
-		if (quickSlot_Select->Rot().z <= -0.42f && quickSlot_Select->Rot().z > -1.2f)
-		{
-			useQuickSlot1 = false;
-			useQuickSlot2 = true;
-			useQuickSlot3 = false;
-			useQuickSlot4 = false;
-			useQuickSlot5 = false;
-			useQuickSlot6 = false;
-			useQuickSlot7 = false;
-			useQuickSlot8 = false;
-		}
-		if (quickSlot_Select->Rot().z <= -1.2f && quickSlot_Select->Rot().z > -1.98f)
-		{
-			useQuickSlot1 = false;
-			useQuickSlot2 = false;
-			useQuickSlot3 = true;
-			useQuickSlot4 = false;
-			useQuickSlot5 = false;
-			useQuickSlot6 = false;
-			useQuickSlot7 = false;
-			useQuickSlot8 = false;
-		}
-		if (quickSlot_Select->Rot().z <= -1.98f && quickSlot_Select->Rot().z > -2.78f)
-		{
-			useQuickSlot1 = false;
-			useQuickSlot2 = false;
-			useQuickSlot3 = false;
-			useQuickSlot4 = true;
-			useQuickSlot5 = false;
-			useQuickSlot6 = false;
-			useQuickSlot7 = false;
-			useQuickSlot8 = false;
-		}
-		if (quickSlot_Select->Rot().z <= -2.78f && quickSlot_Select->Rot().z > -3.6f)
-		{
-			useQuickSlot1 = false;
-			useQuickSlot2 = false;
-			useQuickSlot3 = false;
-			useQuickSlot4 = false;
-			useQuickSlot5 = true;
-			useQuickSlot6 = false;
-			useQuickSlot7 = false;
-			useQuickSlot8 = false;
-		}
-		if (quickSlot_Select->Rot().z <= -3.6f && quickSlot_Select->Rot().z > -4.38f)
-		{
-			useQuickSlot1 = false;
-			useQuickSlot2 = false;
-			useQuickSlot3 = false;
-			useQuickSlot4 = false;
-			useQuickSlot5 = false;
-			useQuickSlot6 = true;
-			useQuickSlot7 = false;
-			useQuickSlot8 = false;
-		}
-		if (quickSlot_Select->Rot().z <= -4.38f && quickSlot_Select->Rot().z > -5.12f)
-		{
-			useQuickSlot1 = false;
-			useQuickSlot2 = false;
-			useQuickSlot3 = false;
-			useQuickSlot4 = false;
-			useQuickSlot5 = false;
-			useQuickSlot6 = false;
-			useQuickSlot7 = true;
-			useQuickSlot8 = false;
-		}
-		if (quickSlot_Select->Rot().z <= -5.12f && quickSlot_Select->Rot().z > -5.98f)
-		{
-			useQuickSlot1 = false;
-			useQuickSlot2 = false;
-			useQuickSlot3 = false;
-			useQuickSlot4 = false;
-			useQuickSlot5 = false;
-			useQuickSlot6 = false;
-			useQuickSlot7 = false;
-			useQuickSlot8 = true;
-		}
 	}
 
-	if (KEY_PRESS('X') && !KEY_PRESS(VK_MBUTTON)) // C 누르기 에서 마우스 휠 버튼 누르기로
+	if (KEY_PRESS('X') && KEY_UP(VK_MBUTTON)) // C 누르기 에서 마우스 휠 버튼 누르기로
 		// X 를 누른 상태에서 C 를 누르면 지금 선택 되어있는 슬롯을 잡아줌
 	{
 		if (quickSlot_Select->Rot().z > -0.42f || quickSlot_Select->Rot().z < -5.98f)
 		{
 			quickSlot_Select->Rot().z = 0.0f;
+			useQuickSlot1 = true;
 		}
 		if (quickSlot_Select->Rot().z <= -0.42f && quickSlot_Select->Rot().z > -1.2f)
 		{
 			quickSlot_Select->Rot().z = -0.8f;
+			useQuickSlot2 = true;
 		}
 		if (quickSlot_Select->Rot().z <= -1.2f && quickSlot_Select->Rot().z > -1.98f)
 		{
 			quickSlot_Select->Rot().z = -1.56f;
+			useQuickSlot3 = true;
 		}
 		if (quickSlot_Select->Rot().z <= -1.98f && quickSlot_Select->Rot().z > -2.78f)
 		{
 			quickSlot_Select->Rot().z = -2.38f;
+			useQuickSlot4 = true;
 		}
 		if (quickSlot_Select->Rot().z <= -2.78f && quickSlot_Select->Rot().z > -3.6f)
 		{
 			quickSlot_Select->Rot().z = -3.173f;
+			useQuickSlot5 = true;
 		}
 		if (quickSlot_Select->Rot().z <= -3.6f && quickSlot_Select->Rot().z > -4.38f)
 		{
 			quickSlot_Select->Rot().z = -3.992f;
+			useQuickSlot6 = true;
 		}
 		if (quickSlot_Select->Rot().z <= -4.38f && quickSlot_Select->Rot().z > -5.12f)
 		{
 			quickSlot_Select->Rot().z = -4.77f;
+			useQuickSlot7 = true;
 		}
 		if (quickSlot_Select->Rot().z <= -5.12f && quickSlot_Select->Rot().z > -5.98f)
 		{
 			quickSlot_Select->Rot().z = -5.543f;
+			useQuickSlot8 = true;
 		}
 	}
 }
 
 void UIManager::DragSlot()
 {
-	if (KEY_PRESS('C') && useSlotUse && !useSelectBar)
-	{
-		//dragSlotBox->Render();
-	}
-
-	if (WM_MOUSEHWHEEL)
+	if (KEY_PRESS('X'))
 	{
 		dragSlotBox->Render();
 	}
+}
+
+void UIManager::DragSlotBar()
+{
+	//if (KEY_PRESS('X'))
+	//{
+	//	useDragSlot = true;
+	//}
 }
 
 bool UIManager::IsAbleBugSkill()

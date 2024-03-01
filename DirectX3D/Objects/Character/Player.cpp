@@ -2,6 +2,7 @@
 #include "Framework.h"
 #include "Player.h"
 #include "Scenes/ShadowScene.h"
+#include "Scenes/ValphalkTestScene.h"
 
 Player::Player() : ModelAnimator("Player")
 {
@@ -183,38 +184,40 @@ void Player::Potion()
 {
 	time += DELTA;
 
-	if (KEY_DOWN('E'))
+	if (UIManager::Get()->useQuickSlot1)
 	{
 		Sounds::Get()->Play("health_potion", 0.3f);
+		UIManager::Get()->useQuickSlot1 = false;
 		cure = true;
 		time = 0;
 	}
 	if (cure == true)
 	{
-		if (time < 2)
+		if (time < 3)
 		{
-			UIManager::Get()->HealthPotion();
+			UIManager::Get()->LargeHealthPotion();
 		}
-		else if (time >= 2)
+		else if (time >= 3)
 		{
 			cure = false;
 			return;
 		}
 	}
 
-	if (KEY_DOWN('R'))
+	if (UIManager::Get()->useQuickSlot2)
 	{
 		Sounds::Get()->Play("health_potion", 0.3f);
+		UIManager::Get()->useQuickSlot2 = false;
 		Lcure = true;
 		time = 0;
 	}
 	if (Lcure == true)
 	{
-		if (time < 3)
+		if (time < 2)
 		{
 			UIManager::Get()->HealthPotion();
 		}
-		else if (time >= 3)
+		else if (time >= 2)
 		{
 			Lcure = false;
 			return;
@@ -605,6 +608,9 @@ bool Player::Attack(float power, bool push, UINT useOtherCollider) // Ãæµ¹ÆÇÁ¤ Ç
 
 	Valphalk* val =
 		dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetValphalk();
+	//Valphalk* val =
+	//	dynamic_cast<ValphalkTestScene*>(SceneManager::Get()->Add("ValphalkTestScene"))->GetValphalk();
+
 
 	Contact contact;
 
@@ -697,6 +703,9 @@ void Player::AttackWOCollision(float power)
 {
 	Valphalk* val =
 		dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetValphalk();
+	//Valphalk* val =
+	//	dynamic_cast<ValphalkTestScene*>(SceneManager::Get()->Add("ValphalkTestScene"))->GetValphalk();
+
 	auto colliders = val->GetCollider();
 
 	int hitPart = lastHitPart;
@@ -750,6 +759,8 @@ bool Player::CollisionCheck()
 {
 	Valphalk* val =
 		dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetValphalk();
+	//Valphalk* val =
+	//	dynamic_cast<ValphalkTestScene*>(SceneManager::Get()->Add("ValphalkTestScene"))->GetValphalk();
 	auto colliders = val->GetCollider();
 
 	for (auto collider : colliders)
@@ -2696,14 +2707,14 @@ bool Player::Jump(float moveSpeed)
 
 void Player::GroundCheck()
 {
-	TerrainEditor* terrain = dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetTerrain();
-
-	Vector3 pos1;
-	terrain->ComputePicking(pos1, realPos->Pos() + Vector3::Up() * 200, Vector3::Down());
+	//TerrainEditor* terrain = dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetTerrain();
+	//
+	//Vector3 pos1;
+	//terrain->ComputePicking(pos1, realPos->Pos() + Vector3::Up() * 200, Vector3::Down());
 
 //	Vector3 pos2;
 //	terrain->ComputePicking(pos2, realPos->Pos(), Vector3::Up());
 
 //	float y = max(pos1.y, pos2.y);
-	Pos().y = pos1.y;
+	//Pos().y = pos1.y;
 }
