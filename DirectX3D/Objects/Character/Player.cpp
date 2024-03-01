@@ -184,19 +184,20 @@ void Player::Potion()
 {
 	time += DELTA;
 
-	if (UIManager::Get()->useQuickSlot1 && UIManager::Get()->useSlotUse)
+	if (UIManager::Get()->useQuickSlot1)
 	{
 		Sounds::Get()->Play("health_potion", 0.3f);
+		UIManager::Get()->useQuickSlot1 = false;
 		cure = true;
 		time = 0;
 	}
 	if (cure == true)
 	{
-		if (time < 2)
+		if (time < 3)
 		{
-			UIManager::Get()->HealthPotion();
+			UIManager::Get()->LargeHealthPotion();
 		}
-		else if (time >= 2)
+		else if (time >= 3)
 		{
 			cure = false;
 			return;
@@ -206,16 +207,17 @@ void Player::Potion()
 	if (UIManager::Get()->useQuickSlot2)
 	{
 		Sounds::Get()->Play("health_potion", 0.3f);
+		UIManager::Get()->useQuickSlot2 = false;
 		Lcure = true;
 		time = 0;
 	}
 	if (Lcure == true)
 	{
-		if (time < 3)
+		if (time < 2)
 		{
 			UIManager::Get()->HealthPotion();
 		}
-		else if (time >= 3)
+		else if (time >= 2)
 		{
 			Lcure = false;
 			return;
@@ -604,10 +606,10 @@ bool Player::Attack(float power, bool push, UINT useOtherCollider) // Ãæµ¹ÆÇÁ¤ Ç
 {
 	renderEffect = true;
 
-	//Valphalk* val =
-	//	dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetValphalk();
 	Valphalk* val =
-		dynamic_cast<ValphalkTestScene*>(SceneManager::Get()->Add("ValphalkTestScene"))->GetValphalk();
+		dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetValphalk();
+	//Valphalk* val =
+	//	dynamic_cast<ValphalkTestScene*>(SceneManager::Get()->Add("ValphalkTestScene"))->GetValphalk();
 
 
 	Contact contact;
@@ -699,10 +701,10 @@ bool Player::Attack(float power, bool push, UINT useOtherCollider) // Ãæµ¹ÆÇÁ¤ Ç
 
 void Player::AttackWOCollision(float power)
 {
-//	Valphalk* val =
-//		dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetValphalk();
 	Valphalk* val =
-		dynamic_cast<ValphalkTestScene*>(SceneManager::Get()->Add("ValphalkTestScene"))->GetValphalk();
+		dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetValphalk();
+	//Valphalk* val =
+	//	dynamic_cast<ValphalkTestScene*>(SceneManager::Get()->Add("ValphalkTestScene"))->GetValphalk();
 
 	auto colliders = val->GetCollider();
 
@@ -755,10 +757,10 @@ void Player::AttackWOCollision(float power)
 
 bool Player::CollisionCheck()
 {
-	//Valphalk* val =
-	//	dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetValphalk();
 	Valphalk* val =
-		dynamic_cast<ValphalkTestScene*>(SceneManager::Get()->Add("ValphalkTestScene"))->GetValphalk();
+		dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetValphalk();
+	//Valphalk* val =
+	//	dynamic_cast<ValphalkTestScene*>(SceneManager::Get()->Add("ValphalkTestScene"))->GetValphalk();
 	auto colliders = val->GetCollider();
 
 	for (auto collider : colliders)

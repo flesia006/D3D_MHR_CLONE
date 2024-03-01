@@ -70,6 +70,7 @@ private:
     void QuickSlot(); // 퀵 슬롯 어떤 식으로 랜더 할지 내용
     void QuickSlotBar(); // 퀵 슬롯 에서 가리키는 내용 함수
     void DragSlot(); // 드래그 슬롯 내용
+    void DragSlotBar(); // 드래그 슬롯 내용
     //=====================
 
 private:
@@ -185,7 +186,7 @@ public:
     float wildBugDuration = 0.0f;
     
     // 퀵 슬롯 실행 할때 유무 확인 하기
-    bool useSlotUse = false;
+    bool useDragSlot = false;
     // 일단 8칸 이라 8개 만들건데 바뀔수 있음
     bool useQuickSlot1 = false;
     bool useQuickSlot2 = false;
