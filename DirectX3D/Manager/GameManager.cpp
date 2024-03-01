@@ -42,10 +42,12 @@ GameManager::GameManager()
 //    SceneManager::Get()->Create("ModelExport", new ModelExportScene());
 //    SceneManager::Get()->Add("ModelExport");
 
+    SceneManager::Get()->Create("Grid", new GridScene());
+    SceneManager::Get()->Add("Grid");
+
 
     SceneManager::Get()->Create("ShadowScene", new ShadowScene());
     SceneManager::Get()->Add("ShadowScene");
-
 //    SceneManager::Get()->Create("MapDesignScene", new MapDesignScene());
 //    SceneManager::Get()->Add("MapDesignScene");
 //      SceneManager::Get()->Create("Particle", new ParticleScene());
@@ -57,8 +59,6 @@ GameManager::GameManager()
     //SceneManager::Get()->Create("ValphalkTestScene", new ValphalkTestScene());
     //SceneManager::Get()->Add("ValphalkTestScene");
 
-    SceneManager::Get()->Create("Grid", new GridScene());
-    SceneManager::Get()->Add("Grid");
 
 
 //    SceneManager::Get()->Add("Terrain");

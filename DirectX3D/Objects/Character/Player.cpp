@@ -32,6 +32,9 @@ Player::Player() : ModelAnimator("Player")
 	criticalParticle = new CriticalParticle();
 	spAtkParticle = new Sp_atk_ready_Particle();
 
+	haloTransform = new Transform();
+	haloCollider = new CapsuleCollider();
+	haloCollider->SetParent(swordStart);
 	/////////////////////////////////////////////////////////////
 	longSword = new Model("kal");
 	longSword->SetParent(mainHand);
@@ -110,12 +113,14 @@ void Player::Render()
 	{
 		trail->Render();
 	}		
-	
+	////////////////////////////////////////////
+	// Particles
 	FOR(hitParticle.size())
 		hitParticle[i]->Render();
 	hitBoomParticle->Render();
 	criticalParticle->Render();
-	spAtkParticle->Render();
+	haloCollider->Render();
+	spAtkParticle->Render();	
 }
 
 
@@ -178,6 +183,9 @@ void Player::UpdateWorlds()
 	tmpCollider3->UpdateWorld();
 
 	swordCollider->Update();
+
+	haloTransform->Pos() = longSword->GlobalPos() + longSword->Back() * 55.f;
+	haloCollider->Pos() = haloTransform->Pos();
 }
 
 void Player::Potion()
@@ -2342,13 +2350,15 @@ void Player::L151() // 특수 납도
 		EndEffect();
 		UIManager::Get()->staminaActive = false;
 	}
-	if (RATIO > 0.5 && RATIO < 0.6)
-	{
-		spAtkParticle->Play({ Pos().x,Pos().y+100,Pos().z }, { 0,1,0 }); // 포지션 수정 필요 오른손에 붙이기 (메인핸드에 붙여도 안나옴;)
-		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_9", .5f);
-	}
 	if (RATIO > 0.2 && RATIO < 0.3)
-		Sounds::Get()->Play("Heeee", .5f);
+		Sounds::Get()->Play("Heeee", .5f);	
+
+	if (RATIO > 0.5 && RATIO < 0.6)
+		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_9", .5f);
+
+	if (RATIO > 0.56 && RATIO < 0.57)
+		spAtkParticle->Play(haloCollider->Pos() + Right() * 1.0f, { 0,1,0 });
+
 	// 줌 정상화 (기인 큰회전 베기에서 넘어온 경우)
 	{
 		if (RATIO > 0 && RATIO < 0.45)

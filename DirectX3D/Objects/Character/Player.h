@@ -274,5 +274,8 @@ private:
 	CriticalParticle* criticalParticle;
 	Sp_atk_ready_Particle* spAtkParticle;
 
+	Transform* haloTransform = nullptr;
+	CapsuleCollider* haloCollider = nullptr;
+
 };
 
