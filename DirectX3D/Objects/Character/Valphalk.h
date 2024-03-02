@@ -195,6 +195,7 @@ private:
 
 	void ChooseNextPattern();
 	void ConditionCheck();
+	void PartDestroyCheck();
 
 	void PlayPattern();
 	void UpdateUI(); //캐릭터 UI가 있으면 이후 업데이트
@@ -484,6 +485,8 @@ private:
 
 	float radBtwTarget = 0.0f;
 	float initialRad = 0.0f;
+	float initRotY = 0.0f;
+
 
 	const float rot135 = 2.36f;
 	const float rot45 = 0.785f;

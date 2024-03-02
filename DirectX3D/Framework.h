@@ -22,6 +22,7 @@
 #define KEY_DOWN(k) Keyboard::Get()->Down(k)
 #define KEY_UP(k) Keyboard::Get()->Up(k)
 #define KEY_PRESS(k) Keyboard::Get()->Press(k)
+#define KEY_DP(k) Keyboard::Get()->DownOrPress(k)
 #define KEY_FRONT(k) Keyboard::Get()->IsInputBufferFront(k)
 
 #define	K_RMB			  Keyboard::Get()->IsInputBufferFront(Keyboard::RMB)
@@ -45,7 +46,8 @@
 #define FOR(n) for(int i = 0; i < n ; i++)
 #define RATIO GetClip(curState)->GetRatio()
 #define INIT  GetClip(curState)->isFirstPlay()
-#define PLAY  if (GetClip(curState)->isFirstPlay()) PlayClip(curState), initForward = Forward()
+#define PLAY  if (GetClip(curState)->isFirstPlay()) PlayClip(curState), initRotY = Rot().y
+
 
 #include <windows.h>
 #include <string>
@@ -222,6 +224,7 @@ using namespace GameMath;
 #include "Objects/Character/Garuk.h"
 #include "Objects/Character/Player.h"
 #include "Objects/Character/Valphalk.h"
+#include "Objects/Character/DummyValphalk.h"
 
 #include "Objects/Manager/BlockManager.h"
 #include "Objects/Manager/KunaiManager.h"

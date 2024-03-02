@@ -426,7 +426,14 @@
     <ClInclude Include="Objects\Particle\CriticalParticle.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+<<<<<<< HEAD
+    <ClInclude Include="Objects\Character\DummyValphalk.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Scenes\PlayerTestScene.h">
+=======
     <ClInclude Include="Objects\Particle\Sp_atk_ready_Particle.h">
+>>>>>>> 258cd01c28d9010da7d9a6490ccbcff393cece75
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Objects\Particle\Val_Jet_Particle.h">
@@ -818,7 +825,14 @@
     <ClCompile Include="Objects\Particle\CriticalParticle.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+<<<<<<< HEAD
+    <ClCompile Include="Objects\Character\DummyValphalk.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Scenes\PlayerTestScene.cpp">
+=======
     <ClCompile Include="Objects\Particle\Sp_atk_ready_Particle.cpp">
+>>>>>>> 258cd01c28d9010da7d9a6490ccbcff393cece75
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Objects\Particle\Val_Jet_Particle.cpp">

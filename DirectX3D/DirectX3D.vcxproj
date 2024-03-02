@@ -42,13 +42,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -142,9 +142,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Objects\Character\DummyValphalk.h" />
     <ClInclude Include="Objects\Particle\CriticalParticle.h" />
     <ClInclude Include="Objects\Particle\HitBoomParticle.h" />
-    <ClInclude Include="Objects\Particle\PotionParticle.h" />
+    <ClInclude Include="Scenes\PlayerTestScene.h" />
     <ClInclude Include="Scenes\MapDesignScene.h" />
     <ClInclude Include="Objects\Landscape\M41Objects.h" />
     <ClInclude Include="Objects\Basic\Cylinder2.h" />
@@ -281,12 +282,12 @@
     <ClInclude Include="Objects\Character\Valphalk.h" />
     <ClInclude Include="Objects\Manager\UIManager.h" />
     <ClInclude Include="Scenes\ValphalkTestScene.h" />
-    <ClInclude Include="Objects\Particle\Val_Jet_Particle.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Objects\Character\DummyValphalk.cpp" />
     <ClCompile Include="Objects\Particle\CriticalParticle.cpp" />
     <ClCompile Include="Objects\Particle\HitBoomParticle.cpp" />
-    <ClCompile Include="Objects\Particle\PotionParticle.cpp" />
+    <ClCompile Include="Scenes\PlayerTestScene.cpp" />
     <ClCompile Include="Scenes\MapDesignScene.cpp" />
     <ClCompile Include="Objects\Landscape\M41Objects.cpp" />
     <ClCompile Include="Objects\Basic\Cylinder2.cpp" />
@@ -415,7 +416,6 @@
     <ClCompile Include="Objects\Manager\UIManager.cpp" />
     <ClCompile Include="Scenes\ValphalkTestScene.cpp" />
     <ClCompile Include="Objects\Particle\Sp_atk_ready_Particle.cpp" />
-    <ClCompile Include="Objects\Particle\Val_Jet_Particle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DirectX3D.rc" />

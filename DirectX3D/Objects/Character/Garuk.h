@@ -52,6 +52,7 @@ private:
     Vector3 velocity;
 
     Vector3 initForward = Vector3::Zero();
+    float initRotY = 0.0f;
 
     Transform* transform;
     Transform* target;

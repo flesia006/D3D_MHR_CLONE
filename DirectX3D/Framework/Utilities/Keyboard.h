@@ -39,6 +39,7 @@ public:
     bool Down(UINT key) { return mapState[key] == DOWN; }
     bool Up(UINT key) { return mapState[key] == UP; }
     bool Press(UINT key) { return mapState[key] == PRESS; }
+    bool DownOrPress(UINT key) { return (mapState[key] == PRESS || mapState[key] == DOWN); }
 
     bool IsInputBufferFront(UINT key);
     UINT ReturnFirst()

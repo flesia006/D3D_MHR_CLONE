@@ -48,3 +48,13 @@ S자 몸통
 호버링
 레이저 발사
 }
+
+		colliders[HEAD]->partHp = 8000;
+
+		colliders[CHEST]->partHp = 1500;
+
+		colliders[LLEG1]->partHp = 2500;
+
+		colliders[RLEG1]->partHp = 2500;
+
+		colliders[TAIL]->partHp = 2500;

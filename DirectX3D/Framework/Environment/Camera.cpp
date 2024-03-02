@@ -31,6 +31,12 @@ void Camera::Update()
     projection = Environment::Get()->GetProjection();
     Frustum();
 
+    if (sightRot->Rot().y < -3.14)
+        sightRot->Rot().y += XM_2PI;
+
+    if (sightRot->Rot().y > 3.14)
+        sightRot->Rot().y -= XM_2PI;
+
     if (target)
         ThirdPresonViewMode();
         //FreeMode();

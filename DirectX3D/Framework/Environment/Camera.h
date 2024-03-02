@@ -72,6 +72,8 @@ private:
     bool isLookAtTargetX = true;
     bool isLookAtTargetY = true;
 
+    bool lateInitialize = false;
+
     Matrix rotMatrix;
 
     char file[128] = {};
