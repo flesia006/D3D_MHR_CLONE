@@ -1053,10 +1053,10 @@ void Valphalk::ChooseNextPattern()
 	int i = rand() % 2;
 	switch (i)
 	{
-	case 0:	curPattern = S_DEAD;	break;
-	case 1:	curPattern = B_DEAD;	break;
+	case 0:	curPattern = S_BITE;	break;
+	case 1:	curPattern = S_SRUSH;	break;
 	}
-
+	/*
 	if (!needHupGi && !angerRoar90 && !angerRoar40 && !ult50)
 	{
 	
@@ -1243,7 +1243,7 @@ void Valphalk::ChooseNextPattern()
 	
 		}
 	}
-
+	*/
 }
 
 void Valphalk::PlayPattern()
