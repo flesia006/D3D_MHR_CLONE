@@ -6,6 +6,8 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 	srand(static_cast<unsigned int>(time(NULL)));
 
 	head = new Transform();
+	jetpos = new Transform();
+	jetposend = new Transform();
 	ReadClip("E_0003");
 	ReadClip("E_0007");
 	// 플레이어 발견 전
@@ -250,6 +252,24 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 	effectSphere1->SetActive(false);
 	effectSphere2->UpdateWorld();
 	effectSphere2->SetActive(false);
+
+	// 파티클
+	FOR(6) jetParticle.push_back(new Val_Jet_Particle());
+	
+	{
+		//jetParticle[0]->Play(bullets[0]->Pos(),{0,1,0});
+		//jetParticle[1]->Play(bullets[1]->Pos(),{0,1,0});
+		//jetParticle[2]->Play(bullets[2]->Pos(),{0,1,0});
+		//jetParticle[3]->Play(bullets[3]->Pos(),{0,1,0});
+		//jetParticle[4]->Play(bullets[4]->Pos(),{0,1,0});
+		//jetParticle[5]->Play(bullets[5]->Pos(),{0,1,0});
+		/*jetParticle[0]->Pos() = GetTranslationByNode(61);
+		jetParticle[1]->Pos() = GetTranslationByNode(64);
+		jetParticle[2]->Pos() = GetTranslationByNode(67);
+		jetParticle[3]->Pos() = GetTranslationByNode(81);
+		jetParticle[4]->Pos() = GetTranslationByNode(84);
+		jetParticle[5]->Pos() = GetTranslationByNode(87);*/
+	}
 }
 
 Valphalk::~Valphalk()
@@ -273,6 +293,7 @@ Valphalk::~Valphalk()
 	delete effectBox3;
 	delete effectSphere1;
 	delete effectSphere2;
+	jetParticle.clear();
 }
 
 void Valphalk::Update()
@@ -324,6 +345,26 @@ void Valphalk::Update()
 
 	ColliderNodePos();
 
+	FOR(jetParticle.size()) jetParticle[i]->Update();
+
+	jetpos->Pos() = GetTranslationByNode(61);
+	jetposend->Pos() = GetTranslationByNode(60);
+	jetpos->UpdateWorld();
+	jetpos->SetParent(jetposend);
+	//jetposend = jetpos->Pos();
+	//jetpos2 = jetposend - jetpos->GlobalPos();
+
+	timer2 += DELTA;
+	if (timer2>=0.11)
+	{
+		jetParticle[0]->Play(GetTranslationByNode(61), GetRotationByNode(61).Back() + 300);// + GetRotationByNode(61).Left());
+		jetParticle[1]->Play(GetTranslationByNode(64), GetRotationByNode(64).Back() + 300);// + GetRotationByNode(64).Left());
+		jetParticle[2]->Play(GetTranslationByNode(67), GetRotationByNode(67).Back() + 300);// + GetRotationByNode(67).Left());
+		jetParticle[3]->Play(GetTranslationByNode(81), GetRotationByNode(81).Back() + 300);// + GetRotationByNode(81).Left());
+		jetParticle[4]->Play(GetTranslationByNode(84), GetRotationByNode(84).Back() + 300);// + GetRotationByNode(84).Left());
+		jetParticle[5]->Play(GetTranslationByNode(87), GetRotationByNode(87).Back() + 300);// + GetRotationByNode(87).Left());
+		timer2 = 0;
+	}
 
 	ModelAnimator::Update();
 	
@@ -358,6 +399,8 @@ void Valphalk::Render()
 	effectSphere2->Render();
 	ModelAnimator::Render();
 	realPos->Render();
+
+	FOR(jetParticle.size()) jetParticle[i]->Render();
 }
 
 void Valphalk::GUIRender()
@@ -384,6 +427,12 @@ void Valphalk::GUIRender()
 	ImGui::DragFloat3("effectsphere1rot", (float*)&effectSphere1->Rot());
 	ImGui::DragFloat3("effectsphere2rot", (float*)&effectSphere2->Rot());
 
+	jetParticle[0]->GUIRender();
+	jetParticle[1]->GUIRender();
+	jetParticle[2]->GUIRender();
+	jetParticle[3]->GUIRender();
+	jetParticle[4]->GUIRender();
+	jetParticle[5]->GUIRender();
 	//	ImGui::Text("RanPatrolNum : %d", ranPatrol);
 	//	ImGui::Text("stormTime : %.3f", stormTime);
 	//	ImGui::Text("Length : %.3f", velocity.Length());

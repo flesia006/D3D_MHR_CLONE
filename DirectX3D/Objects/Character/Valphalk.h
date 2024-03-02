@@ -422,7 +422,7 @@ private:
 	Vector3 velocity; //속력 : 실제 움직임
 
 	Pattern curPattern = PATROL;
-	State curState = E_0152; //= 기본 스테이트;
+	State curState = E_0003; //= 기본 스테이트;
 	State preState = curState;
 
 	UINT sequence = 0;
@@ -500,4 +500,12 @@ public:
 	float curHP = 5000;
 	float checkHp; // 흡기때 쓸거
 	float yDifference = 0.0f;
+
+	// 파티클
+private:
+	vector<Val_Jet_Particle*> jetParticle;
+	float timer2 = 0;
+	Transform* jetpos;
+	Transform* jetposend;
+	Vector3 jetpos2;
 };

@@ -101,6 +101,13 @@ void ParticleSystem::Play(Vector3 pos, Vector3 rot)
     Init(rot);
 }
 
+void ParticleSystem::Play2(Vector3 pos, Vector3 rot)
+{
+    quad->SetActive(true);
+
+    quad->Pos() = pos;
+    quad->Rot() = rot;    
+}
 void ParticleSystem::Stop()
 {
     quad->SetActive(false);
@@ -117,6 +124,11 @@ void ParticleSystem::HaloPos()
     quad->Pos().x += 100;
     quad->Pos().y -= 100;
     //quad->Pos().z -= 50;
+}
+
+void ParticleSystem::SetRotation(Vector3 rot)
+{
+    quad->Rot() = rot;
 }
 
 //아래 두 함수 = 파티클 (개별 내부 데이터) 업데이트

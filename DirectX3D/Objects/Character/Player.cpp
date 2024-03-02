@@ -2717,14 +2717,14 @@ bool Player::Jump(float moveSpeed)
 
 void Player::GroundCheck()
 {
-	//TerrainEditor* terrain = dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetTerrain();
-	//
-	//Vector3 pos1;
-	//terrain->ComputePicking(pos1, realPos->Pos() + Vector3::Up() * 200, Vector3::Down());
+	TerrainEditor* terrain = dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetTerrain();
+	
+	Vector3 pos1;
+	terrain->ComputePicking(pos1, realPos->Pos() + Vector3::Up() * 200, Vector3::Down());
 
-//	Vector3 pos2;
-//	terrain->ComputePicking(pos2, realPos->Pos(), Vector3::Up());
+	Vector3 pos2;
+	terrain->ComputePicking(pos2, realPos->Pos(), Vector3::Up());
 
-//	float y = max(pos1.y, pos2.y);
-	//Pos().y = pos1.y;
+	float y = max(pos1.y, pos2.y);
+	Pos().y = pos1.y;
 }

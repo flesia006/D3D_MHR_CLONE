@@ -75,13 +75,15 @@ public:
     void GUIRender();
 
     void Play(Vector3 pos, Vector3 rot = Vector3()); // 위치는 필수, 회전은 옵션, 기본값은 {0,0,0}
-                                                     // (->기본 출력은 빌보드일 테니까...)
+    void Play2(Vector3 pos, Vector3 rot);            // (->기본 출력은 빌보드일 테니까...)
     void Stop();
 
     bool IsActive() { return quad->Active(); } //이 파티클이 활성화 중인가? -> 사각형에서 변수 참조
 
     void ParticleRotate();
     void HaloPos();
+    void SetRotation(Vector3 rot);
+
 private:
     void UpdatePhysical(); //실체를 업데이트하는 함수
     void UpdateColor();    //색깔을 업데이트하는 함수

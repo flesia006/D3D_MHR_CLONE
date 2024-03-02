@@ -56,8 +56,8 @@ GameManager::GameManager()
 //    SceneManager::Get()->Add("ParticleConfig");
 
 
-    //SceneManager::Get()->Create("ValphalkTestScene", new ValphalkTestScene());
-    //SceneManager::Get()->Add("ValphalkTestScene");
+//    SceneManager::Get()->Create("ValphalkTestScene", new ValphalkTestScene());
+//    SceneManager::Get()->Add("ValphalkTestScene");
 
 
 
