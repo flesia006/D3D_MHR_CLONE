@@ -34,9 +34,7 @@ void Keyboard::Update()
     if (KEY_DOWN(VK_RBUTTON))
         keyStorage.push_front(make_pair(RMB, 0));
 
-    if ((KEY_DOWN(VK_LBUTTON) && KEY_PRESS(VK_RBUTTON)) ||
-        (KEY_DOWN(VK_RBUTTON) && KEY_PRESS(VK_LBUTTON)) ||
-        (KEY_DOWN(VK_RBUTTON) && KEY_DOWN(VK_LBUTTON)) ||
+    if ((KEY_DP(VK_LBUTTON) && KEY_DP(VK_RBUTTON)) ||
         (KEY_DOWN(VK_RBUTTON) && KEY_UP(VK_LBUTTON)) ||
         (KEY_UP(VK_RBUTTON) && KEY_DOWN(VK_LBUTTON)))
         keyStorage.push_front(make_pair(LMBRMB, 0));

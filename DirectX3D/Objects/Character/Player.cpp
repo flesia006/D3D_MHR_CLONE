@@ -2,6 +2,7 @@
 #include "Framework.h"
 #include "Player.h"
 #include "Scenes/ShadowScene.h"
+#include "Scenes/PlayerTestScene.h"
 
 Player::Player() : ModelAnimator("Player")
 {
@@ -100,6 +101,12 @@ void Player::Render()
 	
 	FOR(hitParticle.size())
 		hitParticle[i]->Render();
+
+	if (isSetState)
+	{
+		Pos() = realPos->Pos();
+		isSetState = false;
+	}
 		
 }
 
@@ -131,6 +138,41 @@ void Player::UpdateWorlds()
 		kalzip->Pos() = { -32,32,23 };
 		kalzip->Rot() = { -0.86f,-1.2f,+1.46f };
 	}
+
+	if (Rot().y < -3.14)
+		Rot().y += XM_2PI;
+
+	if (Rot().y > 3.14)
+		Rot().y -= XM_2PI;
+
+	Vector3 camRot = CAM->Rot();
+	camRot.y += XM_PI;
+
+	if		(KEY_DP('W') && KEY_DP('D'))
+		keyboardRot = camRot.y + XM_PIDIV4;
+	else if (KEY_DP('W') && KEY_DP('A'))
+		keyboardRot = camRot.y - XM_PIDIV4;
+	else if (KEY_DP('S') && KEY_DP('D'))
+		keyboardRot = camRot.y + XM_PIDIV4 * 3;
+	else if (KEY_DP('S') && KEY_DP('A'))
+		keyboardRot = camRot.y - XM_PIDIV4 * 3;
+	else if (KEY_DP('W'))
+		keyboardRot = camRot.y;
+	else if (KEY_DP('A'))
+		keyboardRot = camRot.y - XM_PIDIV2;
+	else if (KEY_DP('S'))
+		keyboardRot = camRot.y - XM_PI;
+	else if (KEY_DP('D'))
+		keyboardRot = camRot.y + XM_PIDIV2;
+	else
+		keyboardRot = 0.0f;
+
+	if (keyboardRot < -3.14)
+		keyboardRot += XM_2PI;
+
+	if (keyboardRot > 3.14)
+		keyboardRot -= XM_2PI;
+
 
 	realPos->Pos() = GetTranslationByNode(1);
 
@@ -235,8 +277,21 @@ void Player::GUIRender()
 	
 	ImGui::DragFloat3("RealPos", (float*)&realpos);
 
-	Vector3 pos = Pos();
-	ImGui::DragFloat3("RealPos", (float*)&pos);
+	Vector3 rot = Rot();
+	ImGui::DragFloat3("Rot", (float*)&rot);
+
+	Vector3 camRot = CAM->Rot();
+	camRot.y += XM_PI;
+	if (camRot.y < -3.14)
+		camRot.y += XM_2PI;
+
+	if (camRot.y > 3.14)
+		camRot.y -= XM_2PI;
+
+	ImGui::DragFloat3("camRot", (float*)&camRot);
+
+	float keyDir = keyboardRot;
+	ImGui::DragFloat("KeyDir", &keyDir);
 	//
 	//int U = Keyboard::Get()->ReturnFirst();
 	//ImGui::SliderInt("keyboard", &U, 0, 200);
@@ -585,9 +640,42 @@ void Player::Rotate()
 
 }
 
+void Player::LimitRotate(float limit)
+{
+	if (keyboardRot != 0.0f)
+	{
+		if (abs(Rot().y - keyboardRot) > 3.14)
+		{
+			if (keyboardRot < 0)	keyboardRot += XM_2PI;
+			else					keyboardRot -= XM_2PI;
+		}		
+
+
+		if (keyboardRot > Rot().y)
+		{
+			sumRot += 5* DELTA;
+			if (sumRot < unitRad * limit)
+			{
+				RealRotate(5 * DELTA);
+			}
+		}
+		else
+		{
+			sumRot += 5 * DELTA;
+			if (sumRot < unitRad * limit)
+			{
+				RealRotate(-5 * DELTA);
+			}
+		}
+	}
+}
+
 bool Player::Attack(float power, bool push, UINT useOtherCollider) // √Êµπ∆«¡§ «‘ºˆ
 {
 	renderEffect = true;
+
+	if (SceneManager::Get()->Add("ShadowScene") == nullptr && SceneManager::Get()->Add("PlayerTestScene") != nullptr)
+		return AttackDummy(power, push, useOtherCollider);
 
 	Valphalk* val =
 		dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetValphalk();
@@ -676,8 +764,101 @@ bool Player::Attack(float power, bool push, UINT useOtherCollider) // √Êµπ∆«¡§ «
 	return false;
 }
 
+bool Player::AttackDummy(float power, bool push, UINT useOtherCollider)
+{
+
+	DummyValphalk* val = nullptr;
+
+	if (SceneManager::Get()->Add("PlayerTestScene"))
+		val = dynamic_cast<PlayerTestScene*>(SceneManager::Get()->Add("PlayerTestScene"))->GetValphalk();
+
+	Contact contact;
+
+	vector<CapsuleCollider*> colliders = val->GetCollider();
+
+	CapsuleCollider* playerCollider = swordCollider;
+	if (useOtherCollider != 0)
+	{
+		renderEffect = false;
+		switch (useOtherCollider)
+		{
+		case 1:	playerCollider = tmpCollider; break;
+		case 2:	playerCollider = tmpCollider2; break;
+		case 3:	playerCollider = tmpCollider3; break;
+		default: playerCollider = swordCollider; break;
+		}
+	}
+
+	for (auto collider : colliders)
+	{
+		if (playerCollider->IsCapsuleCollision(collider, &contact) && !attackOnlyOncePerMotion)
+		{
+			hitParticle[lastParticleIndex]->Play(contact.hitPoint, swordSwingDir);
+			lastParticleIndex++;
+			if (lastParticleIndex >= hitParticle.size())
+				lastParticleIndex = 0;
+
+			attackOnlyOncePerMotion = true;
+
+			if (curState == L_101 || curState == L_102 || curState == L_103 || curState == L_104 || curState == L_105) // ±‚¿Œ∫£±‚ æ∆¥œ∂Û∏È ∞‘¿Ã¡ˆ ¡ı∞°
+				UIManager::Get()->PlusSpritGauge();
+
+			if (curState == L_109) // ±‚¿Œ ≈´ »∏¿¸∫£±‚ ¿˚¡ﬂΩ√ø°∏∏
+			{
+				UIManager::Get()->PlusCotingLevel(); // ƒ⁄∆√ ∑π∫ß¿ª 1 ø√∏∞¥Ÿ
+				UIManager::Get()->SetMaxCoting(); // µøΩ√ø° ƒ⁄∆√ ∞‘¿Ã¡ˆ 100¿∏∑Œ √ ±‚»≠
+			}
+			if (curState == L_154) // æ…æ∆πﬂµµ ∫£±‚ ¿˚¡ﬂΩ√ ±‚¿Œ∞‘¿Ã¡ˆ ªÛΩ¬ πˆ«¡
+			{
+				UIManager::Get()->Bonus154True();
+			}
+
+			float hardness = 1.0f;
+			switch (collider->part)
+			{
+			case Valphalk::HEAD: hardness = 55; break;
+			case Valphalk::BODY: hardness = 30; break;
+			case Valphalk::LWING: hardness = 22; break;
+			case Valphalk::RWING: hardness = 22; break;
+			case Valphalk::LLEG1: hardness = 25; break;
+			case Valphalk::LLEG2: hardness = 25; break;
+			case Valphalk::RLEG1: hardness = 25; break;
+			case Valphalk::RLEG2: hardness = 25; break;
+			case Valphalk::TAIL: hardness = 45; break;
+			default: hardness = 1; break;
+			}
+			UIManager::Get()->MinusDurability();
+
+
+			Damage damage;
+			float deal = 300 * 0.06 * power * hardness * 0.01f * UIManager::Get()->GetCotingLevelCoefft() * UIManager::Get()->GetDurabilityLevelCoefft();
+			damage.damage = (int)deal;
+			// ((∞¯∞›∑¬/π´±‚πË¿≤) * ∏º« πË¿≤ * (¿∞¡˙/100 )) * øπ∏Æµµ ∫∏¡§ ∞Ëºˆ * ±‚¿Œ ∫∏¡§ ∞Ëºˆ
+			damage.pos = contact.hitPoint;
+			damage.hitPart = collider->part;
+			lastHitPart = collider->part;
+			lastSwordDir = swordSwingDir;
+
+			if (hardness >= 30)				// ¿∞¡˙¿Ã 30 ¿ÃªÛ¿∏∑Œ ≥Î∂ıµ•πÃ¡ˆ∞° ∂ﬂ¥¬ ªÛ»≤
+				damage.isWeakness = true;
+			else
+				damage.isWeakness = false;
+
+			if (push)
+				damages.push_back(damage);
+
+			return true;;
+		}
+	}
+
+	return false;
+}
+
 void Player::AttackWOCollision(float power)
 {
+	if (SceneManager::Get()->Add("ShadowScene") == nullptr)
+		return;
+
 	Valphalk* val =
 		dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetValphalk();
 	auto colliders = val->GetCollider();
@@ -952,13 +1133,22 @@ void Player::TermAttackUpdate()
 
 }
 
+void Player::RealRotate(float rad)
+{
+	Rot().y += rad;
+	Pos().x = ((Pos().x - realPos->Pos().x) * cos(-rad) - (Pos().z - realPos->Pos().z) * sin(-rad)) + realPos->Pos().x;
+	Pos().z = ((Pos().x - realPos->Pos().x) * sin(-rad) + (Pos().z - realPos->Pos().z) * cos(-rad)) + realPos->Pos().z;
+
+}
+
 void Player::SetState(State state)
 {
 	if (curState == state)
 		return;
-	Pos() = realPos->Pos();
-	if (Pos().y < 0)
-		Pos().y = 0;
+
+	//Pos() = realPos->Pos();
+
+	isSetState = true;
 
 	if (curState == L_155)
 	{
@@ -966,6 +1156,7 @@ void Player::SetState(State state)
 		Rot().y = atan2(realForward.x, realForward.z);
 	}
 
+	sumRot = 0.0f;
 	preState = curState;
 	curState = state;
 	attackOnlyOncePerMotion = false;
@@ -1572,7 +1763,7 @@ void Player::L101() // ≥ªµµÆ∫£±‚
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_5", .5f);
 		UIManager::Get()->staminaActive = false;
 		PlayClip(L_101);
-		MotionRotate(30);
+		initRotY = Rot().y;
 	}
 	if(RATIO>0.3 && RATIO<0.35)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
@@ -1580,7 +1771,9 @@ void Player::L101() // ≥ªµµÆ∫£±‚
 		Sounds::Get()->Play("Heeee", .5f);
 
 	if (RATIO < 0.3)
-		Rot().y = Lerp(Rot().y, rad, 0.001f);
+	{
+		LimitRotate(15);
+	}
 
 
 	// ¡‹ ¡§ªÛ»≠ (æ…æ∆ ±‚¿Œ »∏¿¸ ∫£±‚ø°º≠ ≥—æÓø¬ ∞ÊøÏ)
@@ -1610,7 +1803,7 @@ void Player::L101() // ≥ªµµÆ∫£±‚
 		else if (K_CTRLRMB)			SetState(L_147);	// ∞£∆ƒ ∫£±‚
 		else if (K_CTRLSPACE)		SetState(L_151);	// ∆Øºˆ ≥≥µµ
 		else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// ≥Ø∂Û¬˜±‚
-		else if (K_SPACE)			Roll();		
+ 		else if (K_SPACE)			Roll();		
 	}
 
 	// ∫π±Õ «¡∑π¿”
@@ -1627,14 +1820,14 @@ void Player::L102() // ºº∑Œ∫£±‚
 	{
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_5", .5f);
 		PlayClip(L_102);
-		MotionRotate(30);
+		initRotY = Rot().y;
 	}
 	if (RATIO > 0.25 && RATIO < 0.28)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
 	// πÊ«‚ ¡∂¡§ ∞°¥… «¡∑π¿”
 	{
 		if (RATIO < 0.3)
-			Rot().y = Lerp(Rot().y, rad, 0.001f);
+			LimitRotate(15);
 	}
 
 	// ∞¯∞›∆«¡§ «¡∑π¿”
@@ -1670,13 +1863,13 @@ void Player::L103() // ∫£æÓ≥ª∏Æ±‚
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_5", .5f);
 		UIManager::Get()->staminaActive = false;
 		PlayClip(L_103);
-		MotionRotate(30);
+		initRotY = Rot().y;
 	}
 
 	if (RATIO > 0.2 && RATIO < 0.25)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
 	if (RATIO < 0.272)
-		Rot().y = Lerp(Rot().y, rad, 0.001f);
+		LimitRotate(15);
 		
 	// ∞¯∞›∆«¡§ «¡∑π¿”
 	{
@@ -1710,6 +1903,11 @@ void Player::L104() // ¬Ó∏£±‚
 
 	if (RATIO > 0.1 && RATIO < 0.15)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
+
+	if (RATIO < 0.1)
+		LimitRotate(15);
+
+
 	// ∞¯∞›∆«¡§ «¡∑π¿”
 	{
 		UIManager::Get()->staminaActive = false;
@@ -1740,8 +1938,15 @@ void Player::L105() // ∫£æÓ ø√∏Æ±‚
 	PLAY;
 	if(INIT)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_5", .5f);
+
+	if (RATIO < 0.1)
+		LimitRotate(15);
+
 	if (RATIO > 0.1 && RATIO < 0.12)
-		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
+	{
+		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);		
+	}
+
 	// ∞¯∞›∆«¡§ «¡∑π¿”
 	{
 		if (RATIO > 0.1 && RATIO < 0.2)
@@ -1779,6 +1984,12 @@ void Player::L106() // ±‚¿Œ ∫£±‚ 1
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
 	UIManager::Get()->staminaActive = false;
 
+	// πÊ«‚¿¸»Ø «‘ºˆ
+	{
+		if (RATIO < 0.3)
+			LimitRotate(15);
+	}
+
 	// ∞¯∞›∆«¡§ «¡∑π¿”
 	{
 		if (RATIO > 0.33 && RATIO < 0.416)
@@ -1813,6 +2024,14 @@ void Player::L107() // ±‚¿Œ∫£±‚ 2
 	}
 	if (RATIO > 0.25 && RATIO < 0.26)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
+
+	// πÊ«‚¿¸»Ø «‘ºˆ
+	{
+		if (RATIO < 0.26)
+			LimitRotate(15);
+	}
+
+
 	// ∞¯∞›∆«¡§ «¡∑π¿”
 	{
 		if (RATIO > 0.26 && RATIO < 0.38)
@@ -1885,6 +2104,9 @@ void Player::L108() // ±‚¿Œ∫£±‚ 3
 		}
 		else
 			EndEffect();
+
+		if (RATIO < 0.40)
+			LimitRotate(15);
 	}
 
 	if (RATIO > 0.50)
@@ -1916,10 +2138,16 @@ void Player::L109() // ±‚¿Œ ≈´»∏¿¸∫£±‚
 		Sounds::Get()->Play("Heeee", .5f);
 	if (RATIO > 0.7 && RATIO < 0.75)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_9", .5f);
+
+
+
 	// ¡‹¿Œ
 	{
 		if (RATIO > 0 && RATIO < 0.16)
+		{
 			CAM->Zoom(150);
+			LimitRotate(15);
+		}
 	}
 
 
@@ -1964,6 +2192,10 @@ void Player::L110() // ±‚¿Œ ≥ªµµÆ∫£±‚
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
 	if (RATIO > 0.2 && RATIO < 0.3)
 		Sounds::Get()->Play("Heeee", .5f);
+
+	if (RATIO < 0.30)
+		LimitRotate(15);
+
 
 	// ∞¯∞›∆«¡§ «¡∑π¿” 
 	{
@@ -2013,6 +2245,9 @@ void Player::L119() // ≥Ø∂Û¬˜±‚ ¬¯¡ˆ
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
 	if (RATIO > 0.2 && RATIO < 0.3)
 		Sounds::Get()->Play("Heeee", .5f);
+
+
+
 	// ∞¯∞›∆«¡§ «¡∑π¿” 
 	{
 		if (RATIO > 0.03f && RATIO < 0.19f)
@@ -2065,6 +2300,10 @@ void Player::L128()	// ≥Ø∂Û¬˜±‚ Ω√¿€
 		playOncePerMotion = true;		
 	}
 
+	if (RATIO < 0.2)
+		LimitRotate(180);
+
+
 	// ¡‹ ¡§ªÛ»≠ (æ…æ∆ ±‚¿Œ »∏¿¸ ∫£±‚ø°º≠ ≥—æÓø¬ ∞ÊøÏ)
 	{
 		if (RATIO > 0 && RATIO < 0.9)
@@ -2092,9 +2331,9 @@ void Player::L130()	// ≥Ø∂Û¬˜±‚ √º∞¯¡ﬂ
 			{
 				if (Attack(2, true, 3))
 				{
-					if (K_CTRL && UIManager::Get()->GetCotingLevel() > 0)
+					if (K_CTRL && UI->GetCotingLevel() > 0)
 					{
-						UIManager::Get()->MinusCotingLevel();
+						UI->MinusCotingLevel();
 						SetState(L_133);  // ≈ı±∏±˙±‚
 					}
 					else	 	SetState(L_136);  // ≥´«œ¬Ó∏£±‚
@@ -2157,6 +2396,10 @@ void Player::L133()	// ≈ı±∏±˙±‚
 		Sounds::Get()->Play("Heeee", .5f);
 	if (RATIO > 0.4 && RATIO < 0.44)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
+
+	if (RATIO < 0.35)
+		LimitRotate(180);
+
 	// √º∞¯¡ﬂ
 	{
 		if (RATIO < 0.38) // ¡‹æ∆øÙ
@@ -2316,6 +2559,12 @@ void Player::L151() // ∆Øºˆ ≥≥µµ
 			Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_9", .5f);
 	if (RATIO > 0.2 && RATIO < 0.3)
 		Sounds::Get()->Play("Heeee", .5f);
+
+
+	if (RATIO < 0.2)
+		LimitRotate(180);
+
+
 	// ¡‹ ¡§ªÛ»≠ (±‚¿Œ ≈´»∏¿¸ ∫£±‚ø°º≠ ≥—æÓø¬ ∞ÊøÏ)
 	{
 		if (RATIO > 0 && RATIO < 0.45)
@@ -2376,6 +2625,10 @@ void Player::L154() // æ…æ∆πﬂµµ ∫£±‚
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
 	if (RATIO > 0.2 && RATIO < 0.3)
 		Sounds::Get()->Play("Heeee", .5f);
+
+	if (RATIO < 0.1)
+		LimitRotate(30);
+
 	// ∞¯∞›∆«¡§ «¡∑π¿” (¿Ã ∏º«¿∫ 2π¯ ∫£±‚ µø¿€¿Ã ¿÷¿Ω)
 	{
 		if (RATIO > 0.04 && RATIO < 0.17)
@@ -2433,6 +2686,9 @@ void Player::L155() // æ…æ∆πﬂµµ ±‚¿Œ∫£±‚
 		if (RATIO > 0.1 && RATIO < 0.18)
 			CAM->Zoom(450);
 	}
+
+	if (RATIO < 0.1)
+		LimitRotate(15);
 
 	static bool isHit = false;	// hit «œ∞Ì πŸ∑Œ 3π¯ ∞¯∞› µÈæÓ∞°∏È æÓªˆ«œ¥œ±Ó ≥÷æÓ¡÷¥¬ bool 
 
@@ -2674,6 +2930,15 @@ bool Player::Jump(float moveSpeed)
 
 void Player::GroundCheck()
 {
+
+	if (SceneManager::Get()->Add("ShadowScene") == nullptr)
+	{
+		if (Pos().y < 0)
+			Pos().y = 0;
+		return;
+	}
+
+
 	TerrainEditor* terrain = dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetTerrain();
 
 	Vector3 pos1;

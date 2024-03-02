@@ -64,12 +64,17 @@ private:
 	void Potion();
 
 	void Rotate();
+	void LimitRotate(float limit);
 	bool Attack(float power, bool push = true, UINT useOtherCollider = 0); // TODO : 데미지 계산 넣어야함
+	bool AttackDummy(float power, bool push = true, UINT useOtherCollider = 0); // TODO : 데미지 계산 넣어야함
 	void AttackWOCollision(float power = 0); // 충돌검사를 안하는 공격
 	bool CollisionCheck();
 	void SetAnimation();
 	void Roll();
 	void TermAttackUpdate();
+	void RealRotate(float rad);
+
+
 
 	void SetState(State state);	
 	void EndEffect();
@@ -206,6 +211,7 @@ private:
 	float moveSpeed = 4000 * DELTA;
 	float rotSpeed = 5.0f;
 	float deceleration = 5;
+	float keyboardRot = 0.0f;
 
 	const float motionSpeed = 1.5f;
 
@@ -264,6 +270,11 @@ private:
 	bool holdingSword = false;
 
 	Vector3 initForward = Vector3::Zero();
+	float initRotY = 0.0f;
+	float sumRot = 0.0f;
+	const float unitRad = 0.01744444f;
+
+	bool isSetState = false;
 
 	vector<Damage> damages;
 };

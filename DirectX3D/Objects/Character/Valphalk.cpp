@@ -275,7 +275,7 @@ void Valphalk::Update()
 	GetRadBtwTrgt();
 	PlayPattern();
 	ConditionCheck();
-	// hitCheck() 
+	PartDestroyCheck();
 	head->Pos() = realPos->Pos() + Vector3::Up() * 200;
 	head->UpdateWorld();
 
@@ -922,15 +922,6 @@ void Valphalk::Patrol()
 	}
 
 
-//	if (patrolTime > 5)
-//	{
-//		ranPatrol = rand() % 2;
-//		patrolTime = 0;
-//	}
-//	if (ranPatrol == 0)
-//		SetState(E_0003);
-//	if (ranPatrol == 1)
-//		SetState(E_0043);
 }
 
 void Valphalk::ConditionCheck()
@@ -966,6 +957,49 @@ void Valphalk::ConditionCheck()
 	if (hupGiTimer > 120.0f)   // Èí±â 2ºÐ Áö¼Ó ÈÄ ²¨Áü
 		isHupGi = false;
 
+}
+
+void Valphalk::PartDestroyCheck()
+{
+	if (curPattern == HS_FLYFALLATK)
+		return;
+
+
+	if (colliders[HEAD]->partHp < 0)
+	{
+		colliders[HEAD]->partHp = 8000;
+		if (isSlashMode)
+			curPattern = S_SMALLSTAGGER;
+		else
+			curPattern = B_SMALLSTAGGER;
+	}
+
+	if (colliders[LLEG1]->partHp < 0)
+	{
+		colliders[LLEG1]->partHp = 2500;
+		if (isSlashMode)
+			curPattern = S_HUGESTAGGER;
+		else
+			curPattern = B_HUGESTAGGER;
+	}
+
+	if (colliders[RLEG1]->partHp < 0)
+	{
+		colliders[RLEG1]->partHp = 2500;
+		if (isSlashMode)
+			curPattern = S_HUGESTAGGER;
+		else
+			curPattern = B_HUGESTAGGER;
+	}
+
+	if (colliders[TAIL]->partHp < 0)
+	{
+		colliders[TAIL]->partHp = FLT_MAX;
+		if (isSlashMode)
+			curPattern = S_SMALLSTAGGER;
+		else
+			curPattern = S_SMALLSTAGGER;
+	}
 }
 
 void Valphalk::ChooseNextPattern()
@@ -4433,6 +4467,7 @@ void Valphalk::ColliderAdd()
 		colliders[HEAD]->Scale().z = 100.0f;
 		colliders[HEAD]->Rot().x = 1.73f;
 		colliders[HEAD]->part = HEAD;
+		colliders[HEAD]->partHp = 8000;
 		colliders[HEAD]->SetTag("HEAD");
 	}
 
@@ -4453,6 +4488,7 @@ void Valphalk::ColliderAdd()
 		colliders[CHEST]->Scale().y = 110.0f;
 		colliders[CHEST]->Scale().z = 150.0f;
 		colliders[CHEST]->Rot().x = 0.02;
+		colliders[CHEST]->partHp = 1500;
 		colliders[CHEST]->SetTag("CHEST");
 	}
 
@@ -4523,6 +4559,7 @@ void Valphalk::ColliderAdd()
 		//colliders[LLEG1]->Rot().y = 161.995f;
 		//colliders[LLEG1]->Rot().z = -177.0f;
 		colliders[LLEG1]->part = LLEG1;
+		colliders[LLEG1]->partHp = 2500;
 		colliders[LLEG1]->SetTag("LLEG1");
 	}
 
@@ -4566,6 +4603,7 @@ void Valphalk::ColliderAdd()
 		//colliders[RLEG1]->Rot().x = -43.0f;
 		//colliders[RLEG1]->Rot().y = 22.0f;
 		colliders[RLEG1]->part = RLEG1;
+		colliders[RLEG1]->partHp = 2500;
 		colliders[RLEG1]->SetTag("RLEG1");
 	}
 
@@ -4634,6 +4672,7 @@ void Valphalk::ColliderAdd()
 		colliders[TAIL]->Scale() *= 80.0f; // ²¿¸®
 		colliders[TAIL]->Rot().x += 4.8f;
 		colliders[TAIL]->part = TAIL;
+		colliders[TAIL]->partHp = 2500;
 		colliders[TAIL]->SetTag("TAIL");
 	}
 }
