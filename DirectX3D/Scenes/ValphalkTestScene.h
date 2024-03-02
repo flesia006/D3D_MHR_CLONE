@@ -14,7 +14,7 @@ public:
 
     void CapsuleMove();
     RasterizerState* rasterizer;
-
+    Valphalk* GetValphalk() { return valphalk; }
 
 private:
     Player* player;

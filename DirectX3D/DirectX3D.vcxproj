@@ -269,6 +269,7 @@
     <ClInclude Include="Objects\Particle\Sprite.h" />
     <ClInclude Include="Objects\Particle\Snow.h" />
     <ClInclude Include="Objects\Particle\Spark.h" />
+    <ClInclude Include="Objects\Particle\Sp_atk_ready_Particle.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Objects\Test\TestLight.h" />
     <ClInclude Include="Objects\Particle\Trail.h" />
@@ -414,6 +415,7 @@
     <ClCompile Include="Objects\Character\Valphalk.cpp" />
     <ClCompile Include="Objects\Manager\UIManager.cpp" />
     <ClCompile Include="Scenes\ValphalkTestScene.cpp" />
+    <ClCompile Include="Objects\Particle\Sp_atk_ready_Particle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DirectX3D.rc" />

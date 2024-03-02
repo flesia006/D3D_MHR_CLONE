@@ -166,7 +166,7 @@ private:
 	void HS_FlyBlast();
 	void HS_FlyFallAtk();
 	void HS_FlyWingBlast();
-	void HB_LaserBlast();
+	void HB_WingAtk();
 	void FindRoar();
 	void AngerRoar();
 
@@ -379,7 +379,7 @@ private:
 	void E4001();
 	void E4013();
 	void E4071();
-	void E4073();
+	void E4073(float timer, float checkHp);
 	void E4074();
 
 
@@ -444,6 +444,9 @@ private:
 	BoxCollider* effectBox2;
 	BoxCollider* effectBox3;
 
+	SphereCollider* effectSphere1;
+	SphereCollider* effectSphere2;
+
 	Vector3 fullBurstScale;
 	Vector3 fullBurstPos;
 	Vector3 fullBurstRot;
@@ -498,5 +501,6 @@ private:
 public:
 	float maxHP = 5000;
 	float curHP = 5000;
+	float checkHp; // »Ì±‚∂ß æµ∞≈
 	float yDifference = 0.0f;
 };

@@ -3,7 +3,7 @@
 
 CriticalParticle::CriticalParticle()
 {
-	hit = new ParticleSystem("TextData/Particles/critical_effect.fx");	
+	hit = new ParticleSystem("TextData/Particles/Critical_fix.fx");	
 }
 
 CriticalParticle::~CriticalParticle()
@@ -34,5 +34,10 @@ void CriticalParticle::Play(Vector3 pos, Vector3 rot)
 void CriticalParticle::Stop()
 {
 	hit->Stop();
+}
+
+void CriticalParticle::ParticleRotate()
+{
+	hit->ParticleRotate();
 }
 

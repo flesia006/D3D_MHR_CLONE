@@ -70,6 +70,7 @@ private:
     void QuickSlot(); // 퀵 슬롯 어떤 식으로 랜더 할지 내용
     void QuickSlotBar(); // 퀵 슬롯 에서 가리키는 내용 함수
     void DragSlot(); // 드래그 슬롯 내용
+    void DragSlotBar(); // 드래그 슬롯 내용
     //=====================
 
 private:
@@ -115,12 +116,17 @@ private:
     Quad* orangeLeftHalfCircle3;
     Quad* orangeRightHalfCircle3;
 
-    // 아이템 아이콘 추가
+    // 아이템 아이콘 추가 ( 이건 퀵 슬롯에 있는것들 )
     //===================
-    Quad* potionIcon;
-    Quad* whetstoneIcon;
+    Quad* potionIcon_Q;
+    Quad* greatepotionIcon_Q;
+    Quad* whetstoneIcon_Q;
+    //=================== ( 아래는 다른 슬롯 쪽)
+    Quad* potionIcon_D;
+    Quad* greatepotionIcon_D;
+    Quad* whetstoneIcon_D;
     //===================
-
+    
     //액터의 UI
     ProgressBar* hp;
     Vector3 hpPos; //체력바의 위치를 수치화한 것 (진짜 위치를 위한 중간계산용)
@@ -180,7 +186,7 @@ public:
     float wildBugDuration = 0.0f;
     
     // 퀵 슬롯 실행 할때 유무 확인 하기
-    bool useSlotUse = false;
+    bool useDragSlot = false;
     // 일단 8칸 이라 8개 만들건데 바뀔수 있음
     bool useQuickSlot1 = false;
     bool useQuickSlot2 = false;

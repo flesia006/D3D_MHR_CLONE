@@ -3,6 +3,7 @@
 #include "Player.h"
 #include "Scenes/ShadowScene.h"
 #include "Scenes/PlayerTestScene.h"
+#include "Scenes/ValphalkTestScene.h"
 
 Player::Player() : ModelAnimator("Player")
 {
@@ -22,10 +23,17 @@ Player::Player() : ModelAnimator("Player")
 	swordCollider->Scale() *= 3.0f;
 
 	trail = new Trail(L"Textures/Effect/Snow.png", swordStart, swordEnd, 20, 85);
-
+	
+	/////////////////////////////////////////////////////////////
+	// Particles
+	
 	FOR(7) 
 		hitParticle.push_back(new HitParticle());
+	hitBoomParticle = new HitBoomParticle();
+	criticalParticle = new CriticalParticle();
+	spAtkParticle = new Sp_atk_ready_Particle();
 
+	/////////////////////////////////////////////////////////////
 	longSword = new Model("kal");
 	longSword->SetParent(mainHand);
 
@@ -64,6 +72,9 @@ Player::~Player()
 	delete realPos;
 	delete tmpCollider;
 	hitParticle.clear();
+	delete hitBoomParticle;
+	delete criticalParticle;
+	delete spAtkParticle;
 }
 
 void Player::Update()
@@ -71,11 +82,13 @@ void Player::Update()
 	Control();
 	ResetPlayTime();
 	UpdateWorlds();
-	TermAttackUpdate();
-	
+	TermAttackUpdate();	
 
 	trail->Update();
 	FOR(hitParticle.size())		hitParticle[i]->Update();
+	hitBoomParticle->Update();
+	criticalParticle->Update();
+	spAtkParticle->Update();
 
 	ModelAnimator::Update();
 	//UIManager::Get()->Update();
@@ -101,6 +114,9 @@ void Player::Render()
 	
 	FOR(hitParticle.size())
 		hitParticle[i]->Render();
+	hitBoomParticle->Render();
+	criticalParticle->Render();
+	spAtkParticle->Render();
 
 	if (isSetState)
 	{
@@ -211,38 +227,40 @@ void Player::Potion()
 {
 	time += DELTA;
 
-	if (KEY_DOWN('E'))
+	if (UIManager::Get()->useQuickSlot1)
 	{
 		Sounds::Get()->Play("health_potion", 0.3f);
+		UIManager::Get()->useQuickSlot1 = false;
 		cure = true;
 		time = 0;
 	}
 	if (cure == true)
 	{
-		if (time < 2)
+		if (time < 3)
 		{
-			UIManager::Get()->HealthPotion();
+			UIManager::Get()->LargeHealthPotion();
 		}
-		else if (time >= 2)
+		else if (time >= 3)
 		{
 			cure = false;
 			return;
 		}
 	}
 
-	if (KEY_DOWN('R'))
+	if (UIManager::Get()->useQuickSlot2)
 	{
 		Sounds::Get()->Play("health_potion", 0.3f);
+		UIManager::Get()->useQuickSlot2 = false;
 		Lcure = true;
 		time = 0;
 	}
 	if (Lcure == true)
 	{
-		if (time < 3)
+		if (time < 2)
 		{
 			UIManager::Get()->HealthPotion();
 		}
-		else if (time >= 3)
+		else if (time >= 2)
 		{
 			Lcure = false;
 			return;
@@ -679,6 +697,9 @@ bool Player::Attack(float power, bool push, UINT useOtherCollider) // Ãæµ¹ÆÇÁ¤ Ç
 
 	Valphalk* val =
 		dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetValphalk();
+	//Valphalk* val =
+	//	dynamic_cast<ValphalkTestScene*>(SceneManager::Get()->Add("ValphalkTestScene"))->GetValphalk();
+
 
 	Contact contact;
 
@@ -702,7 +723,10 @@ bool Player::Attack(float power, bool push, UINT useOtherCollider) // Ãæµ¹ÆÇÁ¤ Ç
 	for (auto collider : colliders)
 	{
 		if (playerCollider->IsCapsuleCollision(collider, &contact) && !attackOnlyOncePerMotion)
-		{
+		{			
+			criticalParticle->ParticleRotate();
+			hitBoomParticle->Play(contact.hitPoint, swordSwingDir);
+			criticalParticle->Play(contact.hitPoint, swordSwingDir );
 			hitParticle[lastParticleIndex]->Play(contact.hitPoint, swordSwingDir);
 			lastParticleIndex++;
 			if (lastParticleIndex >= hitParticle.size())
@@ -861,6 +885,9 @@ void Player::AttackWOCollision(float power)
 
 	Valphalk* val =
 		dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetValphalk();
+	//Valphalk* val =
+	//	dynamic_cast<ValphalkTestScene*>(SceneManager::Get()->Add("ValphalkTestScene"))->GetValphalk();
+
 	auto colliders = val->GetCollider();
 
 	int hitPart = lastHitPart;
@@ -873,7 +900,9 @@ void Player::AttackWOCollision(float power)
 	Vector3 MinSwdDir = lastSwordDir + Vector3(-0.1, -0.1, -0.1);
 	Vector3 MaxSwdDir = lastSwordDir + Vector3(0.1, 0.1, 0.1);
 	Vector3 RandomSwdDir = Random(MinSwdDir, MaxSwdDir);
-
+	hitBoomParticle->Play(RandomPos, RandomSwdDir);
+	criticalParticle->ParticleRotate();
+	criticalParticle->Play(RandomPos, RandomSwdDir);
 	hitParticle[lastParticleIndex]->Play(RandomPos, RandomSwdDir);
 	lastParticleIndex++;
 	if (lastParticleIndex >= hitParticle.size())
@@ -912,6 +941,8 @@ bool Player::CollisionCheck()
 {
 	Valphalk* val =
 		dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetValphalk();
+	//Valphalk* val =
+	//	dynamic_cast<ValphalkTestScene*>(SceneManager::Get()->Add("ValphalkTestScene"))->GetValphalk();
 	auto colliders = val->GetCollider();
 
 	for (auto collider : colliders)
@@ -2555,8 +2586,11 @@ void Player::L151() // Æ¯¼ö ³³µµ
 		EndEffect();
 		UIManager::Get()->staminaActive = false;
 	}
-	if(RATIO>0.5 && RATIO<0.6)		
-			Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_9", .5f);
+	if (RATIO > 0.5 && RATIO < 0.6)
+	{
+		spAtkParticle->Play({ Pos().x,Pos().y+100,Pos().z }, { 0,1,0 }); // Æ÷Áö¼Ç ¼öÁ¤ ÇÊ¿ä ¿À¸¥¼Õ¿¡ ºÙÀÌ±â (¸ÞÀÎÇÚµå¿¡ ºÙ¿©µµ ¾È³ª¿È;)
+		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_9", .5f);
+	}
 	if (RATIO > 0.2 && RATIO < 0.3)
 		Sounds::Get()->Play("Heeee", .5f);
 

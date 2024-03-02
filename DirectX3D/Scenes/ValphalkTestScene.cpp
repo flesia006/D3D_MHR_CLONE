@@ -7,14 +7,15 @@ ValphalkTestScene::ValphalkTestScene()
 	valphalk->Pos().z = -1500.0f;
 	
 	capsule = new CapsuleCollider(10, 50);
-	capsule->Pos().y += 150;
-	capsule->UpdateWorld();
+	//capsule->Pos().y += 150;
 	valphalk->SetTarget(capsule);
 	
-	//player = new Player();
+	player = new Player();
 
 	rasterizer = new RasterizerState();
 	rasterizer->CullMode(D3D11_CULL_NONE);
+
+	UIManager::Get();
 
 }
 
@@ -22,13 +23,17 @@ ValphalkTestScene::~ValphalkTestScene()
 {
 	delete valphalk;
 	delete capsule;
-	//delete player;
+	delete player;
 }
 
 void ValphalkTestScene::Update()
 {
+	capsule->SetParent(player);
+	capsule->UpdateWorld();
 	valphalk->Update();
-	CapsuleMove();
+	player->Update();
+	UIManager::Get()->Update();
+	//CapsuleMove();
 }
 
 void ValphalkTestScene::PreRender()
@@ -39,12 +44,14 @@ void ValphalkTestScene::Render()
 {
 	rasterizer->SetState();
 	valphalk->Render();
-
+	player->Render();
 	capsule->Render();
 }
 
 void ValphalkTestScene::PostRender()
 {
+	UIManager::Get()->PostRender();
+
 }
 
 void ValphalkTestScene::GUIRender()

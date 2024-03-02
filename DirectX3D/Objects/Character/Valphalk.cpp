@@ -243,6 +243,13 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 	effectBox3->SetColor(1, 0, 0);
 	effectBox3->UpdateWorld();
 	effectBox3->SetActive(false);
+
+	effectSphere1 = new SphereCollider();
+	effectSphere2 = new SphereCollider();
+	effectSphere1->UpdateWorld();
+	effectSphere1->SetActive(false);
+	effectSphere2->UpdateWorld();
+	effectSphere2->SetActive(false);
 }
 
 Valphalk::~Valphalk()
@@ -264,6 +271,8 @@ Valphalk::~Valphalk()
 	delete effectBox1;
 	delete effectBox2;
 	delete effectBox3;
+	delete effectSphere1;
+	delete effectSphere2;
 }
 
 void Valphalk::Update()
@@ -308,6 +317,9 @@ void Valphalk::Update()
 	effectBox2->UpdateWorld();
 	effectBox3->UpdateWorld();
 
+	effectSphere1->UpdateWorld();
+	effectSphere2->UpdateWorld();
+
 	head->Rot().y = Rot().y;
 
 	ColliderNodePos();
@@ -342,6 +354,8 @@ void Valphalk::Render()
 	effectBox1->Render();
 	effectBox2->Render();
 	effectBox3->Render();
+	effectSphere1->Render();
+	effectSphere2->Render();
 	ModelAnimator::Render();
 	realPos->Render();
 }
@@ -364,6 +378,11 @@ void Valphalk::GUIRender()
 	//ImGui::DragFloat("radBtwTrgt", &radBtwTarget);
 	//ImGui::SliderFloat3("ValphalkScale", (float*)&colliders[i]->Scale(), 0, 1000);
 	ImGui::DragFloat("radDifference", &radDifference);
+
+	ImGui::DragFloat3("effectsphere1pos", (float*)&effectSphere1->Pos());
+	ImGui::DragFloat3("effectsphere2pos", (float*)&effectSphere2->Pos());
+	ImGui::DragFloat3("effectsphere1rot", (float*)&effectSphere1->Rot());
+	ImGui::DragFloat3("effectsphere2rot", (float*)&effectSphere2->Rot());
 
 	//	ImGui::Text("RanPatrolNum : %d", ranPatrol);
 	//	ImGui::Text("stormTime : %.3f", stormTime);
@@ -596,13 +615,16 @@ void Valphalk::Hupgi()
 {
 	if (sequence == 0)
 	{
+		static float timer = 0.0f;
 		curState = E_4071;
 		E4071();
+		checkHp = curHP;
 	}
 	if (sequence == 1)
 	{
+		timer += DELTA;
 		curState = E_4073;
-		E4073();
+		E4073(timer, checkHp);
 	}
 	if (sequence == 2)
 	{
@@ -613,6 +635,11 @@ void Valphalk::Hupgi()
 	{
 		isHupGi = true;
 		ChooseNextPattern();
+	}
+	if (sequence == 4)
+	{
+		curPattern = S_HUGESTAGGER;
+		sequence = 0;
 	}
 }
 
@@ -949,9 +976,12 @@ void Valphalk::ConditionCheck()
 	// 타이머에 따른 조건 갱신
 
 	if (angerTimer > 120.0f)	// 분노 2분 지속 후 꺼짐
+	{
 		isAnger = false;
+		angerTimer = 0.0f;
+	}
 
-	if (roarAfterTimer > 60.0f)  // 인식 포효 1분 후 흡기 시작
+	if (roarAfterTimer > 60.0f && roarAfterTimer < 61.0f)  // 인식 포효 1분 후 흡기 시작
 		needHupGi = true;
 
 	if (hupGiTimer > 120.0f)   // 흡기 2분 지속 후 꺼짐
@@ -1023,6 +1053,11 @@ void Valphalk::ChooseNextPattern()
 	initialRad = Rot().y;
 	float distance = (target->GlobalPos() - Pos()).Length();
 
+	//switch (0)
+	//{
+	//case 0: curPattern = HS_FLYBLAST; break;
+	//}
+
 	// 흡기 : 인식 포효로부터  1분 후
 	// 분노 : 90 ㅇㅣ하    40 일때 한번
 	// 필살기 : 체력 50 언더라면
@@ -1033,38 +1068,38 @@ void Valphalk::ChooseNextPattern()
 		needHupGi = false;
 		return;
 	}
-
+	
 	if (angerRoar90)
 	{
 		curPattern = ANGERROAR;
 		angerRoar90 = false;
 		return;
 	}
-
+	
 	if (angerRoar40)
 	{
 		curPattern = ANGERROAR;
 		angerRoar40 = false;
 		return;
 	}
-
+	
 	if (ult50)
 	{
 		curPattern = STORM;
 		ult50 = false;
 		return;
 	}
-
-	int i = rand() % 2;
-	switch (i)
-	{
-	case 0:	curPattern = B_SMALLSTAGGER;	 break;
-	case 1:	curPattern = B_HUGESTAGGER;		 break;
-	}
-
+	
+	//int i = rand() % 2;
+	//switch (i)
+	//{
+	//case 0:	curPattern = B_SMALLSTAGGER;	 break;
+	//case 1:	curPattern = B_HUGESTAGGER;		 break;
+	//}
+	
 	if (!needHupGi && !angerRoar90 && !angerRoar40 && !ult50)
 	{
-
+	
 		if (distance < 2000)    // 근
 		{
 			if (isSlashMode)	   // 참
@@ -1118,9 +1153,9 @@ void Valphalk::ChooseNextPattern()
 					}
 				}
 			}
-
+	
 		}
-
+	
 		else if (distance >= 2000 && distance < 4000)  // 중
 		{
 			if (isSlashMode) // 참
@@ -1186,9 +1221,9 @@ void Valphalk::ChooseNextPattern()
 					}
 				}
 			}
-
+	
 		}
-
+	
 		else if (distance > 2000)   // 원
 		{
 			if (isSlashMode)        // 참
@@ -1245,7 +1280,7 @@ void Valphalk::ChooseNextPattern()
 					}
 				}
 			}
-
+	
 		}
 	}
 
@@ -1273,7 +1308,7 @@ void Valphalk::PlayPattern()
 	case Valphalk::B_ENERGYBLAST:	EnergyBullets();	break;
 	case Valphalk::HS_FLYBLAST:		HS_FlyBlast();		break;
 	case Valphalk::HS_FLYFALLATK:	HS_FlyFallAtk();	break;
-	case Valphalk::HB_WINGATK:		HB_LaserBlast();	break;
+	case Valphalk::HB_WINGATK:		HB_WingAtk();		break;
 	case Valphalk::FINDROAR:	    FindRoar();  		break;
 	case Valphalk::ANGERROAR:	    AngerRoar();  		break;
 	case Valphalk::HUPGI:		    Hupgi();			break;
@@ -2154,8 +2189,8 @@ void Valphalk::HS_FlyBlast()
 		{
 			for (int i = 0; i < bullets.size(); ++i)
 			{
-				bullets[i]->Pos().x = Lerp(bullets[i]->Pos().x, randX, 0.002f);
-				bullets[i]->Pos().z = Lerp(bullets[i]->Pos().z, randZ, 0.002f);
+				bullets[i]->Pos().x = Lerp(bullets[i]->Pos().x, randX, 0.0024f);
+				bullets[i]->Pos().z = Lerp(bullets[i]->Pos().z, randZ, 0.0024f);
 				
 				bullets[i]->Pos().y -= 1500 * DELTA;
 			}
@@ -2264,7 +2299,6 @@ void Valphalk::HS_FlyFallAtk()
 
 	if (sequence == 7) // 마무리
 	{
-
 		whichPattern = 0;
 		isSlashMode = false;
 		ChooseNextPattern();
@@ -2317,6 +2351,7 @@ void Valphalk::HS_FlyFallAtk()
 	{
 		SetState(E_2375);
 		EX2375();
+
 	}
 
 	if (sequence == 12) // 공격 모션
@@ -2339,10 +2374,10 @@ void Valphalk::HS_FlyWingBlast() // 호버링 후 전방 손바닥 폭발
 
 }
 
-void Valphalk::HB_LaserBlast() // 날개 찍기 오래 유지
+void Valphalk::HB_WingAtk() // 날개 찍기 오래 유지
 {
 	static int whichPattern = 0;
-	//combo = true;
+
 	if (sequence == 0) // 각도 정하기
 	{
 		whichPattern = SetRadAndMirror(false);
@@ -2370,6 +2405,7 @@ void Valphalk::HB_LaserBlast() // 날개 찍기 오래 유지
 
 	if (sequence == 3) // 마무리
 	{
+		isSlashMode = true;
 		whichPattern = 0;
 		ChooseNextPattern();
 	}
@@ -3802,8 +3838,23 @@ void Valphalk::EX2278()
 {
 	PLAY;
 
+	if (RATIO > 0.234f)
+	{
+		if (RATIO < 0.24f)
+		{
+			effectSphere1->Scale() = { 400, 400, 400 };
+			effectSphere1->Pos() = GetTranslationByNode(83) + Back() * 100;
+			effectSphere2->Scale() = { 400, 400, 400 };
+			effectSphere2->Pos() = effectSphere1->Pos() + Back() * 700;
+		}
+		effectSphere1->SetActive(true);
+		effectSphere2->SetActive(true);
+	}
+
 	if (RATIO > 0.98)
 	{
+		effectSphere1->SetActive(false);
+		effectSphere2->SetActive(false);
 		sequence++;
 	}
 }
@@ -4210,8 +4261,25 @@ void Valphalk::EX2376()
 {
 	PLAY;
 
+	if (RATIO > 0.19f)
+	{
+		if (RATIO < 0.20f )
+		{
+			effectSphere1->Scale() = { 500, 500, 500 };
+			effectSphere1->Pos() = GetTranslationByNode(64) + Back() * 100;
+			effectSphere2->Scale() = { 500, 500, 500 };
+			effectSphere2->Pos() = GetTranslationByNode(84) + Back() * 100;
+		}
+		effectSphere1->SetActive(true);
+		effectSphere2->SetActive(true);;
+	}
+
 	if (RATIO > 0.98)
+	{
+		effectSphere1->SetActive(false);
+		effectSphere2->SetActive(false);
 		sequence++;
+	}
 }
 
 void Valphalk::E2381()
@@ -4405,17 +4473,26 @@ void Valphalk::E4071()
 		sequence++;
 }
 
-void Valphalk::E4073()
+void Valphalk::E4073(float timer, float checkHp)
 {
 	PLAY;
-	if (RATIO > 0.97f)
+	if (timer > 3.2f && curHP == checkHp - 300.0f)
+	{
+		sequence == 4;
+		timer = 0;
+	}
+
+	if (timer >= 3.2f)
+	{
 		sequence++;
+	}
 }
 
 void Valphalk::E4074()
 {
 	PLAY;
-	if (RATIO > 0.97f)
+
+	if (RATIO > 0.9f)
 	{
 		sequence++;
 	}

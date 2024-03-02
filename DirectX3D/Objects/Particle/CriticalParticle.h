@@ -12,8 +12,9 @@ public:
 	void Play(Vector3 pos, Vector3 rot);
 
 	void Stop();
+	void ParticleRotate();
 
-	bool IsActive() { return hit->IsActive(); }
+	bool IsActive() { return hit->IsActive(); }	
 
 private:
 	ParticleSystem* hit = nullptr;
