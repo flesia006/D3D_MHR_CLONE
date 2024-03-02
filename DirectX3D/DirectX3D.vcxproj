@@ -144,6 +144,7 @@
   <ItemGroup>
     <ClInclude Include="Objects\Particle\CriticalParticle.h" />
     <ClInclude Include="Objects\Particle\HitBoomParticle.h" />
+    <ClInclude Include="Objects\Particle\PotionParticle.h" />
     <ClInclude Include="Scenes\MapDesignScene.h" />
     <ClInclude Include="Objects\Landscape\M41Objects.h" />
     <ClInclude Include="Objects\Basic\Cylinder2.h" />
@@ -285,6 +286,7 @@
   <ItemGroup>
     <ClCompile Include="Objects\Particle\CriticalParticle.cpp" />
     <ClCompile Include="Objects\Particle\HitBoomParticle.cpp" />
+    <ClCompile Include="Objects\Particle\PotionParticle.cpp" />
     <ClCompile Include="Scenes\MapDesignScene.cpp" />
     <ClCompile Include="Objects\Landscape\M41Objects.cpp" />
     <ClCompile Include="Objects\Basic\Cylinder2.cpp" />

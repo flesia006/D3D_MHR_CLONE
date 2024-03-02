@@ -46,8 +46,8 @@ GameManager::GameManager()
     SceneManager::Get()->Add("Grid");
 
 
-    SceneManager::Get()->Create("ShadowScene", new ShadowScene());
-    SceneManager::Get()->Add("ShadowScene");
+//    SceneManager::Get()->Create("ShadowScene", new ShadowScene());
+//    SceneManager::Get()->Add("ShadowScene");
 //    SceneManager::Get()->Create("MapDesignScene", new MapDesignScene());
 //    SceneManager::Get()->Add("MapDesignScene");
 //      SceneManager::Get()->Create("Particle", new ParticleScene());
@@ -56,8 +56,8 @@ GameManager::GameManager()
 //    SceneManager::Get()->Add("ParticleConfig");
 
 
-//    SceneManager::Get()->Create("ValphalkTestScene", new ValphalkTestScene());
-//    SceneManager::Get()->Add("ValphalkTestScene");
+    SceneManager::Get()->Create("ValphalkTestScene", new ValphalkTestScene());
+    SceneManager::Get()->Add("ValphalkTestScene");
 
 
 

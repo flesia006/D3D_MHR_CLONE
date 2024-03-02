@@ -16,7 +16,10 @@ ParticleSystem::ParticleSystem(string file)
     depthState[1]->DepthWriteMask(D3D11_DEPTH_WRITE_MASK_ALL); // 가려지는 이펙트
     //depthState[1]->DepthWriteMask(D3D11_DEPTH_WRITE_MASK_ZERO); // 안 가려지는 이펙트
 
-    quad->SetActive(false); // 일단 터질 때가 아니어서 비활성화
+    quad->SetActive(false); // 일단 터질 때가 아니어서 비활성화    
+
+    parent = new Transform();
+    parent->Pos() = {};
 }
 
 // 외부 탐색기에서 파일 가져오기 (=그림 파일)
@@ -36,6 +39,10 @@ ParticleSystem::ParticleSystem(wstring file)
     depthState[1]->DepthWriteMask(D3D11_DEPTH_WRITE_MASK_ZERO); // 안 가려지는 이펙트
 
     quad->SetActive(false); // 일단 터질 때가 아니어서 비활성화
+    
+    parent = new Transform();
+    parent->Pos() = {};
+
 }
 
 ParticleSystem::~ParticleSystem()
@@ -55,6 +62,7 @@ void ParticleSystem::Update()
     UpdatePhysical(); // 정점 업데이트
     UpdateColor();    // 색깔을 업데이트
     quad->UpdateWorld();  //업데이트된 정보에 그림을 맞추기 (그림을 파티클에 맞게 업데이트)
+    parent->UpdateWorld();
 
     if (lifeSpan > data.duration) //설정된 재생시간을 생애주기(중 경과시간)가 초과하면
     {
@@ -129,6 +137,34 @@ void ParticleSystem::HaloPos()
 void ParticleSystem::SetRotation(Vector3 rot)
 {
     quad->Rot() = rot;
+}
+
+void ParticleSystem::SetScale()
+{
+    quad->Scale() *= 3;
+}
+
+void ParticleSystem::SetVortex(Vector3 pos)
+{
+    //for (int i = 0; i < 1000; ++i)
+    //{
+    //    quad->Pos() = Float3(quad->Pos().x + i * 10, quad->Pos().y, quad->Pos().y);
+    //}
+    //quad->Rot().z += 1 * DELTA;
+    //parent->Pos() = pos;
+    
+    //for(int i=0;i<1;++i)
+    //quad->Pos() = Float3(quad->Pos().x, quad->Pos().y, quad->Pos().z);
+    //parent->Scale() *= 0.01f;
+    //quad->Scale() *= 100;
+    //quad->SetParent(parent);
+    //quad->Pos() = { pos.x + 10, pos.y, pos.z + 10 };
+    quad->Rot().x = XM_PIDIV2;
+    quad->Rot().y += 10 * DELTA;
+    quad->Rot().z = XM_PIDIV2;
+    //quad->Pos() = pos;
+    //parent->Rot().y += 1.01f * DELTA;
+
 }
 
 //아래 두 함수 = 파티클 (개별 내부 데이터) 업데이트

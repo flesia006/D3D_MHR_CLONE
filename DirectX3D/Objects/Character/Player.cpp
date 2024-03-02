@@ -31,10 +31,10 @@ Player::Player() : ModelAnimator("Player")
 	hitBoomParticle = new HitBoomParticle();
 	criticalParticle = new CriticalParticle();
 	spAtkParticle = new Sp_atk_ready_Particle();
-
+	potionParticle = new PotionParticle();
 	haloTransform = new Transform();
 	haloCollider = new CapsuleCollider();
-	haloCollider->SetParent(swordStart);
+	haloCollider->SetParent(swordStart);	
 	/////////////////////////////////////////////////////////////
 	longSword = new Model("kal");
 	longSword->SetParent(mainHand);
@@ -77,6 +77,7 @@ Player::~Player()
 	delete hitBoomParticle;
 	delete criticalParticle;
 	delete spAtkParticle;
+	delete potionParticle;
 }
 
 void Player::Update()
@@ -90,7 +91,10 @@ void Player::Update()
 	FOR(hitParticle.size())		hitParticle[i]->Update();
 	hitBoomParticle->Update();
 	criticalParticle->Update();
-	spAtkParticle->Update();
+	spAtkParticle->Update();	
+	potionParticle->Update();
+	potionParticle->SetParent(realPos);
+	potionParticle->SetVortex({ Pos().x,Pos().y+100,Pos().z });
 
 	ModelAnimator::Update();
 	//UIManager::Get()->Update();
@@ -121,6 +125,7 @@ void Player::Render()
 	criticalParticle->Render();
 	haloCollider->Render();
 	spAtkParticle->Render();	
+	potionParticle->Render();
 }
 
 
@@ -193,7 +198,7 @@ void Player::Potion()
 	time += DELTA;
 
 	if (UIManager::Get()->useQuickSlot1)
-	{
+	{		
 		Sounds::Get()->Play("health_potion", 0.3f);
 		UIManager::Get()->useQuickSlot1 = false;
 		cure = true;
@@ -201,6 +206,9 @@ void Player::Potion()
 	}
 	if (cure == true)
 	{
+		if (time < 0.1f)
+			potionParticle->Play({ Pos().x,Pos().y+100,Pos().z }, { 0,0,0 });
+
 		if (time < 3)
 		{
 			UIManager::Get()->LargeHealthPotion();
@@ -221,6 +229,9 @@ void Player::Potion()
 	}
 	if (Lcure == true)
 	{
+		if (time < 0.1f)
+			potionParticle->Play({ Pos().x,Pos().y+100,Pos().z }, { 0,0,0 });
+
 		if (time < 2)
 		{
 			UIManager::Get()->HealthPotion();
@@ -614,10 +625,10 @@ bool Player::Attack(float power, bool push, UINT useOtherCollider) // Ãæµ¹ÆÇÁ¤ Ç
 {
 	renderEffect = true;
 
-	Valphalk* val =
-		dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetValphalk();
 	//Valphalk* val =
-	//	dynamic_cast<ValphalkTestScene*>(SceneManager::Get()->Add("ValphalkTestScene"))->GetValphalk();
+	//	dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetValphalk();
+	Valphalk* val =
+		dynamic_cast<ValphalkTestScene*>(SceneManager::Get()->Add("ValphalkTestScene"))->GetValphalk();
 
 
 	Contact contact;
@@ -2717,14 +2728,14 @@ bool Player::Jump(float moveSpeed)
 
 void Player::GroundCheck()
 {
-	TerrainEditor* terrain = dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetTerrain();
-	
-	Vector3 pos1;
-	terrain->ComputePicking(pos1, realPos->Pos() + Vector3::Up() * 200, Vector3::Down());
+	//TerrainEditor* terrain = dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetTerrain();
+	//
+	//Vector3 pos1;
+	//terrain->ComputePicking(pos1, realPos->Pos() + Vector3::Up() * 200, Vector3::Down());
 
-	Vector3 pos2;
-	terrain->ComputePicking(pos2, realPos->Pos(), Vector3::Up());
+	//Vector3 pos2;
+	//terrain->ComputePicking(pos2, realPos->Pos(), Vector3::Up());
 
-	float y = max(pos1.y, pos2.y);
-	Pos().y = pos1.y;
+	//float y = max(pos1.y, pos2.y);
+	//Pos().y = pos1.y;
 }

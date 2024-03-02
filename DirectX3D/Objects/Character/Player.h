@@ -273,6 +273,7 @@ private:
 	HitBoomParticle* hitBoomParticle;
 	CriticalParticle* criticalParticle;
 	Sp_atk_ready_Particle* spAtkParticle;
+	PotionParticle* potionParticle;
 
 	Transform* haloTransform = nullptr;
 	CapsuleCollider* haloCollider = nullptr;
