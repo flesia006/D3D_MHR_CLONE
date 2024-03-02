@@ -98,7 +98,7 @@ void Player::Update()
 	potionParticle->SetVortex({ Pos().x,Pos().y+100,Pos().z });
 
 	ModelAnimator::Update();
-	//UIManager::Get()->Update();
+	UIManager::Get()->Update();
 	Potion();	
 	GroundCheck();
 
@@ -837,6 +837,9 @@ bool Player::AttackDummy(float power, bool push, UINT useOtherCollider)
 	{
 		if (playerCollider->IsCapsuleCollision(collider, &contact) && !attackOnlyOncePerMotion)
 		{
+			criticalParticle->ParticleRotate();
+			hitBoomParticle->Play(contact.hitPoint, swordSwingDir);
+			criticalParticle->Play(contact.hitPoint, swordSwingDir);
 			hitParticle[lastParticleIndex]->Play(contact.hitPoint, swordSwingDir);
 			lastParticleIndex++;
 			if (lastParticleIndex >= hitParticle.size())
