@@ -310,6 +310,11 @@ void Player::GUIRender()
 
 	float keyDir = keyboardRot;
 	ImGui::DragFloat("KeyDir", &keyDir);
+
+
+	float ratio = RATIO;
+	ImGui::DragFloat("clipRatio", &ratio);
+
 	//
 	//int U = Keyboard::Get()->ReturnFirst();
 	//ImGui::SliderInt("keyboard", &U, 0, 200);
@@ -357,15 +362,19 @@ void Player::Control()
 	case Player::S_005:		S005();		break;
 	case Player::S_008:		S008();		break;
 	case Player::S_009:		S009();		break;
+	case Player::S_011:		S011();		break;
 	case Player::S_014:		S014();		break;
 	case Player::S_017:		S017();		break;
 	case Player::S_018:		S018();		break;
+	case Player::S_019:		S019();		break;
+	case Player::S_020:		S020();		break;
 	case Player::S_026:		S026();		break;
 	case Player::S_029:		S029();		break;
 	case Player::S_038:		S038();		break;
 	case Player::S_118:		S118();		break;
 	case Player::S_119:		S119();		break;
 	case Player::S_120:		S120();		break;
+	case Player::S_122:		S122();		break;
 
 	// 이동 모션
 	case Player::L_001:		L001();		break;
@@ -376,7 +385,7 @@ void Player::Control()
 	case Player::L_006:					break;
 	case Player::L_007:					break;
 	case Player::L_008:		L008();		break;
-	case Player::L_009:					break;
+	case Player::L_009:		L009();		break;
 	case Player::L_010:		L010();		break;
 	case Player::L_011:					break;
 	case Player::L_012:					break;
@@ -389,6 +398,7 @@ void Player::Control()
 	case Player::L_077:					break;
 	case Player::L_078:					break;
 	case Player::L_079:					break;
+		
 	// 공격 모션
 	case Player::L_101:		L101();		break;
 	case Player::L_102:		L102();		break;
@@ -644,17 +654,21 @@ void Player::ResetPlayTime()
 		GetClip(preState)->ResetPlayTime();
 }
 
-void Player::Rotate()
+void Player::Rotate(float rotateSpeed)
 {
-	Vector3 newForward;
-	newForward = Lerp(Forward(), CAM->Back(), rotSpeed * DELTA);
-	float rot = atan2(newForward.x, newForward.z);
-	//Rot().y = rot;
+	if (keyboardRot != 0.0f)
+	{
+		if (abs(Rot().y - keyboardRot) > 3.14)
+		{
+			if (keyboardRot < 0)	keyboardRot += XM_2PI;
+			else					keyboardRot -= XM_2PI;
+		}
 
-	//캐릭터 기준 왼쪽 법선 구하기 식 오른쪽이면 Forward(),CAM->Forawrd 일듯
-	//newForward = Cross(Back(), CAM->Back);
-	//float rot = atan2(newForward.x, newForward.z);
-	//Rot().y = rot;
+		if (keyboardRot > Rot().y)
+			RealRotate(rotateSpeed * DELTA);
+		else
+			RealRotate(-rotateSpeed * DELTA);
+	}
 
 }
 
@@ -958,70 +972,18 @@ void Player::SetAnimation()
 
 void Player::Roll()
 {
-	moveSpeed = 400;
-	Vector3 CAMLeftForward = CAM->Back() + CAM->Right();
-	Vector3 CAMRightForward = CAM->Back() + CAM->Left();
-	Vector3 CAMLeftBack = CAM->Right() + CAM->Forward();
-	Vector3 CAMRightBack = CAM->Left() + CAM->Forward();
-	Vector3 forward = Back();
-	Vector3 newForward;
+
 	if (UIManager::Get()->curStamina < 20) // 스태미나 일정수치 미만에서는 구르기 막기
 		return;
 	UIManager::Get()->Roll();
 
-	if (KEY_PRESS('W'))
-	{
-		newForward = Lerp(Forward(), CAM->Back(), rotSpeed * 10);
-		float rot = atan2(newForward.x, newForward.z);
-		Rot().y = rot;
-	}
-	if (KEY_PRESS('S'))
-	{
-		newForward = Lerp(Back(), CAM->Forward(), rotSpeed * 10);
-		float rot = atan2(newForward.x, newForward.z);
-		Rot().y = rot;
-	}
-	if (KEY_PRESS('A'))
-	{
-		newForward = Lerp(Left(), CAM->Right(), rotSpeed * 10);
-		float rot = atan2(newForward.x, newForward.z);
-		Rot().y = rot;
-	}
-	if (KEY_PRESS('D'))
-	{
-		newForward = Lerp(Right(), CAM->Left(), rotSpeed * 10);
-		float rot = atan2(newForward.x, newForward.z);
-		Rot().y = rot;
-	}
-	if (KEY_PRESS('W') && KEY_PRESS('A') || KEY_PRESS('A') && KEY_PRESS('W')) // 좌상 구르기
-	{
-		newForward = Lerp(Left() + Forward(), CAMLeftForward, rotSpeed * 10);
-		float rot = atan2(newForward.x, newForward.z);
-		Rot().y = rot;
-	}
-	if (KEY_PRESS('W') && KEY_PRESS('D') || KEY_PRESS('D') && KEY_PRESS('W')) // 우상 구르기
-	{
-		newForward = Lerp(Right() + Forward(), CAMRightForward, rotSpeed * 10);
-		float rot = atan2(newForward.x, newForward.z);
-		Rot().y = rot;
-	}
-	if (KEY_PRESS('S') && KEY_PRESS('A') || KEY_PRESS('A') && KEY_PRESS('S')) // 좌하 구르기
-	{
-		newForward = Lerp(Left() + Back(), CAMLeftBack, rotSpeed * 10);
-		float rot = atan2(newForward.x, newForward.z);
-		Rot().y = rot;
-	}
-	if (KEY_PRESS('S') && KEY_PRESS('D') || KEY_PRESS('D') && KEY_PRESS('S')) // 우하 구르기
-	{
-		newForward = Lerp(Right() + Back(), CAMRightBack, rotSpeed * 10);
-		float rot = atan2(newForward.x, newForward.z);
-		Rot().y = rot;
-	}
 
-	holdingSword = false;
+	Rot().y = keyboardRot;
+
 
 	if (State_S())
-		SetState(S_017);
+		SetState(S_018);
+
 	else if (!State_S())
 		SetState(L_010);
 
@@ -1191,6 +1153,7 @@ void Player::SetState(State state)
 	preState = curState;
 	curState = state;
 	attackOnlyOncePerMotion = false;
+	playOncePerMotion = false;
 	//	PlayClip(state);
 }
 
@@ -1275,15 +1238,19 @@ void Player::ReadClips()
 	ReadClip("S_005");
 	ReadClip("S_008");
 	ReadClip("S_009");
+	ReadClip("S_011");
 	ReadClip("S_014");
 	ReadClip("S_017");
 	ReadClip("S_018");
+	ReadClip("S_019");
+	ReadClip("S_020");
 	ReadClip("S_026");
 	ReadClip("S_029");
 	ReadClip("S_038");
 	ReadClip("S_118");
 	ReadClip("S_119");
 	ReadClip("S_120");
+	ReadClip("S_122");
 }
 
 void Player::RecordLastPos()
@@ -1294,10 +1261,9 @@ void Player::RecordLastPos()
 
 void Player::S001() // 납도 Idle
 {
-	PLAY;
-	if (KEY_PRESS('W') || KEY_PRESS('A') || KEY_PRESS('S') || KEY_PRESS('D'))
+	PLAYLOOP;
+	if (K_MOVE)
 		SetState(S_005);
-	moveSpeed = 10;
 
 	// 왼 클릭 으로 공격 하는거 추가
 	if (KEY_FRONT(Keyboard::LMB))
@@ -1305,191 +1271,193 @@ void Player::S001() // 납도 Idle
 		SetState(L_101);
 		return;
 	}
-	UIManager::Get()->staminaActive = false;
+
+	if (RATIO > 0.95)
+		Loop();
 }
 
 void Player::S003() // 납도상태 달리기
 {
-	PLAY;
-	Move();
-	Rotate();
-
-	if (UIManager::Get()->curStamina < 0.1f)
-		SetState(S_118);
-
-	if (KEY_UP('W') || KEY_UP('S') || KEY_UP('A') || KEY_UP('D')) // 이동 중 키를 뗄 때
-	{
-		if (KEY_PRESS('W') || KEY_PRESS('A') || KEY_PRESS('S') || KEY_PRESS('D')) // 다른 키가 아직 눌려있으면 돌아간다.
-			return;
-		// 모든 이동키가 입력되지 않을 시 멈춤
-		SetState(S_014);
-		return;
-	}
-
-	if (KEY_PRESS(VK_LSHIFT)) // 시프트 누르면 전력질주
-	{
-		SetState(S_038);
-		return;
-	}
-
-	if (KEY_FRONT(Keyboard::LMB))
-	{
-		SetState(L_101);
-		return;
-	}
-
-	if (KEY_DOWN(VK_SPACE))
-		Roll();
-	UIManager::Get()->staminaActive = false;
-
+//	PLAY;
+//	Move();
+//	Rotate();
+//
+//	if (UIManager::Get()->curStamina < 0.1f)
+//		SetState(S_118);
+//
+//	if (KEY_UP('W') || KEY_UP('S') || KEY_UP('A') || KEY_UP('D')) // 이동 중 키를 뗄 때
+//	{
+//		if (KEY_PRESS('W') || KEY_PRESS('A') || KEY_PRESS('S') || KEY_PRESS('D')) // 다른 키가 아직 눌려있으면 돌아간다.
+//			return;
+//		// 모든 이동키가 입력되지 않을 시 멈춤
+//		SetState(S_014);
+//		return;
+//	}
+//
+//	if (KEY_PRESS(VK_LSHIFT)) // 시프트 누르면 전력질주
+//	{
+//		SetState(S_038);
+//		return;
+//	}
+//
+//	if (KEY_FRONT(Keyboard::LMB))
+//	{
+//		SetState(L_101);
+//		return;
+//	}
+//
+//	if (KEY_DOWN(VK_SPACE))
+//		Roll();
+//	UIManager::Get()->staminaActive = false;
+//
 }
 
-void Player::S005() // 대기중 달리기
+void Player::S005() // 대기중 달리기 시작
 {
 	PLAY;
-	Move();
-	
-	if (moveSpeed <= 400)
-		moveSpeed += 500 * DELTA;
-	
-	//Rotate();
-	if (RATIO > 0.97 && (KEY_PRESS('W') || KEY_PRESS('S') || KEY_PRESS('A') || KEY_PRESS('D')))
-	{
-		SetState(S_003);
-		moveSpeed = 400;
-		return;
-	}
 
-	if (KEY_UP('W') || KEY_UP('S') || KEY_UP('A') || KEY_UP('D'))
-	{
-		if (KEY_PRESS('W') || KEY_PRESS('A') || KEY_PRESS('S') || KEY_PRESS('D'))
-			return;
+	Rotate();
 
+	if (!K_MOVE)
+	{
 		SetState(S_014);
-		return;
 	}
-
 
 	// 101 내디뎌 베기
-	if (KEY_FRONT(Keyboard::LMB))
-	{
-		SetState(L_101);
-		return;
-	}
+	if		(K_LMB)			SetState(L_101);
+	else if (K_CTRL)	SetState(L_106);
+	else if (K_SPACE)	Roll();
 	
-	//if (KEY_PRESS(VK_LSHIFT))
-	//	SetState(S_008);
-	if (KEY_DOWN(VK_SPACE))
-		Roll();
+	if (RATIO > 0.97 )
+	{
+		SetState(S_011);
+	}	
 }
 
 void Player::S008() // 서서 납도
 {
 	PLAY;
-	//Move();
-	Rotate();
+
 	if(RATIO>0.6)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_9", .5f);
 
-	if (RATIO > 0.94 && (KEY_PRESS('W') || KEY_PRESS('S') || KEY_PRESS('A') || KEY_PRESS('D')))
-	{
-		SetState(S_003);
-		return;
-	}
+	if (RATIO > 0.95 && K_MOVE)
+		SetState(S_005);
 
 	if (RATIO > 0.98)
-	{
-		//ReturnIdle();
 		SetState(S_001);
-	}
 
 }
 
 void Player::S009() // 걸으면서 납도
 {
-	PLAY;
-	Move();
+//	PLAY;
+//	Rotate();
+//
+//	if (RATIO > 0.4)
+//		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_9", .5f);
+//
+//	if (RATIO > 0.94 && (KEY_PRESS('W') || KEY_PRESS('S') || KEY_PRESS('A') || KEY_PRESS('D')))
+//	{
+//		SetState(S_011);
+//	}
+//
+//	if (RATIO > 0.98)
+//	{
+//		SetState(S_001);
+//	}
+}
+
+void Player::S011() // 달리기 루프
+{
+	PLAYLOOP;
+
 	Rotate();
-	if (RATIO > 0.4)
-		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_9", .5f);
 
-	if (RATIO > 0.94 && (KEY_PRESS('W') || KEY_PRESS('S') || KEY_PRESS('A') || KEY_PRESS('D')))
+	if (KEY_DP(VK_LSHIFT))
+		SetState(S_122);
+
+	if (!K_MOVE)
 	{
-		SetState(S_003);
-		return;
-	}
-	if (RATIO > 0.98)
-	{
-		//ReturnIdle();
-		SetState(S_001);
+		SetState(S_014);
 	}
 
+	// 101 내디뎌 베기
+	if		(K_LMB)		SetState(L_101);
+	else if (K_CTRL)	SetState(L_106);
+	else if (K_SPACE)	Roll();
+
+
+	if (RATIO > 0.95)
+	{
+		Loop();
+		
+	}
 
 }
 
 void Player::S014() // 달리다 멈춤
 {
 	PLAY;
-	Move();
-	if (preState == S_001)
-		moveSpeed = 400;
 
-	if (moveSpeed >= 0)
-		moveSpeed -= 500 * DELTA;
+	if (K_MOVE)
+		SetState(S_005);
 
-	//Rotate();
+
+
+	
 	if (RATIO > 0.97)
 	{
 		SetState(S_001);
 	}
 }
 
-void Player::S017() // 구르기 후 제자리
+void Player::S017() 
+{
+
+}
+
+void Player::S018() // 구르기 후 제자리
 {
 	PLAY;
 
-	if (GetClip(S_017)->GetRatio() > 0.6f && KEY_PRESS('W') ||
-		GetClip(S_017)->GetRatio() > 0.6f && KEY_PRESS('S') ||
-		GetClip(S_017)->GetRatio() > 0.6f && KEY_PRESS('A') ||
-		GetClip(S_017)->GetRatio() > 0.6f && KEY_PRESS('D'))
+	if (!playOncePerMotion)
 	{
-		SetState(S_018);
+
+	}
+
+	if (GetClip(S_018)->GetRatio() > 0.6f && K_MOVE)
+	{
+		SetState(S_020);
 	}
 
 	if (GetClip(S_017)->GetRatio() > 0.98)
 	{
-		ReturnIdle2();
+		SetState(S_001);
 	}
 }
 
-void Player::S018() // 납도상태 구르기 후 이동키 유지시
+void Player::S019()// 납도상태 구르기 후 이동키 유지시
+{
+
+}
+
+void Player::S020()
 {
 	PLAY;
-	Move();
+
 	Rotate();
-	// 줌 정상화
+
+
+	if (RATIO > 0.48)
 	{
-		if (RATIO > 0 && RATIO < 0.9)
-			CAM->Zoom(300, 5);
+		if (!K_MOVE)			SetState(S_014);
+		else if (K_SPACE)		Roll();
+
 	}
 
-	if (KEY_UP('W') || KEY_UP('S') || KEY_UP('A') || KEY_UP('D'))
-	{
-		if (KEY_PRESS('W') || KEY_PRESS('A') || KEY_PRESS('S') || KEY_PRESS('D'))
-			return;
-
-		SetState(S_014);
-		return;
-	}
-	if (GetClip(S_018)->GetRatio() > 0.48 && KEY_DOWN(VK_SPACE))
-	{
-		Roll();
-	}
-	if (GetClip(S_018)->GetRatio() > 0.98)
-	{
-		SetState(S_003);
-		UIManager::Get()->staminaActive = false;
-	}
+	if (RATIO > 0.97)
+		SetState(S_011);
 }
 
 void Player::S026() // 대기중 걷기시작
@@ -1502,58 +1470,58 @@ void Player::S029() // 걷는중
 
 void Player::S038() // 전력질주
 {
-	PLAY;
-	Move();
-	Rotate();
-	if (moveSpeed <= 650)
-		moveSpeed += 500 * DELTA;
-	if (UIManager::Get()->curStamina < 0.1f) // 스태미나 일정수치 미만에서는 달리기 막기
-	{
-		SetState(S_118);
-		return;
-	}
-	UIManager::Get()->Running();
-	/*if (RATIO > 0.97)
-		moveSpeed++;*/
-
-	if (KEY_UP(VK_LSHIFT))
-	{
-		moveSpeed = 400;
-		SetState(S_003);
-		return;
-	}
-
-	//Rotate();
-	/*if (RATIO > 0.97 && (KEY_PRESS('W') || KEY_PRESS('S') || KEY_PRESS('A') || KEY_PRESS('D')))
-	{
-		SetState(S_003);
-		moveSpeed = 500;
-		return;
-	}*/
-
-	if (KEY_UP('W') || KEY_UP('S') || KEY_UP('A') || KEY_UP('D'))
-	{
-		if (KEY_PRESS('W') || KEY_PRESS('A') || KEY_PRESS('S') || KEY_PRESS('D'))
-			return;
-
-		moveSpeed = 400;
-		SetState(S_014);
-		return;
-	}
-
-
-	// 101 내디뎌 베기
-	if (KEY_FRONT(Keyboard::LMB))
-	{
-		SetState(L_101);
-		return;
-	}
-
-	//if (KEY_PRESS(VK_LSHIFT))
-	//	SetState(S_008);
-	if (KEY_DOWN(VK_SPACE))
-		Roll();
-	UIManager::Get()->staminaActive = true;
+//	PLAY;
+//	Move();
+//	Rotate();
+//	if (moveSpeed <= 650)
+//		moveSpeed += 500 * DELTA;
+//	if (UIManager::Get()->curStamina < 0.1f) // 스태미나 일정수치 미만에서는 달리기 막기
+//	{
+//		SetState(S_118);
+//		return;
+//	}
+//	UIManager::Get()->Running();
+//	/*if (RATIO > 0.97)
+//		moveSpeed++;*/
+//
+//	if (KEY_UP(VK_LSHIFT))
+//	{
+//		moveSpeed = 400;
+//		SetState(S_003);
+//		return;
+//	}
+//
+//	//Rotate();
+//	/*if (RATIO > 0.97 && (KEY_PRESS('W') || KEY_PRESS('S') || KEY_PRESS('A') || KEY_PRESS('D')))
+//	{
+//		SetState(S_003);
+//		moveSpeed = 500;
+//		return;
+//	}*/
+//
+//	if (KEY_UP('W') || KEY_UP('S') || KEY_UP('A') || KEY_UP('D'))
+//	{
+//		if (KEY_PRESS('W') || KEY_PRESS('A') || KEY_PRESS('S') || KEY_PRESS('D'))
+//			return;
+//
+//		moveSpeed = 400;
+//		SetState(S_014);
+//		return;
+//	}
+//
+//
+//	// 101 내디뎌 베기
+//	if (KEY_FRONT(Keyboard::LMB))
+//	{
+//		SetState(L_101);
+//		return;
+//	}
+//
+//	//if (KEY_PRESS(VK_LSHIFT))
+//	//	SetState(S_008);
+//	if (KEY_DOWN(VK_SPACE))
+//		Roll();
+//	UIManager::Get()->staminaActive = true;
 
 }
 
@@ -1584,6 +1552,29 @@ void Player::S120() // 탈진 중
 		SetState(S_119);
 }
 
+void Player::S122()   // 전력질주
+{
+	PLAYLOOP;
+	Rotate();
+
+	if (UIManager::Get()->curStamina < 0.1f)
+		SetState(S_118);
+
+	if (KEY_UP(VK_LSHIFT))
+		SetState(S_011);
+
+	if (!K_MOVE)
+		SetState(S_014);
+
+	
+	if		(K_LMB)		SetState(L_101);
+	else if (K_SPACE)	Roll();
+
+	if (RATIO > 0.95)
+		Loop();
+
+}
+
 void Player::L001() // 발도상태 대기
 {
 	PLAY;
@@ -1612,16 +1603,14 @@ void Player::L002() // 발도
 void Player::L003() // 서서 납도
 {
 	PLAY;
-	Move();
 	Rotate();
 }
 
 void Player::L004() // 발도상태 걷기 중 // 루프
 {
-	PLAY;
-	//
+	PLAYLOOP;
 
-	if (KEY_PRESS(VK_LSHIFT))		SetState(S_009); // 납도	
+	if (KEY_PRESS(VK_LSHIFT))		SetState(L_009); // 납도	
 	else if (K_LMB)		SetState(L_101);	// 101 내디뎌 베기	
 	else if (K_RMB)		SetState(L_104);	// 104 찌르기	
 	else if (K_LMBRMB)	SetState(L_103);	// 103 베어내리기
@@ -1639,10 +1628,9 @@ void Player::L004() // 발도상태 걷기 중 // 루프
 		return;
 	}
 
-	Move();
 	Rotate();
 
-	if (RATIO > 0.98)
+	if (RATIO > 0.95)
 	{
 		Loop();
 	}
@@ -1652,7 +1640,7 @@ void Player::L005() // 발도상태 걷기 시작 (발돋움)
 {
 	PLAY;
 	
-	if (KEY_PRESS(VK_LSHIFT))		SetState(S_009); // 납도	
+	if (KEY_PRESS(VK_LSHIFT))		SetState(L_009); // 납도	
 	else if (K_LMB)		SetState(L_101);	// 101 내디뎌 베기	
 	else if (K_RMB)		SetState(L_104);	// 104 찌르기	
 	else if (K_LMBRMB)	SetState(L_103);	// 103 베어내리기
@@ -1660,7 +1648,6 @@ void Player::L005() // 발도상태 걷기 시작 (발돋움)
 	else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// 날라차기
 	else if (K_SPACE)	Roll();				// 010 구르기
 
-	Move();
 	Rotate();
 
 	if (KEY_UP('W') || KEY_UP('S') || KEY_UP('A') || KEY_UP('D'))
@@ -1697,7 +1684,7 @@ void Player::L008() // 멈춤
 {
 	PLAY;
 
-	if (KEY_PRESS(VK_LSHIFT))		SetState(S_009); // 납도	
+	if (KEY_PRESS(VK_LSHIFT))		SetState(L_009); // 납도	
 	else if (K_LMB)		SetState(L_101);	// 101 내디뎌 베기	
 	else if (K_RMB)		SetState(L_104);	// 104 찌르기	
 	else if (K_LMBRMB)	SetState(L_103);	// 103 베어내리기
@@ -1724,6 +1711,20 @@ void Player::L008() // 멈춤
 void Player::L009() // 걸으면서 납도
 {
 	PLAY;
+	Rotate();
+
+	if (RATIO > 0.4)
+		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_9", .5f);
+
+	if (RATIO > 0.95 && (KEY_PRESS('W') || KEY_PRESS('S') || KEY_PRESS('A') || KEY_PRESS('D')))
+	{
+		SetState(S_011);
+	}
+
+	if (RATIO > 0.98)
+	{
+		SetState(S_014);
+	}
 }
 
 void Player::L010() // 구르기
@@ -1739,10 +1740,7 @@ void Player::L010() // 구르기
 		if (RATIO > 0 && RATIO < 0.9)
 			CAM->Zoom(300, 5);
 	}
-	if (GetClip(L_010)->GetRatio() > 0.45f && KEY_PRESS('W')||
-		GetClip(L_010)->GetRatio() > 0.45f && KEY_PRESS('S')||
-		GetClip(L_010)->GetRatio() > 0.45f && KEY_PRESS('A')||
-		GetClip(L_010)->GetRatio() > 0.45f && KEY_PRESS('D'))
+	if (GetClip(L_010)->GetRatio() > 0.45f && K_MOVE)
 	{
 		SetState(L_014);
 	}
@@ -1758,7 +1756,6 @@ void Player::L010() // 구르기
 void Player::L014() // 발도상태 구르기 후 이동키 유지시
 {
 	PLAY;
-	Move();
 	Rotate();
 	// 줌 정상화
 	{
@@ -2784,40 +2781,6 @@ void Player::L156()
 
 }
 
-void Player::LRunning()
-{
-	PLAY;
-
-	Move();
-	Rotate();
-
-	if (KEY_UP('W') || KEY_UP('S') || KEY_UP('A') || KEY_UP('D'))
-	{
-		if (KEY_PRESS('W') || KEY_PRESS('A') || KEY_PRESS('S') || KEY_PRESS('D'))
-			return;
-
-		SetState(L_008);
-		return;
-	}
-
-	if (RATIO < 0.6)
-		Rotate();
-
-	if (RATIO > 0.94 && (KEY_PRESS('W') || KEY_PRESS('S') || KEY_PRESS('A') || KEY_PRESS('D')))
-	{
-		SetState(L_004);
-		return;
-	}
-
-	if (RATIO > 0.98)
-	{
-		ReturnIdle();
-	}
-
-	if (KEY_DOWN(VK_SPACE))
-		Roll();
-}
-
 void Player::MotionRotate(float degree)
 {
 	Vector3 forword = CAM->Back();
@@ -2840,10 +2803,7 @@ void Player::MotionRotate(float degree)
 
 bool Player::State_S() // 납도 스테이트 목록
 {
-	if (curState == S_001 || curState == S_003 || curState == S_005 ||
-		curState == S_014 || curState == S_017 || curState == S_018 ||
-		curState == S_038 || curState == S_118 || curState == S_119 || 
-		curState == S_120)
+	if (curState >= S_001 && curState != S_008 && curState != L_009)
 		return true;
 
 	else return false;
