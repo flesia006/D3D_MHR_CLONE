@@ -15,16 +15,15 @@ ModelExportScene::ModelExportScene()
 
 
 // Å¬¸³µþ ¶§ ÀÌ°Å ¾²¼À
-    ExportClip(name, "D_026");
-//    ExportClip(name, "D_004");
-//    ExportClip(name, "D_007");
-//    ExportClip(name, "D_011");
-//    ExportClip(name, "D_015");
-//    ExportClip(name, "D_016");
-//    ExportClip(name, "D_021");
-//    ExportClip(name, "D_022");
-//    ExportClip(name, "D_029");
-//    ExportClip(name, "D_030");
+//    ExportClip(name, "L_010");
+//    ExportClip(name, "L_014");
+//    ExportClip(name, "S_005");
+//    ExportClip(name, "S_011");
+//    ExportClip(name, "S_014");
+//    ExportClip(name, "S_018");
+//    ExportClip(name, "S_019");
+//    ExportClip(name, "S_020");
+//    ExportClip(name, "S_122");
 //    ExportClip(name, "D_031");
 //    ExportClip(name, "D_032");
 //    ExportClip(name, "D_033");

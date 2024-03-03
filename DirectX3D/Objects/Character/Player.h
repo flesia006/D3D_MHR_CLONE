@@ -22,10 +22,9 @@ private:
 
 		L_147, L_151, L_152, L_153, L_154,
 		L_155, L_156,
-
-		S_001, S_003, S_005, S_008, S_009,
-		S_014, S_017, S_018, S_026, S_029,
-		S_038, S_118, S_119, S_120,
+		S_001, S_003, S_005, S_008, S_009, S_011,
+		S_014, S_017, S_018, S_019, S_020, S_026, S_029,
+		S_038, S_118, S_119, S_120, S_122,
 
 		// 발도 피격모션
 		L_400, L_403, L_451, L_453, L_455,
@@ -63,6 +62,7 @@ public:
 	void PostRender();
 
 	CapsuleCollider* getCollider() { return tmpCollider; }
+	Transform* GetRealPos() { return realPos; }
 
 private:
 	void Control();
@@ -72,16 +72,20 @@ private:
 	void UpdateWorlds();
 	void Potion();
 
-	void Rotate();
-	void LimitRotate(float limit);
+	void Rotate(float rotateSpeed = 5.0f);   // 앞으로 쭉 달리는 루프모션
+	void LimitRotate(float limit);   // 공격모션  15 , 180
+	void RealRotate(float rad);
+
 	bool Attack(float power, bool push = true, UINT useOtherCollider = 0); // TODO : 데미지 계산 넣어야함
 	bool AttackDummy(float power, bool push = true, UINT useOtherCollider = 0); // TODO : 데미지 계산 넣어야함
 	void AttackWOCollision(float power = 0); // 충돌검사를 안하는 공격
+
+	void HurtCheck();
+
 	bool CollisionCheck();
 	void SetAnimation();
 	void Roll();
 	void TermAttackUpdate();
-	void RealRotate(float rad);
 
 
 
@@ -121,15 +125,19 @@ private:
 	void S005();
 	void S008();
 	void S009();
+	void S011();
 	void S014();
 	void S017();
 	void S018();
+	void S019();
+	void S020();
 	void S026();
 	void S029();
 	void S038();
 	void S118();
 	void S119();
 	void S120();
+	void S122();
 
 
 	void L001();
@@ -207,8 +215,6 @@ private:
 	void D079();
 	void D080();
 
-
-	void LRunning();
 private:
 	Transform* mainHand = nullptr;
 	Transform* backSwd = nullptr;
@@ -229,6 +235,8 @@ private:
 	CapsuleCollider* tmpCollider2 = nullptr;
 	CapsuleCollider* tmpCollider3 = nullptr;
 	CapsuleCollider* swordCollider = nullptr;
+
+	CapsuleCollider* bodyCollider = nullptr;
 
 	Model* longSword = nullptr;
 	Model* kalzip = nullptr;
@@ -283,6 +291,7 @@ private:
 	const float temp = -2.364f;  // 텍스트 띄우기 용 수치
 	const float temp2 = -6.038f; // 텍스트 띄우기 용 수치
 	const float temp3 = 14.067f; // 텍스트 띄우기 용 수치
+	float temp4 = 600.0f;
 
 	float jumpVelocity = 2.8f;
 	const float originJumpVelocity = jumpVelocity;

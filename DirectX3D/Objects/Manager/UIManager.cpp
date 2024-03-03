@@ -398,7 +398,7 @@ void UIManager::Update()
 		recoverHP = curHP;
 	
 	if(staminaActive == false) // 행동이 끝나면 스태미너 자연회복
-		curStamina += 2.5f * DELTA;
+		curStamina += 7.5f * DELTA;
 	if (curStamina >= maxStamina) // 최대 스태미나까지만 자연회복
 		curStamina = maxStamina;
 

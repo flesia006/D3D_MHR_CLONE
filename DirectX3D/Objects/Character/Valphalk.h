@@ -443,9 +443,10 @@ private:
 	BoxCollider* effectBox1;
 	BoxCollider* effectBox2;
 	BoxCollider* effectBox3;
-
 	SphereCollider* effectSphere1;
 	SphereCollider* effectSphere2;
+
+
 
 	Vector3 fullBurstScale;
 	Vector3 fullBurstPos;
