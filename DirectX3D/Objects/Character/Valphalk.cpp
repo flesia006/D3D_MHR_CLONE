@@ -346,7 +346,7 @@ void Valphalk::Update()
 	ColliderNodePos();
 
 	FOR(jetParticle.size()) jetParticle[i]->Update();
-	Jet();
+	//Jet();
 	
 	ModelAnimator::Update();
 

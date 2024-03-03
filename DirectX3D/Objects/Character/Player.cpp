@@ -97,8 +97,9 @@ void Player::Update()
 	criticalParticle->Update();
 	spAtkParticle->Update();	
 	potionParticle->Update();
-	potionParticle->SetParent(realPos);
-	potionParticle->SetVortex({ Pos().x,Pos().y+100,Pos().z });
+	//potionParticle->SetParent(realPos);
+	potionParticle->SetPos(realPos->Pos());
+	potionParticle->SetVortex({ realPos->Pos().x,realPos->Pos().y+100,realPos->Pos().z });
 
 	ModelAnimator::Update();
 	UIManager::Get()->Update();
