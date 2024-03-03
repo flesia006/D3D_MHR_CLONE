@@ -1618,22 +1618,14 @@ void Player::L004() // 발도상태 걷기 중 // 루프
 	else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// 날라차기
 	else if (K_SPACE)	Roll();				// 010 구르기
 
-
-	if (KEY_UP('W') || KEY_UP('S') || KEY_UP('A') || KEY_UP('D')) // 이동 중 키를 뗄 때
-	{
-		if (KEY_PRESS('W') || KEY_PRESS('A') || KEY_PRESS('S') || KEY_PRESS('D')) // 다른 키가 아직 눌려있으면 돌아간다.
-			return;
-		// 모든 이동키가 입력되지 않을 시 멈춤
-		SetState(L_008);
-		return;
-	}
-
 	Rotate();
 
+	if (!K_MOVE) // 이동 중 키를 뗄 때
+		SetState(L_008);
+
+
 	if (RATIO > 0.95)
-	{
 		Loop();
-	}
 }
 
 void Player::L005() // 발도상태 걷기 시작 (발돋움)
@@ -1650,21 +1642,13 @@ void Player::L005() // 발도상태 걷기 시작 (발돋움)
 
 	Rotate();
 
-	if (KEY_UP('W') || KEY_UP('S') || KEY_UP('A') || KEY_UP('D'))
-	{
-		if (KEY_PRESS('W') || KEY_PRESS('A') || KEY_PRESS('S') || KEY_PRESS('D'))
-			return;
-
+	if (!K_MOVE)
 		SetState(L_008);
-		return;
-	}
 
-	if (RATIO < 0.6)
-		Rotate();
 
 	if (RATIO > 0.98 )
 	{
-		if((KEY_PRESS('W') || KEY_PRESS('S') || KEY_PRESS('A') || KEY_PRESS('D')))
+		if(K_MOVE)
 			SetState(L_004);
 		else 
 			ReturnIdle();
@@ -1692,7 +1676,7 @@ void Player::L008() // 멈춤
 	else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// 날라차기
 	else if (K_SPACE)	Roll();				// 010 구르기
 
-	if (RATIO > 0.5 && RATIO <= 0.98)
+	if (RATIO > 0.5 && RATIO <= 0.96)
 	{
 		if (KEY_PRESS('W') || KEY_PRESS('A') || KEY_PRESS('S') || KEY_PRESS('D'))
 		{
@@ -1704,7 +1688,6 @@ void Player::L008() // 멈춤
 	{
 		GetClip(L_008)->SetPlayTime(-100.3f);
 		ReturnIdle();
-		SetState(L_001);
 	}
 }
 
