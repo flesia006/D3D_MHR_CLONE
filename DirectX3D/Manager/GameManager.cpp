@@ -39,8 +39,8 @@ GameManager::GameManager()
 {
     Create();
 
-//    SceneManager::Get()->Create("ModelExport", new ModelExportScene());
-//    SceneManager::Get()->Add("ModelExport");
+    SceneManager::Get()->Create("ModelExport", new ModelExportScene());
+    SceneManager::Get()->Add("ModelExport");
 
 
 //    SceneManager::Get()->Create("ShadowScene", new ShadowScene());

@@ -22,9 +22,18 @@ private:
 
 		L_147, L_151, L_152, L_153, L_154,
 		L_155, L_156,
+
 		S_001, S_003, S_005, S_008, S_009,
 		S_014, S_017, S_018, S_026, S_029,
-		S_038, S_118, S_119, S_120
+		S_038, S_118, S_119, S_120,
+
+		// 발도 피격모션
+		L_400, L_403, L_451, L_453, L_455,
+		// 납도 피격모션
+		D_001, D_004, D_007, D_011, D_015,
+		D_016, D_021, D_022, D_026, D_029,
+		D_030, D_031, D_032, D_033, D_045,
+		D_046, D_066, D_078, D_079, D_080
 	};
 
 	enum Rotation
@@ -166,6 +175,33 @@ private:
 	void L155();
 	void L156();
 
+	void L400();
+	void L403();
+	void L451();
+	void L453();
+	void L455();
+
+	void D001();
+	void D004();
+	void D007();
+	void D011();
+	void D015();
+	void D016();
+	void D021();
+	void D022();
+	void D026();
+	void D029();
+	void D030();
+	void D031();
+	void D032();
+	void D033();
+	void D045();
+	void D046();
+	void D066();
+	void D078();
+	void D079();
+	void D080();
+
 
 	void LRunning();
 private:
@@ -265,7 +301,6 @@ private:
 	Vector3 initForward = Vector3::Zero();
 
 	vector<Damage> damages;
-
 	
 	///////////////////////////////////////////
 	// Particle

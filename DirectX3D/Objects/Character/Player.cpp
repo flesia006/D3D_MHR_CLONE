@@ -362,8 +362,6 @@ void Player::Control()
 	case Player::L_137:		L137();		break;
 	case Player::L_138:		L138();		break;
 
-
-
 	case Player::L_147:		L147();		break;
 	case Player::L_151:		L151();		break;
 	case Player::L_152:		L152();		break;
@@ -371,6 +369,34 @@ void Player::Control()
 	case Player::L_154:		L154();		break;
 	case Player::L_155:		L155();		break;
 	case Player::L_156:		L156();		break;
+
+	// 피격 모션
+	case Player::L_400:		L400();		break;
+	case Player::L_403:		L403();		break;
+	case Player::L_451:		L451();		break;
+	case Player::L_453:		L453();		break;
+	case Player::L_455:		L455();		break;
+
+	case Player::D_001:		D001();		break;
+	case Player::D_004:		D004();		break;
+	case Player::D_007:		D007();		break;
+	case Player::D_011:		D011();		break;
+	case Player::D_015:		D015();		break;
+	case Player::D_016:		D016();		break;
+	case Player::D_021:		D021();		break;
+	case Player::D_022:		D022();		break;
+	case Player::D_026:		D026();		break;
+	case Player::D_029:		D029();		break;
+	case Player::D_030:		D030();		break;
+	case Player::D_031:		D031();		break;
+	case Player::D_032:		D032();		break;
+	case Player::D_033:		D033();		break;
+	case Player::D_045:		D045();		break;
+	case Player::D_046:		D046();		break;
+	case Player::D_066:		D066();		break;
+	case Player::D_078:		D078();		break;
+	case Player::D_079:		D079();		break;
+	case Player::D_080:		D080();		break;
 	}
 
 	if (KEY_UP('W') || KEY_UP('A') || KEY_UP('S') || KEY_UP('D'))
@@ -1092,6 +1118,32 @@ void Player::ReadClips()
 	ReadClip("S_118");
 	ReadClip("S_119");
 	ReadClip("S_120");
+
+	ReadClip("L_403");
+	ReadClip("L_451");
+	ReadClip("L_453");
+	ReadClip("L_455");
+	
+	ReadClip("D_001");
+	ReadClip("D_004");
+	ReadClip("D_007");
+	ReadClip("D_011");
+	ReadClip("D_015");
+	ReadClip("D_016");
+	ReadClip("D_021");
+	ReadClip("D_022");
+	ReadClip("D_026");
+	ReadClip("D_029");
+	ReadClip("D_030");
+	ReadClip("D_031");
+	ReadClip("D_032");
+	ReadClip("D_033");
+	ReadClip("D_045");
+	ReadClip("D_046");
+	ReadClip("D_066");
+	ReadClip("D_078");
+	ReadClip("D_079");
+	ReadClip("D_080");
 }
 
 void Player::RecordLastPos()
@@ -2525,6 +2577,272 @@ void Player::L156()
 {
 
 
+}
+
+void Player::L400()
+{
+	PLAY;
+
+	if (RATIO > 0.98)
+	{
+		ReturnIdle();
+	}
+}
+
+void Player::L403()
+{
+	PLAY;
+
+	if (RATIO > 0.98)
+	{
+		ReturnIdle();
+	}
+}
+
+void Player::L451()
+{
+	PLAY;
+
+	// 캔슬 가능 프레임
+	{
+		if (RATIO > 0.745)
+		{
+			if (K_SPACE)		Roll();			 // 구르기
+		}
+	}
+
+	if (RATIO > 0.98)
+	{
+		ReturnIdle();
+	}
+}
+
+void Player::L453()
+{
+	PLAY;
+
+	// 캔슬 가능 프레임
+	{
+		if (RATIO > 0.745)
+		{
+			if (K_SPACE)		Roll();			 // 구르기
+		}
+	}
+
+	if (RATIO > 0.98)
+	{
+		ReturnIdle();
+	}
+}
+
+void Player::L455()
+{
+	PLAY;
+
+	if (RATIO > 0.98)
+	{
+		ReturnIdle();
+	}
+}
+
+void Player::D001()
+{
+	PLAY;
+
+	if (RATIO > 0.98)
+	{
+		ReturnIdle2();
+	}
+}
+
+void Player::D004()
+{
+	PLAY;
+
+	if (RATIO > 0.98)
+	{
+		ReturnIdle2();
+	}
+}
+
+void Player::D007()
+{
+	PLAY;
+
+	if (RATIO > 0.98)
+	{
+		SetState(L_453);
+	}
+}
+
+void Player::D011()
+{
+	PLAY;
+
+	if (RATIO > 0.98)
+	{
+		SetState(L_451);
+	}
+}
+
+void Player::D015()
+{
+	PLAY;
+
+	if (RATIO > 0.98)
+	{
+		SetState(D_016);
+	}
+}
+
+void Player::D016()
+{
+	PLAY;
+
+	if (RATIO > 0.98)
+	{
+		SetState(L_451);
+	}
+}
+
+void Player::D021()
+{
+	PLAY;
+
+	if (RATIO > 0.98)
+	{
+		SetState(D_022);
+	}
+}
+
+void Player::D022()
+{
+	PLAY;
+
+	if (RATIO > 0.98)
+	{
+		SetState(L_453);
+	}
+}
+
+void Player::D026()
+{
+	PLAY;
+
+	if (RATIO > 0.98)
+	{
+		SetState(D_007);
+	}
+}
+
+void Player::D029()
+{
+	PLAY;
+
+	if (RATIO > 0.98)
+	{
+		SetState(D_030);
+	}
+}
+
+void Player::D030() // Loop
+{
+	PLAY;
+
+	if (RATIO > 0.98)
+	{
+		SetState(D_031);
+	}
+}
+
+void Player::D031()
+{
+	PLAY;
+
+	if (RATIO > 0.98)
+	{
+		SetState(D_007);
+	}
+}
+
+void Player::D032()
+{
+	PLAY;
+
+	if (RATIO > 0.98)
+	{
+		SetState(D_033);
+	}
+}
+
+void Player::D033()
+{
+	PLAY;
+
+	if (RATIO > 0.98)
+	{
+		SetState(D_026);
+	}
+}
+
+void Player::D045()
+{
+	PLAY;
+
+	if (RATIO > 0.98)
+	{
+		SetState(D_046);
+	}
+}
+
+void Player::D046()
+{
+	PLAY;
+
+	if (RATIO > 0.98)
+	{
+		SetState(L_455);
+	}
+}
+
+void Player::D066()
+{
+	PLAY;
+
+	if (RATIO > 0.98)
+	{
+		isPlay = false;
+	}
+}
+
+void Player::D078()
+{
+	PLAY;
+
+	if (RATIO > 0.98)
+	{
+		SetState(D_079);
+	}
+}
+
+void Player::D079()
+{
+	PLAY;
+
+	if (RATIO > 0.98)
+	{
+		SetState(D_080);
+	}
+}
+
+void Player::D080()
+{
+	PLAY;
+
+	if (RATIO > 0.98)
+	{
+		ReturnIdle();
+	}
 }
 
 void Player::LRunning()
