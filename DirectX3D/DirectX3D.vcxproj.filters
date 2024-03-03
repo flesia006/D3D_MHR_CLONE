@@ -164,6 +164,7 @@
     <ClCompile Include="Objects\Particle\Sp_atk_ready_Particle.cpp" />
     <ClCompile Include="Objects\Particle\PotionParticle.cpp" />
     <ClCompile Include="Objects\Particle\Val_Jet_Particle.cpp" />
+    <ClCompile Include="Scenes\FightTestScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Objects\Character\DummyValphalk.h" />
@@ -308,6 +309,7 @@
     <ClInclude Include="Scenes\ValphalkTestScene.h" />
     <ClInclude Include="Objects\Particle\PotionParticle.h" />
     <ClInclude Include="Objects\Particle\Val_Jet_Particle.h" />
+    <ClInclude Include="Scenes\FightTestScene.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DirectX3D.rc" />

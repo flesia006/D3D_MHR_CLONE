@@ -7,7 +7,7 @@ PlayerTestScene::PlayerTestScene()
 	valphalk->Pos().z = -1500.0f;
 
 	player = new Player();
-
+	UI;
 
 }
 
@@ -21,6 +21,7 @@ void PlayerTestScene::Update()
 {
 	valphalk->Update();
 	player->Update();
+	UI->Update();
 }
 
 void PlayerTestScene::PreRender()
@@ -36,6 +37,7 @@ void PlayerTestScene::Render()
 void PlayerTestScene::PostRender()
 {
 	player->PostRender();
+	UI->PostRender();
 }
 
 void PlayerTestScene::GUIRender()

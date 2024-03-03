@@ -27,6 +27,12 @@ public:
     float partHp = 0.0f;
     bool isAttack = false;
 
+    float atkDmg = 10.0f;
+    UINT atkStrength = 2;  // 1 : 소경직을 유발,  2: 넘어짐을 유발, 3: 뭔가 더 대단한걸 유발 (아직 모르겠다)
+    Vector3 lastPos = {};
+    Vector3 curPos = {};
+    Vector3 direction = {};
+
 private:
     virtual void MakeMesh() override;
 

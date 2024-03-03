@@ -35,6 +35,7 @@
 #define	K_SPACE		  Keyboard::Get()->IsInputBufferFront(Keyboard::SPACE)
 #define	K_LBUG		  Keyboard::Get()->IsInputBufferFront(Keyboard::BUG1)
 #define	K_RBUG		  Keyboard::Get()->IsInputBufferFront(Keyboard::BUG2)
+#define	K_MOVE		  Keyboard::Get()->IsMove()
 
 #define UI  UIManager::Get()
 
@@ -47,6 +48,7 @@
 #define RATIO GetClip(curState)->GetRatio()
 #define INIT  GetClip(curState)->isFirstPlay()
 #define PLAY  if (GetClip(curState)->isFirstPlay()) PlayClip(curState), initRotY = Rot().y
+#define PLAYLOOP  if (GetClip(curState)->isFirstPlay()) PlayClip(curState), initRotY = Rot().y, Pos() = realPos->Pos()
 
 
 #include <windows.h>
