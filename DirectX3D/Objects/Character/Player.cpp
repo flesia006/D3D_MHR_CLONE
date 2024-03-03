@@ -102,6 +102,8 @@ void Player::Update()
 	Potion();	
 	GroundCheck();
 
+	if (KEY_DOWN('5'))
+		SetState(D_015);
 }
 
 void Player::Render()
@@ -1334,6 +1336,7 @@ void Player::ReadClips()
 	ReadClip("S_119");
 	ReadClip("S_120");
 
+	ReadClip("L_400");
 	ReadClip("L_403");
 	ReadClip("L_451");
 	ReadClip("L_453");
