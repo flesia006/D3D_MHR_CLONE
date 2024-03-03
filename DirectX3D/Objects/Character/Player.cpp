@@ -715,10 +715,10 @@ bool Player::Attack(float power, bool push, UINT useOtherCollider) // Ãæµ¹ÆÇÁ¤ Ç
 
 	if (SceneManager::Get()->Add("ShadowScene") == nullptr && SceneManager::Get()->Add("PlayerTestScene") != nullptr)
 		return AttackDummy(power, push, useOtherCollider);
-	Valphalk* val =
-		dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetValphalk();
 	//Valphalk* val =
-	//	dynamic_cast<ValphalkTestScene*>(SceneManager::Get()->Add("ValphalkTestScene"))->GetValphalk();
+	//	dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetValphalk();
+	Valphalk* val =
+		dynamic_cast<ValphalkTestScene*>(SceneManager::Get()->Add("ValphalkTestScene"))->GetValphalk();
 
 
 	Contact contact;

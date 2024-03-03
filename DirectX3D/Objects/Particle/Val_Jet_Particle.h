@@ -15,6 +15,9 @@ public:
 
 	bool IsActive() { return jet->IsActive(); }
 
+	void SetPos(Vector3 pos);
+
+
 private:
 	ParticleSystem* jet = nullptr;
 

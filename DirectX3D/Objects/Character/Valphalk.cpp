@@ -257,12 +257,12 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 	FOR(6) jetParticle.push_back(new Val_Jet_Particle());
 	
 	{
-		//jetParticle[0]->Play(bullets[0]->Pos(),{0,1,0});
-		//jetParticle[1]->Play(bullets[1]->Pos(),{0,1,0});
-		//jetParticle[2]->Play(bullets[2]->Pos(),{0,1,0});
-		//jetParticle[3]->Play(bullets[3]->Pos(),{0,1,0});
-		//jetParticle[4]->Play(bullets[4]->Pos(),{0,1,0});
-		//jetParticle[5]->Play(bullets[5]->Pos(),{0,1,0});
+		//jetParticle[0]->Play(bullets[0]->Pos(),GetRotationByNode(61));
+		//jetParticle[1]->Play(bullets[1]->Pos(),GetRotationByNode(64));
+		//jetParticle[2]->Play(bullets[2]->Pos(),GetRotationByNode(61));
+		//jetParticle[3]->Play(bullets[3]->Pos(),GetRotationByNode(81));
+		//jetParticle[4]->Play(bullets[4]->Pos(),GetRotationByNode(84));
+		//jetParticle[5]->Play(bullets[5]->Pos(),GetRotationByNode(87));
 		/*jetParticle[0]->Pos() = GetTranslationByNode(61);
 		jetParticle[1]->Pos() = GetTranslationByNode(64);
 		jetParticle[2]->Pos() = GetTranslationByNode(67);
@@ -346,28 +346,9 @@ void Valphalk::Update()
 	ColliderNodePos();
 
 	FOR(jetParticle.size()) jetParticle[i]->Update();
-
-	jetpos->Pos() = GetTranslationByNode(61);
-	jetposend->Pos() = GetTranslationByNode(60);
-	jetpos->UpdateWorld();
-	jetpos->SetParent(jetposend);
-	//jetposend = jetpos->Pos();
-	//jetpos2 = jetposend - jetpos->GlobalPos();
-
-	timer2 += DELTA;
-	if (timer2>=0.11)
-	{
-		jetParticle[0]->Play(GetTranslationByNode(61), GetRotationByNode(61).Back() + 300);// + GetRotationByNode(61).Left());
-		jetParticle[1]->Play(GetTranslationByNode(64), GetRotationByNode(64).Back() + 300);// + GetRotationByNode(64).Left());
-		jetParticle[2]->Play(GetTranslationByNode(67), GetRotationByNode(67).Back() + 300);// + GetRotationByNode(67).Left());
-		jetParticle[3]->Play(GetTranslationByNode(81), GetRotationByNode(81).Back() + 300);// + GetRotationByNode(81).Left());
-		jetParticle[4]->Play(GetTranslationByNode(84), GetRotationByNode(84).Back() + 300);// + GetRotationByNode(84).Left());
-		jetParticle[5]->Play(GetTranslationByNode(87), GetRotationByNode(87).Back() + 300);// + GetRotationByNode(87).Left());
-		timer2 = 0;
-	}
-
-	ModelAnimator::Update();
+	Jet();
 	
+	ModelAnimator::Update();
 
 }
 
@@ -464,6 +445,55 @@ Vector3 Valphalk::GetPlayerPos() // 플레이어 위치 추적 함수
 	Vector3 pos;
 	pos = player->Pos();
 	return pos;
+}
+
+void Valphalk::Jet()
+{
+	timer2 += DELTA;
+
+	jetpos1_1 = GetTranslationByNode(60);
+	jetpos1_2 = GetTranslationByNode(61);
+	jetpos1 = jetpos1_2 - jetpos1_1;
+	jetpos1.GetNormalized();		
+	jetpos2_1 = GetTranslationByNode(63);
+	jetpos2_2 = GetTranslationByNode(64);
+	jetpos2 = jetpos1_2 - jetpos1_1;
+	jetpos2.GetNormalized();
+	jetpos3_1 = GetTranslationByNode(66);
+	jetpos3_2 = GetTranslationByNode(67);
+	jetpos3 = jetpos1_2 - jetpos1_1;
+	jetpos3.GetNormalized();
+	jetpos4_1 = GetTranslationByNode(80);
+	jetpos4_2 = GetTranslationByNode(81);
+	jetpos4 = jetpos1_2 - jetpos1_1;
+	jetpos4.GetNormalized();
+	jetpos5_1 = GetTranslationByNode(83);
+	jetpos5_2 = GetTranslationByNode(84);
+	jetpos5 = jetpos1_2 - jetpos1_1;
+	jetpos5.GetNormalized();
+	jetpos6_1 = GetTranslationByNode(86);
+	jetpos6_2 = GetTranslationByNode(87);
+	jetpos6 = jetpos1_2 - jetpos1_1;
+	jetpos6.GetNormalized();
+
+	if (timer2 >= 2)
+	{
+		jetParticle[0]->Play(GetTranslationByNode(61), jetpos1);
+		jetParticle[1]->Play(GetTranslationByNode(64), jetpos2);
+		jetParticle[2]->Play(GetTranslationByNode(67), jetpos3);
+		jetParticle[3]->Play(GetTranslationByNode(81), jetpos4);
+		jetParticle[4]->Play(GetTranslationByNode(84), jetpos5);
+		jetParticle[5]->Play(GetTranslationByNode(87), jetpos6);
+		timer2 = 0;
+	}
+
+
+	jetParticle[0]->SetPos(GetTranslationByNode(61));
+	jetParticle[1]->SetPos(GetTranslationByNode(64));
+	jetParticle[2]->SetPos(GetTranslationByNode(67));
+	jetParticle[3]->SetPos(GetTranslationByNode(81));
+	jetParticle[4]->SetPos(GetTranslationByNode(84));
+	jetParticle[5]->SetPos(GetTranslationByNode(87));
 }
 
 void Valphalk::Storm()
