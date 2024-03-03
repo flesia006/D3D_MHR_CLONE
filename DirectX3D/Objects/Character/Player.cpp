@@ -4,6 +4,7 @@
 #include "Scenes/ShadowScene.h"
 #include "Scenes/PlayerTestScene.h"
 #include "Scenes/ValphalkTestScene.h"
+#include "Scenes/FightTestScene.h"
 
 Player::Player() : ModelAnimator("Player")
 {
@@ -56,16 +57,17 @@ Player::Player() : ModelAnimator("Player")
 	tmpCollider3->Scale() *= 24.0f;
 	tmpCollider3->SetParent(forwardPos);
 
+	bodyCollider = new CapsuleCollider(35, 100);
+	bodyCollider->SetParent(realPos);
+	bodyCollider->Pos().y += 75.0f;
+	bodyCollider->UpdateWorld();
+
 	//	tmpCollider->SetParent(head);
 	//	tmpCollider->SetParent(back);
 
 	ReadClips();
 
 	CAM->SetTarget(head);
-	
-
-	//Ä³¸¯ÅÍ¿ë UI Ãß°¡
-
 }
 
 Player::~Player()
@@ -87,6 +89,7 @@ void Player::Update()
 	ResetPlayTime();
 	UpdateWorlds();
 	TermAttackUpdate();	
+	HurtCheck();
 
 	trail->Update();
 	FOR(hitParticle.size())		hitParticle[i]->Update();
@@ -109,6 +112,7 @@ void Player::Render()
 	ModelAnimator::Render();
 	tmpCollider->Render();
 	tmpCollider2->Render();
+	bodyCollider->Render();
 //	tmpCollider3->Render();
 	//swordCollider->Render();
 	longSword->Render();
@@ -231,7 +235,7 @@ void Player::UpdateWorlds()
 	tmpCollider->UpdateWorld();
 	tmpCollider2->UpdateWorld();
 	tmpCollider3->UpdateWorld();
-
+	bodyCollider->Update();
 	swordCollider->Update();
 
 	haloTransform->Pos() = longSword->GlobalPos() + longSword->Back() * 55.f;
@@ -335,6 +339,8 @@ void Player::GUIRender()
 
 	float ratio = RATIO;
 	ImGui::DragFloat("clipRatio", &ratio);
+
+	ImGui::DragFloat("Speed", &temp4);
 
 	//
 	//int U = Keyboard::Get()->ReturnFirst();
@@ -755,10 +761,12 @@ bool Player::Attack(float power, bool push, UINT useOtherCollider) // Ãæµ¹ÆÇÁ¤ Ç
 
 	if (SceneManager::Get()->Add("ShadowScene") == nullptr && SceneManager::Get()->Add("PlayerTestScene") != nullptr)
 		return AttackDummy(power, push, useOtherCollider);
-	Valphalk* val =
-		dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetValphalk();
-	//Valphalk* val =
-	//	dynamic_cast<ValphalkTestScene*>(SceneManager::Get()->Add("ValphalkTestScene"))->GetValphalk();
+
+	Valphalk* val = nullptr;
+	if(SceneManager::Get()->Add("ShadowScene") == nullptr && SceneManager::Get()->Add("FightTestScene") != nullptr)
+		val = dynamic_cast<FightTestScene*>(SceneManager::Get()->Add("FightTestScene"))->GetValphalk();
+	else
+		val = dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetValphalk();
 
 
 	Contact contact;
@@ -998,6 +1006,66 @@ void Player::AttackWOCollision(float power)
 		damage.isWeakness = false;
 
 	damages.push_back(damage);
+}
+
+void Player::HurtCheck()
+{
+	Valphalk* val = nullptr;
+	if (SceneManager::Get()->Add("ShadowScene") == nullptr && SceneManager::Get()->Add("FightTestScene") != nullptr)
+		val = dynamic_cast<FightTestScene*>(SceneManager::Get()->Add("FightTestScene"))->GetValphalk();
+	else if(SceneManager::Get()->Add("ShadowScene") != nullptr)
+		val = dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetValphalk();
+	else
+		return;
+
+	auto colliders = val->GetCollider();
+
+	Contact contact;
+
+	for (auto collider : colliders)
+	{
+		if (bodyCollider->IsCapsuleCollision(collider, &contact))  /// Ãæµ¹À» Çß¾î
+		{
+			Vector3 fwd = Forward();
+			Vector3 atkDir = -1 * collider->direction;
+			atkDir.y = 0;
+			Vector3 reDir = -1 * atkDir;
+			Vector3 rad = XMVector3AngleBetweenVectors(fwd, atkDir);
+
+			if (collider->isAttack)						// ±Ùµ¥ ±× ÄÝ¸®´õ°¡ °ø°Ý ÄÝ¸®´õ¾ß
+			{
+				if (curState >= L_400)
+					return;
+
+				int str = collider->atkStrength;
+				if (rad.x > XM_PIDIV2)
+				{
+					Rot().y = atan2(reDir.x, reDir.z);
+					UpdateWorld();
+
+					switch (str)
+					{
+					case 1:   SetState(D_001); 	break;
+					case 2:   SetState(D_015); 	break;
+					default:  SetState(D_015); 	break;
+					}
+				}
+				else
+				{
+					Rot().y = atan2(atkDir.x, atkDir.z);
+					UpdateWorld();
+
+					switch (str)
+					{
+					case 1:   SetState(D_004); 	break;
+					case 2:   SetState(D_021); 	break;
+					default:  SetState(D_021); 	break;
+					}
+				}
+				UI->curHP -= collider->atkDmg;
+			}
+		}
+	}
 }
 
 bool Player::CollisionCheck()
@@ -1301,6 +1369,7 @@ void Player::ReadClips()
 	ReadClip("S_120");
 	ReadClip("S_122");
 
+	ReadClip("L_400");
 	ReadClip("L_403");
 	ReadClip("L_451");
 	ReadClip("L_453");
@@ -1789,22 +1858,17 @@ void Player::L010() // ±¸¸£±â
 {
 	PLAY;
 
-	//if (GetClip(L_010)->GetRatio() > 0.65 && GetClip(L_010)->GetRatio() <= 0.94)
-	//	if (KEY_PRESS('W'))
-	//		SetState(L_005);
-
 	// ÁÜ Á¤»óÈ­
 	{
 		if (RATIO > 0 && RATIO < 0.9)
 			CAM->Zoom(300, 5);
 	}
-	if (GetClip(L_010)->GetRatio() > 0.45f && K_MOVE)
-	{
+
+	if (RATIO > 0.45f && K_MOVE)
 		SetState(L_014);
-	}
 
 
-	if (GetClip(L_010)->GetRatio() > 0.98)
+	if (RATIO > 0.98)
 	{
 		ReturnIdle();
 	}
@@ -1821,20 +1885,16 @@ void Player::L014() // ¹ßµµ»óÅÂ ±¸¸£±â ÈÄ ÀÌµ¿Å° À¯Áö½Ã
 			CAM->Zoom(300, 5);
 	}
 
-	if (KEY_UP('W') || KEY_UP('S') || KEY_UP('A') || KEY_UP('D'))
-	{
-		if (KEY_PRESS('W') || KEY_PRESS('A') || KEY_PRESS('S') || KEY_PRESS('D'))
-			return;
-
+	if (!K_MOVE)
 		SetState(L_008);
-		return;
-	}
 
-	if (GetClip(L_014)->GetRatio() > 0.48 && KEY_DOWN(VK_SPACE))
+
+	if (RATIO > 0.48 && K_SPACE)
 	{
 		Roll();
 	}
-	if (GetClip(L_014)->GetRatio() > 0.98)
+
+	if (RATIO > 0.98)
 	{
 		SetState(L_004);
 		UIManager::Get()->staminaActive = false;
@@ -2905,7 +2965,7 @@ void Player::L455()
 	}
 }
 
-void Player::D001()
+void Player::D001()  // ¼Ò°æÁ÷
 {
 	PLAY;
 
@@ -2915,7 +2975,7 @@ void Player::D001()
 	}
 }
 
-void Player::D004()
+void Player::D004() // µÚ¿¡¼­ ¸Â°í ¾ÕÀ¸·Î ¼Ò°æÁ÷
 {
 	PLAY;
 
@@ -2925,7 +2985,7 @@ void Player::D004()
 	}
 }
 
-void Player::D007()
+void Player::D007() // ´©¿î »óÅÂ¿¡¼­ ÀÏ¾î³ª±â ½ÃÀÛ
 {
 	PLAY;
 
@@ -2935,7 +2995,7 @@ void Player::D007()
 	}
 }
 
-void Player::D011()
+void Player::D011()  // 7ÀÇ ¹Ý´ë
 {
 	PLAY;
 
@@ -2945,17 +3005,20 @@ void Player::D011()
 	}
 }
 
-void Player::D015()
+void Player::D015() // ÃÄ¸Â°í ´ýºí¸µ ³¯¶ó°¡±â
 {
 	PLAY;
-
-	if (RATIO > 0.98)
+	if (Jump(1000))
+	{
+		Pos() += Back() * temp4 * DELTA;
+	}
+	else
 	{
 		SetState(D_016);
 	}
 }
 
-void Player::D016()
+void Player::D016()  //´ýºí¸µÇÏ°í ÂøÁöÇÏ¸ç µÎ¼ÕÀ¸·Î ¶¥Â¤Àº »óÅÂ
 {
 	PLAY;
 
@@ -2965,11 +3028,15 @@ void Player::D016()
 	}
 }
 
-void Player::D021()
+void Player::D021() // ¾Õº¸°í ¾ÕÀ¸·Î ³¯¶ó°¡±â
 {
 	PLAY;
 
-	if (RATIO > 0.98)
+	if (Jump(1000))
+	{
+		Pos() += Forward() * temp4 * DELTA;
+	}
+	else
 	{
 		SetState(D_022);
 	}
@@ -3128,10 +3195,7 @@ void Player::MotionRotate(float degree)
 
 bool Player::State_S() // ³³µµ ½ºÅ×ÀÌÆ® ¸ñ·Ï
 {
-	if (curState >= S_001 && curState != S_008 && curState != L_009)
-		return true;
-
-	else return false;
+	return curState >= S_001 && curState <= S_122;
 }
 
 void Player::StatusRender()

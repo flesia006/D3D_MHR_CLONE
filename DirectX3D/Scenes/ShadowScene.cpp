@@ -193,50 +193,5 @@ void ShadowScene::GUIRender()
 
 void ShadowScene::AddSounds()
 {    
-    auto sound = Sounds::Get();
-    // Sounds::Get()->AddSound("", SoundPath + L".mp3");
-    // Sounds::Get()->Play("", .5f);
-    /////////////////////////////////////////////////////////////
-    // BGM
-    sound->AddSound("Valphalk_Thema", SoundPath + L"Valphalk_Thema.mp3", true);
-    sound->AddSound("env_114", SoundPath + L"env_114.mp3", true);
 
-    sound->Play("Valphalk_Thema", 0.03f);
-    sound->Play("env_114", .5f);
-    /////////////////////////////////////////////////////////////
-    // Player
-    Sounds::Get()->AddSound("Heeee", SoundPath + L"Heeee.mp3");
-    /////////////////////////////////////////////////////////////
-    // Weapon
-    // 공격시검뽑는소리
-    sound->AddSound("pl_wp_l_swd_com_media.bnk.2_5", SoundPath + L"pl_wp_l_swd_com_media.bnk.2_5.mp3");
-    // 기인베기성공사운드
-    sound->AddSound("pl_wp_l_swd_com_media.bnk.2_8", SoundPath + L"pl_wp_l_swd_com_media.bnk.2_8.mp3");
-    // 납도사운드
-    sound->AddSound("pl_wp_l_swd_com_media.bnk.2_9", SoundPath + L"pl_wp_l_swd_com_media.bnk.2_9.mp3");
-    // 공격시 검뽑는소리2
-    sound->AddSound("pl_wp_l_swd_com_media.bnk.2_25", SoundPath + L"pl_wp_l_swd_com_media.bnk.2_25.mp3");
-    // 앉아발도기인베기 회피추가타
-    sound->AddSound("pl_wp_l_swd_epv_media.bnk.2_8", SoundPath + L"pl_wp_l_swd_epv_media.bnk.2_8.mp3");
-    // 검 휘두르는 바람소리
-    sound->AddSound("pl_wp_l_swd_com_media.bnk.2_7", SoundPath + L"pl_wp_l_swd_com_media.bnk.2_7.mp3");
-
-    /////////////////////////////////////////////////////////////
-    // Valphalk
-    // 포효
-    sound->AddSound("em086_05_vo_media_10", SoundPath + L"em086_05_vo_media_10.mp3");
-    // 습격 부스터 가동
-    sound->AddSound("em086_05_fx_media_25", SoundPath + L"em086_05_fx_media_25.mp3");
-    // 습격 출발
-    sound->AddSound("em086_05_fx_media_22", SoundPath + L"em086_05_fx_media_22.mp3");
-    // 습격 비행중
-    sound->AddSound("em086_05_fx_media_33", SoundPath + L"em086_05_fx_media_33.mp3");
-    // 습격 낙하직전
-    sound->AddSound("em086_05_fx_media_19", SoundPath + L"em086_05_fx_media_19.mp3");
-    // 습격 낙하
-    sound->AddSound("em086_05_fx_media_20", SoundPath + L"em086_05_fx_media_20.mp3");
-
-    /////////////////////////////////////////////////////////////
-    // Item
-    Sounds::Get()->AddSound("health_potion", SoundPath + L"health_potion.mp3");
 }

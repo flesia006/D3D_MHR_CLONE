@@ -62,6 +62,7 @@ public:
 	void PostRender();
 
 	CapsuleCollider* getCollider() { return tmpCollider; }
+	Transform* GetRealPos() { return realPos; }
 
 private:
 	void Control();
@@ -71,12 +72,16 @@ private:
 	void UpdateWorlds();
 	void Potion();
 
-	void Rotate(float rotateSpeed = 5.0f);
-	void LimitRotate(float limit);
+	void Rotate(float rotateSpeed = 5.0f);   // 앞으로 쭉 달리는 루프모션
+	void LimitRotate(float limit);   // 공격모션  15 , 180
 	void RealRotate(float rad);
+
 	bool Attack(float power, bool push = true, UINT useOtherCollider = 0); // TODO : 데미지 계산 넣어야함
 	bool AttackDummy(float power, bool push = true, UINT useOtherCollider = 0); // TODO : 데미지 계산 넣어야함
 	void AttackWOCollision(float power = 0); // 충돌검사를 안하는 공격
+
+	void HurtCheck();
+
 	bool CollisionCheck();
 	void SetAnimation();
 	void Roll();
@@ -231,6 +236,8 @@ private:
 	CapsuleCollider* tmpCollider3 = nullptr;
 	CapsuleCollider* swordCollider = nullptr;
 
+	CapsuleCollider* bodyCollider = nullptr;
+
 	Model* longSword = nullptr;
 	Model* kalzip = nullptr;
 
@@ -284,6 +291,7 @@ private:
 	const float temp = -2.364f;  // 텍스트 띄우기 용 수치
 	const float temp2 = -6.038f; // 텍스트 띄우기 용 수치
 	const float temp3 = 14.067f; // 텍스트 띄우기 용 수치
+	float temp4 = 600.0f;
 
 	float jumpVelocity = 2.8f;
 	const float originJumpVelocity = jumpVelocity;

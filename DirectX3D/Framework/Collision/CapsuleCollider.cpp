@@ -218,6 +218,10 @@ void CapsuleCollider::Update()
 {
     hitPoint->UpdateWorld();
     UpdateWorld();
+
+    lastPos = curPos;
+    curPos = GlobalPos();
+    direction = (curPos - lastPos).GetNormalized();
 }
 
 void CapsuleCollider::GUIRender()
