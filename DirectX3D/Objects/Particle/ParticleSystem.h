@@ -9,7 +9,7 @@ class ParticleSystem
     //           개별 지속시간이 짧거나, 단기간에 여러 개체가 생성되어야 하는 경우가 많아서
     //           일반적인 2D 이미지(쿼드, 스피드트리) 등과는 관리가 조금 다르다
 
-private:
+public:
     //파티클에 필요한 데이터들
 
     //이 효과가 어디서 진행되는가? = 행렬(공간) 필요
@@ -75,13 +75,19 @@ public:
     void GUIRender();
 
     void Play(Vector3 pos, Vector3 rot = Vector3()); // 위치는 필수, 회전은 옵션, 기본값은 {0,0,0}
-                                                     // (->기본 출력은 빌보드일 테니까...)
+    void Play2(Vector3 pos, Vector3 rot);            // (->기본 출력은 빌보드일 테니까...)
     void Stop();
 
     bool IsActive() { return quad->Active(); } //이 파티클이 활성화 중인가? -> 사각형에서 변수 참조
 
     void ParticleRotate();
     void HaloPos();
+    void SetRotation(Vector3 rot);
+    void SetScale();
+    void SetParent(Transform* transform) { parent = transform; }
+    void SetPos(Vector3 pos) { quad->Pos() = pos; }
+    void SetVortex(Vector3 pos);
+
 private:
     void UpdatePhysical(); //실체를 업데이트하는 함수
     void UpdateColor();    //색깔을 업데이트하는 함수
@@ -100,6 +106,7 @@ private:
     VertexBuffer* instanceBuffer; //인스턴스를 구성하는 정점의 버퍼
 
     ParticleData data; //이 파티클의 관리 옵션
+    Transform* parent = nullptr;
 
     float lifeSpan = 0.0f;          // 파티클의 생애주기
     UINT drawCount = 0;             // 출력 요청 횟수

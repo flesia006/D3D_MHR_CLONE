@@ -32,7 +32,10 @@ Player::Player() : ModelAnimator("Player")
 	hitBoomParticle = new HitBoomParticle();
 	criticalParticle = new CriticalParticle();
 	spAtkParticle = new Sp_atk_ready_Particle();
-
+	potionParticle = new PotionParticle();
+	haloTransform = new Transform();
+	haloCollider = new CapsuleCollider();
+	haloCollider->SetParent(swordStart);	
 	/////////////////////////////////////////////////////////////
 	longSword = new Model("kal");
 	longSword->SetParent(mainHand);
@@ -75,6 +78,7 @@ Player::~Player()
 	delete hitBoomParticle;
 	delete criticalParticle;
 	delete spAtkParticle;
+	delete potionParticle;
 }
 
 void Player::Update()
@@ -88,10 +92,13 @@ void Player::Update()
 	FOR(hitParticle.size())		hitParticle[i]->Update();
 	hitBoomParticle->Update();
 	criticalParticle->Update();
-	spAtkParticle->Update();
+	spAtkParticle->Update();	
+	potionParticle->Update();
+	potionParticle->SetParent(realPos);
+	potionParticle->SetVortex({ Pos().x,Pos().y+100,Pos().z });
 
 	ModelAnimator::Update();
-	//UIManager::Get()->Update();
+	UIManager::Get()->Update();
 	Potion();	
 	GroundCheck();
 
@@ -111,11 +118,16 @@ void Player::Render()
 	{
 		trail->Render();
 	}		
-	
+	////////////////////////////////////////////
+	// Particles
 	FOR(hitParticle.size())
 		hitParticle[i]->Render();
 	hitBoomParticle->Render();
 	criticalParticle->Render();
+	haloCollider->Render();
+	spAtkParticle->Render();	
+	potionParticle->Render();
+
 	spAtkParticle->Render();
 
 	if (isSetState)
@@ -221,6 +233,9 @@ void Player::UpdateWorlds()
 	tmpCollider3->UpdateWorld();
 
 	swordCollider->Update();
+
+	haloTransform->Pos() = longSword->GlobalPos() + longSword->Back() * 55.f;
+	haloCollider->Pos() = haloTransform->Pos();
 }
 
 void Player::Potion()
@@ -228,7 +243,7 @@ void Player::Potion()
 	time += DELTA;
 
 	if (UIManager::Get()->useQuickSlot1)
-	{
+	{		
 		Sounds::Get()->Play("health_potion", 0.3f);
 		UIManager::Get()->useQuickSlot1 = false;
 		cure = true;
@@ -236,6 +251,9 @@ void Player::Potion()
 	}
 	if (cure == true)
 	{
+		if (time < 0.1f)
+			potionParticle->Play({ Pos().x,Pos().y+100,Pos().z }, { 0,0,0 });
+
 		if (time < 3)
 		{
 			UIManager::Get()->LargeHealthPotion();
@@ -256,6 +274,9 @@ void Player::Potion()
 	}
 	if (Lcure == true)
 	{
+		if (time < 0.1f)
+			potionParticle->Play({ Pos().x,Pos().y+100,Pos().z }, { 0,0,0 });
+
 		if (time < 2)
 		{
 			UIManager::Get()->HealthPotion();
@@ -428,8 +449,6 @@ void Player::Control()
 	case Player::L_137:		L137();		break;
 	case Player::L_138:		L138();		break;
 
-
-
 	case Player::L_147:		L147();		break;
 	case Player::L_151:		L151();		break;
 	case Player::L_152:		L152();		break;
@@ -437,6 +456,34 @@ void Player::Control()
 	case Player::L_154:		L154();		break;
 	case Player::L_155:		L155();		break;
 	case Player::L_156:		L156();		break;
+
+	// ÇÇ°Ý ¸ð¼Ç
+	case Player::L_400:		L400();		break;
+	case Player::L_403:		L403();		break;
+	case Player::L_451:		L451();		break;
+	case Player::L_453:		L453();		break;
+	case Player::L_455:		L455();		break;
+
+	case Player::D_001:		D001();		break;
+	case Player::D_004:		D004();		break;
+	case Player::D_007:		D007();		break;
+	case Player::D_011:		D011();		break;
+	case Player::D_015:		D015();		break;
+	case Player::D_016:		D016();		break;
+	case Player::D_021:		D021();		break;
+	case Player::D_022:		D022();		break;
+	case Player::D_026:		D026();		break;
+	case Player::D_029:		D029();		break;
+	case Player::D_030:		D030();		break;
+	case Player::D_031:		D031();		break;
+	case Player::D_032:		D032();		break;
+	case Player::D_033:		D033();		break;
+	case Player::D_045:		D045();		break;
+	case Player::D_046:		D046();		break;
+	case Player::D_066:		D066();		break;
+	case Player::D_078:		D078();		break;
+	case Player::D_079:		D079();		break;
+	case Player::D_080:		D080();		break;
 	}
 
 	if (KEY_UP('W') || KEY_UP('A') || KEY_UP('S') || KEY_UP('D'))
@@ -708,7 +755,6 @@ bool Player::Attack(float power, bool push, UINT useOtherCollider) // Ãæµ¹ÆÇÁ¤ Ç
 
 	if (SceneManager::Get()->Add("ShadowScene") == nullptr && SceneManager::Get()->Add("PlayerTestScene") != nullptr)
 		return AttackDummy(power, push, useOtherCollider);
-
 	Valphalk* val =
 		dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetValphalk();
 	//Valphalk* val =
@@ -831,6 +877,9 @@ bool Player::AttackDummy(float power, bool push, UINT useOtherCollider)
 	{
 		if (playerCollider->IsCapsuleCollision(collider, &contact) && !attackOnlyOncePerMotion)
 		{
+			criticalParticle->ParticleRotate();
+			hitBoomParticle->Play(contact.hitPoint, swordSwingDir);
+			criticalParticle->Play(contact.hitPoint, swordSwingDir);
 			hitParticle[lastParticleIndex]->Play(contact.hitPoint, swordSwingDir);
 			lastParticleIndex++;
 			if (lastParticleIndex >= hitParticle.size())
@@ -1251,6 +1300,32 @@ void Player::ReadClips()
 	ReadClip("S_119");
 	ReadClip("S_120");
 	ReadClip("S_122");
+
+	ReadClip("L_403");
+	ReadClip("L_451");
+	ReadClip("L_453");
+	ReadClip("L_455");
+	
+	ReadClip("D_001");
+	ReadClip("D_004");
+	ReadClip("D_007");
+	ReadClip("D_011");
+	ReadClip("D_015");
+	ReadClip("D_016");
+	ReadClip("D_021");
+	ReadClip("D_022");
+	ReadClip("D_026");
+	ReadClip("D_029");
+	ReadClip("D_030");
+	ReadClip("D_031");
+	ReadClip("D_032");
+	ReadClip("D_033");
+	ReadClip("D_045");
+	ReadClip("D_046");
+	ReadClip("D_066");
+	ReadClip("D_078");
+	ReadClip("D_079");
+	ReadClip("D_080");
 }
 
 void Player::RecordLastPos()
@@ -2566,14 +2641,14 @@ void Player::L151() // Æ¯¼ö ³³µµ
 		EndEffect();
 		UIManager::Get()->staminaActive = false;
 	}
-	if (RATIO > 0.5 && RATIO < 0.6)
-	{
-		spAtkParticle->Play({ Pos().x,Pos().y+100,Pos().z }, { 0,1,0 }); // Æ÷Áö¼Ç ¼öÁ¤ ÇÊ¿ä ¿À¸¥¼Õ¿¡ ºÙÀÌ±â (¸ÞÀÎÇÚµå¿¡ ºÙ¿©µµ ¾È³ª¿È;)
-		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_9", .5f);
-	}
 	if (RATIO > 0.2 && RATIO < 0.3)
-		Sounds::Get()->Play("Heeee", .5f);
+		Sounds::Get()->Play("Heeee", .5f);	
 
+	if (RATIO > 0.5 && RATIO < 0.6)
+		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_9", .5f);
+
+	if (RATIO > 0.56 && RATIO < 0.57)
+		spAtkParticle->Play(haloCollider->Pos() + Right() * 1.0f, { 0,1,0 });
 
 	if (RATIO < 0.2)
 		LimitRotate(180);
@@ -2764,6 +2839,273 @@ void Player::L156()
 
 }
 
+void Player::L400()
+{
+	PLAY;
+
+	if (RATIO > 0.98)
+	{
+		ReturnIdle();
+	}
+}
+
+void Player::L403()
+{
+	PLAY;
+
+	if (RATIO > 0.98)
+	{
+		ReturnIdle();
+	}
+}
+
+void Player::L451()
+{
+	PLAY;
+
+	// Äµ½½ °¡´É ÇÁ·¹ÀÓ
+	{
+		if (RATIO > 0.745)
+		{
+			if (K_SPACE)		Roll();			 // ±¸¸£±â
+		}
+	}
+
+	if (RATIO > 0.98)
+	{
+		ReturnIdle();
+	}
+}
+
+void Player::L453()
+{
+	PLAY;
+
+	// Äµ½½ °¡´É ÇÁ·¹ÀÓ
+	{
+		if (RATIO > 0.745)
+		{
+			if (K_SPACE)		Roll();			 // ±¸¸£±â
+		}
+	}
+
+	if (RATIO > 0.98)
+	{
+		ReturnIdle();
+	}
+}
+
+void Player::L455()
+{
+	PLAY;
+
+	if (RATIO > 0.98)
+	{
+		ReturnIdle();
+	}
+}
+
+void Player::D001()
+{
+	PLAY;
+
+	if (RATIO > 0.98)
+	{
+		ReturnIdle2();
+	}
+}
+
+void Player::D004()
+{
+	PLAY;
+
+	if (RATIO > 0.98)
+	{
+		ReturnIdle2();
+	}
+}
+
+void Player::D007()
+{
+	PLAY;
+
+	if (RATIO > 0.98)
+	{
+		SetState(L_453);
+	}
+}
+
+void Player::D011()
+{
+	PLAY;
+
+	if (RATIO > 0.98)
+	{
+		SetState(L_451);
+	}
+}
+
+void Player::D015()
+{
+	PLAY;
+
+	if (RATIO > 0.98)
+	{
+		SetState(D_016);
+	}
+}
+
+void Player::D016()
+{
+	PLAY;
+
+	if (RATIO > 0.98)
+	{
+		SetState(L_451);
+	}
+}
+
+void Player::D021()
+{
+	PLAY;
+
+	if (RATIO > 0.98)
+	{
+		SetState(D_022);
+	}
+}
+
+void Player::D022()
+{
+	PLAY;
+
+	if (RATIO > 0.98)
+	{
+		SetState(L_453);
+	}
+}
+
+void Player::D026()
+{
+	PLAY;
+
+	if (RATIO > 0.98)
+	{
+		SetState(D_007);
+	}
+}
+
+void Player::D029()
+{
+	PLAY;
+
+	if (RATIO > 0.98)
+	{
+		SetState(D_030);
+	}
+}
+
+void Player::D030() // Loop
+{
+	PLAY;
+
+	if (RATIO > 0.98)
+	{
+		SetState(D_031);
+	}
+}
+
+void Player::D031()
+{
+	PLAY;
+
+	if (RATIO > 0.98)
+	{
+		SetState(D_007);
+	}
+}
+
+void Player::D032()
+{
+	PLAY;
+
+	if (RATIO > 0.98)
+	{
+		SetState(D_033);
+	}
+}
+
+void Player::D033()
+{
+	PLAY;
+
+	if (RATIO > 0.98)
+	{
+		SetState(D_026);
+	}
+}
+
+void Player::D045()
+{
+	PLAY;
+
+	if (RATIO > 0.98)
+	{
+		SetState(D_046);
+	}
+}
+
+void Player::D046()
+{
+	PLAY;
+
+	if (RATIO > 0.98)
+	{
+		SetState(L_455);
+	}
+}
+
+void Player::D066()
+{
+	PLAY;
+
+	if (RATIO > 0.98)
+	{
+		isPlay = false;
+	}
+}
+
+void Player::D078()
+{
+	PLAY;
+
+	if (RATIO > 0.98)
+	{
+		SetState(D_079);
+	}
+}
+
+void Player::D079()
+{
+	PLAY;
+
+	if (RATIO > 0.98)
+	{
+		SetState(D_080);
+	}
+}
+
+void Player::D080()
+{
+	PLAY;
+
+	if (RATIO > 0.98)
+	{
+		ReturnIdle();
+	}
+}
+
+
 void Player::MotionRotate(float degree)
 {
 	Vector3 forword = CAM->Back();
@@ -2921,8 +3263,8 @@ void Player::GroundCheck()
 	Vector3 pos1;
 	terrain->ComputePicking(pos1, realPos->Pos() + Vector3::Up() * 200, Vector3::Down());
 
-//	Vector3 pos2;
-//	terrain->ComputePicking(pos2, realPos->Pos(), Vector3::Up());
+	//Vector3 pos2;
+	//terrain->ComputePicking(pos2, realPos->Pos(), Vector3::Up());
 
 //	float y = max(pos1.y, pos2.y);
 	Pos().y = pos1.y;
