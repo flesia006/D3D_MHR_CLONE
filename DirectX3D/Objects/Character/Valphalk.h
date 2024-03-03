@@ -195,6 +195,7 @@ private:
 
 	void ChooseNextPattern();
 	void ConditionCheck();
+	void PartDestroyCheck();
 
 	void PlayPattern();
 	void UpdateUI(); //캐릭터 UI가 있으면 이후 업데이트
@@ -422,7 +423,7 @@ private:
 	Vector3 velocity; //속력 : 실제 움직임
 
 	Pattern curPattern = PATROL;
-	State curState = E_0152; //= 기본 스테이트;
+	State curState = E_0003; //= 기본 스테이트;
 	State preState = curState;
 
 	UINT sequence = 0;
@@ -484,6 +485,8 @@ private:
 
 	float radBtwTarget = 0.0f;
 	float initialRad = 0.0f;
+	float initRotY = 0.0f;
+
 
 	const float rot135 = 2.36f;
 	const float rot45 = 0.785f;
@@ -500,4 +503,12 @@ public:
 	float curHP = 5000;
 	float checkHp; // 흡기때 쓸거
 	float yDifference = 0.0f;
+
+	// 파티클
+private:
+	vector<Val_Jet_Particle*> jetParticle;
+	float timer2 = 0;
+	Transform* jetpos;
+	Transform* jetposend;
+	Vector3 jetpos2;
 };

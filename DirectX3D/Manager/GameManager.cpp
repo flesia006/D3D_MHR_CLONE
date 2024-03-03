@@ -27,6 +27,8 @@
 #include "Scenes/NotUse/TessellationScene.h"
 #include "Scenes/NotUse/TerrainLODScene.h"
 #include "Scenes/ValphalkTestScene.h"
+#include "Scenes/PlayerTestScene.h"
+
 
 // 오늘 진행된 설명 : 궤적 파티클, 다른 특수 파티클(눈, 스파크)
 //                   + 궤적 파티클 적용 (휴먼 클래스에 추가함)
@@ -42,23 +44,26 @@ GameManager::GameManager()
     SceneManager::Get()->Create("ModelExport", new ModelExportScene());
     SceneManager::Get()->Add("ModelExport");
 
+    SceneManager::Get()->Create("Grid", new GridScene());
+    SceneManager::Get()->Add("Grid");
+
 
 //    SceneManager::Get()->Create("ShadowScene", new ShadowScene());
 //    SceneManager::Get()->Add("ShadowScene");
-
 //    SceneManager::Get()->Create("MapDesignScene", new MapDesignScene());
 //    SceneManager::Get()->Add("MapDesignScene");
 //      SceneManager::Get()->Create("Particle", new ParticleScene());
 //      SceneManager::Get()->Add("Particle");
-//    SceneManager::Get()->Create("ParticleConfig", new ParticleConfigScene());
-//    SceneManager::Get()->Add("ParticleConfig");
+    SceneManager::Get()->Create("ParticleConfig", new ParticleConfigScene());
+    SceneManager::Get()->Add("ParticleConfig");
 
 
-    //SceneManager::Get()->Create("ValphalkTestScene", new ValphalkTestScene());
-    //SceneManager::Get()->Add("ValphalkTestScene");
+//    SceneManager::Get()->Create("ValphalkTestScene", new ValphalkTestScene());
+//    SceneManager::Get()->Add("ValphalkTestScene");
 
-    SceneManager::Get()->Create("Grid", new GridScene());
-    SceneManager::Get()->Add("Grid");
+//    SceneManager::Get()->Create("PlayerTestScene", new PlayerTestScene());
+//    SceneManager::Get()->Add("PlayerTestScene");
+
 
 
 //    SceneManager::Get()->Add("Terrain");

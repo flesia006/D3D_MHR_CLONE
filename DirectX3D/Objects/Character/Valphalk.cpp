@@ -6,6 +6,8 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 	srand(static_cast<unsigned int>(time(NULL)));
 
 	head = new Transform();
+	jetpos = new Transform();
+	jetposend = new Transform();
 	ReadClip("E_0003");
 	ReadClip("E_0007");
 	// ÇÃ·¹ÀÌ¾î ¹ß°ß Àü
@@ -250,6 +252,24 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 	effectSphere1->SetActive(false);
 	effectSphere2->UpdateWorld();
 	effectSphere2->SetActive(false);
+
+	// ÆÄÆ¼Å¬
+	FOR(6) jetParticle.push_back(new Val_Jet_Particle());
+	
+	{
+		//jetParticle[0]->Play(bullets[0]->Pos(),{0,1,0});
+		//jetParticle[1]->Play(bullets[1]->Pos(),{0,1,0});
+		//jetParticle[2]->Play(bullets[2]->Pos(),{0,1,0});
+		//jetParticle[3]->Play(bullets[3]->Pos(),{0,1,0});
+		//jetParticle[4]->Play(bullets[4]->Pos(),{0,1,0});
+		//jetParticle[5]->Play(bullets[5]->Pos(),{0,1,0});
+		/*jetParticle[0]->Pos() = GetTranslationByNode(61);
+		jetParticle[1]->Pos() = GetTranslationByNode(64);
+		jetParticle[2]->Pos() = GetTranslationByNode(67);
+		jetParticle[3]->Pos() = GetTranslationByNode(81);
+		jetParticle[4]->Pos() = GetTranslationByNode(84);
+		jetParticle[5]->Pos() = GetTranslationByNode(87);*/
+	}
 }
 
 Valphalk::~Valphalk()
@@ -273,6 +293,7 @@ Valphalk::~Valphalk()
 	delete effectBox3;
 	delete effectSphere1;
 	delete effectSphere2;
+	jetParticle.clear();
 }
 
 void Valphalk::Update()
@@ -284,7 +305,7 @@ void Valphalk::Update()
 	GetRadBtwTrgt();
 	PlayPattern();
 	ConditionCheck();
-	// hitCheck() 
+	PartDestroyCheck();
 	head->Pos() = realPos->Pos() + Vector3::Up() * 200;
 	head->UpdateWorld();
 
@@ -324,6 +345,26 @@ void Valphalk::Update()
 
 	ColliderNodePos();
 
+	FOR(jetParticle.size()) jetParticle[i]->Update();
+
+	jetpos->Pos() = GetTranslationByNode(61);
+	jetposend->Pos() = GetTranslationByNode(60);
+	jetpos->UpdateWorld();
+	jetpos->SetParent(jetposend);
+	//jetposend = jetpos->Pos();
+	//jetpos2 = jetposend - jetpos->GlobalPos();
+
+	timer2 += DELTA;
+	if (timer2>=0.11)
+	{
+		jetParticle[0]->Play(GetTranslationByNode(61), GetRotationByNode(61).Back() + 300);// + GetRotationByNode(61).Left());
+		jetParticle[1]->Play(GetTranslationByNode(64), GetRotationByNode(64).Back() + 300);// + GetRotationByNode(64).Left());
+		jetParticle[2]->Play(GetTranslationByNode(67), GetRotationByNode(67).Back() + 300);// + GetRotationByNode(67).Left());
+		jetParticle[3]->Play(GetTranslationByNode(81), GetRotationByNode(81).Back() + 300);// + GetRotationByNode(81).Left());
+		jetParticle[4]->Play(GetTranslationByNode(84), GetRotationByNode(84).Back() + 300);// + GetRotationByNode(84).Left());
+		jetParticle[5]->Play(GetTranslationByNode(87), GetRotationByNode(87).Back() + 300);// + GetRotationByNode(87).Left());
+		timer2 = 0;
+	}
 
 	ModelAnimator::Update();
 	
@@ -358,6 +399,8 @@ void Valphalk::Render()
 	effectSphere2->Render();
 	ModelAnimator::Render();
 	realPos->Render();
+
+	FOR(jetParticle.size()) jetParticle[i]->Render();
 }
 
 void Valphalk::GUIRender()
@@ -384,6 +427,12 @@ void Valphalk::GUIRender()
 	ImGui::DragFloat3("effectsphere1rot", (float*)&effectSphere1->Rot());
 	ImGui::DragFloat3("effectsphere2rot", (float*)&effectSphere2->Rot());
 
+	jetParticle[0]->GUIRender();
+	jetParticle[1]->GUIRender();
+	jetParticle[2]->GUIRender();
+	jetParticle[3]->GUIRender();
+	jetParticle[4]->GUIRender();
+	jetParticle[5]->GUIRender();
 	//	ImGui::Text("RanPatrolNum : %d", ranPatrol);
 	//	ImGui::Text("stormTime : %.3f", stormTime);
 	//	ImGui::Text("Length : %.3f", velocity.Length());
@@ -949,15 +998,6 @@ void Valphalk::Patrol()
 	}
 
 
-//	if (patrolTime > 5)
-//	{
-//		ranPatrol = rand() % 2;
-//		patrolTime = 0;
-//	}
-//	if (ranPatrol == 0)
-//		SetState(E_0003);
-//	if (ranPatrol == 1)
-//		SetState(E_0043);
 }
 
 void Valphalk::ConditionCheck()
@@ -996,6 +1036,49 @@ void Valphalk::ConditionCheck()
 	if (hupGiTimer > 120.0f)   // Èí±â 2ºÐ Áö¼Ó ÈÄ ²¨Áü
 		isHupGi = false;
 
+}
+
+void Valphalk::PartDestroyCheck()
+{
+	if (curPattern == HS_FLYFALLATK)
+		return;
+
+
+	if (colliders[HEAD]->partHp < 0)
+	{
+		colliders[HEAD]->partHp = 8000;
+		if (isSlashMode)
+			curPattern = S_SMALLSTAGGER;
+		else
+			curPattern = B_SMALLSTAGGER;
+	}
+
+	if (colliders[LLEG1]->partHp < 0)
+	{
+		colliders[LLEG1]->partHp = 2500;
+		if (isSlashMode)
+			curPattern = S_HUGESTAGGER;
+		else
+			curPattern = B_HUGESTAGGER;
+	}
+
+	if (colliders[RLEG1]->partHp < 0)
+	{
+		colliders[RLEG1]->partHp = 2500;
+		if (isSlashMode)
+			curPattern = S_HUGESTAGGER;
+		else
+			curPattern = B_HUGESTAGGER;
+	}
+
+	if (colliders[TAIL]->partHp < 0)
+	{
+		colliders[TAIL]->partHp = FLT_MAX;
+		if (isSlashMode)
+			curPattern = S_SMALLSTAGGER;
+		else
+			curPattern = S_SMALLSTAGGER;
+	}
 }
 
 void Valphalk::ChooseNextPattern()
@@ -4510,6 +4593,7 @@ void Valphalk::ColliderAdd()
 		colliders[HEAD]->Scale().z = 100.0f;
 		colliders[HEAD]->Rot().x = 1.73f;
 		colliders[HEAD]->part = HEAD;
+		colliders[HEAD]->partHp = 8000;
 		colliders[HEAD]->SetTag("HEAD");
 	}
 
@@ -4530,6 +4614,7 @@ void Valphalk::ColliderAdd()
 		colliders[CHEST]->Scale().y = 110.0f;
 		colliders[CHEST]->Scale().z = 150.0f;
 		colliders[CHEST]->Rot().x = 0.02;
+		colliders[CHEST]->partHp = 1500;
 		colliders[CHEST]->SetTag("CHEST");
 	}
 
@@ -4600,6 +4685,7 @@ void Valphalk::ColliderAdd()
 		//colliders[LLEG1]->Rot().y = 161.995f;
 		//colliders[LLEG1]->Rot().z = -177.0f;
 		colliders[LLEG1]->part = LLEG1;
+		colliders[LLEG1]->partHp = 2500;
 		colliders[LLEG1]->SetTag("LLEG1");
 	}
 
@@ -4643,6 +4729,7 @@ void Valphalk::ColliderAdd()
 		//colliders[RLEG1]->Rot().x = -43.0f;
 		//colliders[RLEG1]->Rot().y = 22.0f;
 		colliders[RLEG1]->part = RLEG1;
+		colliders[RLEG1]->partHp = 2500;
 		colliders[RLEG1]->SetTag("RLEG1");
 	}
 
@@ -4711,6 +4798,7 @@ void Valphalk::ColliderAdd()
 		colliders[TAIL]->Scale() *= 80.0f; // ²¿¸®
 		colliders[TAIL]->Rot().x += 4.8f;
 		colliders[TAIL]->part = TAIL;
+		colliders[TAIL]->partHp = 2500;
 		colliders[TAIL]->SetTag("TAIL");
 	}
 }
