@@ -15,6 +15,7 @@ public:
 
     RasterizerState* rasterizer;
     Valphalk* GetValphalk() { return valphalk; }
+    Player* GetPlayer() { return player; }
 
 private:
     Player* player;

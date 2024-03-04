@@ -1,4 +1,5 @@
 #include "Framework.h"
+#include "Scenes/FightTestScene.h"
 #include "Scenes/ShadowScene.h"
 
 Valphalk::Valphalk() : ModelAnimator("Valphalk")
@@ -306,6 +307,7 @@ void Valphalk::Update()
 	GetRadBtwTrgt();
 	PlayPattern();
 	ConditionCheck();
+	DeathCheck();
 	PartDestroyCheck();
 	head->Pos() = realPos->Pos() + Vector3::Up() * 200;
 	head->UpdateWorld();
@@ -350,8 +352,42 @@ void Valphalk::Update()
 	FOR(fireParticle.size()) fireParticle[i]->Update();
 	//Jet();
 
-	ModelAnimator::Update();
+	jetpos->Pos() = GetTranslationByNode(61);
+	jetposend->Pos() = GetTranslationByNode(60);
+	jetpos->UpdateWorld();
+	jetpos->SetParent(jetposend);
+	//jetposend = jetpos->Pos();
+	//jetpos2 = jetposend - jetpos->GlobalPos();
 
+	//timer2 += DELTA;
+	//if (timer2>=0.11)
+	//{
+	//	jetParticle[0]->Play(GetTranslationByNode(61), GetRotationByNode(61).Back() + 300);// + GetRotationByNode(61).Left());
+	//	jetParticle[1]->Play(GetTranslationByNode(64), GetRotationByNode(64).Back() + 300);// + GetRotationByNode(64).Left());
+	//	jetParticle[2]->Play(GetTranslationByNode(67), GetRotationByNode(67).Back() + 300);// + GetRotationByNode(67).Left());
+	//	jetParticle[3]->Play(GetTranslationByNode(81), GetRotationByNode(81).Back() + 300);// + GetRotationByNode(81).Left());
+	//	jetParticle[4]->Play(GetTranslationByNode(84), GetRotationByNode(84).Back() + 300);// + GetRotationByNode(84).Left());
+	//	jetParticle[5]->Play(GetTranslationByNode(87), GetRotationByNode(87).Back() + 300);// + GetRotationByNode(87).Left());
+	//	timer2 = 0;
+	//}
+
+	ModelAnimator::Update();
+	
+	///////////////////////
+	//µð¹ö±×¿ë
+	if (KEY_DOWN('5'))
+	{
+		colliders[HEAD]->minusPartHP(5000);
+	}
+	if (KEY_DOWN('6'))
+	{
+		colliders[LLEG1]->minusPartHP(700);
+	}
+	if (KEY_DOWN('7'))
+	{
+		curHP -= 2000;
+	}
+	////////////////////////
 }
 
 void Valphalk::PreRender()
@@ -398,6 +434,8 @@ void Valphalk::GUIRender()
 
 	ImGui::DragInt("whichPat", &whichPat);
 	ImGui::Text("curHP : %f", curHP);
+	ImGui::Text("headHP : %f", colliders[HEAD]->partHp);
+	ImGui::Text("llegHP : %f", colliders[LLEG1]->partHp);
 	//for (int i = 0; i < colliders.size(); i++)
 	//{
 	//	colliders[i]->GUIRender();
@@ -808,8 +846,16 @@ void Valphalk::S_SmallStagger()
 		SetState(E_3001);	E3001();
 	}
 
-	if (sequence == 1)// ´ë°æÁ÷ ·çÇÁ
+	if (sequence == 1)
+	{
+		isStagger = false;
+
+		if (colliders[HEAD]->partHp < 0)
+			colliders[HEAD]->partHp = 8000;
+		else if (colliders[TAIL]->partHp < 0)
+			colliders[TAIL]->partHp = 8000;
 		ChooseNextPattern();
+	}
 }
 
 void Valphalk::S_HugeStagger()
@@ -830,7 +876,17 @@ void Valphalk::S_HugeStagger()
 	}
 
 	if (sequence == 3)
+	{
+		isStagger = false;
+
+		if (colliders[LLEG1]->partHp < 0)
+			colliders[LLEG1]->partHp = 2500;
+		else if (colliders[RLEG1]->partHp < 0)
+			colliders[RLEG1]->partHp = 2500;
+		else if (colliders[CHEST]->partHp < 0)
+			colliders[CHEST]->partHp = 1500;
 		ChooseNextPattern();
+	}
 }
 
 void Valphalk::B_Dead()
@@ -845,8 +901,16 @@ void Valphalk::B_SmallStagger()
 		SetState(E_3101);	E3101();
 	}
 
-	if (sequence == 1)// ´ë°æÁ÷ ·çÇÁ
+	if (sequence == 1)
+	{
+		isStagger = false;
+
+		if (colliders[HEAD]->partHp < 0)
+			colliders[HEAD]->partHp = 8000;
+		else if (colliders[TAIL]->partHp < 0)
+			colliders[TAIL]->partHp = 8000;
 		ChooseNextPattern();
+	}
 }
 
 void Valphalk::B_HugeStagger()
@@ -867,7 +931,17 @@ void Valphalk::B_HugeStagger()
 	}
 
 	if (sequence == 3)
+	{
+		isStagger = false;
+
+		if (colliders[LLEG1]->partHp < 0)
+			colliders[LLEG1]->partHp = 2500;
+		else if (colliders[RLEG1]->partHp < 0)
+			colliders[RLEG1]->partHp = 2500;
+		else if (colliders[CHEST]->partHp < 0)
+			colliders[CHEST]->partHp = 1500;
 		ChooseNextPattern();
+	}
 }
 
 void Valphalk::SetEvent(int clip, Event event, float timeRatio)
@@ -907,6 +981,12 @@ void Valphalk::SetState(State state, float rad)
 	curState = state;
 
 	//PlayClip(state);
+}
+
+void Valphalk::DeathCheck()
+{
+	if (curHP < 0)
+		curPattern = S_DEAD;
 }
 
 void Valphalk::Patrol()
@@ -1098,10 +1178,23 @@ void Valphalk::PartDestroyCheck()
 	if (curPattern == HS_FLYFALLATK)
 		return;
 
+	if (isStagger)
+		return;
+
+	if (curHP < 0)
+		return;
 
 	if (colliders[HEAD]->partHp < 0)
 	{
-		colliders[HEAD]->partHp = 8000;
+		sequence = 0;
+		radDifference = 0;
+		initialRad = Rot().y;
+		isStagger = true;
+
+		for (auto collider : colliders)
+			if (collider->isAttack)
+				collider->isAttack = false;
+
 		if (isSlashMode)
 			curPattern = S_SMALLSTAGGER;
 		else
@@ -1110,7 +1203,15 @@ void Valphalk::PartDestroyCheck()
 
 	if (colliders[LLEG1]->partHp < 0)
 	{
-		colliders[LLEG1]->partHp = 2500;
+		sequence = 0;
+		radDifference = 0;
+		initialRad = Rot().y;
+		isStagger = true;
+
+		for (auto collider : colliders)
+			if (collider->isAttack)
+				collider->isAttack = false;
+
 		if (isSlashMode)
 			curPattern = S_HUGESTAGGER;
 		else
@@ -1119,7 +1220,32 @@ void Valphalk::PartDestroyCheck()
 
 	if (colliders[RLEG1]->partHp < 0)
 	{
-		colliders[RLEG1]->partHp = 2500;
+		sequence = 0;
+		radDifference = 0;
+		initialRad = Rot().y;
+		isStagger = true;
+
+		for (auto collider : colliders)
+			if (collider->isAttack)
+				collider->isAttack = false;
+
+		if (isSlashMode)
+			curPattern = S_HUGESTAGGER;
+		else
+			curPattern = B_HUGESTAGGER;
+	}
+
+	if (colliders[CHEST]->partHp < 0)
+	{
+		sequence = 0;
+		radDifference = 0;
+		initialRad = Rot().y;
+		isStagger = true;
+
+		for (auto collider : colliders)
+			if (collider->isAttack)
+				collider->isAttack = false;
+
 		if (isSlashMode)
 			curPattern = S_HUGESTAGGER;
 		else
@@ -1128,11 +1254,19 @@ void Valphalk::PartDestroyCheck()
 
 	if (colliders[TAIL]->partHp < 0)
 	{
-		colliders[TAIL]->partHp = FLT_MAX;
+		sequence = 0;
+		radDifference = 0;
+		initialRad = Rot().y;
+		isStagger = true;
+
+		for (auto collider : colliders)
+			if (collider->isAttack)
+				collider->isAttack = false;
+
 		if (isSlashMode)
 			curPattern = S_SMALLSTAGGER;
 		else
-			curPattern = S_SMALLSTAGGER;
+			curPattern = B_SMALLSTAGGER;
 	}
 }
 
@@ -1194,200 +1328,206 @@ void Valphalk::ChooseNextPattern()
 		return;
 	}
 
-	int i = rand() % 2;
-	switch (0)
-	{
-	case 0:	curPattern = B_ENERGYBLAST;	 break;
-	case 1:	curPattern = B_HUGESTAGGER;		 break;
-	}
-	//
-	//if (!needHupGi && !angerRoar90 && !angerRoar40 && !ult50)
-	//{
-	//
-	//	if (distance < 2000)    // ±Ù
-	//	{
-	//		if (isSlashMode)	   // Âü
-	//		{
-	//			if (isHupGi)    // Èí
-	//			{
-	//				int i = rand() % 4;
-	//				switch (i)
-	//				{
-	//				case 0:	curPattern = S_LEGATK;		 break;
-	//				case 1:	curPattern = S_STABATK;		 break;
-	//				case 2:	curPattern = S_BACKWINGATK;  break;
-	//				case 3:	curPattern = HS_FLYFALLATK;  break;  // È£¹ö¸µ
-	//				}
-	//			}
-	//			else           // ¤¤Èí
-	//			{
-	//				int i = rand() % 4;
-	//				switch (i)
-	//				{
-	//				case 0:	curPattern = S_LEGATK;	  break;
-	//				case 1:	curPattern = S_STABATK;	  break;
-	//				case 2:	curPattern = S_BACKWINGATK;  break;
-	//				case 3:	curPattern = S_BITE;		break;
-	//				}
-	//			}
-	//		}
-	//		else               // Æ÷
-	//		{
-	//			if (isHupGi)   // Èí
-	//			{
-	//				int i = rand() % 5;
-	//				switch (i)
-	//				{
-	//				case 0:	curPattern = HB_WINGATK;	  break;
-	//				case 1:	curPattern = B_DOWNBLAST;	  break;
-	//				case 2:	curPattern = FORWARDBOOM;	break;
-	//				case 3:	curPattern = HS_FLYFALLATK;	break;
-	//				case 4:	curPattern = FULLBURST;	break;
-	//				}
-	//			}
-	//			else           // ¤¤Èí
-	//			{
-	//				int i = rand() % 4;
-	//				switch (i)
-	//				{
-	//				case 0:	curPattern = B_SWINGATK;	  break;
-	//				case 1:	curPattern = B_WINGATK;	  break;
-	//				case 2:	curPattern = B_DOWNBLAST;  break;
-	//				case 3:	curPattern = FORWARDBOOM;  break;
-	//				}
-	//			}
-	//		}
-	//
-	//	}
-	//
-	//	else if (distance >= 2000 && distance < 4000)  // Áß
-	//	{
-	//		if (isSlashMode) // Âü
-	//		{
-	//			if (isHupGi) // Èí
-	//			{
-	//				int i = rand() % 4;
-	//				switch (i)
-	//				{
-	//				case 0:	curPattern = S_STABATK;	  break;
-	//				case 1:	curPattern = S_SRUSH;  break;
-	//				case 2:	curPattern = HS_FLYFALLATK;	  break;
-	//				case 3:
-	//					if (curPattern != B_TRANSFORM)
-	//						curPattern = S_TRANSFORM;
-	//					else curPattern = HS_FLYFALLATK;
-	//					break;
-	//				}
-	//			}
-	//			else		// Èí¤¤
-	//			{
-	//				int i = rand() % 3;
-	//				switch (i)
-	//				{
-	//				case 0:	curPattern = S_STABATK;	  break;
-	//				case 1:	curPattern = S_SRUSH;	  break;
-	//				case 2:
-	//					if (curPattern != B_TRANSFORM)
-	//						curPattern = S_TRANSFORM;
-	//					else curPattern = S_STABATK;
-	//					break;
-	//				}
-	//			}
-	//		}
-	//		else			  // Æ÷
-	//		{
-	//			if (isHupGi)  // Èí
-	//			{
-	//				int i = rand() % 5;
-	//				switch (i)
-	//				{
-	//				case 0:	curPattern = B_DOWNBLAST;	  break;
-	//				case 1:	curPattern = FORWARDBOOM;	  break;
-	//				case 2:	curPattern = HS_FLYFALLATK;	  break;
-	//				case 3:	curPattern = FULLBURST;	break;
-	//				case 4:	curPattern = B_DUMBLING;  break;
-	//				}
-	//			}
-	//			else		  // Èí ¤¤
-	//			{
-	//				int i = rand() % 5;
-	//				switch (i)
-	//				{
-	//				case 0:	curPattern = B_SWINGATK;	  break;
-	//				case 1:	curPattern = FORWARDBOOM;	  break;
-	//				case 2:	curPattern = B_ENERGYBLAST;  break;
-	//				case 3:	curPattern = B_DUMBLING;  break;
-	//				case 4:
-	//					if (curPattern != S_TRANSFORM)
-	//						curPattern = B_TRANSFORM;
-	//					else curPattern = B_SWINGATK;
-	//					break;
-	//				}
-	//			}
-	//		}
-	//
-	//	}
-	//
-	//	else if (distance > 2000)   // ¿ø
-	//	{
-	//		if (isSlashMode)        // Âü
-	//		{
-	//			if (isHupGi)        // Èí
-	//			{
-	//				int i = rand() % 2;
-	//				switch (i)
-	//				{
-	//				case 0:	curPattern = S_JETRUSH;	  break;
-	//				case 1:	curPattern = HS_FLYFALLATK;	  break;
-	//				}
-	//			}
-	//			else                // Èí¤¤
-	//			{
-	//				int i = rand() % 3;
-	//				switch (i)
-	//				{
-	//				case 0:	curPattern = S_JETRUSH;	  break;
-	//				case 1:	curPattern = S_RUNANDBITE;	  break;
-	//					//case 2:	curPattern = S_RUNTOTRGT;  break; //TODO
-	//				case 2:
-	//					if (curPattern != B_TRANSFORM)
-	//						curPattern = S_TRANSFORM;
-	//					else curPattern = S_STABATK;
-	//					break;
-	//				}
-	//			}
-	//		}
-	//		else                   //Æ÷
-	//		{
-	//			if (isHupGi)       // Èí
-	//			{
-	//				int i = rand() % 3;
-	//				switch (i)
-	//				{
-	//				case 0:	curPattern = FULLBURST;		break;
-	//				case 1:	curPattern = B_DUMBLING;  break;
-	//				case 2:	curPattern = HS_FLYFALLATK;  break; // Æ®·£½ºÆû ÇÏ°í ³¯°Ô ¼öÁ¤
-	//				}
-	//			}
-	//			else              // Èí¤¤
-	//			{
-	//				int i = rand() % 3;
-	//				switch (0)
-	//				{
-	//				case 0:	curPattern = B_ENERGYBLAST;		break;
-	//				case 1:	curPattern = B_DUMBLING;		break;
-	//				case 2:
-	//					if (curPattern != S_TRANSFORM)
-	//						curPattern = B_TRANSFORM;
-	//					else curPattern = B_SWINGATK;
-	//					break;
-	//				}
-	//			}
-	//		}
-	//
-	//	}
-	//}
+	if (isStagger)
+		return;
 
+	if (curHP < 0)
+		return;
+	
+	//int i = rand() % 2;
+	//switch (i)
+	//{
+	//case 0:	curPattern = B_SMALLSTAGGER;	 break;
+	//case 1:	curPattern = B_HUGESTAGGER;		 break;
+	//}
+	
+	if (!needHupGi && !angerRoar90 && !angerRoar40 && !ult50)
+	{
+	
+		if (distance < 2000)    // ±Ù
+		{
+			if (isSlashMode)	   // Âü
+			{
+				if (isHupGi)    // Èí
+				{
+					int i = rand() % 4;
+					switch (i)
+					{
+					case 0:	curPattern = S_LEGATK;		 break;
+					case 1:	curPattern = S_STABATK;		 break;
+					case 2:	curPattern = S_BACKWINGATK;  break;
+					case 3:	curPattern = HS_FLYFALLATK;  break;  // È£¹ö¸µ
+					}
+				}
+				else           // ¤¤Èí
+				{
+					int i = rand() % 4;
+					switch (i)
+					{
+					case 0:	curPattern = S_LEGATK;	  break;
+					case 1:	curPattern = S_STABATK;	  break;
+					case 2:	curPattern = S_BACKWINGATK;  break;
+					case 3:	curPattern = S_BITE;		break;
+					}
+				}
+			}
+			else               // Æ÷
+			{
+				if (isHupGi)   // Èí
+				{
+					int i = rand() % 5;
+					switch (i)
+					{
+					case 0:	curPattern = HB_WINGATK;	  break;
+					case 1:	curPattern = B_DOWNBLAST;	  break;
+					case 2:	curPattern = FORWARDBOOM;	break;
+					case 3:	curPattern = HS_FLYFALLATK;	break;
+					case 4:	curPattern = FULLBURST;	break;
+					}
+				}
+				else           // ¤¤Èí
+				{
+					int i = rand() % 4;
+					switch (i)
+					{
+					case 0:	curPattern = B_SWINGATK;	  break;
+					case 1:	curPattern = B_WINGATK;	  break;
+					case 2:	curPattern = B_DOWNBLAST;  break;
+					case 3:	curPattern = FORWARDBOOM;  break;
+					}
+				}
+			}
+	
+		}
+	
+		else if (distance >= 2000 && distance < 4000)  // Áß
+		{
+			if (isSlashMode) // Âü
+			{
+				if (isHupGi) // Èí
+				{
+					int i = rand() % 4;
+					switch (i)
+					{
+					case 0:	curPattern = S_STABATK;	  break;
+					case 1:	curPattern = S_SRUSH;  break;
+					case 2:	curPattern = HS_FLYFALLATK;	  break;
+					case 3:
+						if (curPattern != B_TRANSFORM)
+							curPattern = S_TRANSFORM;
+						else curPattern = HS_FLYFALLATK;
+						break;
+					}
+				}
+				else		// Èí¤¤
+				{
+					int i = rand() % 3;
+					switch (i)
+					{
+					case 0:	curPattern = S_STABATK;	  break;
+					case 1:	curPattern = S_SRUSH;	  break;
+					case 2:
+						if (curPattern != B_TRANSFORM)
+							curPattern = S_TRANSFORM;
+						else curPattern = S_STABATK;
+						break;
+					}
+				}
+			}
+			else			  // Æ÷
+			{
+				if (isHupGi)  // Èí
+				{
+					int i = rand() % 5;
+					switch (i)
+					{
+					case 0:	curPattern = B_DOWNBLAST;	  break;
+					case 1:	curPattern = FORWARDBOOM;	  break;
+					case 2:	curPattern = HS_FLYFALLATK;	  break;
+					case 3:	curPattern = FULLBURST;	break;
+					case 4:	curPattern = B_DUMBLING;  break;
+					}
+				}
+				else		  // Èí ¤¤
+				{
+					int i = rand() % 5;
+					switch (i)
+					{
+					case 0:	curPattern = B_SWINGATK;	  break;
+					case 1:	curPattern = FORWARDBOOM;	  break;
+					case 2:	curPattern = B_ENERGYBLAST;  break;
+					case 3:	curPattern = B_DUMBLING;  break;
+					case 4:
+						if (curPattern != S_TRANSFORM)
+							curPattern = B_TRANSFORM;
+						else curPattern = B_SWINGATK;
+						break;
+					}
+				}
+			}
+	
+		}
+	
+		else if (distance > 2000)   // ¿ø
+		{
+			if (isSlashMode)        // Âü
+			{
+				if (isHupGi)        // Èí
+				{
+					int i = rand() % 2;
+					switch (i)
+					{
+					case 0:	curPattern = S_JETRUSH;	  break;
+					case 1:	curPattern = HS_FLYFALLATK;	  break;
+					}
+				}
+				else                // Èí¤¤
+				{
+					int i = rand() % 3;
+					switch (i)
+					{
+					case 0:	curPattern = S_JETRUSH;	  break;
+					case 1:	curPattern = S_RUNANDBITE;	  break;
+						//case 2:	curPattern = S_RUNTOTRGT;  break; //TODO
+					case 2:
+						if (curPattern != B_TRANSFORM)
+							curPattern = S_TRANSFORM;
+						else curPattern = S_STABATK;
+						break;
+					}
+				}
+			}
+			else                   //Æ÷
+			{
+				if (isHupGi)       // Èí
+				{
+					int i = rand() % 3;
+					switch (i)
+					{
+					case 0:	curPattern = FULLBURST;		break;
+					case 1:	curPattern = B_DUMBLING;  break;
+					case 2:	curPattern = HS_FLYFALLATK;  break; // Æ®·£½ºÆû ÇÏ°í ³¯°Ô ¼öÁ¤
+					}
+				}
+				else              // Èí¤¤
+				{
+					int i = rand() % 3;
+					switch (i)
+					{
+					case 0:	curPattern = B_ENERGYBLAST;		break;
+					case 1:	curPattern = B_DUMBLING;		break;
+					case 2:
+						if (curPattern != S_TRANSFORM)
+							curPattern = B_TRANSFORM;
+						else curPattern = B_SWINGATK;
+						break;
+					}
+				}
+			}
+	
+		}
+	}
+	
 }
 
 void Valphalk::PlayPattern()
