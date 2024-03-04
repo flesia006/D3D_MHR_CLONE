@@ -20,11 +20,13 @@ public:
 
     Vector3 GetHitPointPos() { return  hitPoint->GlobalPos(); }
 
+    void minusPartHP(int damage) { partHp -= damage; }
+
     void Update();
     void GUIRender();
 
     int part = 0;
-    float partHp = 0.0f;
+    float partHp = FLT_MAX;
     bool isAttack = false;
 
     float atkDmg = 10.0f;

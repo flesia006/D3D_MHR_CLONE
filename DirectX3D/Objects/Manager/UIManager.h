@@ -61,6 +61,7 @@ public:
     void UseBugSkill();
 
     float SetMaxCoting() { return curCoting = maxCoting; }
+    float SetMaxGauge() { return curSpiritGauge = maxSpiritGauge; }
     float curStamina = 100;//임시로 public에 올려둠
     bool staminaActive = false;
     

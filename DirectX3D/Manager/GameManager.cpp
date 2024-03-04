@@ -44,9 +44,9 @@ GameManager::GameManager()
 
 //    SceneManager::Get()->Create("ModelExport", new ModelExportScene());
 //    SceneManager::Get()->Add("ModelExport");
-
-    SceneManager::Get()->Create("Grid", new GridScene());
-    SceneManager::Get()->Add("Grid");
+//
+//    SceneManager::Get()->Create("Grid", new GridScene());
+//    SceneManager::Get()->Add("Grid");
 
 
 //    SceneManager::Get()->Create("ShadowScene", new ShadowScene());
@@ -62,11 +62,11 @@ GameManager::GameManager()
 //    SceneManager::Get()->Create("ValphalkTestScene", new ValphalkTestScene());
 //    SceneManager::Get()->Add("ValphalkTestScene");
 
-//   SceneManager::Get()->Create("PlayerTestScene", new PlayerTestScene());
-//   SceneManager::Get()->Add("PlayerTestScene");
+   SceneManager::Get()->Create("PlayerTestScene", new PlayerTestScene());
+   SceneManager::Get()->Add("PlayerTestScene");
 
-   SceneManager::Get()->Create("FightTestScene", new FightTestScene());
-   SceneManager::Get()->Add("FightTestScene");
+//   SceneManager::Get()->Create("FightTestScene", new FightTestScene());
+//   SceneManager::Get()->Add("FightTestScene");
 
 //    SceneManager::Get()->Add("Terrain");
 

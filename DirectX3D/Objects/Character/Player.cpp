@@ -62,6 +62,10 @@ Player::Player() : ModelAnimator("Player")
 	bodyCollider->Pos().y += 75.0f;
 	bodyCollider->UpdateWorld();
 
+	evadeCheckCollider = new CapsuleCollider(35, 100);
+	evadeCheckCollider->Pos().y += 75.0f;
+	evadeCheckCollider->SetActive(false);
+	evadeCheckCollider->UpdateWorld();
 	//	tmpCollider->SetParent(head);
 	//	tmpCollider->SetParent(back);
 
@@ -72,25 +76,43 @@ Player::Player() : ModelAnimator("Player")
 
 Player::~Player()
 {
-	delete mainHand;
-	delete head;
-	delete realPos;
+	delete evadeCheckCollider;
+	delete bodyCollider;
+	delete tmpCollider3;
+	delete tmpCollider2;
 	delete tmpCollider;
-	hitParticle.clear();
-	delete hitBoomParticle;
-	delete criticalParticle;
-	delete spAtkParticle;
+	delete kalzip;
+	delete longSword;
+	delete haloCollider;
 	delete potionParticle;
+	delete spAtkParticle;
+	delete criticalParticle;
+	delete hitBoomParticle;
+	hitParticle.clear();
+	delete trail;
+	delete swordCollider;
+	delete backSwd;
+	delete mainHand;
+	delete swordEnd;
+	delete swordStart;
+	delete forwardPos;
+	delete backPos;
+	delete realPos;
+	delete head;
 }
 
 void Player::Update()
 {	
+	if (!DeathCheck())
+	{
+		TermAttackUpdate();
+		HurtCheck();
+		Potion();
+	}
+
 	Control();
 	ResetPlayTime();
 	UpdateWorlds();
-	TermAttackUpdate();	
-	HurtCheck();
-
 	trail->Update();
 	FOR(hitParticle.size())		hitParticle[i]->Update();
 	hitBoomParticle->Update();
@@ -102,9 +124,10 @@ void Player::Update()
 
 	ModelAnimator::Update();
 	UIManager::Get()->Update();
-	Potion();	
 	GroundCheck();
 
+	if (KEY_DOWN('5'))/// µð¹ö±× È®ÀÎ¿ëÀÌ¶ó ÇÊ¿ä¾øÀ¸¸é Áö¿öµµ µÊ
+		UI->curHP -= 30;
 }
 
 void Player::Render()
@@ -113,6 +136,7 @@ void Player::Render()
 	tmpCollider->Render();
 	tmpCollider2->Render();
 	bodyCollider->Render();
+	evadeCheckCollider->Render();
 //	tmpCollider3->Render();
 	//swordCollider->Render();
 	longSword->Render();
@@ -810,6 +834,10 @@ bool Player::Attack(float power, bool push, UINT useOtherCollider) // Ãæµ¹ÆÇÁ¤ Ç
 				UIManager::Get()->PlusCotingLevel(); // ÄÚÆÃ ·¹º§À» 1 ¿Ã¸°´Ù
 				UIManager::Get()->SetMaxCoting(); // µ¿½Ã¿¡ ÄÚÆÃ °ÔÀÌÁö 100À¸·Î ÃÊ±âÈ­
 			}
+			if (curState == L_147 && isEvaded) // °£ÆÄº£±â È¸ÇÇ¼º°ø ÈÄ ÀûÁß½Ã¿¡¸¸
+			{
+				UIManager::Get()->SetMaxGauge(); // ±âÀÎ °ÔÀÌÁö¸¦ ÃÖ´ë·Î ¸¸µç´Ù
+			}
 			if (curState == L_154) // ¾É¾Æ¹ßµµ º£±â ÀûÁß½Ã ±âÀÎ°ÔÀÌÁö »ó½Â ¹öÇÁ
 			{
 				UIManager::Get()->Bonus154True();
@@ -840,6 +868,17 @@ bool Player::Attack(float power, bool push, UINT useOtherCollider) // Ãæµ¹ÆÇÁ¤ Ç
 			damage.hitPart = collider->part;
 			lastHitPart = collider->part;
 			lastSwordDir = swordSwingDir;
+			
+			val->minusCurHP(deal);
+
+			if (collider->part == Valphalk::HEAD
+				|| collider->part == Valphalk::LLEG1
+				|| collider->part == Valphalk::RLEG1
+				|| collider->part == Valphalk::TAIL)
+				collider->minusPartHP(deal);
+
+			if (collider->part == Valphalk::CHEST && val->GetIsHupgi())
+				collider->minusPartHP(deal);
 
 			if (hardness >= 30)				// À°ÁúÀÌ 30 ÀÌ»óÀ¸·Î ³ë¶õµ¥¹ÌÁö°¡ ¶ß´Â »óÈ²
 				damage.isWeakness = true;
@@ -1035,6 +1074,12 @@ void Player::HurtCheck()
 				if (curState >= L_400)
 					return;
 
+				if (curState == L_155 && RATIO < 0.36)
+				{
+					isEvaded = true;
+					return;
+				}
+
 				int str = collider->atkStrength;
 				if (rad.x > XM_PIDIV2)
 				{
@@ -1061,6 +1106,33 @@ void Player::HurtCheck()
 					}
 				}
 				UI->curHP -= collider->atkDmg;
+			}
+		}
+	}
+}
+
+void Player::EvadeCheck()
+{
+	Valphalk* val = nullptr;
+	if (SceneManager::Get()->Add("ShadowScene") == nullptr && SceneManager::Get()->Add("FightTestScene") != nullptr)
+		val = dynamic_cast<FightTestScene*>(SceneManager::Get()->Add("FightTestScene"))->GetValphalk();
+	else if (SceneManager::Get()->Add("ShadowScene") != nullptr)
+		val = dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetValphalk();
+	else
+		return;
+
+	auto colliders = val->GetCollider();
+
+	Contact contact;
+
+	for (auto collider : colliders)
+	{
+		if (evadeCheckCollider->IsCapsuleCollision(collider, &contact))  // Ä¸½¶ Ãæµ¹Ã¼¿Í Ãæµ¹ÇÑ °æ¿ì
+		{
+			if (collider->isAttack)	// ±Ùµ¥ ±× ÄÝ¸®´õ°¡ °ø°Ý ÄÝ¸®´õ¾ß
+			{
+				isEvaded = true;
+				collider->isAttack = false;
 			}
 		}
 	}
@@ -1239,6 +1311,17 @@ void Player::TermAttackUpdate()
 		}
 	}
 
+}
+
+bool Player::DeathCheck()
+{
+	if (UI->curHP < 0)
+	{
+		SetState(D_066);
+		return true;
+	}
+	else
+		return false;
 }
 
 void Player::RealRotate(float rad)
@@ -1568,6 +1651,11 @@ void Player::S018() // ±¸¸£±â ÈÄ Á¦ÀÚ¸®
 
 	}
 
+	if (RATIO < 0.40)
+		bodyCollider->SetActive(false);
+	else
+		bodyCollider->SetActive(true);
+
 	if (GetClip(S_018)->GetRatio() > 0.6f && K_MOVE)
 	{
 		SetState(S_020);
@@ -1855,6 +1943,11 @@ void Player::L009() // °ÉÀ¸¸é¼­ ³³µµ
 void Player::L010() // ±¸¸£±â
 {
 	PLAY;
+
+	if (RATIO < 0.40)
+		bodyCollider->SetActive(false);
+	else
+		bodyCollider->SetActive(true);
 
 	// ÁÜ Á¤»óÈ­
 	{
@@ -2641,8 +2734,13 @@ void Player::L138() // ³«ÇÏÂî¸£±â ³¡
 void Player::L147() // °£ÆÄº£±â
 {
 	PLAY;
-	if(INIT)
-	Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_5", .5f);
+	if (INIT)
+	{
+		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_5", .5f);
+		evadeCheckCollider->SetParent(realPos);
+		evadeCheckCollider->SetActive(true);
+		evadeCheckCollider->UpdateWorld();
+	}
 
 	if (RATIO > 0.2 && RATIO < 0.3)
 		Sounds::Get()->Play("Heeee", .5f);
@@ -2650,13 +2748,23 @@ void Player::L147() // °£ÆÄº£±â
 	// ÁÜ¾Æ¿ô && È¸ÇÇ ÆÇÁ¤ ÇÁ·¹ÀÓ
 	{
 		if (RATIO > 0 && RATIO < 0.30)
+		{
 			CAM->Zoom(450);
+			EvadeCheck(); // ¼º°øÇÏ¸é ¶ò ¼Ò¸® ³ª¾ßÇÔ
+		}
+
+		if (RATIO > 0.30)
+			evadeCheckCollider->SetActive(false);
 	}
 
 	// Æ¯³³ Äµ½½ °¡´É Å¸ÀÌ¹Ö
 	{
 		if (RATIO > 0.205f && RATIO < 0.30f && K_CTRLSPACE)
+		{
+			if (isEvaded)
+				isEvaded = false;
 			SetState(L_151);	// Æ¯¼ö ³³µµ
+		}
 	}
 
 
@@ -2672,6 +2780,12 @@ void Player::L147() // °£ÆÄº£±â
 	{
 		if (RATIO > 0.33 && RATIO < 0.56)
 			CAM->Zoom(300);
+	}
+
+	if (RATIO > 0.56)
+	{
+		if (isEvaded)
+			isEvaded = false;
 	}
 
 	if (RATIO > 0.56) // Äµ½½ °¡´É Å¸ÀÌ¹Ö
@@ -2851,24 +2965,25 @@ void Player::L155() // ¾É¾Æ¹ßµµ ±âÀÎº£±â
 			EndEffect();
 	}
 
-	// Ä«¿îÅÍ ¼º°ø ½Ã Ãß°¡ °ø°Ý ÇÁ·¹ÀÓ (TODO :: Ä«¿îÅÍ Á¶°ÇÀ» ¸¸µé¾î¾ß ÇÔ)
+	// Ä«¿îÅÍ ¼º°ø ½Ã Ãß°¡ °ø°Ý ÇÁ·¹ÀÓ
 	{
-		if (isHit && (RATIO >0.385  && RATIO < 0.39))
+		if (isEvaded && isHit && (RATIO >0.385  && RATIO < 0.39))
 		{
 			if(isHitL155==false)
 			UIManager::Get()->PlusCotingLevel();
 
 			isHitL155 = true;
 			Sounds::Get()->Play("pl_wp_l_swd_epv_media.bnk.2_8", .5f);			
-
+			isEvaded = false;
 		}
 	}
-
 
 	// Äµ½½ °¡´É ÇÁ·¹ÀÓ
 	{
 		if (RATIO > 0.39)
 		{
+			isEvaded = false; // ¸¸¾à ¾Õ¿¡¼­ true·Î ³²¾ÆÀÖ´Â °æ¿ì º¸Çè¿ë
+
 			if		(K_LMB)			SetState(L_101); // ³»µðµ®º£±â
 			else if (K_CTRL)		SetState(L_108); // ±âÀÎ º£±â 3		
 			else if (K_CTRLSPACE)	SetState(L_151); // Æ¯¼ö ³³µµ
@@ -3246,6 +3361,7 @@ void Player::DamageRender()
 	for (auto& d : damages)
 	{
 		d.timer += DELTA;
+		static bool calculatedOnce;
 
 		if (d.timer < 1.5f)
 		{
