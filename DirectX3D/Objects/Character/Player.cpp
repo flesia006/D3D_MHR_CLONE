@@ -62,6 +62,10 @@ Player::Player() : ModelAnimator("Player")
 	bodyCollider->Pos().y += 75.0f;
 	bodyCollider->UpdateWorld();
 
+	evadeCheckCollider = new CapsuleCollider(35, 100);
+	evadeCheckCollider->Pos().y += 75.0f;
+	evadeCheckCollider->SetActive(false);
+	evadeCheckCollider->UpdateWorld();
 	//	tmpCollider->SetParent(head);
 	//	tmpCollider->SetParent(back);
 
@@ -105,7 +109,7 @@ void Player::Update()
 	Potion();	
 	GroundCheck();
 
-	if (KEY_DOWN('5'))
+	if (KEY_DOWN('5'))/// µð¹ö±× È®ÀÎ¿ëÀÌ¶ó ÇÊ¿ä¾øÀ¸¸é Áö¿öµµ µÊ
 		SetState(D_015);
 }
 
@@ -115,6 +119,7 @@ void Player::Render()
 	tmpCollider->Render();
 	tmpCollider2->Render();
 	bodyCollider->Render();
+	evadeCheckCollider->Render();
 //	tmpCollider3->Render();
 	//swordCollider->Render();
 	longSword->Render();
@@ -812,6 +817,10 @@ bool Player::Attack(float power, bool push, UINT useOtherCollider) // Ãæµ¹ÆÇÁ¤ Ç
 				UIManager::Get()->PlusCotingLevel(); // ÄÚÆÃ ·¹º§À» 1 ¿Ã¸°´Ù
 				UIManager::Get()->SetMaxCoting(); // µ¿½Ã¿¡ ÄÚÆÃ °ÔÀÌÁö 100À¸·Î ÃÊ±âÈ­
 			}
+			if (curState == L_147 && isEvaded) // °£ÆÄº£±â È¸ÇÇ¼º°ø ÈÄ ÀûÁß½Ã¿¡¸¸
+			{
+				UIManager::Get()->SetMaxGauge(); // ±âÀÎ °ÔÀÌÁö¸¦ ÃÖ´ë·Î ¸¸µç´Ù
+			}
 			if (curState == L_154) // ¾É¾Æ¹ßµµ º£±â ÀûÁß½Ã ±âÀÎ°ÔÀÌÁö »ó½Â ¹öÇÁ
 			{
 				UIManager::Get()->Bonus154True();
@@ -1065,6 +1074,33 @@ void Player::HurtCheck()
 					}
 				}
 				UI->curHP -= collider->atkDmg;
+			}
+		}
+	}
+}
+
+void Player::EvadeCheck()
+{
+	Valphalk* val = nullptr;
+	if (SceneManager::Get()->Add("ShadowScene") == nullptr && SceneManager::Get()->Add("FightTestScene") != nullptr)
+		val = dynamic_cast<FightTestScene*>(SceneManager::Get()->Add("FightTestScene"))->GetValphalk();
+	else if (SceneManager::Get()->Add("ShadowScene") != nullptr)
+		val = dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetValphalk();
+	else
+		return;
+
+	auto colliders = val->GetCollider();
+
+	Contact contact;
+
+	for (auto collider : colliders)
+	{
+		if (evadeCheckCollider->IsCapsuleCollision(collider, &contact))  // Ä¸½¶ Ãæµ¹Ã¼¿Í Ãæµ¹ÇÑ °æ¿ì
+		{
+			if (collider->isAttack)	// ±Ùµ¥ ±× ÄÝ¸®´õ°¡ °ø°Ý ÄÝ¸®´õ¾ß
+			{
+				isEvaded = true;
+				collider->isAttack = false;
 			}
 		}
 	}
@@ -2645,8 +2681,13 @@ void Player::L138() // ³«ÇÏÂî¸£±â ³¡
 void Player::L147() // °£ÆÄº£±â
 {
 	PLAY;
-	if(INIT)
-	Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_5", .5f);
+	if (INIT)
+	{
+		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_5", .5f);
+		evadeCheckCollider->SetParent(realPos);
+		evadeCheckCollider->SetActive(true);
+		evadeCheckCollider->UpdateWorld();
+	}
 
 	if (RATIO > 0.2 && RATIO < 0.3)
 		Sounds::Get()->Play("Heeee", .5f);
@@ -2654,7 +2695,13 @@ void Player::L147() // °£ÆÄº£±â
 	// ÁÜ¾Æ¿ô && È¸ÇÇ ÆÇÁ¤ ÇÁ·¹ÀÓ
 	{
 		if (RATIO > 0 && RATIO < 0.30)
+		{
 			CAM->Zoom(450);
+			EvadeCheck(); // ¼º°øÇÏ¸é ¶ò ¼Ò¸® ³ª¾ßÇÔ
+		}
+
+		if (RATIO > 0.30)
+			evadeCheckCollider->SetActive(false);
 	}
 
 	// Æ¯³³ Äµ½½ °¡´É Å¸ÀÌ¹Ö
@@ -2676,6 +2723,12 @@ void Player::L147() // °£ÆÄº£±â
 	{
 		if (RATIO > 0.33 && RATIO < 0.56)
 			CAM->Zoom(300);
+	}
+
+	if (RATIO > 0.56)
+	{
+		if (isEvaded)
+			isEvaded = false;
 	}
 
 	if (RATIO > 0.56) // Äµ½½ °¡´É Å¸ÀÌ¹Ö

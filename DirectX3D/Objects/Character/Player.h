@@ -81,6 +81,7 @@ private:
 	void AttackWOCollision(float power = 0); // 충돌검사를 안하는 공격
 
 	void HurtCheck();
+	void EvadeCheck();
 
 	bool CollisionCheck();
 	void SetAnimation();
@@ -237,6 +238,7 @@ private:
 	CapsuleCollider* swordCollider = nullptr;
 
 	CapsuleCollider* bodyCollider = nullptr;
+	CapsuleCollider* evadeCheckCollider = nullptr;
 
 	Model* longSword = nullptr;
 	Model* kalzip = nullptr;
@@ -321,6 +323,8 @@ private:
 	bool isSetState = false;
 
 	vector<Damage> damages;
+
+	bool isEvaded = false; // 회피했는지 여부
 	
 	///////////////////////////////////////////
 	// Particle
