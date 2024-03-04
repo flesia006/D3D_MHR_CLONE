@@ -254,7 +254,26 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 	effectSphere2->SetActive(false);
 
 	// 파티클
-	FOR(6) jetParticle.push_back(new Val_Jet_Particle());
+	FOR(6)
+	{
+		zetPos.push_back(new Transform());
+		ValZet* valzet = new ValZet();
+		if (i < 3)
+			valzet->Rot().z -= XM_PIDIV2;
+		else
+			valzet->Rot().z += XM_PIDIV2;
+		valZets.push_back(valzet);
+		valZets[i]->SetParent(zetPos[i]);
+	}
+	laserBeam = new ValZet();
+	laserBeam->Rot().z -= XM_PIDIV2;
+	laserBeam->Scale() *=  10;
+	laserBeam->Scale().z *= 3;
+	laserBeam->SetParent(zetPos[1]);
+
+
+
+	//FOR(6) jetParticle.push_back(new Val_Jet_Particle());
 	
 	{
 		//jetParticle[0]->Play(bullets[0]->Pos(),{0,1,0});
@@ -351,20 +370,29 @@ void Valphalk::Update()
 	jetposend->Pos() = GetTranslationByNode(60);
 	jetpos->UpdateWorld();
 	jetpos->SetParent(jetposend);
-	//jetposend = jetpos->Pos();
-	//jetpos2 = jetposend - jetpos->GlobalPos();
 
-	timer2 += DELTA;
-	if (timer2>=0.11)
-	{
-		jetParticle[0]->Play(GetTranslationByNode(61), GetRotationByNode(61).Back() + 300);// + GetRotationByNode(61).Left());
-		jetParticle[1]->Play(GetTranslationByNode(64), GetRotationByNode(64).Back() + 300);// + GetRotationByNode(64).Left());
-		jetParticle[2]->Play(GetTranslationByNode(67), GetRotationByNode(67).Back() + 300);// + GetRotationByNode(67).Left());
-		jetParticle[3]->Play(GetTranslationByNode(81), GetRotationByNode(81).Back() + 300);// + GetRotationByNode(81).Left());
-		jetParticle[4]->Play(GetTranslationByNode(84), GetRotationByNode(84).Back() + 300);// + GetRotationByNode(84).Left());
-		jetParticle[5]->Play(GetTranslationByNode(87), GetRotationByNode(87).Back() + 300);// + GetRotationByNode(87).Left());
-		timer2 = 0;
-	}
+	zetPos[0]->SetWorld(GetTransformByNode(61));
+	zetPos[1]->SetWorld(GetTransformByNode(64));
+	zetPos[2]->SetWorld(GetTransformByNode(67));
+	zetPos[3]->SetWorld(GetTransformByNode(81));
+	zetPos[4]->SetWorld(GetTransformByNode(84));
+	zetPos[5]->SetWorld(GetTransformByNode(87));
+
+	FOR(6)
+		valZets[i]->Update();
+
+	laserBeam->Update();
+//	if (timer2>=0.11)
+//	{
+//		jetParticle[0]->Play(GetTranslationByNode(61), GetRotationByNode(61).Back() + 300);// + GetRotationByNode(61).Left());
+//		jetParticle[1]->Play(GetTranslationByNode(64), GetRotationByNode(64).Back() + 300);// + GetRotationByNode(64).Left());
+//		jetParticle[2]->Play(GetTranslationByNode(67), GetRotationByNode(67).Back() + 300);// + GetRotationByNode(67).Left());
+//		jetParticle[3]->Play(GetTranslationByNode(81), GetRotationByNode(81).Back() + 300);// + GetRotationByNode(81).Left());
+//		jetParticle[4]->Play(GetTranslationByNode(84), GetRotationByNode(84).Back() + 300);// + GetRotationByNode(84).Left());
+//		jetParticle[5]->Play(GetTranslationByNode(87), GetRotationByNode(87).Back() + 300);// + GetRotationByNode(87).Left());
+//		timer2 = 0;
+//	}
+//
 
 	ModelAnimator::Update();
 	
@@ -400,7 +428,14 @@ void Valphalk::Render()
 	ModelAnimator::Render();
 	realPos->Render();
 
-	FOR(jetParticle.size()) jetParticle[i]->Render();
+	if (renderJet)
+		FOR(6) valZets[i]->Render();
+	if (renderJetRight)
+		FOR(3) valZets[i+3]->Render();
+	if (renderLaser)
+		laserBeam->Render();
+
+//	FOR(jetParticle.size()) jetParticle[i]->Render();
 }
 
 void Valphalk::GUIRender()
@@ -650,9 +685,21 @@ void Valphalk::FullBurst()
 			Scale().x *= -1;
 		sequence++;
 	}
-	if (sequence == 4) { SetState(E_2361); E2361(); }
+	if (sequence == 4) 
+	{	
+		SetState(E_2361); 
+		E2361(); 
+		if (!renderLaser)
+			renderLaser = true;
+	}
 	if (sequence == 5) { SetState(E_2367); E2367(); }
-	if (sequence == 6) { SetState(E_2368); E2368(); }
+	if (sequence == 6) 
+	{ 
+		SetState(E_2368); 
+		E2368(); 		
+		if (renderLaser)
+			renderLaser = false;
+	}
 	if (sequence == 7)
 	{
 		isSlashMode = true;
@@ -1407,12 +1454,19 @@ void Valphalk::RotateToTarget(float ratio1, float ratio2)
 
 void Valphalk::SetColliderAttack(ColliderName name, float ratio)
 {
-	colliders[name]->isAttack = true;
-	colliders[name]->SetColor(Float4(1, 0, 1, 1));
+	static bool ON = false;
+	if (!ON)
+	{
+		colliders[name]->isAttack = true;
+		colliders[name]->SetColor(Float4(1, 0, 1, 1));
+		ON = true;
+	}
+
 	if (RATIO > ratio - 0.01)
 	{
 		colliders[name]->isAttack = false;
 		colliders[name]->SetColor(Float4(0, 1, 0, 1));
+		ON = false;
 	}
 }
 
@@ -1604,6 +1658,8 @@ void Valphalk::S_StabAtk()
 
 	if (sequence == 3) // 공격 모션
 	{
+		if (!renderJetRight)
+			renderJetRight = true;
 		SetState(E_2038);	E2038();
 	}
 
@@ -1614,6 +1670,8 @@ void Valphalk::S_StabAtk()
 
 	if (sequence == 5)
 	{
+		if (renderJetRight)
+			renderJetRight = false;
 		whichPattern = 0;
 		ChooseNextPattern();
 	}
@@ -1771,11 +1829,14 @@ void Valphalk::S_JetRush()
 
 	if (sequence == 2) // 돌진모션
 	{
+		if (!renderJet)
+			renderJet = true;
 		SetState(E_2013);	E2013();
 	}
 
 	if (sequence == 3) // 돌진 브레이크 모션
 	{
+
 		SetState(E_2017);	E2017();
 	}
 
@@ -1786,6 +1847,8 @@ void Valphalk::S_JetRush()
 
 	if (sequence == 5) // 마무리
 	{
+		if (renderJet)
+			renderJet = false;
 		if (whichPattern == 4 || whichPattern == 5 || whichPattern == 6)
 			Scale().x *= -1;
 		whichPattern = 0;
@@ -2291,7 +2354,8 @@ void Valphalk::HS_FlyFallAtk()
 	{
 		SetState(E_2265);
 		EX2265();
-
+		if (!renderJet)
+			renderJet = true;
 	}
 
 	if (sequence == 1)
@@ -2342,6 +2406,8 @@ void Valphalk::HS_FlyFallAtk()
 
 	if (sequence == 6) // 공격 모션
 	{
+		if (renderJet)
+			renderJet = false;
 		Pos().y = 0;
 		EX2278();
 	}
@@ -2349,6 +2415,7 @@ void Valphalk::HS_FlyFallAtk()
 	if (sequence == 7) // 마무리
 	{
 		whichPattern = 0;
+
 		isSlashMode = false;
 		ChooseNextPattern();
 	}
@@ -2398,9 +2465,10 @@ void Valphalk::HS_FlyFallAtk()
 
 	if (sequence == 11) // 공격 모션
 	{
+		if (renderJet)
+			renderJet = false;
 		SetState(E_2375);
 		EX2375();
-
 	}
 
 	if (sequence == 12) // 공격 모션

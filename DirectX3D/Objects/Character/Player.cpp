@@ -1020,11 +1020,9 @@ void Player::HurtCheck()
 
 	auto colliders = val->GetCollider();
 
-	Contact contact;
-
 	for (auto collider : colliders)
 	{
-		if (bodyCollider->IsCapsuleCollision(collider, &contact))  /// 충돌을 했어
+		if (bodyCollider->IsCapsuleCollision(collider))  /// 충돌을 했어
 		{
 			Vector3 fwd = Forward();
 			Vector3 atkDir = -1 * collider->direction;
