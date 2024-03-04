@@ -124,6 +124,7 @@ void Player::Update()
 
 	ModelAnimator::Update();
 	UIManager::Get()->Update();
+	Potion();
 	GroundCheck();
 
 	if (KEY_DOWN('5'))/// 디버그 확인용이라 필요없으면 지워도 됨
@@ -268,18 +269,20 @@ void Player::UpdateWorlds()
 
 void Player::Potion()
 {
-	time += DELTA;
+	time += DELTA;	
 
-	if (UIManager::Get()->useQuickSlot1 && UIManager::Get()->haveGPotion > 0 
-		|| UIManager::Get()->useDragSlot1 && UIManager::Get()->haveGPotion > 0 && KEY_DOWN('E'))
+	if (UIManager::Get()->useQuickSlot1 && UIManager::Get()->haveGPotion > 0 && !Lcure && !cure
+		|| UIManager::Get()->useDragSlot1 && UIManager::Get()->haveGPotion > 0 && KEY_DOWN('E') && !Lcure && !cure)
 	{		
 		Sounds::Get()->Play("health_potion", 0.3f);
-		UIManager::Get()->useQuickSlot1 = false;
-		cure = true;
+		UIManager::Get()->haveGPotion--;
+		Lcure = true;
 		time = 0;
 	}
-	if (cure == true)
+	if (Lcure == true)
 	{
+		UIManager::Get()->useQuickSlot1 = false;
+		UIManager::Get()->useQuickSlot2 = false;
 		if (time < 0.1f)
 			potionParticle->Play({ Pos().x,Pos().y+100,Pos().z }, { 0,0,0 });
 
@@ -289,21 +292,22 @@ void Player::Potion()
 		}
 		else if (time >= 3)
 		{
-			cure = false;
-			return;
+			Lcure = false;
 		}
 	}
 
-	if (UIManager::Get()->useQuickSlot2 && UIManager::Get()->havePotion > 10
-		|| UIManager::Get()->useDragSlot3 && UIManager::Get()->havePotion > 10 && KEY_DOWN('E'))
+	if (UIManager::Get()->useQuickSlot2 && UIManager::Get()->havePotion > 10 && !cure && !Lcure
+		|| UIManager::Get()->useDragSlot3 && UIManager::Get()->havePotion > 10 && KEY_DOWN('E') && !cure && !Lcure)
 	{
 		Sounds::Get()->Play("health_potion", 0.3f);
-		UIManager::Get()->useQuickSlot2 = false;
-		Lcure = true;
+		UIManager::Get()->havePotion--;
+		cure = true;
 		time = 0;
 	}
-	if (Lcure == true)
+	if (cure == true)
 	{
+		UIManager::Get()->useQuickSlot1 = false;
+		UIManager::Get()->useQuickSlot2 = false;
 		if (time < 0.1f)
 			potionParticle->Play({ Pos().x,Pos().y+100,Pos().z }, { 0,0,0 });
 
@@ -313,10 +317,10 @@ void Player::Potion()
 		}
 		else if (time >= 2)
 		{
-			Lcure = false;
-			return;
+			cure = false;
 		}
 	}
+
 	if (KEY_DOWN('T'))
 	{
 		Sounds::Get()->Play("health_potion", 0.3f);

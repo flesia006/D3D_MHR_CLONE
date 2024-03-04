@@ -905,14 +905,6 @@ void UIManager::QuickSlot()
 			itemNumber_Q[11]->Render();
 			itemNumber_Q[10]->Render();
 		}
-		if (KEY_UP(VK_MBUTTON) && haveGPotion >= 0 && useQuickSlot1)
-		{
-			haveGPotion--;
-		}
-		if (KEY_UP(VK_MBUTTON) && havePotion >= 10 && useQuickSlot2)
-		{
-			havePotion--;
-		}
 	}
 }
 
@@ -1083,7 +1075,6 @@ void UIManager::DragSlot()
 	if (useDragSlot1)
 	{
 		greatepotionIcon_D->Render();
-
 		if (haveGPotion < 10)
 		{
 			itemNumber_D[haveGPotion]->Pos().x = 1752;
@@ -1100,7 +1091,6 @@ void UIManager::DragSlot()
 	if (useDragSlot2)
 	{
 		whetstoneIcon_D->Render();
-	
 	}
 	if (useDragSlot3)
 	{
@@ -1117,14 +1107,6 @@ void UIManager::DragSlot()
 			itemNumber_D[1]->Render();
 			itemNumber_D[0]->Render();
 		}
-	}
-	if (KEY_DOWN('E') && haveGPotion > 0 && useDragSlot1)
-	{
-		haveGPotion--;
-	}
-	if (KEY_DOWN('E') && havePotion > 10 && useDragSlot3)
-	{
-		havePotion--;
 	}
 }
 
