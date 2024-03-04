@@ -257,6 +257,7 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 	// ÆÄÆ¼Å¬
 	FOR(6) jetParticle.push_back(new Val_Jet_Particle());
 	FOR(6) fireParticle.push_back(new Val_fire());
+	hupgiFire = new Sprite(L"Textures/Effect/val_fire.png", 1500, 1500, 4, 8, false);
 	{
 		//jetParticle[0]->Play(bullets[0]->Pos(),GetRotationByNode(61));
 		//jetParticle[1]->Play(bullets[1]->Pos(),GetRotationByNode(64));
@@ -296,6 +297,7 @@ Valphalk::~Valphalk()
 	delete effectSphere2;
 	jetParticle.clear();
 	fireParticle.clear();
+	delete hupgiFire;
 }
 
 void Valphalk::Update()
@@ -371,6 +373,14 @@ void Valphalk::Update()
 	//	timer2 = 0;
 	//}
 
+	//hupgiFire->Play({ 0,0,0 });
+
+	if (KEY_DOWN('8'))
+	{
+		hupgiFire->Play({ 0,0,0 });
+	}
+	hupgiFire->Update();
+
 	ModelAnimator::Update();
 	
 	///////////////////////
@@ -388,6 +398,7 @@ void Valphalk::Update()
 		curHP -= 2000;
 	}
 	////////////////////////
+
 }
 
 void Valphalk::PreRender()
@@ -421,6 +432,7 @@ void Valphalk::Render()
 
 	FOR(jetParticle.size()) jetParticle[i]->Render();
 	FOR(fireParticle.size()) fireParticle[i]->Render();
+	hupgiFire->Render();
 }
 
 void Valphalk::GUIRender()

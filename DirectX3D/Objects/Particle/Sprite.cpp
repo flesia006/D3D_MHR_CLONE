@@ -36,9 +36,10 @@ void Sprite::Update()
         curFrameCount++; //프레임 +1
         //프레임 위치 찾기
         buffer->Get().curFrame.x = curFrameCount % (UINT)buffer->Get().maxFrame.x;
-        buffer->Get().curFrame.y = curFrameCount / (UINT)buffer->Get().maxFrame.y;
+        buffer->Get().curFrame.y = curFrameCount / (UINT)buffer->Get().maxFrame.x;
         time = 0;
     }
+    
 
     if (curFrameCount >= maxFrameCount) Stop();
 }
@@ -62,7 +63,7 @@ void Sprite::Play(Vector3 pos)
 
     vertex.pos = pos;
     vertex.uv = size;
-
+    
     vertexBuffer->Update(&vertex, particleCount);
 }
 
@@ -70,5 +71,5 @@ void Sprite::Create()
 {
     particleCount = 1; //애니메이션을 재생하는 것이 목적이니까
 
-    vertexBuffer = new VertexBuffer(&vertex, sizeof(VertexUV), 1); // 텍스처 한 개 출력이 목적이니까
+    vertexBuffer = new VertexBuffer(&vertex, sizeof(VertexUV), 1); // 텍스처 한 개 출력이 목적이니까    
 }

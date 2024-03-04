@@ -9,7 +9,7 @@ ParticleScene::ParticleScene()
     //particle = new Sprite(L"Textures/Effect/fire_8x2.png", 5, 30, 8, 2, true);
     particle = new HitParticle();
     particle->Play({ 0, 0, 0 }, {0, 1, 0});
-    sprite = new Sprite(L"Textures/Effect/val_spark.png",50,50,8,4,false);
+    sprite = new Sprite(L"Textures/Effect/val_fire.png",50,50,4,8,false);
     collider = new SphereCollider(30);
 }
 

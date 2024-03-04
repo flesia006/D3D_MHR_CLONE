@@ -522,4 +522,6 @@ private:
 	Vector3 jetpos1_1, jetpos2_1, jetpos3_1, jetpos4_1, jetpos5_1, jetpos6_1;
 	Vector3 jetpos1_2, jetpos2_2, jetpos3_2, jetpos4_2, jetpos5_2, jetpos6_2;
 	Vector3 jetpos1, jetpos2, jetpos3, jetpos4, jetpos5, jetpos6;
+
+	Sprite* hupgiFire;
 };
