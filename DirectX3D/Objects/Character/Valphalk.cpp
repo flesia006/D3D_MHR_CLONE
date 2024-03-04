@@ -307,7 +307,7 @@ Valphalk::~Valphalk()
 	delete effectBox3;
 	delete effectSphere1;
 	delete effectSphere2;
-	jetParticle.clear();
+	//jetParticle.clear();
 }
 
 void Valphalk::Update()
@@ -361,7 +361,7 @@ void Valphalk::Update()
 
 	ColliderNodePos();
 
-	FOR(jetParticle.size()) jetParticle[i]->Update();
+	//FOR(jetParticle.size()) jetParticle[i]->Update();
 
 	jetpos->Pos() = GetTranslationByNode(61);
 	jetposend->Pos() = GetTranslationByNode(60);
@@ -473,12 +473,12 @@ void Valphalk::GUIRender()
 	ImGui::DragFloat3("effectsphere1rot", (float*)&effectSphere1->Rot());
 	ImGui::DragFloat3("effectsphere2rot", (float*)&effectSphere2->Rot());
 
-	jetParticle[0]->GUIRender();
-	jetParticle[1]->GUIRender();
-	jetParticle[2]->GUIRender();
-	jetParticle[3]->GUIRender();
-	jetParticle[4]->GUIRender();
-	jetParticle[5]->GUIRender();
+	//jetParticle[0]->GUIRender();
+	//jetParticle[1]->GUIRender();
+	//jetParticle[2]->GUIRender();
+	//jetParticle[3]->GUIRender();
+	//jetParticle[4]->GUIRender();
+	//jetParticle[5]->GUIRender();
 	//	ImGui::Text("RanPatrolNum : %d", ranPatrol);
 	//	ImGui::Text("stormTime : %.3f", stormTime);
 	//	ImGui::Text("Length : %.3f", velocity.Length());
