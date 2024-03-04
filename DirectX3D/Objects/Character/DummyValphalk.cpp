@@ -376,7 +376,7 @@ void DummyValphalk::ColliderNodePos()
 
 	// 部府 1/2 场
 	transforms[TAIL_2]->SetWorld(GetTransformByNode(128));
-
+	
 	// 部府 场
 	transforms[TAIL]->SetWorld(GetTransformByNode(130));
 

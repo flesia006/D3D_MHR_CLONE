@@ -911,7 +911,12 @@ void Valphalk::SetState(State state, float rad)
 void Valphalk::DeathCheck()
 {
 	if (curHP < 0)
-		curPattern = S_DEAD;
+	{
+		if(isSlashMode)
+			curPattern = S_DEAD;
+		else
+			curPattern = B_DEAD;
+	}
 }
 
 void Valphalk::Patrol()
@@ -1225,6 +1230,12 @@ void Valphalk::ChooseNextPattern()
 	// 분노 : 90 ㅇㅣ하    40 일때 한번
 	// 필살기 : 체력 50 언더라면
 
+	if (isStagger)
+		return;
+
+	if (curHP < 0)
+		return;
+
 	if (needHupGi)
 	{
 		curPattern = HUPGI;
@@ -1252,12 +1263,6 @@ void Valphalk::ChooseNextPattern()
 		ult50 = false;
 		return;
 	}
-
-	if (isStagger)
-		return;
-
-	if (curHP < 0)
-		return;
 	
 	//int i = rand() % 2;
 	//switch (i)
@@ -2586,6 +2591,15 @@ void Valphalk::FindRoar()
 
 void Valphalk::AngerRoar()
 {
+	if (sequence == 0) // 각도 정하기
+	{
+		SetState(E_4013); E4013();
+	}
+
+	if (sequence == 1) // 각도 정했으면 방향 전환함수
+	{
+		ChooseNextPattern();
+	}
 }
 
 void Valphalk::E0003() // 평상시 대기

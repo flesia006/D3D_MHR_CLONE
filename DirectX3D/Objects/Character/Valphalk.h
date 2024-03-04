@@ -505,8 +505,8 @@ private:
 	bool isStagger = false;
 
 public:
-	float maxHP = 5000;
-	float curHP = 5000;
+	float maxHP = 25000;
+	float curHP = 25000;
 	float checkHp; // »Ì±‚∂ß æµ∞≈
 	float yDifference = 0.0f;
 

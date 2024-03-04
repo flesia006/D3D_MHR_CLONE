@@ -76,25 +76,43 @@ Player::Player() : ModelAnimator("Player")
 
 Player::~Player()
 {
-	delete mainHand;
-	delete head;
-	delete realPos;
+	delete evadeCheckCollider;
+	delete bodyCollider;
+	delete tmpCollider3;
+	delete tmpCollider2;
 	delete tmpCollider;
-	hitParticle.clear();
-	delete hitBoomParticle;
-	delete criticalParticle;
-	delete spAtkParticle;
+	delete kalzip;
+	delete longSword;
+	delete haloCollider;
 	delete potionParticle;
+	delete spAtkParticle;
+	delete criticalParticle;
+	delete hitBoomParticle;
+	hitParticle.clear();
+	delete trail;
+	delete swordCollider;
+	delete backSwd;
+	delete mainHand;
+	delete swordEnd;
+	delete swordStart;
+	delete forwardPos;
+	delete backPos;
+	delete realPos;
+	delete head;
 }
 
 void Player::Update()
 {	
+	if (!DeathCheck())
+	{
+		TermAttackUpdate();
+		HurtCheck();
+		Potion();
+	}
+
 	Control();
 	ResetPlayTime();
 	UpdateWorlds();
-	TermAttackUpdate();	
-	HurtCheck();
-
 	trail->Update();
 	FOR(hitParticle.size())		hitParticle[i]->Update();
 	hitBoomParticle->Update();
@@ -106,11 +124,10 @@ void Player::Update()
 
 	ModelAnimator::Update();
 	UIManager::Get()->Update();
-	Potion();	
 	GroundCheck();
 
 	if (KEY_DOWN('5'))/// 디버그 확인용이라 필요없으면 지워도 됨
-		SetState(D_015);
+		UI->curHP -= 30;
 }
 
 void Player::Render()
@@ -1298,6 +1315,17 @@ void Player::TermAttackUpdate()
 
 }
 
+bool Player::DeathCheck()
+{
+	if (UI->curHP < 0)
+	{
+		SetState(D_066);
+		return true;
+	}
+	else
+		return false;
+}
+
 void Player::RealRotate(float rad)
 {
 	Rot().y += rad;
@@ -1625,6 +1653,11 @@ void Player::S018() // 구르기 후 제자리
 
 	}
 
+	if (RATIO < 0.40)
+		bodyCollider->SetActive(false);
+	else
+		bodyCollider->SetActive(true);
+
 	if (GetClip(S_018)->GetRatio() > 0.6f && K_MOVE)
 	{
 		SetState(S_020);
@@ -1912,6 +1945,11 @@ void Player::L009() // 걸으면서 납도
 void Player::L010() // 구르기
 {
 	PLAY;
+
+	if (RATIO < 0.40)
+		bodyCollider->SetActive(false);
+	else
+		bodyCollider->SetActive(true);
 
 	// 줌 정상화
 	{

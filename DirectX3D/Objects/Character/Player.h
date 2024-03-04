@@ -89,7 +89,7 @@ private:
 	void Roll();
 	void TermAttackUpdate();
 
-
+	bool DeathCheck();
 
 	void SetState(State state);	
 	void EndEffect();
