@@ -1,5 +1,6 @@
 #include "Framework.h"
 #include "Scenes/ShadowScene.h"
+#include "Scenes/FightTestScene.h"
 
 Valphalk::Valphalk() : ModelAnimator("Valphalk")
 {
@@ -318,6 +319,7 @@ void Valphalk::Update()
 	PlayPattern();
 	ConditionCheck();
 	PartDestroyCheck();
+	PushPlayer();
 	head->Pos() = realPos->Pos() + Vector3::Up() * 200;
 	head->UpdateWorld();
 
@@ -1399,6 +1401,39 @@ void Valphalk::PlayPattern()
 	case Valphalk::B_HUGESTAGGER:	B_HugeStagger();	break;
 	case Valphalk::PATROL:			Patrol();			break;
 	default:		break;
+	}
+}
+
+void Valphalk::PushPlayer()
+{
+	if (curPattern == S_DEAD || curPattern == B_DEAD)
+		return;
+
+	Player* player;
+
+	if (SceneManager::Get()->Add("FightTestScene") != nullptr)
+		player = dynamic_cast<FightTestScene*>
+			(SceneManager::Get()->Add("FightTestScene"))->GetPlayer();
+
+	else if (SceneManager::Get()->Add("ShadowScene") != nullptr)
+		player = dynamic_cast<ShadowScene*>
+			(SceneManager::Get()->Add("ShadowScene"))->GetPlayer();
+
+	else
+		return;
+
+	Collider* playerCollider = player->getCollider();
+	
+
+	for (auto collider : colliders)
+	{
+		if (collider->IsCollision(playerCollider))
+		{
+			Vector3 dir = (playerCollider->GlobalPos() - collider->GlobalPos()).GetNormalized();
+
+			player->Pos().x += dir.x * 500 * DELTA;
+			player->Pos().z += dir.z * 500 * DELTA;
+		}
 	}
 }
 

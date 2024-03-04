@@ -198,6 +198,7 @@ private:
 	void PartDestroyCheck();
 
 	void PlayPattern();
+	void PushPlayer();
 	void UpdateUI(); //캐릭터 UI가 있으면 이후 업데이트
 	float GetRadBtwTrgt();
 	void RotateToTarget(float ratio1, float ratio2); // 
@@ -422,7 +423,7 @@ private:
 
 	Vector3 velocity; //속력 : 실제 움직임
 
-	Pattern curPattern = HS_FLYFALLATK;
+	Pattern curPattern = PATROL;
 	State curState = E_0003; //= 기본 스테이트;
 	State preState = curState;
 
@@ -438,13 +439,13 @@ private:
 	// 공격 콜라이더 (투사체, 폭발 등)	
 	vector<SphereCollider*> bullets;
 	BoxCollider* forwardBoom;
-	Vector3 forwardBoomPosInit = { 0,-300,-1000 };
 	BoxCollider* fullBurst;
 	BoxCollider* effectBox1;
 	BoxCollider* effectBox2;
 	BoxCollider* effectBox3;
 	SphereCollider* effectSphere1;
 	SphereCollider* effectSphere2;
+	Vector3 forwardBoomPosInit = { 0,-300,-1000 };
 
 
 

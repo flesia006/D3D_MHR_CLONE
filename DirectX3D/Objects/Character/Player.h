@@ -61,7 +61,7 @@ public:
 	void GUIRender();
 	void PostRender();
 
-	CapsuleCollider* getCollider() { return tmpCollider; }
+	CapsuleCollider* getCollider() { return bodyCollider; }
 	Transform* GetRealPos() { return realPos; }
 
 private:

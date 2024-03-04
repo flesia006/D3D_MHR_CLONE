@@ -2693,7 +2693,7 @@ void Player::L151() // Æ¯¼ö ³³µµ
 {
 	if (GetClip(curState)->isFirstPlay()) 
 	{
-		PlayClip(curState);
+		PlayClip(curState, 2.8);
 		initForward = Forward();
 		holdingSword = true;
 		EndEffect();
