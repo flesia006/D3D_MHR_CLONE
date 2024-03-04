@@ -1486,7 +1486,7 @@ void Player::S008() // 서서 납도
 	if (RATIO > 0.95 && K_MOVE)
 		SetState(S_005);
 
-	if (RATIO > 0.98)
+	if (RATIO > 0.96)
 		SetState(S_001);
 
 }
@@ -1504,7 +1504,7 @@ void Player::S009() // 걸으면서 납도
 //		SetState(S_011);
 //	}
 //
-//	if (RATIO > 0.98)
+//	if (RATIO > 0.96)
 //	{
 //		SetState(S_001);
 //	}
@@ -1548,7 +1548,7 @@ void Player::S014() // 달리다 멈춤
 
 
 	
-	if (RATIO > 0.97)
+	if (RATIO > 0.96)
 	{
 		SetState(S_001);
 	}
@@ -1573,7 +1573,7 @@ void Player::S018() // 구르기 후 제자리
 		SetState(S_020);
 	}
 
-	if (GetClip(S_017)->GetRatio() > 0.98)
+	if (GetClip(S_017)->GetRatio() > 0.96)
 	{
 		SetState(S_001);
 	}
@@ -1598,7 +1598,7 @@ void Player::S020()
 
 	}
 
-	if (RATIO > 0.97)
+	if (RATIO > 0.96)
 		SetState(S_011);
 }
 
@@ -1623,7 +1623,7 @@ void Player::S038() // 전력질주
 //		return;
 //	}
 //	UIManager::Get()->Running();
-//	/*if (RATIO > 0.97)
+//	/*if (RATIO > 0.96)
 //		moveSpeed++;*/
 //
 //	if (KEY_UP(VK_LSHIFT))
@@ -1634,7 +1634,7 @@ void Player::S038() // 전력질주
 //	}
 //
 //	//Rotate();
-//	/*if (RATIO > 0.97 && (KEY_PRESS('W') || KEY_PRESS('S') || KEY_PRESS('A') || KEY_PRESS('D')))
+//	/*if (RATIO > 0.96 && (KEY_PRESS('W') || KEY_PRESS('S') || KEY_PRESS('A') || KEY_PRESS('D')))
 //	{
 //		SetState(S_003);
 //		moveSpeed = 500;
@@ -1671,7 +1671,7 @@ void Player::S118() // 탈진 시작
 {
 	PLAY;
 	UIManager::Get()->curStamina += 2.0f * DELTA;
-	if (RATIO > 0.98f)
+	if (RATIO > 0.96f)
 		SetState(S_120);
 }
 
@@ -1679,7 +1679,7 @@ void Player::S119() // 탈진 끝
 {	
 	PLAY;
 	UIManager::Get()->curStamina += 2.0f * DELTA;
-	if (RATIO > 0.98f)
+	if (RATIO > 0.96f)
 	{
 		SetState(S_001);
 		return;
@@ -1788,7 +1788,7 @@ void Player::L005() // 발도상태 걷기 시작 (발돋움)
 		SetState(L_008);
 
 
-	if (RATIO > 0.98 )
+	if (RATIO > 0.96 )
 	{
 		if(K_MOVE)
 			SetState(L_004);
@@ -1818,15 +1818,15 @@ void Player::L008() // 멈춤
 	else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// 날라차기
 	else if (K_SPACE)	Roll();				// 010 구르기
 
-	if (RATIO > 0.5 && RATIO <= 0.96)
+	if (RATIO > 0.5 && RATIO <= 0.95)
 	{
-		if (KEY_PRESS('W') || KEY_PRESS('A') || KEY_PRESS('S') || KEY_PRESS('D'))
+		if (K_MOVE)
 		{
 			SetState(L_005);
 		}
 	}
 
-	if (RATIO > 0.98)
+	if (RATIO > 0.95)
 	{
 		GetClip(L_008)->SetPlayTime(-100.3f);
 		ReturnIdle();
@@ -1846,7 +1846,7 @@ void Player::L009() // 걸으면서 납도
 		SetState(S_011);
 	}
 
-	if (RATIO > 0.98)
+	if (RATIO > 0.96)
 	{
 		SetState(S_014);
 	}
@@ -1866,7 +1866,7 @@ void Player::L010() // 구르기
 		SetState(L_014);
 
 
-	if (RATIO > 0.98)
+	if (RATIO > 0.96)
 	{
 		ReturnIdle();
 	}
@@ -1892,7 +1892,7 @@ void Player::L014() // 발도상태 구르기 후 이동키 유지시
 		Roll();
 	}
 
-	if (RATIO > 0.98)
+	if (RATIO > 0.96)
 	{
 		SetState(L_004);
 		UIManager::Get()->staminaActive = false;
@@ -1937,7 +1937,7 @@ void Player::L101() // 내디뎌베기
 
 
 	// 캔슬 가능 프레임
-	if (RATIO > 0.6 && RATIO < 0.98)
+	if (RATIO > 0.6 && RATIO < 0.96)
 	{
 
 		if		(K_LMB)				SetState(L_102);	// 세로베기		
@@ -1951,7 +1951,7 @@ void Player::L101() // 내디뎌베기
 	}
 
 	// 복귀 프레임
-	if (RATIO > 0.98)
+	if (RATIO > 0.96)
 	{
 		ReturnIdle();
 	}
@@ -1983,7 +1983,7 @@ void Player::L102() // 세로베기
 	}
 
 	// 파생 연계 프레임
-	if (RATIO > 0.5 && RATIO < 0.98)
+	if (RATIO > 0.5 && RATIO < 0.96)
 	{
 		if		(K_LMB || K_RMB)	SetState(L_104);	// 찌르기
 		else if (K_LMBRMB)			SetState(L_103);	// 베어내리기
@@ -1994,7 +1994,7 @@ void Player::L102() // 세로베기
 		else if (K_SPACE)			Roll();
 	}
 
-	if (RATIO > 0.98)
+	if (RATIO > 0.96)
 	{
 		ReturnIdle();
 	}
@@ -2033,7 +2033,7 @@ void Player::L103() // 베어내리기
 		else if (K_SPACE)			Roll();
 	}
 
-	if (RATIO > 0.98)
+	if (RATIO > 0.96)
 	{
 		ReturnIdle();
 	}
@@ -2061,7 +2061,7 @@ void Player::L104() // 찌르기
 			EndEffect();
 	}
 
-	if (RATIO > 0.40 && RATIO < 0.98)
+	if (RATIO > 0.40 && RATIO < 0.96)
 	{
 		if		(K_LMB || K_RMB)	SetState(L_105);	// 베어올리기
 		else if (K_LMBRMB)			SetState(L_103);	// 베어내리기
@@ -2073,7 +2073,7 @@ void Player::L104() // 찌르기
 		
 	}
 
-	if (RATIO > 0.98)
+	if (RATIO > 0.96)
 		ReturnIdle();
 }
 
@@ -2099,7 +2099,7 @@ void Player::L105() // 베어 올리기
 			EndEffect();
 	}
 
-	if (RATIO > 0.4 && RATIO < 0.98)
+	if (RATIO > 0.4 && RATIO < 0.96)
 	{		
 		if		(K_LMB)			SetState(L_102);	// 세로베기		
 		else if (K_RMB)			SetState(L_104);	// 찌르기		
@@ -2111,7 +2111,7 @@ void Player::L105() // 베어 올리기
 		else if (K_SPACE)		Roll();
 	}
 
-	if (RATIO > 0.98)
+	if (RATIO > 0.96)
 		ReturnIdle();
 }
 
@@ -2154,7 +2154,7 @@ void Player::L106() // 기인 베기 1
 		else if (K_SPACE)		Roll();				// 구르기
 	}
 
-	if (RATIO > 0.98)
+	if (RATIO > 0.96)
 		ReturnIdle();
 }
 
@@ -2199,7 +2199,7 @@ void Player::L107() // 기인베기 2
 	}
 
 
-	if (RATIO > 0.98)
+	if (RATIO > 0.96)
 		ReturnIdle();
 }
 
@@ -2264,7 +2264,7 @@ void Player::L108() // 기인베기 3
 		else if (K_SPACE)			Roll();			  // 구르기		
 	}
 
-	if (RATIO > 0.98)
+	if (RATIO > 0.96)
 		ReturnIdle();
 }
 
@@ -2320,7 +2320,7 @@ void Player::L109() // 기인 큰회전베기
 		 else if(KEY_DOWN(VK_XBUTTON1)) SetState(L_101);
 	}
 
-	if (RATIO > 0.98)
+	if (RATIO > 0.96)
 		SetState(S_001);
 }
 
@@ -2360,7 +2360,7 @@ void Player::L110() // 기인 내디뎌베기
 		else if (K_SPACE)							Roll();				// 구르기
 	}
 
-	if (RATIO > 0.98)
+	if (RATIO > 0.96)
 		ReturnIdle();
 }
 
@@ -2407,7 +2407,7 @@ void Player::L119() // 날라차기 착지
 			SetState(L_104);    // 찌르기
 	}
 
-	if (RATIO > 0.98)
+	if (RATIO > 0.96)
 		ReturnIdle();
 }
 
@@ -2431,7 +2431,7 @@ void Player::L122()
 			SetState(L_104);    // 찌르기
 	}
 
-	if (RATIO > 0.98)
+	if (RATIO > 0.96)
 		ReturnIdle();
 }
 
@@ -2455,7 +2455,7 @@ void Player::L128()	// 날라차기 시작
 	}
 
 
-	if (RATIO > 0.98)
+	if (RATIO > 0.96)
 	{
 		SetState(L_130);
 		playOncePerMotion = false;
@@ -2484,7 +2484,7 @@ void Player::L130()	// 날라차기 체공중
 				}
 			}
 
-			if (RATIO > 0.98)
+			if (RATIO > 0.96)
 			{
 				SetState(L_131);
 			}
@@ -2514,7 +2514,7 @@ void Player::L131() // 체공 루프
 				else	 	SetState(L_136);  // 낙하찌르기
 			}
 
-			if (RATIO > 0.98)
+			if (RATIO > 0.96)
 				Loop();
 		}
 		else
@@ -2585,7 +2585,7 @@ void Player::L135()	// 투구깨기 끝
 			else if (K_SPACE)		Roll();				// 구르기
 		}
 
-		if (RATIO > 0.98)
+		if (RATIO > 0.96)
 		{
 			SetState(L_001);
 		}
@@ -2631,7 +2631,7 @@ void Player::L138() // 낙하찌르기 끝
 
 	// 체공중
 	{
-		if (RATIO > 0.98)
+		if (RATIO > 0.96)
 		{
 			ReturnIdle();
 		}
@@ -2685,7 +2685,7 @@ void Player::L147() // 간파베기
 		else if (K_SPACE)		Roll();				// 구르기
 	}
 
-	if (RATIO > 0.98)
+	if (RATIO > 0.96)
 		ReturnIdle();
 }
 
@@ -2727,7 +2727,7 @@ void Player::L151() // 특수 납도
 		}
 	}
 
-	if (RATIO > 0.98)
+	if (RATIO > 0.96)
 	{
 		SetState(L_152);
 	}
@@ -2754,7 +2754,7 @@ void Player::L153() // 특수납도 취소 동작
 {
 	PLAY;
 
-	if (RATIO > 0.98)
+	if (RATIO > 0.96)
 	{
 		holdingSword = false;
 		SetState(S_001);
@@ -2812,7 +2812,7 @@ void Player::L154() // 앉아발도 베기
 		}
 	}
 
-	if (RATIO > 0.98)
+	if (RATIO > 0.96)
 		ReturnIdle();
 
 }
@@ -2883,7 +2883,7 @@ void Player::L155() // 앉아발도 기인베기
 			CAM->Zoom(300, 5);
 	}
 
-	if (RATIO > 0.98)
+	if (RATIO > 0.96)
 	{
 		ReturnIdle();
 		isDoubleStrikeMotion = false;
@@ -2901,7 +2901,7 @@ void Player::L400()
 {
 	PLAY;
 
-	if (RATIO > 0.98)
+	if (RATIO > 0.96)
 	{
 		ReturnIdle();
 	}
@@ -2911,7 +2911,7 @@ void Player::L403()
 {
 	PLAY;
 
-	if (RATIO > 0.98)
+	if (RATIO > 0.96)
 	{
 		ReturnIdle();
 	}
@@ -2929,7 +2929,7 @@ void Player::L451()
 		}
 	}
 
-	if (RATIO > 0.98)
+	if (RATIO > 0.96)
 	{
 		ReturnIdle();
 	}
@@ -2947,7 +2947,7 @@ void Player::L453()
 		}
 	}
 
-	if (RATIO > 0.98)
+	if (RATIO > 0.96)
 	{
 		ReturnIdle();
 	}
@@ -2957,7 +2957,7 @@ void Player::L455()
 {
 	PLAY;
 
-	if (RATIO > 0.98)
+	if (RATIO > 0.96)
 	{
 		ReturnIdle();
 	}
@@ -2967,7 +2967,7 @@ void Player::D001()  // 소경직
 {
 	PLAY;
 
-	if (RATIO > 0.98)
+	if (RATIO > 0.96)
 	{
 		ReturnIdle2();
 	}
@@ -2977,7 +2977,7 @@ void Player::D004() // 뒤에서 맞고 앞으로 소경직
 {
 	PLAY;
 
-	if (RATIO > 0.98)
+	if (RATIO > 0.96)
 	{
 		ReturnIdle2();
 	}
@@ -2987,7 +2987,7 @@ void Player::D007() // 누운 상태에서 일어나기 시작
 {
 	PLAY;
 
-	if (RATIO > 0.98)
+	if (RATIO > 0.96)
 	{
 		SetState(L_453);
 	}
@@ -2997,7 +2997,7 @@ void Player::D011()  // 7의 반대
 {
 	PLAY;
 
-	if (RATIO > 0.98)
+	if (RATIO > 0.96)
 	{
 		SetState(L_451);
 	}
@@ -3020,7 +3020,7 @@ void Player::D016()  //덤블링하고 착지하며 두손으로 땅짚은 상태
 {
 	PLAY;
 
-	if (RATIO > 0.98)
+	if (RATIO > 0.96)
 	{
 		SetState(L_451);
 	}
@@ -3044,7 +3044,7 @@ void Player::D022()
 {
 	PLAY;
 
-	if (RATIO > 0.98)
+	if (RATIO > 0.96)
 	{
 		SetState(L_453);
 	}
@@ -3054,7 +3054,7 @@ void Player::D026()
 {
 	PLAY;
 
-	if (RATIO > 0.98)
+	if (RATIO > 0.96)
 	{
 		SetState(D_007);
 	}
@@ -3064,7 +3064,7 @@ void Player::D029()
 {
 	PLAY;
 
-	if (RATIO > 0.98)
+	if (RATIO > 0.96)
 	{
 		SetState(D_030);
 	}
@@ -3074,7 +3074,7 @@ void Player::D030() // Loop
 {
 	PLAY;
 
-	if (RATIO > 0.98)
+	if (RATIO > 0.96)
 	{
 		SetState(D_031);
 	}
@@ -3084,7 +3084,7 @@ void Player::D031()
 {
 	PLAY;
 
-	if (RATIO > 0.98)
+	if (RATIO > 0.96)
 	{
 		SetState(D_007);
 	}
@@ -3094,7 +3094,7 @@ void Player::D032()
 {
 	PLAY;
 
-	if (RATIO > 0.98)
+	if (RATIO > 0.96)
 	{
 		SetState(D_033);
 	}
@@ -3104,7 +3104,7 @@ void Player::D033()
 {
 	PLAY;
 
-	if (RATIO > 0.98)
+	if (RATIO > 0.96)
 	{
 		SetState(D_026);
 	}
@@ -3114,7 +3114,7 @@ void Player::D045()
 {
 	PLAY;
 
-	if (RATIO > 0.98)
+	if (RATIO > 0.96)
 	{
 		SetState(D_046);
 	}
@@ -3124,7 +3124,7 @@ void Player::D046()
 {
 	PLAY;
 
-	if (RATIO > 0.98)
+	if (RATIO > 0.96)
 	{
 		SetState(L_455);
 	}
@@ -3134,7 +3134,7 @@ void Player::D066()
 {
 	PLAY;
 
-	if (RATIO > 0.98)
+	if (RATIO > 0.96)
 	{
 		isPlay = false;
 	}
@@ -3144,7 +3144,7 @@ void Player::D078()
 {
 	PLAY;
 
-	if (RATIO > 0.98)
+	if (RATIO > 0.96)
 	{
 		SetState(D_079);
 	}
@@ -3154,7 +3154,7 @@ void Player::D079()
 {
 	PLAY;
 
-	if (RATIO > 0.98)
+	if (RATIO > 0.96)
 	{
 		SetState(D_080);
 	}
@@ -3164,7 +3164,7 @@ void Player::D080()
 {
 	PLAY;
 
-	if (RATIO > 0.98)
+	if (RATIO > 0.96)
 	{
 		ReturnIdle();
 	}

@@ -422,7 +422,7 @@ private:
 
 	Vector3 velocity; //속력 : 실제 움직임
 
-	Pattern curPattern = FULLBURST;
+	Pattern curPattern = HS_FLYFALLATK;
 	State curState = E_0003; //= 기본 스테이트;
 	State preState = curState;
 
@@ -469,7 +469,6 @@ private:
 	bool isHupGi = true;
 	bool renderJet = false;
 	bool renderJetRight = false;
-	bool renderLaser = false;
 
 	bool  isFindTrgt = false;
 	float roarAfterTimer = 0.0f;  // 인식 포효 이후부터 타이머 시작
@@ -518,5 +517,4 @@ private:
 
 	vector<Transform*> zetPos;
 	vector<ValZet*> valZets;
-	ValZet* laserBeam;
 };

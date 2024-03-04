@@ -265,13 +265,6 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 		valZets.push_back(valzet);
 		valZets[i]->SetParent(zetPos[i]);
 	}
-	laserBeam = new ValZet();
-	laserBeam->Rot().z -= XM_PIDIV2;
-	laserBeam->Scale() *=  10;
-	laserBeam->Scale().z *= 3;
-	laserBeam->SetParent(zetPos[1]);
-
-
 
 	//FOR(6) jetParticle.push_back(new Val_Jet_Particle());
 	
@@ -381,7 +374,6 @@ void Valphalk::Update()
 	FOR(6)
 		valZets[i]->Update();
 
-	laserBeam->Update();
 //	if (timer2>=0.11)
 //	{
 //		jetParticle[0]->Play(GetTranslationByNode(61), GetRotationByNode(61).Back() + 300);// + GetRotationByNode(61).Left());
@@ -432,8 +424,7 @@ void Valphalk::Render()
 		FOR(6) valZets[i]->Render();
 	if (renderJetRight)
 		FOR(3) valZets[i+3]->Render();
-	if (renderLaser)
-		laserBeam->Render();
+
 
 //	FOR(jetParticle.size()) jetParticle[i]->Render();
 }
@@ -685,21 +676,9 @@ void Valphalk::FullBurst()
 			Scale().x *= -1;
 		sequence++;
 	}
-	if (sequence == 4) 
-	{	
-		SetState(E_2361); 
-		E2361(); 
-		if (!renderLaser)
-			renderLaser = true;
-	}
+	if (sequence == 4) { SetState(E_2361); E2361(); }
 	if (sequence == 5) { SetState(E_2367); E2367(); }
-	if (sequence == 6) 
-	{ 
-		SetState(E_2368); 
-		E2368(); 		
-		if (renderLaser)
-			renderLaser = false;
-	}
+	if (sequence == 6) { SetState(E_2368); E2368(); }
 	if (sequence == 7)
 	{
 		isSlashMode = true;
