@@ -124,7 +124,6 @@ void Player::Update()
 
 	ModelAnimator::Update();
 	UIManager::Get()->Update();
-	Potion();
 	GroundCheck();
 
 	if (KEY_DOWN('5'))/// 디버그 확인용이라 필요없으면 지워도 됨
