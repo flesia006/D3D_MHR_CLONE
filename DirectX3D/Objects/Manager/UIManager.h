@@ -127,6 +127,9 @@ private:
     Quad* greatepotionIcon_D;
     Quad* whetstoneIcon_D;
     //===================
+    vector<Quad*> itemNumber_Q;
+    vector<Quad*> itemNumber_D;
+    //===================
     
     //액터의 UI
     ProgressBar* hp;
@@ -187,7 +190,6 @@ public:
     float wildBugDuration = 0.0f;
     
     // 퀵 슬롯 실행 할때 유무 확인 하기
-    bool useDragSlot = false;
     // 일단 8칸 이라 8개 만들건데 바뀔수 있음
     bool useQuickSlot1 = false;
     bool useQuickSlot2 = false;
@@ -200,5 +202,15 @@ public:
     // 아래 이건 특정 키를 누르면 Bar가 활성화됨
     bool useSelectBar = false;
     Vector3 MousePos;
+
+    int havePotion = 20;
+    int haveGPotion = 10;
+
+    // 드래그 슬롯 실행 할때 유무 확인 하기
+    bool useDragSlot1 = true;
+    bool useDragSlot2 = false;
+    bool useDragSlot3 = false;
+
+    int DragCout = 0;
 };
 

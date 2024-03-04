@@ -270,7 +270,8 @@ void Player::Potion()
 {
 	time += DELTA;
 
-	if (UIManager::Get()->useQuickSlot1)
+	if (UIManager::Get()->useQuickSlot1 && UIManager::Get()->haveGPotion > 0 
+		|| UIManager::Get()->useDragSlot1 && UIManager::Get()->haveGPotion > 0 && KEY_DOWN('E'))
 	{		
 		Sounds::Get()->Play("health_potion", 0.3f);
 		UIManager::Get()->useQuickSlot1 = false;
@@ -293,7 +294,8 @@ void Player::Potion()
 		}
 	}
 
-	if (UIManager::Get()->useQuickSlot2)
+	if (UIManager::Get()->useQuickSlot2 && UIManager::Get()->havePotion > 10
+		|| UIManager::Get()->useDragSlot3 && UIManager::Get()->havePotion > 10 && KEY_DOWN('E'))
 	{
 		Sounds::Get()->Play("health_potion", 0.3f);
 		UIManager::Get()->useQuickSlot2 = false;
