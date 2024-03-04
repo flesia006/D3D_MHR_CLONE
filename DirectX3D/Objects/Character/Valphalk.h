@@ -143,6 +143,9 @@ public:
 	Transform* GetTransform(int index) { return transforms[index]; }
 	vector<CapsuleCollider*> GetCollider() { return colliders; }
 
+	void minusCurHP(int damage) { curHP -= damage; }
+	bool GetIsHupgi() { return isHupGi; }
+
 	//ColliderName GetName() { return colliderName; }
 	float damage = 0.1f;
 
@@ -192,6 +195,7 @@ private:
 
 	void SetState(State state, float rad = 0);
 
+	void DeathCheck();
 
 	void ChooseNextPattern();
 	void ConditionCheck();
@@ -498,6 +502,7 @@ private:
 	int whichPat = 0;
 
 	bool isReverse = false;
+	bool isStagger = false;
 
 public:
 	float maxHP = 5000;

@@ -851,6 +851,17 @@ bool Player::Attack(float power, bool push, UINT useOtherCollider) // Ãæµ¹ÆÇÁ¤ Ç
 			damage.hitPart = collider->part;
 			lastHitPart = collider->part;
 			lastSwordDir = swordSwingDir;
+			
+			val->minusCurHP(deal);
+
+			if (collider->part == Valphalk::HEAD
+				|| collider->part == Valphalk::LLEG1
+				|| collider->part == Valphalk::RLEG1
+				|| collider->part == Valphalk::TAIL)
+				collider->minusPartHP(deal);
+
+			if (collider->part == Valphalk::CHEST && val->GetIsHupgi())
+				collider->minusPartHP(deal);
 
 			if (hardness >= 30)				// À°ÁúÀÌ 30 ÀÌ»óÀ¸·Î ³ë¶õµ¥¹ÌÁö°¡ ¶ß´Â »óÈ²
 				damage.isWeakness = true;
@@ -1047,6 +1058,12 @@ void Player::HurtCheck()
 			{
 				if (curState >= L_400)
 					return;
+
+				if (curState == L_155 && RATIO < 0.36)
+				{
+					isEvaded = true;
+					return;
+				}
 
 				int str = collider->atkStrength;
 				if (rad.x > XM_PIDIV2)
@@ -2707,7 +2724,11 @@ void Player::L147() // °£ÆÄº£±â
 	// Æ¯³³ Äµ½½ °¡´É Å¸ÀÌ¹Ö
 	{
 		if (RATIO > 0.205f && RATIO < 0.30f && K_CTRLSPACE)
+		{
+			if (isEvaded)
+				isEvaded = false;
 			SetState(L_151);	// Æ¯¼ö ³³µµ
+		}
 	}
 
 
@@ -2908,24 +2929,25 @@ void Player::L155() // ¾É¾Æ¹ßµµ ±âÀÎº£±â
 			EndEffect();
 	}
 
-	// Ä«¿îÅÍ ¼º°ø ½Ã Ãß°¡ °ø°Ý ÇÁ·¹ÀÓ (TODO :: Ä«¿îÅÍ Á¶°ÇÀ» ¸¸µé¾î¾ß ÇÔ)
+	// Ä«¿îÅÍ ¼º°ø ½Ã Ãß°¡ °ø°Ý ÇÁ·¹ÀÓ
 	{
-		if (isHit && (RATIO >0.385  && RATIO < 0.39))
+		if (isEvaded && isHit && (RATIO >0.385  && RATIO < 0.39))
 		{
 			if(isHitL155==false)
 			UIManager::Get()->PlusCotingLevel();
 
 			isHitL155 = true;
 			Sounds::Get()->Play("pl_wp_l_swd_epv_media.bnk.2_8", .5f);			
-
+			isEvaded = false;
 		}
 	}
-
 
 	// Äµ½½ °¡´É ÇÁ·¹ÀÓ
 	{
 		if (RATIO > 0.39)
 		{
+			isEvaded = false; // ¸¸¾à ¾Õ¿¡¼­ true·Î ³²¾ÆÀÖ´Â °æ¿ì º¸Çè¿ë
+
 			if		(K_LMB)			SetState(L_101); // ³»µðµ®º£±â
 			else if (K_CTRL)		SetState(L_108); // ±âÀÎ º£±â 3		
 			else if (K_CTRLSPACE)	SetState(L_151); // Æ¯¼ö ³³µµ
@@ -2940,7 +2962,7 @@ void Player::L155() // ¾É¾Æ¹ßµµ ±âÀÎº£±â
 			CAM->Zoom(300, 5);
 	}
 
-	if (RATIO > 0.98)
+	if (RATIO > 0.96)
 	{
 		ReturnIdle();
 		isDoubleStrikeMotion = false;
@@ -3303,6 +3325,7 @@ void Player::DamageRender()
 	for (auto& d : damages)
 	{
 		d.timer += DELTA;
+		static bool calculatedOnce;
 
 		if (d.timer < 1.5f)
 		{

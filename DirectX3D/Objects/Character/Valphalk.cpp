@@ -1,4 +1,5 @@
 #include "Framework.h"
+#include "Scenes/FightTestScene.h"
 #include "Scenes/ShadowScene.h"
 
 Valphalk::Valphalk() : ModelAnimator("Valphalk")
@@ -305,6 +306,7 @@ void Valphalk::Update()
 	GetRadBtwTrgt();
 	PlayPattern();
 	ConditionCheck();
+	DeathCheck();
 	PartDestroyCheck();
 	head->Pos() = realPos->Pos() + Vector3::Up() * 200;
 	head->UpdateWorld();
@@ -368,7 +370,21 @@ void Valphalk::Update()
 
 	ModelAnimator::Update();
 	
-
+	///////////////////////
+	//디버그용
+	if (KEY_DOWN('5'))
+	{
+		colliders[HEAD]->minusPartHP(5000);
+	}
+	if (KEY_DOWN('6'))
+	{
+		colliders[LLEG1]->minusPartHP(700);
+	}
+	if (KEY_DOWN('7'))
+	{
+		curHP -= 2000;
+	}
+	////////////////////////
 }
 
 void Valphalk::PreRender()
@@ -414,6 +430,8 @@ void Valphalk::GUIRender()
 
 	ImGui::DragInt("whichPat", &whichPat);
 	ImGui::Text("curHP : %f", curHP);
+	ImGui::Text("headHP : %f", colliders[HEAD]->partHp);
+	ImGui::Text("llegHP : %f", colliders[LLEG1]->partHp);
 	//for (int i = 0; i < colliders.size(); i++)
 	//{
 	//	colliders[i]->GUIRender();
@@ -753,8 +771,16 @@ void Valphalk::S_SmallStagger()
 		SetState(E_3001);	E3001();
 	}
 
-	if (sequence == 1)// 대경직 루프
+	if (sequence == 1)
+	{
+		isStagger = false;
+
+		if (colliders[HEAD]->partHp < 0)
+			colliders[HEAD]->partHp = 8000;
+		else if (colliders[TAIL]->partHp < 0)
+			colliders[TAIL]->partHp = 8000;
 		ChooseNextPattern();
+	}
 }
 
 void Valphalk::S_HugeStagger()
@@ -775,7 +801,17 @@ void Valphalk::S_HugeStagger()
 	}
 
 	if (sequence == 3)
+	{
+		isStagger = false;
+
+		if (colliders[LLEG1]->partHp < 0)
+			colliders[LLEG1]->partHp = 2500;
+		else if (colliders[RLEG1]->partHp < 0)
+			colliders[RLEG1]->partHp = 2500;
+		else if (colliders[CHEST]->partHp < 0)
+			colliders[CHEST]->partHp = 1500;
 		ChooseNextPattern();
+	}
 }
 
 void Valphalk::B_Dead()
@@ -790,8 +826,16 @@ void Valphalk::B_SmallStagger()
 		SetState(E_3101);	E3101();
 	}
 
-	if (sequence == 1)// 대경직 루프
+	if (sequence == 1)
+	{
+		isStagger = false;
+
+		if (colliders[HEAD]->partHp < 0)
+			colliders[HEAD]->partHp = 8000;
+		else if (colliders[TAIL]->partHp < 0)
+			colliders[TAIL]->partHp = 8000;
 		ChooseNextPattern();
+	}
 }
 
 void Valphalk::B_HugeStagger()
@@ -812,7 +856,17 @@ void Valphalk::B_HugeStagger()
 	}
 
 	if (sequence == 3)
+	{
+		isStagger = false;
+
+		if (colliders[LLEG1]->partHp < 0)
+			colliders[LLEG1]->partHp = 2500;
+		else if (colliders[RLEG1]->partHp < 0)
+			colliders[RLEG1]->partHp = 2500;
+		else if (colliders[CHEST]->partHp < 0)
+			colliders[CHEST]->partHp = 1500;
 		ChooseNextPattern();
+	}
 }
 
 void Valphalk::SetEvent(int clip, Event event, float timeRatio)
@@ -852,6 +906,12 @@ void Valphalk::SetState(State state, float rad)
 	curState = state;
 
 	//PlayClip(state);
+}
+
+void Valphalk::DeathCheck()
+{
+	if (curHP < 0)
+		curPattern = S_DEAD;
 }
 
 void Valphalk::Patrol()
@@ -1043,10 +1103,23 @@ void Valphalk::PartDestroyCheck()
 	if (curPattern == HS_FLYFALLATK)
 		return;
 
+	if (isStagger)
+		return;
+
+	if (curHP < 0)
+		return;
 
 	if (colliders[HEAD]->partHp < 0)
 	{
-		colliders[HEAD]->partHp = 8000;
+		sequence = 0;
+		radDifference = 0;
+		initialRad = Rot().y;
+		isStagger = true;
+
+		for (auto collider : colliders)
+			if (collider->isAttack)
+				collider->isAttack = false;
+
 		if (isSlashMode)
 			curPattern = S_SMALLSTAGGER;
 		else
@@ -1055,7 +1128,15 @@ void Valphalk::PartDestroyCheck()
 
 	if (colliders[LLEG1]->partHp < 0)
 	{
-		colliders[LLEG1]->partHp = 2500;
+		sequence = 0;
+		radDifference = 0;
+		initialRad = Rot().y;
+		isStagger = true;
+
+		for (auto collider : colliders)
+			if (collider->isAttack)
+				collider->isAttack = false;
+
 		if (isSlashMode)
 			curPattern = S_HUGESTAGGER;
 		else
@@ -1064,7 +1145,32 @@ void Valphalk::PartDestroyCheck()
 
 	if (colliders[RLEG1]->partHp < 0)
 	{
-		colliders[RLEG1]->partHp = 2500;
+		sequence = 0;
+		radDifference = 0;
+		initialRad = Rot().y;
+		isStagger = true;
+
+		for (auto collider : colliders)
+			if (collider->isAttack)
+				collider->isAttack = false;
+
+		if (isSlashMode)
+			curPattern = S_HUGESTAGGER;
+		else
+			curPattern = B_HUGESTAGGER;
+	}
+
+	if (colliders[CHEST]->partHp < 0)
+	{
+		sequence = 0;
+		radDifference = 0;
+		initialRad = Rot().y;
+		isStagger = true;
+
+		for (auto collider : colliders)
+			if (collider->isAttack)
+				collider->isAttack = false;
+
 		if (isSlashMode)
 			curPattern = S_HUGESTAGGER;
 		else
@@ -1073,11 +1179,19 @@ void Valphalk::PartDestroyCheck()
 
 	if (colliders[TAIL]->partHp < 0)
 	{
-		colliders[TAIL]->partHp = FLT_MAX;
+		sequence = 0;
+		radDifference = 0;
+		initialRad = Rot().y;
+		isStagger = true;
+
+		for (auto collider : colliders)
+			if (collider->isAttack)
+				collider->isAttack = false;
+
 		if (isSlashMode)
 			curPattern = S_SMALLSTAGGER;
 		else
-			curPattern = S_SMALLSTAGGER;
+			curPattern = B_SMALLSTAGGER;
 	}
 }
 
@@ -1138,6 +1252,12 @@ void Valphalk::ChooseNextPattern()
 		ult50 = false;
 		return;
 	}
+
+	if (isStagger)
+		return;
+
+	if (curHP < 0)
+		return;
 	
 	//int i = rand() % 2;
 	//switch (i)

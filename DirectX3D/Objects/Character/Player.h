@@ -62,6 +62,7 @@ public:
 	void PostRender();
 
 	CapsuleCollider* getCollider() { return tmpCollider; }
+	CapsuleCollider* getSwordCollider() { return swordCollider; }
 	Transform* GetRealPos() { return realPos; }
 
 private:
