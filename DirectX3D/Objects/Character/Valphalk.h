@@ -510,6 +510,7 @@ public:
 	// ÆÄÆ¼Å¬
 private:
 	vector<Val_Jet_Particle*> jetParticle;
+	vector<Val_fire*> fireParticle;
 	float timer2 = 0;
 	Transform* jetpos;
 	Transform* jetposend;

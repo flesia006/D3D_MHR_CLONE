@@ -142,6 +142,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Objects\Particle\Val_fire.h" />
     <ClInclude Include="Scenes\FightTestScene.h" />
     <ClInclude Include="Objects\Character\DummyValphalk.h" />
     <ClInclude Include="Objects\Particle\CriticalParticle.h" />
@@ -287,6 +288,7 @@
     <ClInclude Include="Scenes\ValphalkTestScene.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Objects\Particle\Val_fire.cpp" />
     <ClCompile Include="Scenes\FightTestScene.cpp" />
     <ClCompile Include="Objects\Character\DummyValphalk.cpp" />
     <ClCompile Include="Objects\Particle\CriticalParticle.cpp" />

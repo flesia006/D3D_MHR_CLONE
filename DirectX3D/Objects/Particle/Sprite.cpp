@@ -31,7 +31,7 @@ void Sprite::Update()
 
     time += speed * DELTA;
 
-    if (time > 0.1f) //0.1f : 임의의 기준시간. 나중에 개발자가 수정 가능
+    if (time > 0.04f) //0.1f : 임의의 기준시간. 나중에 개발자가 수정 가능
     {
         curFrameCount++; //프레임 +1
         //프레임 위치 찾기

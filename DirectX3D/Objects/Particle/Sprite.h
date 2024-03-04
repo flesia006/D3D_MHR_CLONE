@@ -36,7 +36,7 @@ public:
     void GUIRender();
 
     void Play(Vector3 pos);
-
+    
 private:
     void Create();
 

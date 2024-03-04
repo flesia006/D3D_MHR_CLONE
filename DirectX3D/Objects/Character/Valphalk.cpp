@@ -187,7 +187,7 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 	}
 
 	forwardBoom = new BoxCollider();
-	forwardBoom->Scale() *=700;
+	forwardBoom->Scale() *= 700;
 	forwardBoom->SetColor(1, 0, 0);
 	forwardBoom->Pos() = forwardBoomPosInit;
 	forwardBoom->SetParent(head);
@@ -255,7 +255,7 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 
 	// 파티클
 	FOR(6) jetParticle.push_back(new Val_Jet_Particle());
-	
+	FOR(6) fireParticle.push_back(new Val_fire());
 	{
 		//jetParticle[0]->Play(bullets[0]->Pos(),GetRotationByNode(61));
 		//jetParticle[1]->Play(bullets[1]->Pos(),GetRotationByNode(64));
@@ -294,6 +294,7 @@ Valphalk::~Valphalk()
 	delete effectSphere1;
 	delete effectSphere2;
 	jetParticle.clear();
+	fireParticle.clear();
 }
 
 void Valphalk::Update()
@@ -346,8 +347,9 @@ void Valphalk::Update()
 	ColliderNodePos();
 
 	FOR(jetParticle.size()) jetParticle[i]->Update();
+	FOR(fireParticle.size()) fireParticle[i]->Update();
 	//Jet();
-	
+
 	ModelAnimator::Update();
 
 }
@@ -382,6 +384,7 @@ void Valphalk::Render()
 	realPos->Render();
 
 	FOR(jetParticle.size()) jetParticle[i]->Render();
+	FOR(fireParticle.size()) fireParticle[i]->Render();
 }
 
 void Valphalk::GUIRender()
@@ -454,7 +457,7 @@ void Valphalk::Jet()
 	jetpos1_1 = GetTranslationByNode(60);
 	jetpos1_2 = GetTranslationByNode(61);
 	jetpos1 = jetpos1_2 - jetpos1_1;
-	jetpos1.GetNormalized();		
+	jetpos1.GetNormalized();
 	jetpos2_1 = GetTranslationByNode(63);
 	jetpos2_2 = GetTranslationByNode(64);
 	jetpos2 = jetpos1_2 - jetpos1_1;
@@ -513,6 +516,8 @@ void Valphalk::Storm()
 void Valphalk::EnergyBullets()
 {
 	static int whichPattern = 0;
+	FOR(6) fireParticle[i]->SetVortex(bullets[i]->Pos());
+
 	if (sequence == 0) // 각도 정하기
 	{
 		whichPattern = SetRadAndMirror(true);
@@ -537,15 +542,32 @@ void Valphalk::EnergyBullets()
 			Scale().x *= -1;
 		sequence++;
 	}
+	Vector3 fire1 = GetTranslationByNode(61) - GetTranslationByNode(60);
+	Vector3 fire2 = GetTranslationByNode(64) - GetTranslationByNode(63);
+	Vector3 fire3 = GetTranslationByNode(67) - GetTranslationByNode(66);
+	Vector3 fire4 = GetTranslationByNode(81) - GetTranslationByNode(80);
+	Vector3 fire5 = GetTranslationByNode(84) - GetTranslationByNode(83);
+	Vector3 fire6 = GetTranslationByNode(87) - GetTranslationByNode(86);
+	fire1.GetNormalized();
+	fire2.GetNormalized();
+	fire3.GetNormalized();
+	fire4.GetNormalized();
+	fire5.GetNormalized();
+	fire6.GetNormalized();
 
 	if (sequence == 3) // 탄의 포지션 잡아주기
 	{
-		bullets[0]->Pos() = GetTranslationByNode(61);
-		bullets[1]->Pos() = GetTranslationByNode(64);
-		bullets[2]->Pos() = GetTranslationByNode(67);
-		bullets[3]->Pos() = GetTranslationByNode(81);
-		bullets[4]->Pos() = GetTranslationByNode(84);
-		bullets[5]->Pos() = GetTranslationByNode(87);
+		bullets[0]->Pos() = GetTranslationByNode(61) + fire1 * .81f;
+		bullets[1]->Pos() = GetTranslationByNode(64) + fire2 * .81f;
+		bullets[2]->Pos() = GetTranslationByNode(67) + fire3 * .81f;
+		bullets[3]->Pos() = GetTranslationByNode(81) + fire4 * .81f;
+		bullets[4]->Pos() = GetTranslationByNode(84) + fire5 * .81f;
+		bullets[5]->Pos() = GetTranslationByNode(87) + fire6 * .81f;
+		FOR(6)
+		{
+			fireParticle[i]->Play(bullets[i]->Pos(), bullets[i]->Rot());
+			fireParticle[i]->PlaySpark(bullets[i]->Pos());
+		}
 
 		for (int i = 0; i < bullets.size(); ++i)
 		{
@@ -564,17 +586,20 @@ void Valphalk::EnergyBullets()
 	}
 	if (sequence == 5)
 	{
-		SetState(E_2079); E2079();	
+		SetState(E_2079); E2079();
 	}
 	if (sequence == 6) // 값 초기화 및 패턴 넘기기
-	{ 	
+	{
 		for (int i = 0; i < 6; ++i)
 		{
+			if (bullets[i]->Pos().y >= 0)
+				fireParticle[i]->Play(bullets[i]->Pos(), bullets[i]->Rot());
+
 			randX[i] = 0;
 			randZ[i] = 0;
 		}
-		whichPattern = 0; 
-		ChooseNextPattern(); 
+		whichPattern = 0;
+		ChooseNextPattern();
 	}
 }
 
@@ -888,7 +913,7 @@ void Valphalk::Patrol()
 {
 	static int whichPattern = 0;
 	static int loopCount = 0;
-	
+
 	if (sequence == 0) // 방향을 정해
 	{
 		// 걸어가는 방향은 맵 중앙 주위로 랜덤이야
@@ -956,10 +981,10 @@ void Valphalk::Patrol()
 	}
 
 	if (sequence == 2) // 루프해
-	{		
+	{
 
 
-		SetState(E_0055);  
+		SetState(E_0055);
 
 		// E_0055
 		{
@@ -987,7 +1012,7 @@ void Valphalk::Patrol()
 			Scale().x = 1;
 
 		// 플레이어가 근처에 있는지 체크해
-		if((target->GlobalPos()- realPos->Pos()).Length() < 4000)
+		if ((target->GlobalPos() - realPos->Pos()).Length() < 4000)
 			sequence++; // 있으면 포효로
 		else
 			sequence = 0; // 없으면 루프해
@@ -1147,221 +1172,221 @@ void Valphalk::ChooseNextPattern()
 		needHupGi = false;
 		return;
 	}
-	
+
 	if (angerRoar90)
 	{
 		curPattern = ANGERROAR;
 		angerRoar90 = false;
 		return;
 	}
-	
+
 	if (angerRoar40)
 	{
 		curPattern = ANGERROAR;
 		angerRoar40 = false;
 		return;
 	}
-	
+
 	if (ult50)
 	{
 		curPattern = STORM;
 		ult50 = false;
 		return;
 	}
-	
-	//int i = rand() % 2;
-	//switch (i)
-	//{
-	//case 0:	curPattern = B_SMALLSTAGGER;	 break;
-	//case 1:	curPattern = B_HUGESTAGGER;		 break;
-	//}
-	
-	if (!needHupGi && !angerRoar90 && !angerRoar40 && !ult50)
+
+	int i = rand() % 2;
+	switch (0)
 	{
-	
-		if (distance < 2000)    // 근
-		{
-			if (isSlashMode)	   // 참
-			{
-				if (isHupGi)    // 흡
-				{
-					int i = rand() % 4;
-					switch (i)
-					{
-					case 0:	curPattern = S_LEGATK;		 break;
-					case 1:	curPattern = S_STABATK;		 break;
-					case 2:	curPattern = S_BACKWINGATK;  break;
-					case 3:	curPattern = HS_FLYFALLATK;  break;  // 호버링
-					}
-				}
-				else           // ㄴ흡
-				{
-					int i = rand() % 4;
-					switch (i)
-					{
-					case 0:	curPattern = S_LEGATK;	  break;
-					case 1:	curPattern = S_STABATK;	  break;
-					case 2:	curPattern = S_BACKWINGATK;  break;
-					case 3:	curPattern = S_BITE;		break;
-					}
-				}
-			}
-			else               // 포
-			{
-				if (isHupGi)   // 흡
-				{
-					int i = rand() % 5;
-					switch (i)
-					{
-					case 0:	curPattern = HB_WINGATK;	  break;
-					case 1:	curPattern = B_DOWNBLAST;	  break;
-					case 2:	curPattern = FORWARDBOOM;	break;
-					case 3:	curPattern = HS_FLYFALLATK;	break;
-					case 4:	curPattern = FULLBURST;	break;
-					}
-				}
-				else           // ㄴ흡
-				{
-					int i = rand() % 4;
-					switch (i)
-					{
-					case 0:	curPattern = B_SWINGATK;	  break;
-					case 1:	curPattern = B_WINGATK;	  break;
-					case 2:	curPattern = B_DOWNBLAST;  break;
-					case 3:	curPattern = FORWARDBOOM;  break;
-					}
-				}
-			}
-	
-		}
-	
-		else if (distance >= 2000 && distance < 4000)  // 중
-		{
-			if (isSlashMode) // 참
-			{
-				if (isHupGi) // 흡
-				{
-					int i = rand() % 4;
-					switch (i)
-					{
-					case 0:	curPattern = S_STABATK;	  break;
-					case 1:	curPattern = S_SRUSH;  break;
-					case 2:	curPattern = HS_FLYFALLATK;	  break;
-					case 3:
-						if (curPattern != B_TRANSFORM)
-							curPattern = S_TRANSFORM;
-						else curPattern = HS_FLYFALLATK;
-						break;
-					}
-				}
-				else		// 흡ㄴ
-				{
-					int i = rand() % 3;
-					switch (i)
-					{
-					case 0:	curPattern = S_STABATK;	  break;
-					case 1:	curPattern = S_SRUSH;	  break;
-					case 2:
-						if (curPattern != B_TRANSFORM)
-							curPattern = S_TRANSFORM;
-						else curPattern = S_STABATK;
-						break;
-					}
-				}
-			}
-			else			  // 포
-			{
-				if (isHupGi)  // 흡
-				{
-					int i = rand() % 5;
-					switch (i)
-					{
-					case 0:	curPattern = B_DOWNBLAST;	  break;
-					case 1:	curPattern = FORWARDBOOM;	  break;
-					case 2:	curPattern = HS_FLYFALLATK;	  break;
-					case 3:	curPattern = FULLBURST;	break;
-					case 4:	curPattern = B_DUMBLING;  break;
-					}
-				}
-				else		  // 흡 ㄴ
-				{
-					int i = rand() % 5;
-					switch (i)
-					{
-					case 0:	curPattern = B_SWINGATK;	  break;
-					case 1:	curPattern = FORWARDBOOM;	  break;
-					case 2:	curPattern = B_ENERGYBLAST;  break;
-					case 3:	curPattern = B_DUMBLING;  break;
-					case 4:
-						if (curPattern != S_TRANSFORM)
-							curPattern = B_TRANSFORM;
-						else curPattern = B_SWINGATK;
-						break;
-					}
-				}
-			}
-	
-		}
-	
-		else if (distance > 2000)   // 원
-		{
-			if (isSlashMode)        // 참
-			{
-				if (isHupGi)        // 흡
-				{
-					int i = rand() % 2;
-					switch (i)
-					{
-					case 0:	curPattern = S_JETRUSH;	  break;
-					case 1:	curPattern = HS_FLYFALLATK;	  break;
-					}
-				}
-				else                // 흡ㄴ
-				{
-					int i = rand() % 3;
-					switch (i)
-					{
-					case 0:	curPattern = S_JETRUSH;	  break;
-					case 1:	curPattern = S_RUNANDBITE;	  break;
-						//case 2:	curPattern = S_RUNTOTRGT;  break; //TODO
-					case 2:
-						if (curPattern != B_TRANSFORM)
-							curPattern = S_TRANSFORM;
-						else curPattern = S_STABATK;
-						break;
-					}
-				}
-			}
-			else                   //포
-			{
-				if (isHupGi)       // 흡
-				{
-					int i = rand() % 3;
-					switch (i)
-					{
-					case 0:	curPattern = FULLBURST;		break;
-					case 1:	curPattern = B_DUMBLING;  break;
-					case 2:	curPattern = HS_FLYFALLATK;  break; // 트랜스폼 하고 날게 수정
-					}
-				}
-				else              // 흡ㄴ
-				{
-					int i = rand() % 3;
-					switch (i)
-					{
-					case 0:	curPattern = B_ENERGYBLAST;		break;
-					case 1:	curPattern = B_DUMBLING;		break;
-					case 2:
-						if (curPattern != S_TRANSFORM)
-							curPattern = B_TRANSFORM;
-						else curPattern = B_SWINGATK;
-						break;
-					}
-				}
-			}
-	
-		}
+	case 0:	curPattern = B_ENERGYBLAST;	 break;
+	case 1:	curPattern = B_HUGESTAGGER;		 break;
 	}
+	//
+	//if (!needHupGi && !angerRoar90 && !angerRoar40 && !ult50)
+	//{
+	//
+	//	if (distance < 2000)    // 근
+	//	{
+	//		if (isSlashMode)	   // 참
+	//		{
+	//			if (isHupGi)    // 흡
+	//			{
+	//				int i = rand() % 4;
+	//				switch (i)
+	//				{
+	//				case 0:	curPattern = S_LEGATK;		 break;
+	//				case 1:	curPattern = S_STABATK;		 break;
+	//				case 2:	curPattern = S_BACKWINGATK;  break;
+	//				case 3:	curPattern = HS_FLYFALLATK;  break;  // 호버링
+	//				}
+	//			}
+	//			else           // ㄴ흡
+	//			{
+	//				int i = rand() % 4;
+	//				switch (i)
+	//				{
+	//				case 0:	curPattern = S_LEGATK;	  break;
+	//				case 1:	curPattern = S_STABATK;	  break;
+	//				case 2:	curPattern = S_BACKWINGATK;  break;
+	//				case 3:	curPattern = S_BITE;		break;
+	//				}
+	//			}
+	//		}
+	//		else               // 포
+	//		{
+	//			if (isHupGi)   // 흡
+	//			{
+	//				int i = rand() % 5;
+	//				switch (i)
+	//				{
+	//				case 0:	curPattern = HB_WINGATK;	  break;
+	//				case 1:	curPattern = B_DOWNBLAST;	  break;
+	//				case 2:	curPattern = FORWARDBOOM;	break;
+	//				case 3:	curPattern = HS_FLYFALLATK;	break;
+	//				case 4:	curPattern = FULLBURST;	break;
+	//				}
+	//			}
+	//			else           // ㄴ흡
+	//			{
+	//				int i = rand() % 4;
+	//				switch (i)
+	//				{
+	//				case 0:	curPattern = B_SWINGATK;	  break;
+	//				case 1:	curPattern = B_WINGATK;	  break;
+	//				case 2:	curPattern = B_DOWNBLAST;  break;
+	//				case 3:	curPattern = FORWARDBOOM;  break;
+	//				}
+	//			}
+	//		}
+	//
+	//	}
+	//
+	//	else if (distance >= 2000 && distance < 4000)  // 중
+	//	{
+	//		if (isSlashMode) // 참
+	//		{
+	//			if (isHupGi) // 흡
+	//			{
+	//				int i = rand() % 4;
+	//				switch (i)
+	//				{
+	//				case 0:	curPattern = S_STABATK;	  break;
+	//				case 1:	curPattern = S_SRUSH;  break;
+	//				case 2:	curPattern = HS_FLYFALLATK;	  break;
+	//				case 3:
+	//					if (curPattern != B_TRANSFORM)
+	//						curPattern = S_TRANSFORM;
+	//					else curPattern = HS_FLYFALLATK;
+	//					break;
+	//				}
+	//			}
+	//			else		// 흡ㄴ
+	//			{
+	//				int i = rand() % 3;
+	//				switch (i)
+	//				{
+	//				case 0:	curPattern = S_STABATK;	  break;
+	//				case 1:	curPattern = S_SRUSH;	  break;
+	//				case 2:
+	//					if (curPattern != B_TRANSFORM)
+	//						curPattern = S_TRANSFORM;
+	//					else curPattern = S_STABATK;
+	//					break;
+	//				}
+	//			}
+	//		}
+	//		else			  // 포
+	//		{
+	//			if (isHupGi)  // 흡
+	//			{
+	//				int i = rand() % 5;
+	//				switch (i)
+	//				{
+	//				case 0:	curPattern = B_DOWNBLAST;	  break;
+	//				case 1:	curPattern = FORWARDBOOM;	  break;
+	//				case 2:	curPattern = HS_FLYFALLATK;	  break;
+	//				case 3:	curPattern = FULLBURST;	break;
+	//				case 4:	curPattern = B_DUMBLING;  break;
+	//				}
+	//			}
+	//			else		  // 흡 ㄴ
+	//			{
+	//				int i = rand() % 5;
+	//				switch (i)
+	//				{
+	//				case 0:	curPattern = B_SWINGATK;	  break;
+	//				case 1:	curPattern = FORWARDBOOM;	  break;
+	//				case 2:	curPattern = B_ENERGYBLAST;  break;
+	//				case 3:	curPattern = B_DUMBLING;  break;
+	//				case 4:
+	//					if (curPattern != S_TRANSFORM)
+	//						curPattern = B_TRANSFORM;
+	//					else curPattern = B_SWINGATK;
+	//					break;
+	//				}
+	//			}
+	//		}
+	//
+	//	}
+	//
+	//	else if (distance > 2000)   // 원
+	//	{
+	//		if (isSlashMode)        // 참
+	//		{
+	//			if (isHupGi)        // 흡
+	//			{
+	//				int i = rand() % 2;
+	//				switch (i)
+	//				{
+	//				case 0:	curPattern = S_JETRUSH;	  break;
+	//				case 1:	curPattern = HS_FLYFALLATK;	  break;
+	//				}
+	//			}
+	//			else                // 흡ㄴ
+	//			{
+	//				int i = rand() % 3;
+	//				switch (i)
+	//				{
+	//				case 0:	curPattern = S_JETRUSH;	  break;
+	//				case 1:	curPattern = S_RUNANDBITE;	  break;
+	//					//case 2:	curPattern = S_RUNTOTRGT;  break; //TODO
+	//				case 2:
+	//					if (curPattern != B_TRANSFORM)
+	//						curPattern = S_TRANSFORM;
+	//					else curPattern = S_STABATK;
+	//					break;
+	//				}
+	//			}
+	//		}
+	//		else                   //포
+	//		{
+	//			if (isHupGi)       // 흡
+	//			{
+	//				int i = rand() % 3;
+	//				switch (i)
+	//				{
+	//				case 0:	curPattern = FULLBURST;		break;
+	//				case 1:	curPattern = B_DUMBLING;  break;
+	//				case 2:	curPattern = HS_FLYFALLATK;  break; // 트랜스폼 하고 날게 수정
+	//				}
+	//			}
+	//			else              // 흡ㄴ
+	//			{
+	//				int i = rand() % 3;
+	//				switch (0)
+	//				{
+	//				case 0:	curPattern = B_ENERGYBLAST;		break;
+	//				case 1:	curPattern = B_DUMBLING;		break;
+	//				case 2:
+	//					if (curPattern != S_TRANSFORM)
+	//						curPattern = B_TRANSFORM;
+	//					else curPattern = B_SWINGATK;
+	//					break;
+	//				}
+	//			}
+	//		}
+	//
+	//	}
+	//}
 
 }
 
@@ -2100,7 +2125,7 @@ void Valphalk::B_DownBlast()
 	}
 
 	if (sequence == 2) // 공격 모션
-	{	
+	{
 		SetState(E_2082);
 		E2082();
 	}
@@ -2270,7 +2295,7 @@ void Valphalk::HS_FlyBlast()
 			{
 				bullets[i]->Pos().x = Lerp(bullets[i]->Pos().x, randX, 0.0024f);
 				bullets[i]->Pos().z = Lerp(bullets[i]->Pos().z, randZ, 0.0024f);
-				
+
 				bullets[i]->Pos().y -= 1500 * DELTA;
 			}
 		}
@@ -3188,19 +3213,22 @@ void Valphalk::E2054() // 찌르기 날개 회수
 void Valphalk::E2079()
 {
 	PLAY;
-	
+
 	for (int i = 0; i < bullets.size(); ++i)
 	{
 		if (RATIO > 0.1 + ((DELTA + (float)i) * 0.03f))
 		{
-			bullets[i]->Pos().x = Lerp(bullets[i]->Pos().x, randX[i], 0.0017f);
-			bullets[i]->Pos().z = Lerp(bullets[i]->Pos().z, randZ[i], 0.0017f);
+			bullets[i]->Pos().x = Lerp(bullets[i]->Pos().x, randX[i], 0.0167f);
+			bullets[i]->Pos().z = Lerp(bullets[i]->Pos().z, randZ[i], 0.0167f);
 
-			bullets[i]->Pos().y -= 400 * DELTA;
+			bullets[i]->Pos().y -= 420 * DELTA;
 		}
 
-		if (bullets[i]->Pos().y < 0)
+		else if (bullets[i]->Pos().y < 0)
+		{
 			bullets[i]->SetActive(false);
+			FOR(6) fireParticle[i]->Stop();
+		}
 	}
 
 	if (RATIO > 0.98)
@@ -3621,7 +3649,7 @@ void Valphalk::E2188()//정면 보고 왼발 들기
 {
 	PLAY;
 
-	if (RATIO > 0.16 && RATIO < 0.8) 
+	if (RATIO > 0.16 && RATIO < 0.8)
 		RotateToTarget(0.16, 0.7);
 
 
@@ -4342,7 +4370,7 @@ void Valphalk::EX2376()
 
 	if (RATIO > 0.19f)
 	{
-		if (RATIO < 0.20f )
+		if (RATIO < 0.20f)
 		{
 			effectSphere1->Scale() = { 500, 500, 500 };
 			effectSphere1->Pos() = GetTranslationByNode(64) + Back() * 100;
