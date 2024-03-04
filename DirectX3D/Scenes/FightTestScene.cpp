@@ -50,8 +50,8 @@ void FightTestScene::PostRender()
 
 void FightTestScene::GUIRender()
 {
-	player->GUIRender();
-//	valphalk->GUIRender();
+//	player->GUIRender();
+	valphalk->GUIRender();
 
 
 }

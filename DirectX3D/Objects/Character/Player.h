@@ -89,7 +89,7 @@ private:
 	void Roll();
 	void TermAttackUpdate();
 
-
+	bool DeathCheck();
 
 	void SetState(State state);	
 	void EndEffect();
@@ -294,7 +294,7 @@ private:
 	const float temp = -2.364f;  // 텍스트 띄우기 용 수치
 	const float temp2 = -6.038f; // 텍스트 띄우기 용 수치
 	const float temp3 = 14.067f; // 텍스트 띄우기 용 수치
-	float temp4 = 600.0f;
+	float temp4 = -580.0f;
 
 	float jumpVelocity = 2.8f;
 	const float originJumpVelocity = jumpVelocity;

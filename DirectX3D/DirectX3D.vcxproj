@@ -286,6 +286,7 @@
     <ClInclude Include="Objects\Character\Valphalk.h" />
     <ClInclude Include="Objects\Manager\UIManager.h" />
     <ClInclude Include="Scenes\ValphalkTestScene.h" />
+    <ClInclude Include="Objects\Particle\ValZet.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Objects\Particle\Val_fire.cpp" />
@@ -424,6 +425,7 @@
     <ClCompile Include="Objects\Manager\UIManager.cpp" />
     <ClCompile Include="Scenes\ValphalkTestScene.cpp" />
     <ClCompile Include="Objects\Particle\Sp_atk_ready_Particle.cpp" />
+    <ClCompile Include="Objects\Particle\ValZet.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DirectX3D.rc" />

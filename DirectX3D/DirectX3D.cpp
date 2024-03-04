@@ -9,6 +9,7 @@
 HINSTANCE hInst;
 HWND hWnd;
 Vector3 mousePos;
+Vector3 wheelPos;
 
 WCHAR szTitle[MAX_LOADSTRING];                  // 제목 표시줄 텍스트입니다.
 WCHAR szWindowClass[MAX_LOADSTRING];            // 기본 창 클래스 이름입니다.
@@ -160,6 +161,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         mousePos.x = (float)LOWORD(lParam);
         mousePos.y = WIN_HEIGHT - (float)HIWORD(lParam);
         break;
+    case WM_MOUSEWHEEL:
+    {
+        short tWheelValue = (short)HIWORD(wParam);
+        if (tWheelValue > 0)
+        {
+            wheelPos.z = tWheelValue * 1.0f * DELTA;
+        }
+        else if (tWheelValue <= 0)
+        {
+            wheelPos.z = tWheelValue * 1.0f * DELTA;
+        }
+        break;
+    }
     case WM_DESTROY:
         PostQuitMessage(0);
         break;

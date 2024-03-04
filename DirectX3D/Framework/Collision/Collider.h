@@ -31,7 +31,7 @@ protected:
         BOX, SPHERE, CAPSULE
     };
 
-    const float PUSH_SPEED = 100.0f;
+    const float PUSH_SPEED = 1000.0f;
 
 public:
     Collider();
