@@ -790,7 +790,7 @@ void Valphalk::Hupgi()
 {
 	if (sequence == 0)
 	{
-		static float timer = 0.0f;
+		static float timer = 0.0f;	
 		curState = E_4071;
 		E4071();
 		checkHp = curHP;
@@ -1212,7 +1212,7 @@ void Valphalk::ConditionCheck()
 		angerTimer = 0.0f;
 	}
 
-	if (roarAfterTimer > 60.0f && !needHupGi)  // 인식 포효 1분 후 흡기 시작
+	if (roarAfterTimer > 5.0f && !needHupGi)  // 인식 포효 1분 후 흡기 시작
 	{
 		needHupGi = true;
 		isFindTrgt = false;
@@ -4852,6 +4852,11 @@ void Valphalk::E4013() // 조우 포효
 void Valphalk::E4071()
 {
 	PLAY;
+	if (RATIO < 0.3f && RATIO > 0.29f)
+	{
+		Sounds::Get()->Play("em086_05_vo_media_20", 0.5f); // 흡기 시작 voice
+		Sounds::Get()->Play("em086_05_fx_media_40", 0.5f); // 흡기 시작 sfx
+	}
 	if (RATIO > 0.97f)
 		sequence++;
 }
@@ -4859,13 +4864,13 @@ void Valphalk::E4071()
 void Valphalk::E4073(float timer, float checkHp)
 {
 	PLAY;
-	if (timer > 3.2f && curHP == checkHp - 300.0f)
+	if (timer > 2.5f && curHP == checkHp - 300.0f)
 	{
 		sequence == 4;
 		timer = 0;
 	}
 
-	if (timer >= 3.2f)
+	if (timer >= 2.5f)
 	{
 		sequence++;
 	}
@@ -4874,6 +4879,9 @@ void Valphalk::E4073(float timer, float checkHp)
 void Valphalk::E4074()
 {
 	PLAY;
+	if (RATIO < 0.1f)
+		Sounds::Get()->Play("em086_05_fx_media_51", 0.5f); // 흡기 끝
+
 
 	if (RATIO > 0.9f)
 	{

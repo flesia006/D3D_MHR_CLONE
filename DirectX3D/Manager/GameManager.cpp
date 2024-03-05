@@ -65,8 +65,8 @@ GameManager::GameManager()
 //   SceneManager::Get()->Create("PlayerTestScene", new PlayerTestScene());
 //   SceneManager::Get()->Add("PlayerTestScene");
 
-   SceneManager::Get()->Create("FightTestScene", new FightTestScene());
-   SceneManager::Get()->Add("FightTestScene");
+//   SceneManager::Get()->Create("FightTestScene", new FightTestScene());
+//   SceneManager::Get()->Add("FightTestScene");
 
 //    SceneManager::Get()->Add("Terrain");
 
@@ -190,8 +190,17 @@ void GameManager::Create()
 
     /////////////////////////////////////////////////////////////
     // Valphalk
+    // = Voice = 
     // 포효
     sound->AddSound("em086_05_vo_media_10", SoundPath + L"em086_05_vo_media_10.mp3");
+    // 흡기 사운드
+    sound->AddSound("em086_05_vo_media_20", SoundPath + L"em086_05_vo_media_20.mp3");
+
+    // = SFX =     
+    // 흡기 시작
+    sound->AddSound("em086_05_fx_media_40", SoundPath + L"em086_05_fx_media_40.mp3");
+    // 흡기 끝
+    sound->AddSound("em086_05_fx_media_51", SoundPath + L"em086_05_fx_media_51.mp3");
     // 습격 부스터 가동
     sound->AddSound("em086_05_fx_media_25", SoundPath + L"em086_05_fx_media_25.mp3");
     // 습격 출발
@@ -203,6 +212,7 @@ void GameManager::Create()
     // 습격 낙하
     sound->AddSound("em086_05_fx_media_20", SoundPath + L"em086_05_fx_media_20.mp3");
 
+    
     /////////////////////////////////////////////////////////////
     // Item
     Sounds::Get()->AddSound("health_potion", SoundPath + L"health_potion.mp3");
