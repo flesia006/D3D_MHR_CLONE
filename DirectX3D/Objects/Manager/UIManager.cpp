@@ -132,7 +132,8 @@ UIManager::UIManager()
 	dragSlotBox = new Quad(L"Textures/UI/DragSlotBox.png");
 	dragSlotBox->Scale() *= 2.3f;
 	dragSlotBox->Scale().x *= 1.2f;
-	dragSlotBox->Pos() = { 1750,140,0 };
+	dragSlotBox->Scale().y *= 1.25f;
+	dragSlotBox->Pos() = { 1750,135,0 };
 
 	// 슬롯 내임 들어갈 박스 추가
 	slotName1 = new Quad(L"Textures/UI/SlotName.png");
@@ -235,14 +236,51 @@ UIManager::UIManager()
 	whetstoneIcon_Q->Scale() *= 0.95;
 	// 아이템 아이콘 추가 (드래그 슬롯 쪽)
 	potionIcon_D = new Quad(L"Textures/UI/Potion.png");
-	potionIcon_D->Pos() = { 1313.5, 347, 0 };
-	potionIcon_D->Scale() *= 0.9;
+	potionIcon_D->Pos() = { 1657,182,0 };
+	potionIcon_D->Scale() *= 1.2;
 	greatepotionIcon_D = new Quad(L"Textures/UI/GreatePotion.png");
-	greatepotionIcon_D->Pos() = { 1219.5, 393.5, 0 };
-	greatepotionIcon_D->Scale() *= 0.9;
+	greatepotionIcon_D->Pos() = { 1737,183,0 };
+	greatepotionIcon_D->Scale() *= 1.2;
 	whetstoneIcon_D = new Quad(L"Textures/UI/Whetstone-icon.png");
-	whetstoneIcon_D->Pos() = { 1351.5, 262.5, 0 };
-	whetstoneIcon_D->Scale() *= 0.95;
+	whetstoneIcon_D->Pos() = { 1821,184,0 };
+	whetstoneIcon_D->Scale() *= 1.25;
+
+	FOR(20)
+	{
+		wstring texture;
+		if (i < 10)
+		{
+			texture = L"Textures/UI/Number" + to_wstring(i) + L".png";
+			Quad* quad = new Quad(texture);
+			quad->Pos().x = greatepotionIcon_Q->Pos().x + 15;
+			quad->Pos().y = greatepotionIcon_Q->Pos().y - 15;
+			quad->Scale() *= 0.4;
+			itemNumber_Q.push_back(quad);
+			itemNumber_Q[i]->UpdateWorld();
+		}
+		else if (i >= 10)
+		{
+			texture = L"Textures/UI/Number" + to_wstring(i - 10) + L".png";
+			Quad* quad = new Quad(texture);
+			quad->Pos().x = potionIcon_Q->Pos().x + 15;
+			quad->Pos().y = potionIcon_Q->Pos().y - 15;
+			quad->Scale() *= 0.4;
+			itemNumber_Q.push_back(quad);
+			itemNumber_Q[i]->UpdateWorld();
+		}
+	}
+
+	FOR(10)
+	{
+		wstring texture;
+		texture = L"Textures/UI/Number" + to_wstring(i) + L".png";
+		Quad* quad = new Quad(texture);
+		quad->Pos().x = greatepotionIcon_D->Pos().x + 15;
+		quad->Pos().y = greatepotionIcon_D->Pos().y - 16;
+		quad->Scale() *= 0.4;
+		itemNumber_D.push_back(quad);
+		itemNumber_D[i]->UpdateWorld();
+	}
 
 	// hp bar ui
 	hp->Scale() = { 2.625f,0.03f,0 };
@@ -330,6 +368,14 @@ UIManager::~UIManager()
 	delete potionIcon_D;
 	delete greatepotionIcon_D;
 	delete whetstoneIcon_D;
+	FOR(itemNumber_Q.size())
+	{
+		delete itemNumber_Q[i];
+	}
+	FOR(itemNumber_D.size())
+	{
+		delete itemNumber_D[i];
+	}
 }
 
 void UIManager::Update()
@@ -377,6 +423,14 @@ void UIManager::Update()
 	potionIcon_D->UpdateWorld();
 	greatepotionIcon_D->UpdateWorld();
 	whetstoneIcon_D->UpdateWorld();
+	FOR(itemNumber_Q.size())
+	{
+		itemNumber_Q[i]->UpdateWorld();
+	}
+	FOR(itemNumber_D.size())
+	{
+		itemNumber_D[i]->UpdateWorld();
+	}
 	//===================
 
 	FOR(selectBoxs.size())
@@ -622,7 +676,6 @@ void UIManager::Update()
 
 void UIManager::PostRender()
 {
-	DragSlot();
 	recover->Render();
 	hp->Render();
 	stamina->Render();
@@ -672,6 +725,7 @@ void UIManager::PostRender()
 	if (orangeLeftHalfCircle3->Rot().z > XM_PI)
 		orangeRightHalfCircle3->Render();
 
+	DragSlot();
 	QuickSlot();
 }
 
@@ -773,40 +827,6 @@ void UIManager::QuickSlot()
 		{
 			selectBoxs[i]->Render();
 		}
-	
-		//if (useQuickSlot1)
-		//{
-		//
-		//	useQuickSlot1 = true;
-		//	useQuickSlot2 = false;
-		//	useQuickSlot3 = false;
-		//	useQuickSlot4 = false;
-		//	useQuickSlot5 = false;
-		//	useQuickSlot6 = false;
-		//	useQuickSlot7 = false;
-		//	useQuickSlot8 = false;
-		//}
-		//if (useQuickSlot2)
-		//{
-		//}
-		//if (useQuickSlot3)
-		//{
-		//}
-		//if (useQuickSlot4)
-		//{
-		//}
-		//if (useQuickSlot5)
-		//{
-		//}
-		//if (useQuickSlot6)
-		//{
-		//}
-		//if (useQuickSlot7)
-		//{
-		//}
-		//if (useQuickSlot8)
-		//{
-		//}
 
 		if (quickSlot_Select->Rot().z > -0.42f && useSelectBar)
 		{
@@ -859,13 +879,38 @@ void UIManager::QuickSlot()
 		potionIcon_Q->Render();
 		greatepotionIcon_Q->Render();
 		whetstoneIcon_Q->Render();
+
+		if (haveGPotion < 10)
+		{
+			itemNumber_Q[haveGPotion]->Pos().x = 1234.5;
+			itemNumber_Q[haveGPotion]->Render();
+		}
+		else if (haveGPotion == 10)
+		{
+			itemNumber_Q[1]->Pos().x = 1228;
+			itemNumber_Q[0]->Pos().x = 1241;
+			itemNumber_Q[1]->Render();
+			itemNumber_Q[0]->Render();
+		}
+
+		if (10 <= havePotion && havePotion < 20)
+		{
+			itemNumber_Q[havePotion]->Pos().x = 1328.5;
+			itemNumber_Q[havePotion]->Render();
+		}
+		else if (havePotion == 20)
+		{
+			itemNumber_Q[11]->Pos().x = 1317;
+			itemNumber_Q[10]->Pos().x = 1330;
+			itemNumber_Q[11]->Render();
+			itemNumber_Q[10]->Render();
+		}
 	}
-	
 }
 
 void UIManager::QuickSlotBar()
 {
-
+	
 	if (quickSlot_Select->Rot().z <= -3.0f && quickSlot_Select->Rot().z >= -6.0f)
 	{
 		quickSlot_Select->Pos() = { 1221.5, 260, 0 };
@@ -988,15 +1033,104 @@ void UIManager::DragSlot()
 	if (KEY_PRESS('X'))
 	{
 		dragSlotBox->Render();
+		itemSlot->Render();
+		if (DragCout == 0) // 그레이트 포션 중앙
+		{
+			potionIcon_D->Pos() = { 1657,182,0 };
+			greatepotionIcon_D->Pos() = { 1737,183,0 };
+			whetstoneIcon_D->Pos() = { 1821,184,0 };
+			potionIcon_D->Render();
+			greatepotionIcon_D->Render();
+			whetstoneIcon_D->Render();
+			useDragSlot1 = true;
+			useDragSlot2 = false;
+			useDragSlot3 = false;
+		}
+		if (DragCout == 1 || DragCout == -2) // 숫돌 중앙
+		{
+			potionIcon_D->Pos() = { 1821,182,0 };
+			greatepotionIcon_D->Pos() = { 1657, 182, 0 };
+			whetstoneIcon_D->Pos() = { 1741, 183, 0 };
+			potionIcon_D->Render();
+			greatepotionIcon_D->Render();
+			whetstoneIcon_D->Render();
+			useDragSlot1 = false;
+			useDragSlot2 = true;
+			useDragSlot3 = false;
+		}
+		if (DragCout == 2 || DragCout == -1) // 일반 포션 중앙
+		{
+			potionIcon_D->Pos() = { 1739,181,0 };
+			greatepotionIcon_D->Pos() = { 1821, 182, 0 };
+			whetstoneIcon_D->Pos() = { 1657, 184, 0 };
+			potionIcon_D->Render();
+			greatepotionIcon_D->Render();
+			whetstoneIcon_D->Render();
+			useDragSlot1 = false;
+			useDragSlot2 = false;
+			useDragSlot3 = true;
+		}
+	}
+	
+	if (useDragSlot1)
+	{
+		greatepotionIcon_D->Render();
+		if (haveGPotion < 10)
+		{
+			itemNumber_D[haveGPotion]->Pos().x = 1752;
+			itemNumber_D[haveGPotion]->Render();
+		}
+		else if (haveGPotion == 10)
+		{
+			itemNumber_D[1]->Pos().x = 1746;
+			itemNumber_D[0]->Pos().x = 1758;
+			itemNumber_D[1]->Render();
+			itemNumber_D[0]->Render();
+		}
+	}
+	if (useDragSlot2)
+	{
+		whetstoneIcon_D->Render();
+	}
+	if (useDragSlot3)
+	{
+		potionIcon_D->Render();
+		if (10 <= havePotion && havePotion < 20)
+		{
+			itemNumber_D[havePotion - 10]->Pos().x = 1752;
+			itemNumber_D[havePotion - 10]->Render();
+		}
+		else if (havePotion == 20)
+		{
+			itemNumber_D[1]->Pos().x = 1746;
+			itemNumber_D[0]->Pos().x = 1758;
+			itemNumber_D[1]->Render();
+			itemNumber_D[0]->Render();
+		}
 	}
 }
 
 void UIManager::DragSlotBar()
 {
-	//if (KEY_PRESS('X'))
-	//{
-	//	useDragSlot = true;
-	//}
+	//if (KEY_DOWN(VK_LEFT) && KEY_PRESS('X'))
+	if (wheelPos.z < 0)
+	{
+		DragCout--;
+		if (DragCout < -2)
+		{
+			DragCout = 0;
+		}
+		wheelPos = {};
+	}
+	else if (wheelPos.z > 0 ) //if (KEY_DOWN(VK_RIGHT) && KEY_PRESS('X'))
+	{
+		DragCout++;
+		if (DragCout > 2)
+		{
+			DragCout = 0;
+		}
+		wheelPos = {};
+	}
 }
 
 bool UIManager::IsAbleBugSkill()

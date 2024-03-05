@@ -45,8 +45,8 @@ GameManager::GameManager()
 //    SceneManager::Get()->Create("ModelExport", new ModelExportScene());
 //    SceneManager::Get()->Add("ModelExport");
 //
-//    SceneManager::Get()->Create("Grid", new GridScene());
-//    SceneManager::Get()->Add("Grid");
+    SceneManager::Get()->Create("Grid", new GridScene());
+    SceneManager::Get()->Add("Grid");
 
 
 //    SceneManager::Get()->Create("ShadowScene", new ShadowScene());

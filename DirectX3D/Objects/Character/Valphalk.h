@@ -209,6 +209,7 @@ private:
 	void PartDestroyCheck();
 
 	void PlayPattern();
+	void PushPlayer();
 	void UpdateUI(); //캐릭터 UI가 있으면 이후 업데이트
 	float GetRadBtwTrgt();
 	void RotateToTarget(float ratio1, float ratio2); // 
@@ -449,13 +450,13 @@ private:
 	// 공격 콜라이더 (투사체, 폭발 등)	
 	vector<SphereCollider*> bullets;
 	BoxCollider* forwardBoom;
-	Vector3 forwardBoomPosInit = { 0,-300,-1000 };
 	BoxCollider* fullBurst;
 	BoxCollider* effectBox1;
 	BoxCollider* effectBox2;
 	BoxCollider* effectBox3;
 	SphereCollider* effectSphere1;
 	SphereCollider* effectSphere2;
+	Vector3 forwardBoomPosInit = { 0,-300,-1000 };
 
 	//공격 충돌체 보관용 벡터
 	vector<SphereCollider*> sphereColliders;
@@ -479,7 +480,9 @@ private:
 	bool combo = false;
 
 	bool isSlashMode = true;
-	bool isHupGi = false;
+	bool isHupGi = true;
+	bool renderJet = false;
+	bool renderJetRight = false;
 
 	bool  isFindTrgt = false;
 	float roarAfterTimer = 0.0f;  // 인식 포효 이후부터 타이머 시작
@@ -528,4 +531,7 @@ private:
 	Transform* jetpos;
 	Transform* jetposend;
 	Vector3 jetpos2;
+
+	vector<Transform*> zetPos;
+	vector<ValZet*> valZets;
 };

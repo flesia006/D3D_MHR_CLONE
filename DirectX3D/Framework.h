@@ -211,6 +211,7 @@ using namespace GameMath;
 #include "Objects/Particle/Sp_atk_ready_Particle.h"
 #include "Objects/Particle/Val_Jet_Particle.h"
 #include "Objects/Particle/PotionParticle.h"
+#include "Objects/Particle/ValZet.h"
 
 #include "Objects/Algorithm/Node.h"
 #include "Objects/Algorithm/Heap.h"
@@ -243,5 +244,6 @@ using namespace GameMath;
 
 extern HWND hWnd;
 extern Vector3 mousePos;
+extern Vector3 wheelPos;
 
 const wstring SoundPath = L"../DirectX3D/Sounds/";
