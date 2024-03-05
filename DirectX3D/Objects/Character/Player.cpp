@@ -846,16 +846,27 @@ bool Player::Attack(float power, bool push, UINT useOtherCollider) // Ãæµ¹ÆÇÁ¤ Ç
 			float hardness = 1.0f;
 			switch (collider->part)
 			{
-				case Valphalk::HEAD  : hardness = 55; break;
-				case Valphalk::BODY	 : hardness = 30; break;
-				case Valphalk::LWING : hardness = 22; break;
-				case Valphalk::RWING : hardness = 22; break;
-				case Valphalk::LLEG1 : hardness = 25; break;
-				case Valphalk::LLEG2 : hardness = 25; break;
-				case Valphalk::RLEG1 : hardness = 25; break;
-				case Valphalk::RLEG2 : hardness = 25; break;
-				case Valphalk::TAIL  : hardness = 45; break;
-				default				 : hardness = 1 ; break;
+				case Valphalk::HEAD			: hardness = 55; break;
+				case Valphalk::NECK			: hardness = 55; break;
+				case Valphalk::CHEST		: hardness = 30; break;
+				case Valphalk::BODY			: hardness = 30; break;
+				case Valphalk::LWING		: hardness = 22; break;
+				case Valphalk::LWING_RADIUS : hardness = 22; break;
+				case Valphalk::RWING		: hardness = 22; break;
+				case Valphalk::RWING_RADIUS	: hardness = 22; break;
+				case Valphalk::LLEG1		: hardness = 25; break;
+				case Valphalk::LLEG1_FOOT	: hardness = 25; break;
+				case Valphalk::LLEG2		: hardness = 25; break;
+				case Valphalk::LLEG2_FOOT	: hardness = 25; break;
+				case Valphalk::RLEG1		: hardness = 25; break;
+				case Valphalk::RLEG1_FOOT	: hardness = 25; break;
+				case Valphalk::RLEG2		: hardness = 25; break;
+				case Valphalk::RLEG2_FOOT	: hardness = 25; break;
+				case Valphalk::TAIL_START	: hardness = 45; break;
+				case Valphalk::TAIL_1		: hardness = 45; break;
+				case Valphalk::TAIL_2		: hardness = 45; break;
+				case Valphalk::TAIL			: hardness = 45; break;
+				default						: hardness = 1 ; break;
 			}
 			UIManager::Get()->MinusDurability();
 			
@@ -868,17 +879,30 @@ bool Player::Attack(float power, bool push, UINT useOtherCollider) // Ãæµ¹ÆÇÁ¤ Ç
 			damage.hitPart = collider->part;
 			lastHitPart = collider->part;
 			lastSwordDir = swordSwingDir;
-			
+
 			val->minusCurHP(deal);
 
 			if (collider->part == Valphalk::HEAD
-				|| collider->part == Valphalk::LLEG1
-				|| collider->part == Valphalk::RLEG1
-				|| collider->part == Valphalk::TAIL)
-				collider->minusPartHP(deal);
+				|| collider->part == Valphalk::NECK)
+				val->minusHeadHP(deal);
 
-			if (collider->part == Valphalk::CHEST && val->GetIsHupgi())
-				collider->minusPartHP(deal);
+			if ((collider->part == Valphalk::CHEST
+				|| collider->part == Valphalk::BODY) && val->GetIsHupgi())
+				val->minusChestHP(deal);
+
+			if (collider->part == Valphalk::LLEG1
+				|| collider->part == Valphalk::LLEG1_FOOT)
+				val->minusLLegHP(deal);
+
+			if (collider->part == Valphalk::RLEG1
+				|| collider->part == Valphalk::RLEG1_FOOT)
+				val->minusRLegHP(deal);
+
+			if (collider->part == Valphalk::TAIL_START
+				|| collider->part == Valphalk::TAIL_1
+				|| collider->part == Valphalk::TAIL_2
+				|| collider->part == Valphalk::TAIL)
+				val->minusTailHP(deal);
 
 			if (hardness >= 30)				// À°ÁúÀÌ 30 ÀÌ»óÀ¸·Î ³ë¶õµ¥¹ÌÁö°¡ ¶ß´Â »óÈ²
 				damage.isWeakness = true;
@@ -1049,6 +1073,9 @@ void Player::AttackWOCollision(float power)
 
 void Player::HurtCheck()
 {
+	if (!bodyCollider->Active())
+		return;
+
 	Valphalk* val = nullptr;
 	if (SceneManager::Get()->Add("ShadowScene") == nullptr && SceneManager::Get()->Add("FightTestScene") != nullptr)
 		val = dynamic_cast<FightTestScene*>(SceneManager::Get()->Add("FightTestScene"))->GetValphalk();
@@ -1058,6 +1085,8 @@ void Player::HurtCheck()
 		return;
 
 	auto colliders = val->GetCollider();
+	auto sphereColliders = val->GetSphereCollider();
+	auto boxColliders = val->GetBoxCollider();
 
 	Contact contact;
 
@@ -1109,6 +1138,89 @@ void Player::HurtCheck()
 				}
 				UI->curHP -= collider->atkDmg;
 			}
+		}
+	}
+
+	for (auto collider : sphereColliders)
+	{
+		if (bodyCollider->IsSphereCollision(collider, &contact))  /// ±¸Ã¼ Ãæµ¹À» Çß¾î
+		{
+			if (!collider->Active())
+				return;
+
+			Vector3 fwd = Forward();
+			Vector3 atkDir = -1 * collider->direction;
+			atkDir.y = 0;
+			Vector3 reDir = -1 * atkDir;
+			Vector3 rad = XMVector3AngleBetweenVectors(fwd, atkDir);
+
+			
+			if (curState >= L_400)
+				return;
+
+			if (curState == L_155 && RATIO < 0.36)
+			{
+				isEvaded = true;
+				return;
+			}
+
+			if (rad.x > XM_PIDIV2)
+			{
+				Rot().y = atan2(reDir.x, reDir.z);
+				UpdateWorld();
+
+				SetState(D_015);
+			}
+			else
+			{
+				Rot().y = atan2(atkDir.x, atkDir.z);
+				UpdateWorld();
+
+				SetState(D_021);
+			}
+			UI->curHP -= collider->atkDmg;
+			
+		}
+	}
+
+	for (auto collider : boxColliders)
+	{
+		if (bodyCollider->IsBoxCollision(collider))  /// ¹Ú½º Ãæµ¹À» Çß¾î
+		{
+			if (!collider->Active())
+				return;
+
+			Vector3 fwd = Forward();
+			Vector3 atkDir = -1 * collider->direction;
+			atkDir.y = 0;
+			Vector3 reDir = -1 * atkDir;
+			Vector3 rad = XMVector3AngleBetweenVectors(fwd, atkDir);
+
+
+			if (curState >= L_400)
+				return;
+
+			if (curState == L_155 && RATIO < 0.36)
+			{
+				isEvaded = true;
+				return;
+			}
+
+			if (rad.x > XM_PIDIV2)
+			{
+				Rot().y = atan2(reDir.x, reDir.z);
+				UpdateWorld();
+
+				SetState(D_015);
+			}
+			else
+			{
+				Rot().y = atan2(atkDir.x, atkDir.z);
+				UpdateWorld();
+
+				SetState(D_021);
+			}
+			UI->curHP -= collider->atkDmg;
 		}
 	}
 }

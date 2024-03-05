@@ -185,6 +185,7 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 		bullets[i]->Scale() *= 100;
 		bullets[i]->SetColor(1, 0, 0);
 		bullets[i]->SetActive(false);
+		sphereColliders.push_back(bullets[i]);
 	}
 
 	forwardBoom = new BoxCollider();
@@ -246,6 +247,11 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 	effectBox3->SetColor(1, 0, 0);
 	effectBox3->UpdateWorld();
 	effectBox3->SetActive(false);
+	boxColliders.push_back(forwardBoom);
+	boxColliders.push_back(fullBurst);
+	boxColliders.push_back(effectBox1);
+	boxColliders.push_back(effectBox2);
+	boxColliders.push_back(effectBox3);
 
 	effectSphere1 = new SphereCollider();
 	effectSphere2 = new SphereCollider();
@@ -253,6 +259,8 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 	effectSphere1->SetActive(false);
 	effectSphere2->UpdateWorld();
 	effectSphere2->SetActive(false);
+	sphereColliders.push_back(effectSphere1);
+	sphereColliders.push_back(effectSphere2);
 
 	// 파티클
 	FOR(6) jetParticle.push_back(new Val_Jet_Particle());
@@ -328,20 +336,23 @@ void Valphalk::Update()
 		capsulCollider->Update();
 
 	for (BoxCollider* boxCollider : wings)
-		boxCollider->UpdateWorld();
+		boxCollider->Update();
 
 	for (SphereCollider* bullet : bullets)
-		bullet->UpdateWorld();
+		bullet->Update();
 
-	forwardBoom->UpdateWorld();
-	fullBurst->UpdateWorld();
+	for (BoxCollider* boxCollider : boxColliders)
+		boxCollider->Update();
 
-	effectBox1->UpdateWorld();
-	effectBox2->UpdateWorld();
-	effectBox3->UpdateWorld();
+//	forwardBoom->UpdateWorld(); boxColliders for문에 넣어서 주석처리 해둠
+//	fullBurst->UpdateWorld();
+//
+//	effectBox1->UpdateWorld();
+//	effectBox2->UpdateWorld();
+//	effectBox3->UpdateWorld();
 
-	effectSphere1->UpdateWorld();
-	effectSphere2->UpdateWorld();
+	effectSphere1->Update();
+	effectSphere2->Update();
 
 	head->Rot().y = Rot().y;
 
@@ -431,7 +442,9 @@ void Valphalk::GUIRender()
 	ImGui::DragInt("whichPat", &whichPat);
 	ImGui::Text("curHP : %f", curHP);
 	ImGui::Text("headHP : %f", colliders[HEAD]->partHp);
+	ImGui::Text("chestHP : %f", colliders[CHEST]->partHp);
 	ImGui::Text("llegHP : %f", colliders[LLEG1]->partHp);
+	ImGui::Text("rlegHP : %f", colliders[RLEG1]->partHp);
 	//for (int i = 0; i < colliders.size(); i++)
 	//{
 	//	colliders[i]->GUIRender();
@@ -1068,14 +1081,23 @@ void Valphalk::Patrol()
 void Valphalk::ConditionCheck()
 {
 	// 조건에 따른 bool 갱신
-	if ((curHP / maxHP) < 0.9)
+	if ((curHP / maxHP) < 0.9 && !angerRoar90Threshold)
+	{
 		angerRoar90 = true;
+		angerRoar90Threshold = true;
+	}
 
-	if ((curHP / maxHP) < 0.4)
+	if ((curHP / maxHP) < 0.4 && !angerRoar40Threshold)
+	{
 		angerRoar40 = true;
+		angerRoar40Threshold = true;
+	}
 
-	if ((curHP / maxHP) < 0.5)
+	if ((curHP / maxHP) < 0.5 && !ult50Threshold)
+	{
 		ult50 = true;
+		ult50Threshold = true;
+	}
 
 	// 타이머 갱신
 	if (isAnger)
@@ -1095,12 +1117,18 @@ void Valphalk::ConditionCheck()
 		angerTimer = 0.0f;
 	}
 
-	if (roarAfterTimer > 60.0f && roarAfterTimer < 61.0f)  // 인식 포효 1분 후 흡기 시작
+	if (roarAfterTimer > 60.0f && !needHupGi)  // 인식 포효 1분 후 흡기 시작
+	{
 		needHupGi = true;
+		isFindTrgt = false;
+		roarAfterTimer = 0.0f;
+	}
 
 	if (hupGiTimer > 120.0f)   // 흡기 2분 지속 후 꺼짐
+	{
 		isHupGi = false;
-
+		hupGiTimer = 0.0f;
+	}
 }
 
 void Valphalk::PartDestroyCheck()
@@ -2598,6 +2626,7 @@ void Valphalk::AngerRoar()
 
 	if (sequence == 1) // 각도 정했으면 방향 전환함수
 	{
+		isAnger = true;
 		ChooseNextPattern();
 	}
 }
@@ -4738,6 +4767,7 @@ void Valphalk::ColliderAdd()
 		colliders[NECK]->Scale().y = 60.0f;
 		colliders[NECK]->Scale().z = 80.0f;
 		colliders[NECK]->Rot().x = 1.80f;
+		colliders[NECK]->part = NECK;
 		colliders[NECK]->SetTag("NECK");
 	}
 
@@ -4748,6 +4778,7 @@ void Valphalk::ColliderAdd()
 		colliders[CHEST]->Scale().y = 110.0f;
 		colliders[CHEST]->Scale().z = 150.0f;
 		colliders[CHEST]->Rot().x = 0.02;
+		colliders[CHEST]->part = CHEST;
 		colliders[CHEST]->partHp = 1500;
 		colliders[CHEST]->SetTag("CHEST");
 	}
@@ -4783,6 +4814,7 @@ void Valphalk::ColliderAdd()
 		colliders[LWING_RADIUS]->Scale().y = 70.0f;
 		colliders[LWING_RADIUS]->Scale().z = 80.0f;
 		colliders[LWING_RADIUS]->Rot().x = 1.22f;
+		colliders[LWING_RADIUS]->part = LWING_RADIUS;
 		colliders[LWING_RADIUS]->SetTag("LWING_RADIUS");
 	}
 
@@ -4806,6 +4838,7 @@ void Valphalk::ColliderAdd()
 		colliders[RWING_RADIUS]->Scale().y = 70.0f;
 		colliders[RWING_RADIUS]->Scale().z = 80.0f;
 		colliders[RWING_RADIUS]->Rot().x = 1.22f;
+		colliders[RWING_RADIUS]->part = RWING_RADIUS;
 		colliders[RWING_RADIUS]->SetTag("RWING_RADIUS");
 	}
 
@@ -4830,6 +4863,7 @@ void Valphalk::ColliderAdd()
 		colliders[LLEG1_FOOT]->Scale().y = 90.0f;
 		colliders[LLEG1_FOOT]->Scale().z = 100.0f;
 		colliders[LLEG1_FOOT]->Rot().x = 2.55f;
+		colliders[LLEG1_FOOT]->part = LLEG1_FOOT;
 		colliders[LLEG1_FOOT]->SetTag("LLEG1_FOOT");
 	}
 
@@ -4851,6 +4885,7 @@ void Valphalk::ColliderAdd()
 		colliders[LLEG2_FOOT]->Scale().y = 60.0f;
 		colliders[LLEG2_FOOT]->Scale().z = 70.0f;
 		colliders[LLEG2_FOOT]->Rot().x = -0.74f;
+		colliders[LLEG2_FOOT]->part = LLEG2_FOOT;
 		colliders[LLEG2_FOOT]->SetTag("LLEG2_FOOT");
 	}
 
@@ -4874,6 +4909,7 @@ void Valphalk::ColliderAdd()
 		colliders[RLEG1_FOOT]->Scale().y = 90.0f;
 		colliders[RLEG1_FOOT]->Scale().z = 100.0f;
 		colliders[RLEG1_FOOT]->Rot().x = -0.45f;
+		colliders[RLEG1_FOOT]->part = RLEG1_FOOT;
 		//colliders[RLEG1_FOOT]->Rot().y = 22.0f;
 		colliders[RLEG1_FOOT]->SetTag("RLEG1_FOOT");
 	}
@@ -4884,6 +4920,7 @@ void Valphalk::ColliderAdd()
 		colliders[RLEG2]->Scale().x = 70.0f;
 		colliders[RLEG2]->Scale().y = 60.0f;
 		colliders[RLEG2]->Scale().z = 70.0f;
+		colliders[RLEG2]->part = RLEG2;
 		//colliders[RLEG2]->Rot().x = 50.0f;
 		colliders[RLEG2]->SetTag("RLEG2");
 	}
@@ -4895,6 +4932,7 @@ void Valphalk::ColliderAdd()
 		colliders[RLEG2_FOOT]->Scale().y = 60.0f;
 		colliders[RLEG2_FOOT]->Scale().z = 70.0f;
 		colliders[RLEG2_FOOT]->Rot().x = -0.74f;
+		colliders[RLEG2_FOOT]->part = RLEG2_FOOT;
 		colliders[RLEG2_FOOT]->SetTag("RLEG2_FOOT");
 	}
 
@@ -4905,6 +4943,7 @@ void Valphalk::ColliderAdd()
 		colliders[TAIL_START]->Scale().y = 100.0f;
 		colliders[TAIL_START]->Scale().z = 120.0f;
 		colliders[TAIL_START]->Rot().x = 1.78f;
+		colliders[TAIL_START]->part = TAIL_START;
 		colliders[TAIL_START]->SetTag("TAIL_START");
 	}
 
@@ -4913,6 +4952,7 @@ void Valphalk::ColliderAdd()
 		colliders[TAIL_1]->SetParent(transforms[TAIL_1]);
 		colliders[TAIL_1]->Scale() *= 80.0f;
 		colliders[TAIL_1]->Rot().x = 1.55f;
+		colliders[TAIL_1]->part = TAIL_1;
 		colliders[TAIL_1]->SetTag("TAIL_1");
 	}
 
@@ -4923,6 +4963,7 @@ void Valphalk::ColliderAdd()
 		colliders[TAIL_2]->Scale().y = 60.0f;
 		colliders[TAIL_2]->Scale().z = 50.0f;
 		colliders[TAIL_2]->Rot().x += 1.6f;
+		colliders[TAIL_2]->part += TAIL_2;
 		colliders[TAIL_2]->SetTag("TAIL_2");
 	}
 

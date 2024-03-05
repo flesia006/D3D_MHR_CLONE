@@ -56,6 +56,15 @@ bool SphereCollider::IsCapsuleCollision(CapsuleCollider* collider)
     return collider->IsSphereCollision(this);
 }
 
+void SphereCollider::Update()
+{
+    UpdateWorld();
+
+    lastPos = curPos;
+    curPos = GlobalPos();
+    direction = (curPos - lastPos).GetNormalized();
+}
+
 void SphereCollider::MakeMesh()
 {
     float thetaStep = XM_2PI / sliceCount;
