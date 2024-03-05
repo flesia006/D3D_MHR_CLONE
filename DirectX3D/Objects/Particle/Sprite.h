@@ -36,6 +36,7 @@ public:
     void GUIRender();
 
     void Play(Vector3 pos);
+    void PlayLoop(Vector3 pos);
     
 private:
     void Create();
@@ -49,5 +50,6 @@ private:
 
     SpriteBuffer* buffer;
     VertexUV vertex;
+    bool isLoop = false;
 };
 

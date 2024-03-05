@@ -212,6 +212,8 @@ private:
 	int  SetRadAndMirror(bool needMirror);
 	void Loop() { GetClip(curState)->ResetPlayTime(); Pos() = realPos->Pos(); }
 
+	void FlameOn();
+	void FlameOff();
 	// 모션 함수
 
 	void E0003();
@@ -473,7 +475,7 @@ private:
 	bool combo = false;
 
 	bool isSlashMode = true;
-	bool isHupGi = true;
+	bool isHupGi = false;
 	bool renderJet = false;
 	bool renderJetRight = false;
 
@@ -526,8 +528,8 @@ private:
 	Vector3 jetpos1_2, jetpos2_2, jetpos3_2, jetpos4_2, jetpos5_2, jetpos6_2;
 	Vector3 jetpos1, jetpos2, jetpos3, jetpos4, jetpos5, jetpos6;
 
-	Sprite* hupgiFire;
-	Vector3 jetpos2;
+	vector<HupgiFire*> hupgiFire;
+	//Vector3 jetpos2;
 
 	vector<Transform*> zetPos;
 	vector<ValZet*> valZets;

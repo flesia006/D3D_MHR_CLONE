@@ -67,6 +67,44 @@ void Sprite::Play(Vector3 pos)
     vertexBuffer->Update(&vertex, particleCount);
 }
 
+void Sprite::PlayLoop(Vector3 pos)
+{
+    isActive = true; //재생시작
+
+    if (isLoop == true)
+    {
+        time = 0;
+        curFrameCount = 0;
+        isLoop = false;
+    }
+
+    vertex.pos = pos;
+    vertex.uv = size;
+
+    vertexBuffer->Update(&vertex, particleCount);
+
+    if (!isActive) return;
+    else
+    {
+        time += speed * DELTA;
+
+        if (time > 0.04f) //0.1f : 임의의 기준시간. 나중에 개발자가 수정 가능
+        {
+            curFrameCount++; //프레임 +1
+            //프레임 위치 찾기
+            buffer->Get().curFrame.x = curFrameCount % (UINT)buffer->Get().maxFrame.x;
+            buffer->Get().curFrame.y = curFrameCount / (UINT)buffer->Get().maxFrame.x;
+            time = 0;
+        }
+
+        if (curFrameCount >= maxFrameCount)
+        {
+            curFrameCount = 0;
+            isLoop = true;
+        }
+    }
+}
+
 void Sprite::Create()
 {
     particleCount = 1; //애니메이션을 재생하는 것이 목적이니까

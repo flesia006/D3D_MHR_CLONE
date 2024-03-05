@@ -272,7 +272,7 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 	
 	FOR(6) jetParticle.push_back(new Val_Jet_Particle());
 	FOR(6) fireParticle.push_back(new Val_fire());
-	hupgiFire = new Sprite(L"Textures/Effect/val_fire.png", 1500, 1500, 4, 8, false);
+	FOR(8) hupgiFire.push_back(new HupgiFire());
 	{
 		//jetParticle[0]->Play(bullets[0]->Pos(),GetRotationByNode(61));
 		//jetParticle[1]->Play(bullets[1]->Pos(),GetRotationByNode(64));
@@ -312,7 +312,7 @@ Valphalk::~Valphalk()
 	delete effectSphere2;
 	jetParticle.clear();
 	fireParticle.clear();
-	delete hupgiFire;
+	hupgiFire.clear();
 }
 
 void Valphalk::Update()
@@ -385,25 +385,11 @@ void Valphalk::Update()
 	FOR(6)
 		valZets[i]->Update();
 
-//	if (timer2>=0.11)
-//	{
-//		jetParticle[0]->Play(GetTranslationByNode(61), GetRotationByNode(61).Back() + 300);// + GetRotationByNode(61).Left());
-//		jetParticle[1]->Play(GetTranslationByNode(64), GetRotationByNode(64).Back() + 300);// + GetRotationByNode(64).Left());
-//		jetParticle[2]->Play(GetTranslationByNode(67), GetRotationByNode(67).Back() + 300);// + GetRotationByNode(67).Left());
-//		jetParticle[3]->Play(GetTranslationByNode(81), GetRotationByNode(81).Back() + 300);// + GetRotationByNode(81).Left());
-//		jetParticle[4]->Play(GetTranslationByNode(84), GetRotationByNode(84).Back() + 300);// + GetRotationByNode(84).Left());
-//		jetParticle[5]->Play(GetTranslationByNode(87), GetRotationByNode(87).Back() + 300);// + GetRotationByNode(87).Left());
-//		timer2 = 0;
-//	}
-//
-
-	//hupgiFire->Play({ 0,0,0 });
-
-	if (KEY_DOWN('8'))
-	{
-		hupgiFire->Play({ 0,0,0 });
-	}
-	hupgiFire->Update();
+	if (isHupGi == true)
+		FlameOn();
+	else
+		FlameOff();
+	FOR(hupgiFire.size()) hupgiFire[i]->Update();
 
 	ModelAnimator::Update();
 	
@@ -462,7 +448,7 @@ void Valphalk::Render()
 
 	FOR(jetParticle.size()) jetParticle[i]->Render();
 	FOR(fireParticle.size()) fireParticle[i]->Render();
-	hupgiFire->Render();
+	FOR(hupgiFire.size()) hupgiFire[i]->Render();
 }
 
 void Valphalk::GUIRender()
@@ -569,14 +555,6 @@ void Valphalk::Jet()
 		jetParticle[5]->Play(GetTranslationByNode(87), jetpos6);
 		timer2 = 0;
 	}
-
-
-	jetParticle[0]->SetPos(GetTranslationByNode(61));
-	jetParticle[1]->SetPos(GetTranslationByNode(64));
-	jetParticle[2]->SetPos(GetTranslationByNode(67));
-	jetParticle[3]->SetPos(GetTranslationByNode(81));
-	jetParticle[4]->SetPos(GetTranslationByNode(84));
-	jetParticle[5]->SetPos(GetTranslationByNode(87));
 }
 
 void Valphalk::Storm()
@@ -1780,6 +1758,25 @@ int Valphalk::SetRadAndMirror(bool needMirror)
 
 	initialRad = Rot().y;
 	return whichPattern;
+}
+
+void Valphalk::FlameOn()
+{
+	// Èí±â»óÅÂ ¸ö¿¡ ºÒ¹øÁü
+		hupgiFire[0]->Play(GetTranslationByNode(15), 0); // ¿ÞÂÊ ¾î±ú
+		hupgiFire[1]->Play(GetTranslationByNode(35), 0); // ¿À¸¥ÂÊ ¾î±ú
+		hupgiFire[2]->Play(GetTranslationByNode(61), 0); // ³¯°³
+		hupgiFire[3]->Play(GetTranslationByNode(64), 0); // ³¯°³
+		hupgiFire[4]->Play(GetTranslationByNode(67), 0); // ³¯°³
+		hupgiFire[5]->Play(GetTranslationByNode(81), 0); // ³¯°³
+		hupgiFire[6]->Play(GetTranslationByNode(84), 0); // ³¯°³
+		hupgiFire[7]->Play(GetTranslationByNode(87), 0); // ³¯°³	
+	
+}
+
+void Valphalk::FlameOff()
+{
+	FOR(hupgiFire.size()) hupgiFire[i]->Stop();
 }
 
 void Valphalk::S_LegAtk()
