@@ -142,8 +142,15 @@ public:
 
 	Transform* GetTransform(int index) { return transforms[index]; }
 	vector<CapsuleCollider*> GetCollider() { return colliders; }
+	vector<SphereCollider*> GetSphereCollider() { return sphereColliders; }
+	vector<BoxCollider*> GetBoxCollider() { return boxColliders; }
 
 	void minusCurHP(int damage) { curHP -= damage; }
+	void minusHeadHP(int damage) { colliders[HEAD]->partHp -= damage; }
+	void minusChestHP(int damage) { colliders[CHEST]->partHp -= damage; }
+	void minusLLegHP(int damage) { colliders[LLEG1]->partHp -= damage; }
+	void minusRLegHP(int damage) { colliders[RLEG1]->partHp -= damage; }
+	void minusTailHP(int damage) { colliders[TAIL]->partHp -= damage; }
 	bool GetIsHupgi() { return isHupGi; }
 
 	//ColliderName GetName() { return colliderName; }
@@ -455,7 +462,9 @@ private:
 	SphereCollider* effectSphere2;
 	Vector3 forwardBoomPosInit = { 0,-300,-1000 };
 
-
+	//공격 충돌체 보관용 벡터
+	vector<SphereCollider*> sphereColliders;
+	vector<BoxCollider*> boxColliders;
 
 	Vector3 fullBurstScale;
 	Vector3 fullBurstPos;
@@ -489,9 +498,11 @@ private:
 	float angerTimer = 0.0f;
 	bool isAnger = false;
 
-	bool  ult50 = false;
+	bool ult50 = false;
 
-
+	bool angerRoar90Threshold = false;
+	bool angerRoar40Threshold = false;
+	bool ult50Threshold = false;
 
 	bool playOncePerPattern = false;
 

@@ -138,6 +138,15 @@ void BoxCollider::GUIRender()
     GameObject::GUIRender();
 }
 
+void BoxCollider::Update()
+{
+    UpdateWorld();
+
+    lastPos = curPos;
+    curPos = GlobalPos();
+    direction = (curPos - lastPos).GetNormalized();
+}
+
 bool BoxCollider::IsSeperateAxis(Vector3 D, Vector3 axis, ObbDesc box1, ObbDesc box2)
 {
     float distance = abs(Dot(D, axis));
