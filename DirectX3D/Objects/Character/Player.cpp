@@ -1146,7 +1146,7 @@ void Player::HurtCheck()
 
 	for (auto collider : sphereColliders)
 	{
-		if (bodyCollider->IsSphereCollision(collider, &contact))  /// 구체 충돌을 했어
+		if (bodyCollider->IsSphereCollision(collider))  /// 구체 충돌을 했어
 		{
 			if (!collider->Active())
 				return;
