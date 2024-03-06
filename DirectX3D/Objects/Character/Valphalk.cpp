@@ -4893,7 +4893,7 @@ void Valphalk::E4073(float timer, float checkHp)
 	PLAY;
 	if (timer <= 3.2f && curHP <= checkHp - 300.0f)
 	{
-		sequence == 4;
+		sequence = 4;
 		timer = 0;
 	}
 

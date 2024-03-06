@@ -10,8 +10,8 @@ Val_fire::Val_fire()
 	//particle4 = new ParticleSystem("TextData/Particles/potion_04.fx");
 	//particle2->SetScale();
 	//particle3->SetScale();		
-	particle->SetScale();
-	particle2->SetScale();	
+	particle->SetScale(3.0f);
+	particle2->SetScale(3.0f);	
 }
 
 Val_fire::~Val_fire()
