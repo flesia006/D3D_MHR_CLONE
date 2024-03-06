@@ -103,13 +103,18 @@ Player::~Player()
 
 void Player::Update()
 {	
-	if (!DeathCheck())
-	{
-		TermAttackUpdate();
-		HurtCheck();
-		Potion();
-	}
-
+	//if (!DeathCheck())
+	//{
+	//	TermAttackUpdate();
+	//	HurtCheck();
+	//	Potion();
+	//}
+	///////////////////////////////////
+	//디버깅을 위해서 DeathCheck() 밖으로 빼둔것.
+	TermAttackUpdate();
+	HurtCheck();
+	Potion();
+	////////////////////////////////////
 	Control();
 	ResetPlayTime();
 	UpdateWorlds();
@@ -718,7 +723,7 @@ void Player::Move()
 		}
 	}
 
-	if (KEY_FRONT(Keyboard::CTRL))
+	if (KEY_FRONT(Keyboard::CTRL) && UI->curSpiritGauge >= 10)
 	{
 		SetState(L_106);
 		return;
@@ -1088,17 +1093,22 @@ void Player::HurtCheck()
 		val = dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetValphalk();
 	else
 		return;
-
+	//TODO : 포효 충돌체 충돌판정 만들어야함, 3번 : 귀막는 모션
 	auto colliders = val->GetCollider();
 	auto sphereColliders = val->GetSphereCollider();
 	auto boxColliders = val->GetBoxCollider();
 
 	for (auto collider : colliders)
 	{
-		if (bodyCollider->IsCapsuleCollision(collider))  /// 충돌을 했어
+		if (bodyCollider->IsCapsuleCollision(collider))  /// 발파루크 캡슐들이랑 충돌을 했어
 		{
+			if (!collider->Active())
+				return;
+
 			Vector3 fwd = Forward();
 			Vector3 atkDir = -1 * collider->direction;
+			if (collider->direction == Vector3(0, 0, 0))
+				collider->direction = realPos->Pos() - collider->Pos();
 			atkDir.y = 0;
 			Vector3 reDir = -1 * atkDir;
 			Vector3 rad = XMVector3AngleBetweenVectors(fwd, atkDir);
@@ -1124,6 +1134,7 @@ void Player::HurtCheck()
 					{
 					case 1:   SetState(D_001); 	break;
 					case 2:   SetState(D_015); 	break;
+					case 3:   SetState(D_045); 	break;
 					default:  SetState(D_015); 	break;
 					}
 				}
@@ -1136,6 +1147,7 @@ void Player::HurtCheck()
 					{
 					case 1:   SetState(D_004); 	break;
 					case 2:   SetState(D_021); 	break;
+					case 3:   SetState(D_045); 	break;
 					default:  SetState(D_021); 	break;
 					}
 				}
@@ -1153,6 +1165,8 @@ void Player::HurtCheck()
 
 			Vector3 fwd = Forward();
 			Vector3 atkDir = -1 * collider->direction;
+			if (collider->direction == Vector3(0, 0, 0))
+				collider->direction = realPos->Pos() - collider->Pos();
 			atkDir.y = 0;
 			Vector3 reDir = -1 * atkDir;
 			Vector3 rad = XMVector3AngleBetweenVectors(fwd, atkDir);
@@ -1195,6 +1209,8 @@ void Player::HurtCheck()
 
 			Vector3 fwd = Forward();
 			Vector3 atkDir = -1 * collider->direction;
+			if (collider->direction == Vector3(0, 0, 0))
+				collider->direction = realPos->Pos() - collider->Pos();
 			atkDir.y = 0;
 			Vector3 reDir = -1 * atkDir;
 			Vector3 rad = XMVector3AngleBetweenVectors(fwd, atkDir);
@@ -1666,8 +1682,8 @@ void Player::S005() // 대기중 달리기 시작
 	}
 
 	// 101 내디뎌 베기
-	if		(K_LMB)			SetState(L_101);
-	else if (K_CTRL)	SetState(L_106);
+	if (K_LMB)			SetState(L_101);
+	else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106);
 	else if (K_SPACE)	Roll();
 	
 	if (RATIO > 0.97 )
@@ -1726,7 +1742,7 @@ void Player::S011() // 달리기 루프
 
 	// 101 내디뎌 베기
 	if		(K_LMB)		SetState(L_101);
-	else if (K_CTRL)	SetState(L_106);
+	else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106);
 	else if (K_SPACE)	Roll();
 
 
@@ -1933,7 +1949,7 @@ void Player::L001() // 발도상태 대기
 	else if (K_LMB)		SetState(L_101);	// 101 내디뎌 베기	
 	else if (K_RMB)		SetState(L_104);	// 104 찌르기	
 	else if (K_LMBRMB)	SetState(L_103);	// 103 베어내리기
-	else if (K_CTRL)	SetState(L_106);	// 106 기인 베기	
+	else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106);	// 106 기인 베기	
 	else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// 날라차기
 	else if (K_SPACE)	Roll();				// 010 구르기
 
@@ -1961,7 +1977,7 @@ void Player::L004() // 발도상태 걷기 중 // 루프
 	else if (K_LMB)		SetState(L_101);	// 101 내디뎌 베기	
 	else if (K_RMB)		SetState(L_104);	// 104 찌르기	
 	else if (K_LMBRMB)	SetState(L_103);	// 103 베어내리기
-	else if (K_CTRL)	SetState(L_106);	// 106 기인 베기	
+	else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106);	// 106 기인 베기	
 	else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// 날라차기
 	else if (K_SPACE)	Roll();				// 010 구르기
 
@@ -1983,7 +1999,7 @@ void Player::L005() // 발도상태 걷기 시작 (발돋움)
 	else if (K_LMB)		SetState(L_101);	// 101 내디뎌 베기	
 	else if (K_RMB)		SetState(L_104);	// 104 찌르기	
 	else if (K_LMBRMB)	SetState(L_103);	// 103 베어내리기
-	else if (K_CTRL)	SetState(L_106);	// 106 기인 베기	
+	else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106);	// 106 기인 베기	
 	else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// 날라차기
 	else if (K_SPACE)	Roll();				// 010 구르기
 
@@ -2019,7 +2035,7 @@ void Player::L008() // 멈춤
 	else if (K_LMB)		SetState(L_101);	// 101 내디뎌 베기	
 	else if (K_RMB)		SetState(L_104);	// 104 찌르기	
 	else if (K_LMBRMB)	SetState(L_103);	// 103 베어내리기
-	else if (K_CTRL)	SetState(L_106);	// 106 기인 베기	
+	else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106);	// 106 기인 베기	
 	else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// 날라차기
 	else if (K_SPACE)	Roll();				// 010 구르기
 
@@ -2118,6 +2134,7 @@ void Player::L101() // 내디뎌베기
 		UIManager::Get()->staminaActive = false;
 		PlayClip(L_101);
 		initRotY = Rot().y;
+		isEvaded = false;
 	}
 	if(RATIO>0.3 && RATIO<0.35)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
@@ -2153,7 +2170,7 @@ void Player::L101() // 내디뎌베기
 		if		(K_LMB)				SetState(L_102);	// 세로베기		
 		else if (K_RMB)				SetState(L_104);	// 찌르기
 		else if (K_LMBRMB)			SetState(L_103);	// 베어내리기
-		else if (K_CTRL)			SetState(L_106);	// 기인베기1		
+		else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106);	// 기인베기1		
 		else if (K_CTRLRMB)			SetState(L_147);	// 간파 베기
 		else if (K_CTRLSPACE)		SetState(L_151);	// 특수 납도
 		else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// 날라차기
@@ -2197,7 +2214,7 @@ void Player::L102() // 세로베기
 	{
 		if		(K_LMB || K_RMB)	SetState(L_104);	// 찌르기
 		else if (K_LMBRMB)			SetState(L_103);	// 베어내리기
-		else if (K_CTRL)			SetState(L_106);	// 기인베기1		
+		else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106);	// 기인베기1		
 		else if (K_CTRLRMB)			SetState(L_147);	// 간파 베기
 		else if (K_CTRLSPACE)		SetState(L_151);	// 특수 납도
 		else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// 날라차기
@@ -2218,6 +2235,7 @@ void Player::L103() // 베어내리기
 		UIManager::Get()->staminaActive = false;
 		PlayClip(L_103);
 		initRotY = Rot().y;
+		isEvaded = false;
 	}
 
 	if (RATIO > 0.2 && RATIO < 0.25)
@@ -2236,7 +2254,7 @@ void Player::L103() // 베어내리기
 	if (RATIO > 0.87)
 	{
 		if		(K_RMB)				SetState(L_104);	// 찌르기
-		else if (K_CTRL)			SetState(L_110);	// 기인내디뎌베기		
+		else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_110);	// 기인내디뎌베기		
 		else if (K_CTRLRMB)			SetState(L_147);	// 간파 베기
 		else if (K_CTRLSPACE)		SetState(L_151);	// 특수 납도
 		else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// 날라차기
@@ -2252,8 +2270,11 @@ void Player::L103() // 베어내리기
 void Player::L104() // 찌르기
 {
 	PLAY;
-	if(INIT)
+	if (INIT)
+	{
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_5", .5f);
+		isEvaded = false;
+	}
 
 	if (RATIO > 0.1 && RATIO < 0.15)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
@@ -2275,7 +2296,7 @@ void Player::L104() // 찌르기
 	{
 		if		(K_LMB || K_RMB)	SetState(L_105);	// 베어올리기
 		else if (K_LMBRMB)			SetState(L_103);	// 베어내리기
-		else if (K_CTRL)			SetState(L_106);	// 기인베기1		
+		else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106);	// 기인베기1		
 		else if (K_CTRLRMB)			SetState(L_147);	// 간파 베기
 		else if (K_CTRLSPACE)		SetState(L_151);	// 특수 납도
 		else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// 날라차기
@@ -2314,7 +2335,7 @@ void Player::L105() // 베어 올리기
 		if		(K_LMB)			SetState(L_102);	// 세로베기		
 		else if (K_RMB)			SetState(L_104);	// 찌르기		
 		else if (K_LMBRMB)		SetState(L_103);	// 베어내리기		
-		else if (K_CTRL)		SetState(L_106);	// 기인베기1		
+		else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106);	// 기인베기1		
 		else if (K_CTRLRMB)		SetState(L_147);	// 간파 베기
 		else if (K_CTRLSPACE)	SetState(L_151);	// 특수 납도
 		else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// 날라차기
@@ -2357,7 +2378,7 @@ void Player::L106() // 기인 베기 1
 		
 		if		(K_RMB)			SetState(L_104);	// 찌르기		
 		else if (K_LMBRMB)		SetState(L_103);	// 베어내리기		
-		else if (K_CTRL)		SetState(L_107);	// 기인 베기2		
+		else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_107);	// 기인 베기2		
 		else if (K_CTRLRMB)		SetState(L_147);	// 간파 베기		
 		else if (K_CTRLSPACE)	SetState(L_151);	// 특수 납도		
 		else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// 날라차기
@@ -2400,7 +2421,7 @@ void Player::L107() // 기인베기 2
 		{
 			if		(K_LMB || K_RMB)	SetState(L_105);	// 베어올리기
 			else if (K_LMBRMB)			SetState(L_103);	// 베어내리기		
-			else if (K_CTRL)			SetState(L_108);	// 기인 베기3		
+			else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_108);	// 기인 베기3		
 			else if (K_CTRLRMB)			SetState(L_147);	// 간파 베기
 			else if (K_CTRLSPACE)		SetState(L_151);	// 특수 납도		
 			else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// 날라차기
@@ -2467,7 +2488,7 @@ void Player::L108() // 기인베기 3
 	{		
 		if		(K_RMB || K_LMB)	SetState(L_104);  // 찌르기		
 		else if (K_LMBRMB)			SetState(L_103);  // 베어내리기		
-		else if (K_CTRL)			SetState(L_109);  // 기인 큰회전베기
+		else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_109);  // 기인 큰회전베기
 		else if (K_CTRLRMB)			SetState(L_147);  // 간파 베기
 		else if (K_CTRLSPACE)		SetState(L_151);  // 특수 납도		
 		else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// 날라차기
@@ -2485,6 +2506,7 @@ void Player::L109() // 기인 큰회전베기
 	{
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_25", .5f);
 		UIManager::Get()->MinusSpiritGauge(); // 기인게이지 소모하기( 단 1번 )
+		isEvaded = false;
 	}
 	if (RATIO > 0.2 && RATIO < 0.21)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
@@ -2565,7 +2587,7 @@ void Player::L110() // 기인 내디뎌베기
 		if (K_LMB || K_RMB)							SetState(L_105);    // 베어올리기		
 		else if (K_CTRLRMB)							SetState(L_147);    // 간파 베기
 		else if (K_CTRLSPACE)						SetState(L_151);	// 특수 납도
-		else if (K_CTRL)							SetState(L_108);	// 기인베기3
+		else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_108);	// 기인베기3
 		else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// 날라차기
 		else if (K_SPACE)							Roll();				// 구르기
 	}
@@ -2651,7 +2673,8 @@ void Player::L128()	// 날라차기 시작
 	if (!playOncePerMotion)
 	{		
 		UI->UseBugSkill();
-		playOncePerMotion = true;		
+		playOncePerMotion = true;
+		isEvaded = false;
 	}
 
 	if (RATIO < 0.2)
@@ -2857,6 +2880,7 @@ void Player::L147() // 간파베기
 		evadeCheckCollider->SetParent(realPos);
 		evadeCheckCollider->SetActive(true);
 		evadeCheckCollider->UpdateWorld();
+		UI->curSpiritGauge = 0;
 	}
 
 	if (RATIO > 0.2 && RATIO < 0.3)
@@ -2880,6 +2904,7 @@ void Player::L147() // 간파베기
 		{
 			if (isEvaded)
 				isEvaded = false;
+			evadeCheckCollider->SetActive(false);
 			SetState(L_151);	// 특수 납도
 		}
 	}
@@ -2899,25 +2924,22 @@ void Player::L147() // 간파베기
 			CAM->Zoom(300);
 	}
 
-	if (RATIO > 0.56)
-	{
-		if (isEvaded)
-			isEvaded = false;
-	}
-
 	if (RATIO > 0.56) // 캔슬 가능 타이밍
 	{
 		if		(K_LMB)			SetState(L_101);    // 세로베기		
 		else if (K_RMB)			SetState(L_104);	// 찌르기		
 		else if (K_LMBRMB)		SetState(L_103);	// 베어내리기		
 		else if (K_CTRLSPACE)	SetState(L_151);	// 특수 납도
-		else if (K_CTRL)		SetState(L_109);	// 기인큰회전베기 (TODO :: 이건 조건 따져야함)	
+		else if (K_CTRL && isEvaded)	SetState(L_109);	// 기인큰회전베기
 		else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// 날라차기
 		else if (K_SPACE)		Roll();				// 구르기
 	}
 
 	if (RATIO > 0.96)
+	{
+		isEvaded = false;
 		ReturnIdle();
+	}
 }
 
 void Player::L151() // 특수 납도
@@ -2929,6 +2951,7 @@ void Player::L151() // 특수 납도
 		holdingSword = true;
 		EndEffect();
 		UIManager::Get()->staminaActive = false;
+		isEvaded = false;
 	}
 	if (RATIO > 0.2 && RATIO < 0.3)
 		Sounds::Get()->Play("Heeee", .5f);	
@@ -3036,7 +3059,7 @@ void Player::L154() // 앉아발도 베기
 		{
 			if		(K_LMB)			SetState(L_102); // 세로베기
 			else if (K_RMB)			SetState(L_104); // 찌르기
-			else if (K_CTRL)		SetState(L_106); // 기인 베기 1		
+			else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106); // 기인 베기 1		
 			else if (K_CTRLRMB)		SetState(L_147); // 간파 베기
 			else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// 날라차기
 			else if (K_SPACE)		Roll();			 // 구르기
@@ -3087,7 +3110,7 @@ void Player::L155() // 앉아발도 기인베기
 		if (isEvaded && isHit && (RATIO >0.385  && RATIO < 0.39))
 		{
 			if(isHitL155==false)
-			UIManager::Get()->PlusCotingLevel();
+				UIManager::Get()->PlusCotingLevel();
 
 			isHitL155 = true;
 			Sounds::Get()->Play("pl_wp_l_swd_epv_media.bnk.2_8", .5f);			
@@ -3101,8 +3124,8 @@ void Player::L155() // 앉아발도 기인베기
 		{
 			isEvaded = false; // 만약 앞에서 true로 남아있는 경우 보험용
 
-			if		(K_LMB)			SetState(L_101); // 내디뎌베기
-			else if (K_CTRL)		SetState(L_108); // 기인 베기 3		
+			if (K_LMB)			SetState(L_101); // 내디뎌베기
+			else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_108); // 기인 베기 3		
 			else if (K_CTRLSPACE)	SetState(L_151); // 특수 납도
 			else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// 날라차기
 			else if (K_SPACE)		Roll();			 // 구르기
