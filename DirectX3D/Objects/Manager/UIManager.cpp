@@ -122,13 +122,8 @@ UIManager::UIManager()
 	quickSlot_Select->Pos() = { 1224, 260, 0 };
 	quickSlot_Select->Scale() *= 0.42f;
 	quickSlot_Select->Scale().x *= 0.88f;
-	//quickSlot_Select->Rot().z;
-	
+
 	// 드래그 UI 추가
-	//dragSlotBox = new Quad(L"Textures/UI/DragSlotBox.png");
-	//dragSlotBox->Scale() *= 2.3f;
-	//dragSlotBox->Scale().x *= 1.2f;
-	//dragSlotBox->Pos() = { 1500,140,0 };
 	dragSlotBox = new Quad(L"Textures/UI/DragSlotBox.png");
 	dragSlotBox->Scale() *= 2.3f;
 	dragSlotBox->Scale().x *= 1.2f;
@@ -149,7 +144,7 @@ UIManager::UIManager()
 
 	FOR(8)
 	{
-		Quad* quad = new Quad(L"Textures/UI/ItemSlotBox.png"); 
+		Quad* quad = new Quad(L"Textures/UI/ItemSlotBox.png");
 		quad->Scale() *= 0.5f;
 		if (i == 0)
 		{
@@ -195,6 +190,55 @@ UIManager::UIManager()
 		quad->Pos().y = selectBoxs[i]->Pos().y + 2;
 		selectBoxFrames.push_back(quad);
 		selectBoxFrames[i]->UpdateWorld();
+	}
+
+	FOR(8)
+	{
+		Quad* quad = new Quad(L"Textures/UI/KeyNumber_SlotBox.png");
+		quad->Scale() *= 1.5f;
+		if (i == 0)
+		{
+			//quad->Pos() = { 250, 270, 0 }; // 0 번째
+			quad->Pos() = { 250, 100, 0 }; // 0 번째
+		}
+		if (i == 1)
+		{
+			quad->Pos() = { 450, 100, 0 }; // 1 번째
+		}
+		if (i == 2)
+		{
+			quad->Pos() = { 650, 100, 0 }; // 2 번째
+		}
+		if (i == 3)
+		{
+			quad->Pos() = { 850, 100, 0 }; // 3 번째
+		}
+		if (i == 4)
+		{
+			quad->Pos() = { 1050, 100, 0 }; // 4 번째
+		}
+		if (i == 5)
+		{
+			quad->Pos() = { 1250, 100, 0 }; // 5 번째
+		}
+		if (i == 6)
+		{
+			quad->Pos() = { 1450, 100, 0 }; // 6 번째
+		}
+		if (i == 7)
+		{
+			quad->Pos() = { 1650, 100, 0 }; // 7 번째
+		}
+		numberBoxs.push_back(quad);
+		numberBoxs[i]->UpdateWorld();
+	}
+	FOR(8)
+	{
+		Quad* quad = new Quad(L"Textures/UI/ItemSlot.png");
+		quad->Scale() *= 1.33f;
+		quad->Pos() = numberBoxs[i]->Pos();
+		numberBoxFrames.push_back(quad);
+		numberBoxFrames[i]->UpdateWorld();
 	}
 
 	//캐릭터용 UI 추가
@@ -244,6 +288,16 @@ UIManager::UIManager()
 	whetstoneIcon_D = new Quad(L"Textures/UI/Whetstone-icon.png");
 	whetstoneIcon_D->Pos() = { 1821,184,0 };
 	whetstoneIcon_D->Scale() *= 1.25;
+	// 아이템 아이콘 추가 (넘버 슬롯 쪽)
+	potionIcon_N = new Quad(L"Textures/UI/Potion.png");
+	potionIcon_N->Pos() = { 250, 100, 0 };
+	potionIcon_N->Scale() *= 1.1;
+	greatepotionIcon_N = new Quad(L"Textures/UI/GreatePotion.png");
+	greatepotionIcon_N->Pos() = { 448, 100, 0 };
+	greatepotionIcon_N->Scale() *= 1.1;
+	whetstoneIcon_N = new Quad(L"Textures/UI/Whetstone-icon.png");
+	whetstoneIcon_N->Pos() = { 650, 102, 0 };
+	whetstoneIcon_N->Scale() *= 1.25;
 
 	FOR(20)
 	{
@@ -253,7 +307,7 @@ UIManager::UIManager()
 			texture = L"Textures/UI/Number" + to_wstring(i) + L".png";
 			Quad* quad = new Quad(texture);
 			quad->Pos().x = greatepotionIcon_Q->Pos().x + 15;
-			quad->Pos().y = greatepotionIcon_Q->Pos().y - 15;
+			quad->Pos().y = greatepotionIcon_Q->Pos().y - 16;
 			quad->Scale() *= 0.4;
 			itemNumber_Q.push_back(quad);
 			itemNumber_Q[i]->UpdateWorld();
@@ -263,7 +317,7 @@ UIManager::UIManager()
 			texture = L"Textures/UI/Number" + to_wstring(i - 10) + L".png";
 			Quad* quad = new Quad(texture);
 			quad->Pos().x = potionIcon_Q->Pos().x + 15;
-			quad->Pos().y = potionIcon_Q->Pos().y - 15;
+			quad->Pos().y = potionIcon_Q->Pos().y - 16;
 			quad->Scale() *= 0.4;
 			itemNumber_Q.push_back(quad);
 			itemNumber_Q[i]->UpdateWorld();
@@ -280,6 +334,31 @@ UIManager::UIManager()
 		quad->Scale() *= 0.4;
 		itemNumber_D.push_back(quad);
 		itemNumber_D[i]->UpdateWorld();
+	}
+
+	FOR(20)
+	{
+		wstring texture;
+		if (i < 10)
+		{
+			texture = L"Textures/UI/Number" + to_wstring(i) + L".png";
+			Quad* quad = new Quad(texture);
+			quad->Pos().x = greatepotionIcon_N->Pos().x + 15;
+			quad->Pos().y = greatepotionIcon_N->Pos().y - 16;
+			quad->Scale() *= 0.4;
+			itemNumber_N.push_back(quad);
+			itemNumber_N[i]->UpdateWorld();
+		}
+		else if (i >= 10)
+		{
+			texture = L"Textures/UI/Number" + to_wstring(i - 10) + L".png";
+			Quad* quad = new Quad(texture);
+			quad->Pos().x = potionIcon_N->Pos().x + 15;
+			quad->Pos().y = potionIcon_N->Pos().y - 16;
+			quad->Scale() *= 0.4;
+			itemNumber_N.push_back(quad);
+			itemNumber_N[i]->UpdateWorld();
+		}
 	}
 
 	// hp bar ui
@@ -359,6 +438,14 @@ UIManager::~UIManager()
 	{
 		delete selectBoxFrames[i];
 	}
+	FOR(numberBoxs.size())
+	{
+		delete numberBoxs[1];
+	}
+	FOR(numberBoxFrames.size())
+	{
+		delete numberBoxFrames[1];
+	}
 	delete dragSlotBox;
 	delete slotName1;
 	delete slotName2;
@@ -368,6 +455,9 @@ UIManager::~UIManager()
 	delete potionIcon_D;
 	delete greatepotionIcon_D;
 	delete whetstoneIcon_D;
+	delete potionIcon_N;
+	delete greatepotionIcon_N;
+	delete whetstoneIcon_N;
 	FOR(itemNumber_Q.size())
 	{
 		delete itemNumber_Q[i];
@@ -376,10 +466,15 @@ UIManager::~UIManager()
 	{
 		delete itemNumber_D[i];
 	}
+	FOR(itemNumber_N.size())
+	{
+		delete itemNumber_N[i];
+	}
 }
 
 void UIManager::Update()
 {
+	NumberSlotBar();
 	DragSlotBar();
 	QuickSlotBar();
 
@@ -423,6 +518,9 @@ void UIManager::Update()
 	potionIcon_D->UpdateWorld();
 	greatepotionIcon_D->UpdateWorld();
 	whetstoneIcon_D->UpdateWorld();
+	potionIcon_N->UpdateWorld();
+	greatepotionIcon_N->UpdateWorld();
+	whetstoneIcon_N->UpdateWorld();
 	FOR(itemNumber_Q.size())
 	{
 		itemNumber_Q[i]->UpdateWorld();
@@ -430,6 +528,10 @@ void UIManager::Update()
 	FOR(itemNumber_D.size())
 	{
 		itemNumber_D[i]->UpdateWorld();
+	}
+	FOR(itemNumber_N.size())
+	{
+		itemNumber_N[i]->UpdateWorld();
 	}
 	//===================
 
@@ -441,7 +543,14 @@ void UIManager::Update()
 	{
 		selectBoxFrames[i]->UpdateWorld();
 	}
-
+	FOR(numberBoxs.size())
+	{
+		numberBoxs[i]->UpdateWorld();
+	}
+	FOR(numberBoxFrames.size())
+	{
+		numberBoxFrames[i]->UpdateWorld();
+	}
 	//hp, stamina 부분
 	hp->SetAmount(curHP / maxHP);
 	recover->SetAmount(recoverHP / maxHP);
@@ -450,8 +559,8 @@ void UIManager::Update()
 		curHP += 0.1f * DELTA;
 	if (curHP > recoverHP)
 		recoverHP = curHP;
-	
-	if(staminaActive == false) // 행동이 끝나면 스태미너 자연회복
+
+	if (staminaActive == false) // 행동이 끝나면 스태미너 자연회복
 		curStamina += 7.5f * DELTA;
 	if (curStamina >= maxStamina) // 최대 스태미나까지만 자연회복
 		curStamina = maxStamina;
@@ -480,7 +589,7 @@ void UIManager::Update()
 
 	//기인게이지 부분
 	lsGauge2->SetAmount(curSpiritGauge / maxSpiritGauge);
-	
+
 	if (curSpiritGauge > 0.0f)
 		curSpiritGauge -= 0.1f * DELTA;
 	if (curSpiritGauge <= 0)
@@ -505,7 +614,7 @@ void UIManager::Update()
 		if (bonusTime < limitTime)
 		{
 			lsGauge2->SetTexture(L"Textures/UI/LSGauge2_blue.png");
-			curSpiritGauge += 2.f * DELTA;			
+			curSpiritGauge += 2.f * DELTA;
 		}
 		else
 		{
@@ -543,11 +652,11 @@ void UIManager::Update()
 	if (cotingLevel == 0)
 		lsCoting->SetTexture(L"Textures/UI/LSCoting_none.png");
 	if (cotingLevel == 1)
-		lsCoting->SetTexture(L"Textures/UI/LSCoting_white.png");			
+		lsCoting->SetTexture(L"Textures/UI/LSCoting_white.png");
 	if (cotingLevel == 2)
-		lsCoting->SetTexture(L"Textures/UI/LSCoting_yellow.png");			
+		lsCoting->SetTexture(L"Textures/UI/LSCoting_yellow.png");
 	if (cotingLevel == 3)
-		lsCoting->SetTexture(L"Textures/UI/LSCoting_red.png");			
+		lsCoting->SetTexture(L"Textures/UI/LSCoting_red.png");
 
 	if (curCoting <= 0.0f) // 게이지는 100을 넘지않고 0을 넘지않게
 		curCoting = 0;
@@ -727,6 +836,7 @@ void UIManager::PostRender()
 
 	DragSlot();
 	QuickSlot();
+	NumberSlot();
 }
 
 void UIManager::GUIRender()
@@ -817,7 +927,7 @@ void UIManager::GetWildBug()
 
 void UIManager::QuickSlot()
 {
-	
+
 	if (KEY_PRESS('X')) // X 만 누르면 슬롯만 나옴
 	{
 		quickSlot_Back->Render();
@@ -910,7 +1020,7 @@ void UIManager::QuickSlot()
 
 void UIManager::QuickSlotBar()
 {
-	
+
 	if (quickSlot_Select->Rot().z <= -3.0f && quickSlot_Select->Rot().z >= -6.0f)
 	{
 		quickSlot_Select->Pos() = { 1221.5, 260, 0 };
@@ -970,7 +1080,7 @@ void UIManager::QuickSlotBar()
 			SetCursorPos(MousePos.x + 8.0f, CENTER_Y + Distance(MousePos.y, CENTER_Y) + 31.0f);
 		}
 		Vector3 pos = mousePos - Vector3(MousePos.x, CENTER_Y - Distance(MousePos.y, CENTER_Y));
-		quickSlot_Select->Rot().z -= pos.x * 0.4f * DELTA;
+		quickSlot_Select->Rot().z -= pos.x * 0.25f * DELTA;
 
 		if (0.01f <= quickSlot_Select->Rot().z)
 		{
@@ -1071,7 +1181,7 @@ void UIManager::DragSlot()
 			useDragSlot3 = true;
 		}
 	}
-	
+
 	if (useDragSlot1)
 	{
 		greatepotionIcon_D->Render();
@@ -1112,7 +1222,6 @@ void UIManager::DragSlot()
 
 void UIManager::DragSlotBar()
 {
-	//if (KEY_DOWN(VK_LEFT) && KEY_PRESS('X'))
 	if (wheelPos.z < 0)
 	{
 		DragCout--;
@@ -1122,7 +1231,7 @@ void UIManager::DragSlotBar()
 		}
 		wheelPos = {};
 	}
-	else if (wheelPos.z > 0 ) //if (KEY_DOWN(VK_RIGHT) && KEY_PRESS('X'))
+	else if (wheelPos.z > 0)
 	{
 		DragCout++;
 		if (DragCout > 2)
@@ -1131,6 +1240,201 @@ void UIManager::DragSlotBar()
 		}
 		wheelPos = {};
 	}
+}
+
+void UIManager::NumberSlot()
+{
+	if (useNumberBar)
+	{
+		timer += DELTA;
+		FOR(numberBoxs.size())
+		{
+			numberBoxs[i]->Render();
+		}
+		if (useNumberSlot1)
+		{
+			numberBoxFrames[0]->Render();
+		}
+		if (useNumberSlot2)
+		{
+			numberBoxFrames[1]->Render();
+		}
+		if (useNumberSlot3)
+		{
+			numberBoxFrames[2]->Render();
+		}
+		if (useNumberSlot4)
+		{
+			numberBoxFrames[3]->Render();
+		}
+		if (useNumberSlot5)
+		{
+			numberBoxFrames[4]->Render();
+		}
+		if (useNumberSlot6)
+		{
+			numberBoxFrames[5]->Render();
+		}
+		if (useNumberSlot7)
+		{
+			numberBoxFrames[6]->Render();
+		}
+		if (useNumberSlot8)
+		{
+			numberBoxFrames[7]->Render();
+		}
+		potionIcon_N->Render();
+		greatepotionIcon_N->Render();
+		whetstoneIcon_N->Render();
+
+		if (haveGPotion < 10)
+		{
+			itemNumber_N[haveGPotion]->Pos().x = 463;
+			itemNumber_N[haveGPotion]->Render();
+		}
+		else if (haveGPotion == 10)
+		{
+			itemNumber_N[1]->Pos().x = 457;
+			itemNumber_N[0]->Pos().x = 468;
+			itemNumber_N[1]->Render();
+			itemNumber_N[0]->Render();
+		}
+
+		if (10 <= havePotion && havePotion < 20)
+		{
+			itemNumber_N[havePotion]->Pos().x = 265;
+			itemNumber_N[havePotion]->Render();
+		}
+		else if (havePotion == 20)
+		{
+			itemNumber_N[11]->Pos().x = 259;
+			itemNumber_N[10]->Pos().x = 270;
+			itemNumber_N[11]->Render();
+			itemNumber_N[10]->Render();
+		}
+	}
+
+}
+
+void UIManager::NumberSlotBar()
+{
+
+	if (useNumberBar && KEY_DOWN('1'))
+	{
+		useNumberSlot1 = true;
+		useNumberSlot2 = false;
+		useNumberSlot3 = false;
+		useNumberSlot4 = false;
+		useNumberSlot5 = false;
+		useNumberSlot6 = false;
+		useNumberSlot7 = false;
+		useNumberSlot8 = false;
+		timer = 0;
+	}
+	else if (useNumberBar && KEY_DOWN('2'))
+	{
+		useNumberSlot1 = false;
+		useNumberSlot2 = true;
+		useNumberSlot3 = false;
+		useNumberSlot4 = false;
+		useNumberSlot5 = false;
+		useNumberSlot6 = false;
+		useNumberSlot7 = false;
+		useNumberSlot8 = false;
+		timer = 0;
+	}
+	else if (useNumberBar && KEY_DOWN('3'))
+	{
+		useNumberSlot1 = false;
+		useNumberSlot2 = false;
+		useNumberSlot3 = true;
+		useNumberSlot4 = false;
+		useNumberSlot5 = false;
+		useNumberSlot6 = false;
+		useNumberSlot7 = false;
+		useNumberSlot8 = false;
+		timer = 0;
+	}
+	else if (useNumberBar && KEY_DOWN('4'))
+	{
+		useNumberSlot1 = false;
+		useNumberSlot2 = false;
+		useNumberSlot3 = false;
+		useNumberSlot4 = true;
+		useNumberSlot5 = false;
+		useNumberSlot6 = false;
+		useNumberSlot7 = false;
+		useNumberSlot8 = false;
+		timer = 0;
+	}
+	else if (useNumberBar && KEY_DOWN('5'))
+	{
+		useNumberSlot1 = false;
+		useNumberSlot2 = false;
+		useNumberSlot3 = false;
+		useNumberSlot4 = false;
+		useNumberSlot5 = true;
+		useNumberSlot6 = false;
+		useNumberSlot7 = false;
+		useNumberSlot8 = false;
+		timer = 0;
+	}
+	else if (useNumberBar && KEY_DOWN('6'))
+	{
+		useNumberSlot1 = false;
+		useNumberSlot2 = false;
+		useNumberSlot3 = false;
+		useNumberSlot4 = false;
+		useNumberSlot5 = false;
+		useNumberSlot6 = true;
+		useNumberSlot7 = false;
+		useNumberSlot8 = false;
+		timer = 0;
+	}
+	else if (useNumberBar && KEY_DOWN('7'))
+	{
+		useNumberSlot1 = false;
+		useNumberSlot2 = false;
+		useNumberSlot3 = false;
+		useNumberSlot4 = false;
+		useNumberSlot5 = false;
+		useNumberSlot6 = false;
+		useNumberSlot7 = true;
+		useNumberSlot8 = false;
+		timer = 0;
+	}
+	else if (useNumberBar && KEY_DOWN('8'))
+	{
+		useNumberSlot1 = false;
+		useNumberSlot2 = false;
+		useNumberSlot3 = false;
+		useNumberSlot4 = false;
+		useNumberSlot5 = false;
+		useNumberSlot6 = false;
+		useNumberSlot7 = false;
+		useNumberSlot8 = true;
+		timer = 0;
+	}
+	if (!useNumberBar && KEY_UP('1') || !useNumberBar && KEY_UP('2') || !useNumberBar && KEY_UP('3')
+		|| !useNumberBar && KEY_UP('4') || !useNumberBar && KEY_UP('5') || !useNumberBar && KEY_UP('6')
+		|| !useNumberBar && KEY_UP('7') || !useNumberBar && KEY_UP('8'))
+	{
+		useNumberBar = true;
+	}
+	if (timer >= 3.0f || KEY_DOWN(VK_ESCAPE))
+	{
+		useNumberBar = false;
+		useNumberSlot1 = false;
+		useNumberSlot2 = false;
+		useNumberSlot3 = false;
+		useNumberSlot4 = false;
+		useNumberSlot5 = false;
+		useNumberSlot6 = false;
+		useNumberSlot7 = false;
+		useNumberSlot8 = false;
+		timer = 0;
+	}
+
 }
 
 bool UIManager::IsAbleBugSkill()
