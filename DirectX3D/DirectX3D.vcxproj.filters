@@ -165,7 +165,9 @@
     <ClCompile Include="Objects\Particle\PotionParticle.cpp" />
     <ClCompile Include="Objects\Particle\Val_Jet_Particle.cpp" />
     <ClCompile Include="Scenes\FightTestScene.cpp" />
+    <ClCompile Include="Objects\Particle\Val_fire.cpp" />
     <ClCompile Include="Objects\Particle\ValZet.cpp" />
+    <ClCompile Include="Objects\Particle\HupgiFire.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Objects\Character\DummyValphalk.h" />
@@ -311,7 +313,9 @@
     <ClInclude Include="Objects\Particle\PotionParticle.h" />
     <ClInclude Include="Objects\Particle\Val_Jet_Particle.h" />
     <ClInclude Include="Scenes\FightTestScene.h" />
+    <ClInclude Include="Objects\Particle\Val_fire.h" />
     <ClInclude Include="Objects\Particle\ValZet.h" />
+    <ClInclude Include="Objects\Particle\HupgiFire.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DirectX3D.rc" />

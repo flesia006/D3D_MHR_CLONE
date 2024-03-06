@@ -48,7 +48,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -142,6 +142,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Objects\Particle\HupgiFire.h" />
+    <ClInclude Include="Objects\Particle\Val_fire.h" />
     <ClInclude Include="Scenes\FightTestScene.h" />
     <ClInclude Include="Objects\Character\DummyValphalk.h" />
     <ClInclude Include="Objects\Particle\CriticalParticle.h" />
@@ -288,6 +290,8 @@
     <ClInclude Include="Objects\Particle\ValZet.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Objects\Particle\HupgiFire.cpp" />
+    <ClCompile Include="Objects\Particle\Val_fire.cpp" />
     <ClCompile Include="Scenes\FightTestScene.cpp" />
     <ClCompile Include="Objects\Character\DummyValphalk.cpp" />
     <ClCompile Include="Objects\Particle\CriticalParticle.cpp" />

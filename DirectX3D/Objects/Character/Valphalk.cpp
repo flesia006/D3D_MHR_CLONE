@@ -191,7 +191,7 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 	}
 
 	forwardBoom = new BoxCollider();
-	forwardBoom->Scale() *=700;
+	forwardBoom->Scale() *= 700;
 	forwardBoom->SetColor(1, 0, 0);
 	forwardBoom->Pos() = forwardBoomPosInit;
 	forwardBoom->SetParent(head);
@@ -286,13 +286,16 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 
 	//FOR(6) jetParticle.push_back(new Val_Jet_Particle());
 	
+	FOR(6) jetParticle.push_back(new Val_Jet_Particle());
+	FOR(6) fireParticle.push_back(new Val_fire());
+	FOR(8) hupgiFire.push_back(new HupgiFire());
 	{
-		//jetParticle[0]->Play(bullets[0]->Pos(),{0,1,0});
-		//jetParticle[1]->Play(bullets[1]->Pos(),{0,1,0});
-		//jetParticle[2]->Play(bullets[2]->Pos(),{0,1,0});
-		//jetParticle[3]->Play(bullets[3]->Pos(),{0,1,0});
-		//jetParticle[4]->Play(bullets[4]->Pos(),{0,1,0});
-		//jetParticle[5]->Play(bullets[5]->Pos(),{0,1,0});
+		//jetParticle[0]->Play(bullets[0]->Pos(),GetRotationByNode(61));
+		//jetParticle[1]->Play(bullets[1]->Pos(),GetRotationByNode(64));
+		//jetParticle[2]->Play(bullets[2]->Pos(),GetRotationByNode(61));
+		//jetParticle[3]->Play(bullets[3]->Pos(),GetRotationByNode(81));
+		//jetParticle[4]->Play(bullets[4]->Pos(),GetRotationByNode(84));
+		//jetParticle[5]->Play(bullets[5]->Pos(),GetRotationByNode(87));
 		/*jetParticle[0]->Pos() = GetTranslationByNode(61);
 		jetParticle[1]->Pos() = GetTranslationByNode(64);
 		jetParticle[2]->Pos() = GetTranslationByNode(67);
@@ -323,7 +326,9 @@ Valphalk::~Valphalk()
 	delete effectBox3;
 	delete effectSphere1;
 	delete effectSphere2;
-	//jetParticle.clear();
+	jetParticle.clear();
+	fireParticle.clear();
+	hupgiFire.clear();
 }
 
 void Valphalk::Update()
@@ -380,7 +385,9 @@ void Valphalk::Update()
 
 	ColliderNodePos();
 
-	//FOR(jetParticle.size()) jetParticle[i]->Update();
+	FOR(jetParticle.size()) jetParticle[i]->Update();
+	FOR(fireParticle.size()) fireParticle[i]->Update();
+	//Jet();
 
 	jetpos->Pos() = GetTranslationByNode(61);
 	jetposend->Pos() = GetTranslationByNode(60);
@@ -397,17 +404,11 @@ void Valphalk::Update()
 	FOR(6)
 		valZets[i]->Update();
 
-//	if (timer2>=0.11)
-//	{
-//		jetParticle[0]->Play(GetTranslationByNode(61), GetRotationByNode(61).Back() + 300);// + GetRotationByNode(61).Left());
-//		jetParticle[1]->Play(GetTranslationByNode(64), GetRotationByNode(64).Back() + 300);// + GetRotationByNode(64).Left());
-//		jetParticle[2]->Play(GetTranslationByNode(67), GetRotationByNode(67).Back() + 300);// + GetRotationByNode(67).Left());
-//		jetParticle[3]->Play(GetTranslationByNode(81), GetRotationByNode(81).Back() + 300);// + GetRotationByNode(81).Left());
-//		jetParticle[4]->Play(GetTranslationByNode(84), GetRotationByNode(84).Back() + 300);// + GetRotationByNode(84).Left());
-//		jetParticle[5]->Play(GetTranslationByNode(87), GetRotationByNode(87).Back() + 300);// + GetRotationByNode(87).Left());
-//		timer2 = 0;
-//	}
-//
+	if (isHupGi == true)
+		FlameOn();
+	else
+		FlameOff();
+	FOR(hupgiFire.size()) hupgiFire[i]->Update();
 
 	ModelAnimator::Update();
 	
@@ -426,6 +427,7 @@ void Valphalk::Update()
 		curHP -= 2000;
 	}
 	////////////////////////
+
 }
 
 void Valphalk::PreRender()
@@ -463,7 +465,9 @@ void Valphalk::Render()
 		FOR(3) valZets[i+3]->Render();
 
 
-//	FOR(jetParticle.size()) jetParticle[i]->Render();
+	FOR(jetParticle.size()) jetParticle[i]->Render();
+	FOR(fireParticle.size()) fireParticle[i]->Render();
+	FOR(hupgiFire.size()) hupgiFire[i]->Render();
 }
 
 void Valphalk::GUIRender()
@@ -533,6 +537,47 @@ Vector3 Valphalk::GetPlayerPos() // 플레이어 위치 추적 함수
 	return pos;
 }
 
+void Valphalk::Jet()
+{
+	timer2 += DELTA;
+
+	jetpos1_1 = GetTranslationByNode(60);
+	jetpos1_2 = GetTranslationByNode(61);
+	jetpos1 = jetpos1_2 - jetpos1_1;
+	jetpos1.GetNormalized();
+	jetpos2_1 = GetTranslationByNode(63);
+	jetpos2_2 = GetTranslationByNode(64);
+	jetpos2 = jetpos1_2 - jetpos1_1;
+	jetpos2.GetNormalized();
+	jetpos3_1 = GetTranslationByNode(66);
+	jetpos3_2 = GetTranslationByNode(67);
+	jetpos3 = jetpos1_2 - jetpos1_1;
+	jetpos3.GetNormalized();
+	jetpos4_1 = GetTranslationByNode(80);
+	jetpos4_2 = GetTranslationByNode(81);
+	jetpos4 = jetpos1_2 - jetpos1_1;
+	jetpos4.GetNormalized();
+	jetpos5_1 = GetTranslationByNode(83);
+	jetpos5_2 = GetTranslationByNode(84);
+	jetpos5 = jetpos1_2 - jetpos1_1;
+	jetpos5.GetNormalized();
+	jetpos6_1 = GetTranslationByNode(86);
+	jetpos6_2 = GetTranslationByNode(87);
+	jetpos6 = jetpos1_2 - jetpos1_1;
+	jetpos6.GetNormalized();
+
+	if (timer2 >= 2)
+	{
+		jetParticle[0]->Play(GetTranslationByNode(61), jetpos1);
+		jetParticle[1]->Play(GetTranslationByNode(64), jetpos2);
+		jetParticle[2]->Play(GetTranslationByNode(67), jetpos3);
+		jetParticle[3]->Play(GetTranslationByNode(81), jetpos4);
+		jetParticle[4]->Play(GetTranslationByNode(84), jetpos5);
+		jetParticle[5]->Play(GetTranslationByNode(87), jetpos6);
+		timer2 = 0;
+	}
+}
+
 void Valphalk::Storm()
 {
 	stormTime += DELTA;
@@ -550,6 +595,8 @@ void Valphalk::Storm()
 void Valphalk::EnergyBullets()
 {
 	static int whichPattern = 0;
+	FOR(6) fireParticle[i]->SetVortex(bullets[i]->Pos());
+
 	if (sequence == 0) // 각도 정하기
 	{
 		whichPattern = SetRadAndMirror(true);
@@ -574,15 +621,32 @@ void Valphalk::EnergyBullets()
 			Scale().x *= -1;
 		sequence++;
 	}
+	Vector3 fire1 = GetTranslationByNode(61) - GetTranslationByNode(60);
+	Vector3 fire2 = GetTranslationByNode(64) - GetTranslationByNode(63);
+	Vector3 fire3 = GetTranslationByNode(67) - GetTranslationByNode(66);
+	Vector3 fire4 = GetTranslationByNode(81) - GetTranslationByNode(80);
+	Vector3 fire5 = GetTranslationByNode(84) - GetTranslationByNode(83);
+	Vector3 fire6 = GetTranslationByNode(87) - GetTranslationByNode(86);
+	fire1.GetNormalized();
+	fire2.GetNormalized();
+	fire3.GetNormalized();
+	fire4.GetNormalized();
+	fire5.GetNormalized();
+	fire6.GetNormalized();
 
 	if (sequence == 3) // 탄의 포지션 잡아주기
 	{
-		bullets[0]->Pos() = GetTranslationByNode(61);
-		bullets[1]->Pos() = GetTranslationByNode(64);
-		bullets[2]->Pos() = GetTranslationByNode(67);
-		bullets[3]->Pos() = GetTranslationByNode(81);
-		bullets[4]->Pos() = GetTranslationByNode(84);
-		bullets[5]->Pos() = GetTranslationByNode(87);
+		bullets[0]->Pos() = GetTranslationByNode(61) + fire1 * .81f;
+		bullets[1]->Pos() = GetTranslationByNode(64) + fire2 * .81f;
+		bullets[2]->Pos() = GetTranslationByNode(67) + fire3 * .81f;
+		bullets[3]->Pos() = GetTranslationByNode(81) + fire4 * .81f;
+		bullets[4]->Pos() = GetTranslationByNode(84) + fire5 * .81f;
+		bullets[5]->Pos() = GetTranslationByNode(87) + fire6 * .81f;
+		FOR(6)
+		{
+			fireParticle[i]->Play(bullets[i]->Pos(), bullets[i]->Rot());
+			fireParticle[i]->PlaySpark(bullets[i]->Pos());
+		}
 
 		for (int i = 0; i < bullets.size(); ++i)
 		{
@@ -601,17 +665,20 @@ void Valphalk::EnergyBullets()
 	}
 	if (sequence == 5)
 	{
-		SetState(E_2079); E2079();	
+		SetState(E_2079); E2079();
 	}
 	if (sequence == 6) // 값 초기화 및 패턴 넘기기
-	{ 	
+	{
 		for (int i = 0; i < 6; ++i)
 		{
+			if (bullets[i]->Pos().y >= 0)
+				fireParticle[i]->Play(bullets[i]->Pos(), bullets[i]->Rot());
+
 			randX[i] = 0;
 			randZ[i] = 0;
 		}
-		whichPattern = 0; 
-		ChooseNextPattern(); 
+		whichPattern = 0;
+		ChooseNextPattern();
 	}
 }
 
@@ -731,7 +798,7 @@ void Valphalk::Hupgi()
 {
 	if (sequence == 0)
 	{
-		static float timer = 0.0f;
+		static float timer = 0.0f;	
 		curState = E_4071;
 		E4071();
 		checkHp = curHP;
@@ -972,7 +1039,7 @@ void Valphalk::Patrol()
 {
 	static int whichPattern = 0;
 	static int loopCount = 0;
-	
+
 	if (sequence == 0) // 방향을 정해
 	{
 		// 걸어가는 방향은 맵 중앙 주위로 랜덤이야
@@ -1040,10 +1107,10 @@ void Valphalk::Patrol()
 	}
 
 	if (sequence == 2) // 루프해
-	{		
+	{
 
 
-		SetState(E_0055);  
+		SetState(E_0055);
 
 		// E_0055
 		{
@@ -1071,7 +1138,7 @@ void Valphalk::Patrol()
 			Scale().x = 1;
 
 		// 플레이어가 근처에 있는지 체크해
-		if((target->GlobalPos()- realPos->Pos()).Length() < 4000)
+		if ((target->GlobalPos() - realPos->Pos()).Length() < 4000)
 			sequence++; // 있으면 포효로
 		else
 			sequence = 0; // 없으면 루프해
@@ -1153,7 +1220,7 @@ void Valphalk::ConditionCheck()
 		angerTimer = 0.0f;
 	}
 
-	if (roarAfterTimer > 60.0f && !needHupGi)  // 인식 포효 1분 후 흡기 시작
+	if (roarAfterTimer > 5.0f && !needHupGi)  // 인식 포효 1분 후 흡기 시작
 	{
 		needHupGi = true;
 		isFindTrgt = false;
@@ -1306,21 +1373,21 @@ void Valphalk::ChooseNextPattern()
 		needHupGi = false;
 		return;
 	}
-	
+
 	if (angerRoar90)
 	{
 		curPattern = ANGERROAR;
 		angerRoar90 = false;
 		return;
 	}
-	
+
 	if (angerRoar40)
 	{
 		curPattern = ANGERROAR;
 		angerRoar40 = false;
 		return;
 	}
-	
+
 	if (ult50)
 	{
 		curPattern = STORM;
@@ -1521,7 +1588,7 @@ void Valphalk::ChooseNextPattern()
 	
 		}
 	}
-
+	
 }
 
 void Valphalk::PlayPattern()
@@ -1730,6 +1797,25 @@ int Valphalk::SetRadAndMirror(bool needMirror)
 
 	initialRad = Rot().y;
 	return whichPattern;
+}
+
+void Valphalk::FlameOn()
+{
+	// 흡기상태 몸에 불번짐
+		hupgiFire[0]->Play(GetTranslationByNode(15), 0); // 왼쪽 어깨
+		hupgiFire[1]->Play(GetTranslationByNode(35), 0); // 오른쪽 어깨
+		hupgiFire[2]->Play(GetTranslationByNode(61), 0); // 날개
+		hupgiFire[3]->Play(GetTranslationByNode(64), 0); // 날개
+		hupgiFire[4]->Play(GetTranslationByNode(67), 0); // 날개
+		hupgiFire[5]->Play(GetTranslationByNode(81), 0); // 날개
+		hupgiFire[6]->Play(GetTranslationByNode(84), 0); // 날개
+		hupgiFire[7]->Play(GetTranslationByNode(87), 0); // 날개	
+	
+}
+
+void Valphalk::FlameOff()
+{
+	FOR(hupgiFire.size()) hupgiFire[i]->Stop();
 }
 
 void Valphalk::S_LegAtk()
@@ -2311,7 +2397,7 @@ void Valphalk::B_DownBlast()
 	}
 
 	if (sequence == 2) // 공격 모션
-	{	
+	{
 		SetState(E_2082);
 		E2082();
 	}
@@ -2481,7 +2567,7 @@ void Valphalk::HS_FlyBlast()
 			{
 				bullets[i]->Pos().x = Lerp(bullets[i]->Pos().x, randX, 0.0024f);
 				bullets[i]->Pos().z = Lerp(bullets[i]->Pos().z, randZ, 0.0024f);
-				
+
 				bullets[i]->Pos().y -= 1500 * DELTA;
 			}
 		}
@@ -3419,19 +3505,22 @@ void Valphalk::E2054() // 찌르기 날개 회수
 void Valphalk::E2079()
 {
 	PLAY;
-	
+
 	for (int i = 0; i < bullets.size(); ++i)
 	{
 		if (RATIO > 0.1 + ((DELTA + (float)i) * 0.03f))
 		{
-			bullets[i]->Pos().x = Lerp(bullets[i]->Pos().x, randX[i], 0.0017f);
-			bullets[i]->Pos().z = Lerp(bullets[i]->Pos().z, randZ[i], 0.0017f);
+			bullets[i]->Pos().x = Lerp(bullets[i]->Pos().x, randX[i], 0.0167f);
+			bullets[i]->Pos().z = Lerp(bullets[i]->Pos().z, randZ[i], 0.0167f);
 
-			bullets[i]->Pos().y -= 400 * DELTA;
+			bullets[i]->Pos().y -= 420 * DELTA;
 		}
 
-		if (bullets[i]->Pos().y < 0)
+		else if (bullets[i]->Pos().y < 0)
+		{
 			bullets[i]->SetActive(false);
+			FOR(6) fireParticle[i]->Stop();
+		}
 	}
 
 	if (RATIO > 0.96)
@@ -3852,7 +3941,7 @@ void Valphalk::E2188()//정면 보고 왼발 들기
 {
 	PLAY;
 
-	if (RATIO > 0.16 && RATIO < 0.8) 
+	if (RATIO > 0.16 && RATIO < 0.8)
 		RotateToTarget(0.16, 0.7);
 
 
@@ -4577,7 +4666,7 @@ void Valphalk::EX2376()
 
 	if (RATIO > 0.19f)
 	{
-		if (RATIO < 0.20f )
+		if (RATIO < 0.20f)
 		{
 			effectSphere1->Scale() = { 500, 500, 500 };
 			effectSphere1->Pos() = GetTranslationByNode(64) + Back() * 100;
@@ -4798,20 +4887,25 @@ void Valphalk::E4013() // 조우 포효
 void Valphalk::E4071()
 {
 	PLAY;
-	if (RATIO > 0.96f)
+	if (RATIO < 0.3f && RATIO > 0.29f)
+	{
+		Sounds::Get()->Play("em086_05_vo_media_20", 0.5f); // 흡기 시작 voice
+		Sounds::Get()->Play("em086_05_fx_media_40", 0.5f); // 흡기 시작 sfx
+	}
+	if (RATIO > 0.97f)
 		sequence++;
 }
 
 void Valphalk::E4073(float timer, float checkHp)
 {
 	PLAY;
-	if (timer > 3.2f && curHP == checkHp - 300.0f)
+	if (timer > 2.5f && curHP == checkHp - 300.0f)
 	{
 		sequence == 4;
 		timer = 0;
 	}
 
-	if (timer >= 3.2f)
+	if (timer >= 2.5f)
 	{
 		sequence++;
 	}
@@ -4820,6 +4914,9 @@ void Valphalk::E4073(float timer, float checkHp)
 void Valphalk::E4074()
 {
 	PLAY;
+	if (RATIO < 0.1f)
+		Sounds::Get()->Play("em086_05_fx_media_51", 0.5f); // 흡기 끝
+
 
 	if (RATIO > 0.9f)
 	{

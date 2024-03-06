@@ -86,6 +86,7 @@ public:
     void SetScale();
     void SetParent(Transform* transform) { parent = transform; }
     void SetPos(Vector3 pos) { quad->Pos() = pos; }
+    void SetRot(Vector3 rot) { quad->Rot() = rot; }
     void SetVortex(Vector3 pos);
 
 private:

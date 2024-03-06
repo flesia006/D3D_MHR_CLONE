@@ -197,6 +197,8 @@ private:
 	void Patrol();
 	Vector3 GetPlayerPos();
 
+	void Jet();
+
 private:
 	void SetEvent(int clip, Event event, float timeRatio);
 	void ExecuteEvent();
@@ -218,6 +220,8 @@ private:
 	int  SetRadAndMirror(bool needMirror);
 	void Loop() { GetClip(curState)->ResetPlayTime(); Pos() = realPos->Pos(); }
 
+	void FlameOn();
+	void FlameOff();
 	// 모션 함수
 
 	void E0003();
@@ -528,10 +532,16 @@ public:
 	// 파티클
 private:
 	vector<Val_Jet_Particle*> jetParticle;
+	vector<Val_fire*> fireParticle;
 	float timer2 = 0;
 	Transform* jetpos;
 	Transform* jetposend;
-	Vector3 jetpos2;
+	Vector3 jetpos1_1, jetpos2_1, jetpos3_1, jetpos4_1, jetpos5_1, jetpos6_1;
+	Vector3 jetpos1_2, jetpos2_2, jetpos3_2, jetpos4_2, jetpos5_2, jetpos6_2;
+	Vector3 jetpos1, jetpos2, jetpos3, jetpos4, jetpos5, jetpos6;
+
+	vector<HupgiFire*> hupgiFire;
+	//Vector3 jetpos2;
 
 	vector<Transform*> zetPos;
 	vector<ValZet*> valZets;

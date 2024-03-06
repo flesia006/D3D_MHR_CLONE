@@ -3,7 +3,7 @@
 #include "Objects/Character/Valphalk.h"
 
 ShadowScene::ShadowScene()
-{
+{    
     objects = new M41Objects();
 
     terrain = new TerrainEditor();
@@ -193,5 +193,5 @@ void ShadowScene::GUIRender()
 
 void ShadowScene::AddSounds()
 {    
-
+ 
 }

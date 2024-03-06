@@ -3,7 +3,8 @@
 
 Val_Jet_Particle::Val_Jet_Particle()
 {
-	jet = new ParticleSystem("TextData/Particles/Val_jet.fx");	
+	jet = new ParticleSystem("TextData/Particles/val_jet_v2.fx");	
+	jet->SetScale();
 }
 
 Val_Jet_Particle::~Val_Jet_Particle()
@@ -29,11 +30,16 @@ void Val_Jet_Particle::GUIRender()
 void Val_Jet_Particle::Play(Vector3 pos, Vector3 rot)
 {
 	//jet->SetRotation(rot);
-	jet->Play2(pos, rot);
+	jet->Play(pos, rot);
 }
 
 void Val_Jet_Particle::Stop()
 {
 	jet->Stop();
+}
+
+void Val_Jet_Particle::SetPos(Vector3 pos)
+{
+	jet->SetPos(pos);	
 }
 
