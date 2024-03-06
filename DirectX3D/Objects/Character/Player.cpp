@@ -103,13 +103,18 @@ Player::~Player()
 
 void Player::Update()
 {	
-	if (!DeathCheck())
-	{
-		TermAttackUpdate();
-		HurtCheck();
-		Potion();
-	}
-
+	//if (!DeathCheck())
+	//{
+	//	TermAttackUpdate();
+	//	HurtCheck();
+	//	Potion();
+	//}
+	///////////////////////////////////
+	//µð¹ö±ëÀ» À§ÇØ¼­ DeathCheck() ¹ÛÀ¸·Î »©µÐ°Í.
+	TermAttackUpdate();
+	HurtCheck();
+	Potion();
+	////////////////////////////////////
 	Control();
 	ResetPlayTime();
 	UpdateWorlds();
@@ -124,7 +129,6 @@ void Player::Update()
 	potionParticle->SetVortex({ realPos->Pos().x,realPos->Pos().y+100,realPos->Pos().z });
 
 	ModelAnimator::Update();
-	UIManager::Get()->Update();
 	GroundCheck();
 
 	if (KEY_DOWN('5'))/// µð¹ö±× È®ÀÎ¿ëÀÌ¶ó ÇÊ¿ä¾øÀ¸¸é Áö¿öµµ µÊ
@@ -269,22 +273,24 @@ void Player::UpdateWorlds()
 
 void Player::Potion()
 {
-	time += DELTA;	
-
-	if (UIManager::Get()->useQuickSlot1 && UIManager::Get()->haveGPotion > 0 && !Lcure && !cure
-		|| UIManager::Get()->useDragSlot1 && UIManager::Get()->haveGPotion > 0 && KEY_DOWN('E') && !Lcure && !cure)
-	{		
+	time += DELTA;
+	if (UI->useQuickSlot1 && UI->haveGPotion > 0 && !Lcure && !cure
+		|| UI->useDragSlot1 && UI->haveGPotion > 0 && KEY_DOWN('E') && !Lcure && !cure
+		|| UI->useNumberBar && UI->haveGPotion > 0 && KEY_DOWN('2') && !Lcure && !cure)
+	{
 		Sounds::Get()->Play("health_potion", 0.3f);
-		UIManager::Get()->haveGPotion--;
+		UI->haveGPotion--;
 		Lcure = true;
 		time = 0;
 	}
 	if (Lcure == true)
 	{
-		UIManager::Get()->useQuickSlot1 = false;
-		UIManager::Get()->useQuickSlot2 = false;
+		UI->useQuickSlot1 = false;
+		UI->useQuickSlot2 = false;
 		if (time < 0.1f)
-			potionParticle->Play({ Pos().x,Pos().y+100,Pos().z }, { 0,0,0 });
+		{
+			potionParticle->Play({ Pos().x,Pos().y + 100,Pos().z }, { 0,0,0 });
+		}
 
 		if (time < 3)
 		{
@@ -296,24 +302,27 @@ void Player::Potion()
 		}
 	}
 
-	if (UIManager::Get()->useQuickSlot2 && UIManager::Get()->havePotion > 10 && !cure && !Lcure
-		|| UIManager::Get()->useDragSlot3 && UIManager::Get()->havePotion > 10 && KEY_DOWN('E') && !cure && !Lcure)
+	if (UI->useQuickSlot2 && UI->havePotion > 10 && !cure && !Lcure
+		|| UI->useDragSlot3 && UI->havePotion > 10 && KEY_DOWN('E') && !cure && !Lcure
+		|| UI->useNumberBar && UI->havePotion > 10 && KEY_DOWN('1') && !Lcure && !cure)
 	{
 		Sounds::Get()->Play("health_potion", 0.3f);
-		UIManager::Get()->havePotion--;
+		UI->havePotion--;
 		cure = true;
 		time = 0;
 	}
 	if (cure == true)
 	{
-		UIManager::Get()->useQuickSlot1 = false;
-		UIManager::Get()->useQuickSlot2 = false;
+		UI->useQuickSlot1 = false;
+		UI->useQuickSlot2 = false;
 		if (time < 0.1f)
-			potionParticle->Play({ Pos().x,Pos().y+100,Pos().z }, { 0,0,0 });
+		{
+			potionParticle->Play({ Pos().x,Pos().y + 100,Pos().z }, { 0,0,0 });
+		}
 
 		if (time < 2)
 		{
-			UIManager::Get()->HealthPotion();
+			UI->HealthPotion();
 		}
 		else if (time >= 2)
 		{
@@ -324,7 +333,7 @@ void Player::Potion()
 	if (KEY_DOWN('T'))
 	{
 		Sounds::Get()->Play("health_potion", 0.3f);
-		UIManager::Get()->curStamina = 100;
+		UI->curStamina = 100;
 	}
 }
 
@@ -719,7 +728,7 @@ void Player::Move()
 		}
 	}
 
-	if (KEY_FRONT(Keyboard::CTRL))
+	if (KEY_FRONT(Keyboard::CTRL) && UI->curSpiritGauge >= 10)
 	{
 		SetState(L_106);
 		return;
@@ -822,6 +831,9 @@ bool Player::Attack(float power, bool push, UINT useOtherCollider) // Ãæµ¹ÆÇÁ¤ Ç
 	{
 		if (playerCollider->IsCapsuleCollision(collider, &contact) && !attackOnlyOncePerMotion)
 		{			
+			if (!collider->Active())
+				return false;
+
 			criticalParticle->ParticleRotate();
 			hitBoomParticle->Play(contact.hitPoint, swordSwingDir);
 			criticalParticle->Play(contact.hitPoint, swordSwingDir );
@@ -1096,15 +1108,17 @@ void Player::HurtCheck()
 
 	for (auto collider : colliders)
 	{
-		if (bodyCollider->IsCapsuleCollision(collider))  /// Ãæµ¹À» Çß¾î
+		if (bodyCollider->IsCapsuleCollision(collider))  /// ¹ßÆÄ·çÅ© Ä¸½¶µéÀÌ¶û Ãæµ¹À» Çß¾î
 		{
 			Vector3 fwd = Forward();
 			Vector3 atkDir = -1 * collider->direction;
+			if (collider->direction == Vector3(0, 0, 0))
+				collider->direction = realPos->Pos() - collider->Pos();
 			atkDir.y = 0;
 			Vector3 reDir = -1 * atkDir;
 			Vector3 rad = XMVector3AngleBetweenVectors(fwd, atkDir);
 
-			if (collider->isAttack)						// ±Ùµ¥ ±× ÄÝ¸®´õ°¡ °ø°Ý ÄÝ¸®´õ¾ß
+			if (collider->isAttack && collider->Active())						// ±Ùµ¥ ±× ÄÝ¸®´õ°¡ °ø°Ý ÄÝ¸®´õ¾ß
 			{
 				if (curState >= L_400)
 					return;
@@ -1115,7 +1129,11 @@ void Player::HurtCheck()
 					return;
 				}
 
+				evadeCheckCollider->SetActive(false);
+				evadeCheckCollider->UpdateWorld();
+
 				int str = collider->atkStrength;
+				holdingSword = false;
 				if (rad.x > XM_PIDIV2)
 				{
 					Rot().y = atan2(reDir.x, reDir.z);
@@ -1125,6 +1143,7 @@ void Player::HurtCheck()
 					{
 					case 1:   SetState(D_001); 	break;
 					case 2:   SetState(D_015); 	break;
+					case 3:   SetState(D_045); 	break;
 					default:  SetState(D_015); 	break;
 					}
 				}
@@ -1137,6 +1156,7 @@ void Player::HurtCheck()
 					{
 					case 1:   SetState(D_004); 	break;
 					case 2:   SetState(D_021); 	break;
+					case 3:   SetState(D_045); 	break;
 					default:  SetState(D_021); 	break;
 					}
 				}
@@ -1149,41 +1169,46 @@ void Player::HurtCheck()
 	{
 		if (bodyCollider->IsSphereCollision(collider))  /// ±¸Ã¼ Ãæµ¹À» Çß¾î
 		{
-			if (!collider->Active())
-				return;
-
 			Vector3 fwd = Forward();
 			Vector3 atkDir = -1 * collider->direction;
+			if (collider->direction == Vector3(0, 0, 0))
+				collider->direction = realPos->Pos() - collider->Pos();
 			atkDir.y = 0;
 			Vector3 reDir = -1 * atkDir;
 			Vector3 rad = XMVector3AngleBetweenVectors(fwd, atkDir);
 
-			
-			if (curState >= L_400)
-				return;
-
-			if (curState == L_155 && RATIO < 0.36)
+			if (collider->Active())
 			{
-				isEvaded = true;
-				return;
-			}
+				if (curState >= L_400)
+					return;
 
-			if (rad.x > XM_PIDIV2)
-			{
-				Rot().y = atan2(reDir.x, reDir.z);
-				UpdateWorld();
+				if (curState == L_155 && RATIO < 0.36)
+				{
+					isEvaded = true;
+					return;
+				}
 
-				SetState(D_015);
-			}
-			else
-			{
-				Rot().y = atan2(atkDir.x, atkDir.z);
-				UpdateWorld();
+				evadeCheckCollider->SetActive(false);
+				evadeCheckCollider->UpdateWorld();
 
-				SetState(D_021);
+				holdingSword = false;
+
+				if (rad.x > XM_PIDIV2)
+				{
+					Rot().y = atan2(reDir.x, reDir.z);
+					UpdateWorld();
+
+					SetState(D_015);
+				}
+				else
+				{
+					Rot().y = atan2(atkDir.x, atkDir.z);
+					UpdateWorld();
+
+					SetState(D_021);
+				}
+				UI->curHP -= collider->atkDmg;
 			}
-			UI->curHP -= collider->atkDmg;
-			
 		}
 	}
 
@@ -1191,40 +1216,46 @@ void Player::HurtCheck()
 	{
 		if (bodyCollider->IsBoxCollision(collider))  /// ¹Ú½º Ãæµ¹À» Çß¾î
 		{
-			if (!collider->Active())
-				return;
-
 			Vector3 fwd = Forward();
 			Vector3 atkDir = -1 * collider->direction;
+			if (collider->direction == Vector3(0, 0, 0))
+				collider->direction = realPos->Pos() - collider->Pos();
 			atkDir.y = 0;
 			Vector3 reDir = -1 * atkDir;
 			Vector3 rad = XMVector3AngleBetweenVectors(fwd, atkDir);
 
-
-			if (curState >= L_400)
-				return;
-
-			if (curState == L_155 && RATIO < 0.36)
+			if (collider->Active())
 			{
-				isEvaded = true;
-				return;
-			}
+				if (curState >= L_400)
+					return;
 
-			if (rad.x > XM_PIDIV2)
-			{
-				Rot().y = atan2(reDir.x, reDir.z);
-				UpdateWorld();
+				if (curState == L_155 && RATIO < 0.36)
+				{
+					isEvaded = true;
+					return;
+				}
 
-				SetState(D_015);
-			}
-			else
-			{
-				Rot().y = atan2(atkDir.x, atkDir.z);
-				UpdateWorld();
+				evadeCheckCollider->SetActive(false);
+				evadeCheckCollider->UpdateWorld();
 
-				SetState(D_021);
+				holdingSword = false;
+
+				if (rad.x > XM_PIDIV2)
+				{
+					Rot().y = atan2(reDir.x, reDir.z);
+					UpdateWorld();
+
+					SetState(D_015);
+				}
+				else
+				{
+					Rot().y = atan2(atkDir.x, atkDir.z);
+					UpdateWorld();
+
+					SetState(D_021);
+				}
+				UI->curHP -= collider->atkDmg;
 			}
-			UI->curHP -= collider->atkDmg;
 		}
 	}
 }
@@ -1667,8 +1698,8 @@ void Player::S005() // ´ë±âÁß ´Þ¸®±â ½ÃÀÛ
 	}
 
 	// 101 ³»µðµ® º£±â
-	if		(K_LMB)			SetState(L_101);
-	else if (K_CTRL)	SetState(L_106);
+	if (K_LMB)			SetState(L_101);
+	else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106);
 	else if (K_SPACE)	Roll();
 	
 	if (RATIO > 0.97 )
@@ -1727,7 +1758,7 @@ void Player::S011() // ´Þ¸®±â ·çÇÁ
 
 	// 101 ³»µðµ® º£±â
 	if		(K_LMB)		SetState(L_101);
-	else if (K_CTRL)	SetState(L_106);
+	else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106);
 	else if (K_SPACE)	Roll();
 
 
@@ -1934,7 +1965,7 @@ void Player::L001() // ¹ßµµ»óÅÂ ´ë±â
 	else if (K_LMB)		SetState(L_101);	// 101 ³»µðµ® º£±â	
 	else if (K_RMB)		SetState(L_104);	// 104 Âî¸£±â	
 	else if (K_LMBRMB)	SetState(L_103);	// 103 º£¾î³»¸®±â
-	else if (K_CTRL)	SetState(L_106);	// 106 ±âÀÎ º£±â	
+	else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106);	// 106 ±âÀÎ º£±â	
 	else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// ³¯¶óÂ÷±â
 	else if (K_SPACE)	Roll();				// 010 ±¸¸£±â
 
@@ -1962,7 +1993,7 @@ void Player::L004() // ¹ßµµ»óÅÂ °È±â Áß // ·çÇÁ
 	else if (K_LMB)		SetState(L_101);	// 101 ³»µðµ® º£±â	
 	else if (K_RMB)		SetState(L_104);	// 104 Âî¸£±â	
 	else if (K_LMBRMB)	SetState(L_103);	// 103 º£¾î³»¸®±â
-	else if (K_CTRL)	SetState(L_106);	// 106 ±âÀÎ º£±â	
+	else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106);	// 106 ±âÀÎ º£±â	
 	else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// ³¯¶óÂ÷±â
 	else if (K_SPACE)	Roll();				// 010 ±¸¸£±â
 
@@ -1984,7 +2015,7 @@ void Player::L005() // ¹ßµµ»óÅÂ °È±â ½ÃÀÛ (¹ßµ¸¿ò)
 	else if (K_LMB)		SetState(L_101);	// 101 ³»µðµ® º£±â	
 	else if (K_RMB)		SetState(L_104);	// 104 Âî¸£±â	
 	else if (K_LMBRMB)	SetState(L_103);	// 103 º£¾î³»¸®±â
-	else if (K_CTRL)	SetState(L_106);	// 106 ±âÀÎ º£±â	
+	else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106);	// 106 ±âÀÎ º£±â	
 	else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// ³¯¶óÂ÷±â
 	else if (K_SPACE)	Roll();				// 010 ±¸¸£±â
 
@@ -2020,7 +2051,7 @@ void Player::L008() // ¸ØÃã
 	else if (K_LMB)		SetState(L_101);	// 101 ³»µðµ® º£±â	
 	else if (K_RMB)		SetState(L_104);	// 104 Âî¸£±â	
 	else if (K_LMBRMB)	SetState(L_103);	// 103 º£¾î³»¸®±â
-	else if (K_CTRL)	SetState(L_106);	// 106 ±âÀÎ º£±â	
+	else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106);	// 106 ±âÀÎ º£±â	
 	else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// ³¯¶óÂ÷±â
 	else if (K_SPACE)	Roll();				// 010 ±¸¸£±â
 
@@ -2119,6 +2150,7 @@ void Player::L101() // ³»µðµ®º£±â
 		UIManager::Get()->staminaActive = false;
 		PlayClip(L_101);
 		initRotY = Rot().y;
+		isEvaded = false;
 	}
 	if(RATIO>0.3 && RATIO<0.35)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
@@ -2154,7 +2186,7 @@ void Player::L101() // ³»µðµ®º£±â
 		if		(K_LMB)				SetState(L_102);	// ¼¼·Îº£±â		
 		else if (K_RMB)				SetState(L_104);	// Âî¸£±â
 		else if (K_LMBRMB)			SetState(L_103);	// º£¾î³»¸®±â
-		else if (K_CTRL)			SetState(L_106);	// ±âÀÎº£±â1		
+		else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106);	// ±âÀÎº£±â1		
 		else if (K_CTRLRMB)			SetState(L_147);	// °£ÆÄ º£±â
 		else if (K_CTRLSPACE)		SetState(L_151);	// Æ¯¼ö ³³µµ
 		else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// ³¯¶óÂ÷±â
@@ -2198,7 +2230,7 @@ void Player::L102() // ¼¼·Îº£±â
 	{
 		if		(K_LMB || K_RMB)	SetState(L_104);	// Âî¸£±â
 		else if (K_LMBRMB)			SetState(L_103);	// º£¾î³»¸®±â
-		else if (K_CTRL)			SetState(L_106);	// ±âÀÎº£±â1		
+		else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106);	// ±âÀÎº£±â1		
 		else if (K_CTRLRMB)			SetState(L_147);	// °£ÆÄ º£±â
 		else if (K_CTRLSPACE)		SetState(L_151);	// Æ¯¼ö ³³µµ
 		else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// ³¯¶óÂ÷±â
@@ -2219,6 +2251,7 @@ void Player::L103() // º£¾î³»¸®±â
 		UIManager::Get()->staminaActive = false;
 		PlayClip(L_103);
 		initRotY = Rot().y;
+		isEvaded = false;
 	}
 
 	if (RATIO > 0.2 && RATIO < 0.25)
@@ -2237,7 +2270,7 @@ void Player::L103() // º£¾î³»¸®±â
 	if (RATIO > 0.87)
 	{
 		if		(K_RMB)				SetState(L_104);	// Âî¸£±â
-		else if (K_CTRL)			SetState(L_110);	// ±âÀÎ³»µðµ®º£±â		
+		else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_110);	// ±âÀÎ³»µðµ®º£±â		
 		else if (K_CTRLRMB)			SetState(L_147);	// °£ÆÄ º£±â
 		else if (K_CTRLSPACE)		SetState(L_151);	// Æ¯¼ö ³³µµ
 		else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// ³¯¶óÂ÷±â
@@ -2253,8 +2286,11 @@ void Player::L103() // º£¾î³»¸®±â
 void Player::L104() // Âî¸£±â
 {
 	PLAY;
-	if(INIT)
+	if (INIT)
+	{
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_5", .5f);
+		isEvaded = false;
+	}
 
 	if (RATIO > 0.1 && RATIO < 0.15)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
@@ -2276,7 +2312,7 @@ void Player::L104() // Âî¸£±â
 	{
 		if		(K_LMB || K_RMB)	SetState(L_105);	// º£¾î¿Ã¸®±â
 		else if (K_LMBRMB)			SetState(L_103);	// º£¾î³»¸®±â
-		else if (K_CTRL)			SetState(L_106);	// ±âÀÎº£±â1		
+		else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106);	// ±âÀÎº£±â1		
 		else if (K_CTRLRMB)			SetState(L_147);	// °£ÆÄ º£±â
 		else if (K_CTRLSPACE)		SetState(L_151);	// Æ¯¼ö ³³µµ
 		else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// ³¯¶óÂ÷±â
@@ -2315,7 +2351,7 @@ void Player::L105() // º£¾î ¿Ã¸®±â
 		if		(K_LMB)			SetState(L_102);	// ¼¼·Îº£±â		
 		else if (K_RMB)			SetState(L_104);	// Âî¸£±â		
 		else if (K_LMBRMB)		SetState(L_103);	// º£¾î³»¸®±â		
-		else if (K_CTRL)		SetState(L_106);	// ±âÀÎº£±â1		
+		else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106);	// ±âÀÎº£±â1		
 		else if (K_CTRLRMB)		SetState(L_147);	// °£ÆÄ º£±â
 		else if (K_CTRLSPACE)	SetState(L_151);	// Æ¯¼ö ³³µµ
 		else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// ³¯¶óÂ÷±â
@@ -2358,7 +2394,7 @@ void Player::L106() // ±âÀÎ º£±â 1
 		
 		if		(K_RMB)			SetState(L_104);	// Âî¸£±â		
 		else if (K_LMBRMB)		SetState(L_103);	// º£¾î³»¸®±â		
-		else if (K_CTRL)		SetState(L_107);	// ±âÀÎ º£±â2		
+		else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_107);	// ±âÀÎ º£±â2		
 		else if (K_CTRLRMB)		SetState(L_147);	// °£ÆÄ º£±â		
 		else if (K_CTRLSPACE)	SetState(L_151);	// Æ¯¼ö ³³µµ		
 		else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// ³¯¶óÂ÷±â
@@ -2401,7 +2437,7 @@ void Player::L107() // ±âÀÎº£±â 2
 		{
 			if		(K_LMB || K_RMB)	SetState(L_105);	// º£¾î¿Ã¸®±â
 			else if (K_LMBRMB)			SetState(L_103);	// º£¾î³»¸®±â		
-			else if (K_CTRL)			SetState(L_108);	// ±âÀÎ º£±â3		
+			else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_108);	// ±âÀÎ º£±â3		
 			else if (K_CTRLRMB)			SetState(L_147);	// °£ÆÄ º£±â
 			else if (K_CTRLSPACE)		SetState(L_151);	// Æ¯¼ö ³³µµ		
 			else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// ³¯¶óÂ÷±â
@@ -2468,7 +2504,7 @@ void Player::L108() // ±âÀÎº£±â 3
 	{		
 		if		(K_RMB || K_LMB)	SetState(L_104);  // Âî¸£±â		
 		else if (K_LMBRMB)			SetState(L_103);  // º£¾î³»¸®±â		
-		else if (K_CTRL)			SetState(L_109);  // ±âÀÎ Å«È¸Àüº£±â
+		else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_109);  // ±âÀÎ Å«È¸Àüº£±â
 		else if (K_CTRLRMB)			SetState(L_147);  // °£ÆÄ º£±â
 		else if (K_CTRLSPACE)		SetState(L_151);  // Æ¯¼ö ³³µµ		
 		else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// ³¯¶óÂ÷±â
@@ -2486,6 +2522,7 @@ void Player::L109() // ±âÀÎ Å«È¸Àüº£±â
 	{
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_25", .5f);
 		UIManager::Get()->MinusSpiritGauge(); // ±âÀÎ°ÔÀÌÁö ¼Ò¸ðÇÏ±â( ´Ü 1¹ø )
+		isEvaded = false;
 	}
 	if (RATIO > 0.2 && RATIO < 0.21)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
@@ -2566,7 +2603,7 @@ void Player::L110() // ±âÀÎ ³»µðµ®º£±â
 		if (K_LMB || K_RMB)							SetState(L_105);    // º£¾î¿Ã¸®±â		
 		else if (K_CTRLRMB)							SetState(L_147);    // °£ÆÄ º£±â
 		else if (K_CTRLSPACE)						SetState(L_151);	// Æ¯¼ö ³³µµ
-		else if (K_CTRL)							SetState(L_108);	// ±âÀÎº£±â3
+		else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_108);	// ±âÀÎº£±â3
 		else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// ³¯¶óÂ÷±â
 		else if (K_SPACE)							Roll();				// ±¸¸£±â
 	}
@@ -2652,7 +2689,8 @@ void Player::L128()	// ³¯¶óÂ÷±â ½ÃÀÛ
 	if (!playOncePerMotion)
 	{		
 		UI->UseBugSkill();
-		playOncePerMotion = true;		
+		playOncePerMotion = true;
+		isEvaded = false;
 	}
 
 	if (RATIO < 0.2)
@@ -2673,7 +2711,7 @@ void Player::L128()	// ³¯¶óÂ÷±â ½ÃÀÛ
 	}
 }
 
-void Player::L130()	// ³¯¶óÂ÷±â Ã¼°øÁß
+void Player::L130()	// ³¯¶óÂ÷±â Ã¼°øÁß 
 {
 	PLAY;
 
@@ -2682,7 +2720,7 @@ void Player::L130()	// ³¯¶óÂ÷±â Ã¼°øÁß
 		if(Jump(850))
 		// °ø°ÝÆÇÁ¤ ÇÁ·¹ÀÓ
 		{
-			if ( Pos().y > 50 )
+			if ( Pos().y > 50 )//TODO
 			{
 				if (Attack(2, true, 3))
 				{
@@ -2858,6 +2896,7 @@ void Player::L147() // °£ÆÄº£±â
 		evadeCheckCollider->SetParent(realPos);
 		evadeCheckCollider->SetActive(true);
 		evadeCheckCollider->UpdateWorld();
+		UI->curSpiritGauge = 0;
 	}
 
 	if (RATIO > 0.2 && RATIO < 0.3)
@@ -2881,6 +2920,7 @@ void Player::L147() // °£ÆÄº£±â
 		{
 			if (isEvaded)
 				isEvaded = false;
+			evadeCheckCollider->SetActive(false);
 			SetState(L_151);	// Æ¯¼ö ³³µµ
 		}
 	}
@@ -2900,25 +2940,22 @@ void Player::L147() // °£ÆÄº£±â
 			CAM->Zoom(300);
 	}
 
-	if (RATIO > 0.56)
-	{
-		if (isEvaded)
-			isEvaded = false;
-	}
-
 	if (RATIO > 0.56) // Äµ½½ °¡´É Å¸ÀÌ¹Ö
 	{
 		if		(K_LMB)			SetState(L_101);    // ¼¼·Îº£±â		
 		else if (K_RMB)			SetState(L_104);	// Âî¸£±â		
 		else if (K_LMBRMB)		SetState(L_103);	// º£¾î³»¸®±â		
 		else if (K_CTRLSPACE)	SetState(L_151);	// Æ¯¼ö ³³µµ
-		else if (K_CTRL)		SetState(L_109);	// ±âÀÎÅ«È¸Àüº£±â (TODO :: ÀÌ°Ç Á¶°Ç µûÁ®¾ßÇÔ)	
+		else if (K_CTRL && isEvaded)	SetState(L_109);	// ±âÀÎÅ«È¸Àüº£±â
 		else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// ³¯¶óÂ÷±â
 		else if (K_SPACE)		Roll();				// ±¸¸£±â
 	}
 
 	if (RATIO > 0.96)
+	{
+		isEvaded = false;
 		ReturnIdle();
+	}
 }
 
 void Player::L151() // Æ¯¼ö ³³µµ
@@ -2930,6 +2967,7 @@ void Player::L151() // Æ¯¼ö ³³µµ
 		holdingSword = true;
 		EndEffect();
 		UIManager::Get()->staminaActive = false;
+		isEvaded = false;
 	}
 	if (RATIO > 0.2 && RATIO < 0.3)
 		Sounds::Get()->Play("Heeee", .5f);	
@@ -3037,7 +3075,7 @@ void Player::L154() // ¾É¾Æ¹ßµµ º£±â
 		{
 			if		(K_LMB)			SetState(L_102); // ¼¼·Îº£±â
 			else if (K_RMB)			SetState(L_104); // Âî¸£±â
-			else if (K_CTRL)		SetState(L_106); // ±âÀÎ º£±â 1		
+			else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106); // ±âÀÎ º£±â 1		
 			else if (K_CTRLRMB)		SetState(L_147); // °£ÆÄ º£±â
 			else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// ³¯¶óÂ÷±â
 			else if (K_SPACE)		Roll();			 // ±¸¸£±â
@@ -3056,7 +3094,7 @@ void Player::L155() // ¾É¾Æ¹ßµµ ±âÀÎº£±â
 	if (INIT)
 	{
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_25", .5f);
-		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_8", .5f);
+		//Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_8", .5f);
 	}
 	if (RATIO > 0.11 && RATIO < 0.15)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
@@ -3088,7 +3126,7 @@ void Player::L155() // ¾É¾Æ¹ßµµ ±âÀÎº£±â
 		if (isEvaded && isHit && (RATIO >0.385  && RATIO < 0.39))
 		{
 			if(isHitL155==false)
-			UIManager::Get()->PlusCotingLevel();
+				UIManager::Get()->PlusCotingLevel();
 
 			isHitL155 = true;
 			Sounds::Get()->Play("pl_wp_l_swd_epv_media.bnk.2_8", .5f);			
@@ -3102,8 +3140,8 @@ void Player::L155() // ¾É¾Æ¹ßµµ ±âÀÎº£±â
 		{
 			isEvaded = false; // ¸¸¾à ¾Õ¿¡¼­ true·Î ³²¾ÆÀÖ´Â °æ¿ì º¸Çè¿ë
 
-			if		(K_LMB)			SetState(L_101); // ³»µðµ®º£±â
-			else if (K_CTRL)		SetState(L_108); // ±âÀÎ º£±â 3		
+			if (K_LMB)			SetState(L_101); // ³»µðµ®º£±â
+			else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_108); // ±âÀÎ º£±â 3		
 			else if (K_CTRLSPACE)	SetState(L_151); // Æ¯¼ö ³³µµ
 			else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// ³¯¶óÂ÷±â
 			else if (K_SPACE)		Roll();			 // ±¸¸£±â
@@ -3239,7 +3277,7 @@ void Player::D011()  // 7ÀÇ ¹Ý´ë
 void Player::D015() // ÃÄ¸Â°í ´ýºí¸µ ³¯¶ó°¡±â
 {
 	PLAY;
-	if (Jump(1000))
+	if (Jump(300))
 	{
 		Pos() += Back() * temp4 * DELTA;
 	}
@@ -3263,7 +3301,7 @@ void Player::D021() // ¾Õº¸°í ¾ÕÀ¸·Î ³¯¶ó°¡±â
 {
 	PLAY;
 
-	if (Jump(1000))
+	if (Jump(300))
 	{
 		Pos() += Forward() * temp4 * DELTA;
 	}
@@ -3426,7 +3464,7 @@ void Player::MotionRotate(float degree)
 
 bool Player::State_S() // ³³µµ ½ºÅ×ÀÌÆ® ¸ñ·Ï
 {
-	return curState >= S_001 && curState <= S_122;
+	return (curState >= S_001 && curState <= S_122) || curState >= D_001;
 }
 
 void Player::StatusRender()

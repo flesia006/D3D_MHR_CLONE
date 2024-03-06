@@ -4,7 +4,7 @@
 Val_Jet_Particle::Val_Jet_Particle()
 {
 	jet = new ParticleSystem("TextData/Particles/val_jet_v2.fx");	
-	jet->SetScale();
+	jet->SetScale(3.0f);
 }
 
 Val_Jet_Particle::~Val_Jet_Particle()

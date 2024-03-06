@@ -147,9 +147,9 @@ void ParticleSystem::SetRotation(Vector3 rot)
     quad->Rot() = rot;
 }
 
-void ParticleSystem::SetScale()
+void ParticleSystem::SetScale(float scale)
 {
-    quad->Scale() *= 3;
+    quad->Scale() *= scale;
 }
 
 void ParticleSystem::SetVortex(Vector3 pos)

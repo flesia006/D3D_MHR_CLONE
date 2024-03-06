@@ -72,6 +72,8 @@ private:
     void QuickSlotBar(); // 퀵 슬롯 에서 가리키는 내용 함수
     void DragSlot(); // 드래그 슬롯 내용
     void DragSlotBar(); // 드래그 슬롯 내용
+    void NumberSlot(); // 넘버 슬롯 내용
+    void NumberSlotBar(); // 넘버 슬롯 내용
     //=====================
 
 private:
@@ -100,6 +102,9 @@ private:
     vector<Quad*> selectBoxFrames;
     // 드래그 슬롯 추가 부분
     Quad* dragSlotBox;
+    // 넘버 슬롯 추가 부분
+    vector<Quad*> numberBoxs;
+    vector<Quad*> numberBoxFrames;
     // 슬롯 안에 아이템 이름
     Quad* slotName1;
     Quad* slotName2;
@@ -127,8 +132,13 @@ private:
     Quad* greatepotionIcon_D;
     Quad* whetstoneIcon_D;
     //===================
+    Quad* potionIcon_N;
+    Quad* greatepotionIcon_N;
+    Quad* whetstoneIcon_N;
+    //===================
     vector<Quad*> itemNumber_Q;
     vector<Quad*> itemNumber_D;
+    vector<Quad*> itemNumber_N;
     //===================
     
     //액터의 UI
@@ -210,6 +220,19 @@ public:
     bool useDragSlot1 = true;
     bool useDragSlot2 = false;
     bool useDragSlot3 = false;
+
+    // 넘버 슬롯 실행 할때 유뮤 확인 하기
+    bool useNumberBar = false;
+    float timer = 0.0f;
+
+    bool useNumberSlot1 = false;
+    bool useNumberSlot2 = false;
+    bool useNumberSlot3 = false;
+    bool useNumberSlot4 = false;
+    bool useNumberSlot5 = false;
+    bool useNumberSlot6 = false;
+    bool useNumberSlot7 = false;
+    bool useNumberSlot8 = false;
 
     int DragCout = 0;
 };

@@ -83,7 +83,7 @@ public:
     void ParticleRotate();
     void HaloPos();
     void SetRotation(Vector3 rot);
-    void SetScale();
+    void SetScale(float scale);
     void SetParent(Transform* transform) { parent = transform; }
     void SetPos(Vector3 pos) { quad->Pos() = pos; }
     void SetRot(Vector3 rot) { quad->Rot() = rot; }

@@ -6,7 +6,7 @@ PotionParticle::PotionParticle()
 	particle2 = new ParticleSystem("TextData/Particles/potion_02.fx");
 	particle3 = new ParticleSystem("TextData/Particles/potion_05_v2.fx");
 	particle4 = new ParticleSystem("TextData/Particles/potion_04.fx");
-	particle2->SetScale();
+	particle2->SetScale(3.0f);
 	//particle3->SetScale();		
 }
 

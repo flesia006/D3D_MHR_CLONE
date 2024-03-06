@@ -72,7 +72,9 @@ public:
 		TAIL_START, // 시작 부분
 		TAIL_1,		// 1/4 지점
 		TAIL_2,		// 1/2 지점
-		TAIL		// 끝 지점
+		TAIL,		// 끝 지점
+
+		ROAR		// 포효 충돌체
 	};
 	enum WingName
 	{
@@ -177,7 +179,6 @@ private:
 	void HS_FlyFallAtk();
 	void HS_FlyWingBlast();
 	void HB_WingAtk();
-	void FindRoar();
 	void AngerRoar();
 
 	void Storm();
@@ -215,7 +216,7 @@ private:
 	void UpdateUI(); //캐릭터 UI가 있으면 이후 업데이트
 	float GetRadBtwTrgt();
 	void RotateToTarget(float ratio1, float ratio2); // 
-	void SetColliderAttack(ColliderName name, float ratio);
+	void SetColliderAttack(ColliderName name, float ratio, float dmg = 10.0f, UINT atkStrength = 2);
 	int  SetRadAndMirror(bool needMirror);
 	void Loop() { GetClip(curState)->ResetPlayTime(); Pos() = realPos->Pos(); }
 
