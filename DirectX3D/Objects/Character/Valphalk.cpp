@@ -368,15 +368,15 @@ void Valphalk::Update()
 	for (SphereCollider* bullet : bullets)
 		bullet->Update();
 
-	for (BoxCollider* boxCollider : boxColliders)
-		boxCollider->Update();
+	//for (BoxCollider* boxCollider : boxColliders)
+	//	boxCollider->Update();
 
-//	forwardBoom->UpdateWorld(); boxColliders for문에 넣어서 주석처리 해둠
-//	fullBurst->UpdateWorld();
-//
-//	effectBox1->UpdateWorld();
-//	effectBox2->UpdateWorld();
-//	effectBox3->UpdateWorld();
+	forwardBoom->Update();
+	fullBurst->Update();
+
+	effectBox1->Update();
+	effectBox2->Update();
+	effectBox3->Update();
 
 	effectSphere1->Update();
 	effectSphere2->Update();
@@ -411,23 +411,6 @@ void Valphalk::Update()
 	FOR(hupgiFire.size()) hupgiFire[i]->Update();
 
 	ModelAnimator::Update();
-	
-	///////////////////////
-	//디버그용
-	if (KEY_DOWN('5'))
-	{
-		colliders[HEAD]->minusPartHP(5000);
-	}
-	if (KEY_DOWN('6'))
-	{
-		colliders[LLEG1]->minusPartHP(700);
-	}
-	if (KEY_DOWN('7'))
-	{
-		curHP -= 2000;
-	}
-	////////////////////////
-
 }
 
 void Valphalk::PreRender()
@@ -3536,10 +3519,17 @@ void Valphalk::E2056() // 찌르고 그 날개 로 한바퀴 돌기
 	if (RATIO > 0.361 && RATIO < 0.617)
 	{
 		SetColliderAttack(RWING, 0.617, 50, 2);
+		if (!playOncePerPattern)
+		{
+			colliders[RWING]->Scale().y *= 2.2f;
+			playOncePerPattern = true;
+		}
 	}
 
 	if (RATIO > 0.96)
 	{
+		colliders[RWING]->Scale().y *= 0.4f;
+		playOncePerPattern = false;
 		sequence++;
 		Rot().y += XM_PIDIV2;
 	}
@@ -3708,8 +3698,10 @@ void Valphalk::E2144() // 전방 폭격 시작
 
 void Valphalk::E2145() // 전방 폭격 시전 후 백스텝
 {
-	forwardBoom->SetActive(true);
 	PLAY;
+
+	if (RATIO < 0.6f)
+		forwardBoom->SetActive(true);
 	if (RATIO > 0.6f)
 		forwardBoom->SetActive(false);
 
@@ -3852,7 +3844,7 @@ void Valphalk::E2151()
 void Valphalk::E2152()
 {
 	PLAY;
-	if (RATIO > 0.5 && RATIO < 0.51)
+	if (RATIO > 0.5 && RATIO < 0.6)
 		forwardBoom->SetActive(true);
 	if (RATIO > 0.6)
 		forwardBoom->SetActive(false);
@@ -4725,9 +4717,9 @@ void Valphalk::E2082()
 	PLAY;
 	forwardBoom->Pos() = 0;
 	forwardBoom->Scale().x = 3000;
-	if (RATIO > 0.2 && RATIO < 0.21)
+	if (RATIO > 0.2 && RATIO < 0.3)
 		forwardBoom->SetActive(true);
-	if (RATIO > 0.4 && RATIO < 0.41)
+	if (RATIO > 0.4)
 		forwardBoom->SetActive(false);
 
 	if (RATIO > 0.96)

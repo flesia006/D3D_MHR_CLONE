@@ -827,6 +827,9 @@ bool Player::Attack(float power, bool push, UINT useOtherCollider) // Ãæµ¹ÆÇÁ¤ Ç
 	{
 		if (playerCollider->IsCapsuleCollision(collider, &contact) && !attackOnlyOncePerMotion)
 		{			
+			if (!collider->Active())
+				return false;
+
 			criticalParticle->ParticleRotate();
 			hitBoomParticle->Play(contact.hitPoint, swordSwingDir);
 			criticalParticle->Play(contact.hitPoint, swordSwingDir );
@@ -1094,7 +1097,7 @@ void Player::HurtCheck()
 		val = dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetValphalk();
 	else
 		return;
-	//TODO : Æ÷È¿ Ãæµ¹Ã¼ Ãæµ¹ÆÇÁ¤ ¸¸µé¾î¾ßÇÔ, 3¹ø : ±Í¸·´Â ¸ð¼Ç
+
 	auto colliders = val->GetCollider();
 	auto sphereColliders = val->GetSphereCollider();
 	auto boxColliders = val->GetBoxCollider();
@@ -1103,9 +1106,6 @@ void Player::HurtCheck()
 	{
 		if (bodyCollider->IsCapsuleCollision(collider))  /// ¹ßÆÄ·çÅ© Ä¸½¶µéÀÌ¶û Ãæµ¹À» Çß¾î
 		{
-			if (!collider->Active())
-				return;
-
 			Vector3 fwd = Forward();
 			Vector3 atkDir = -1 * collider->direction;
 			if (collider->direction == Vector3(0, 0, 0))
@@ -1114,7 +1114,7 @@ void Player::HurtCheck()
 			Vector3 reDir = -1 * atkDir;
 			Vector3 rad = XMVector3AngleBetweenVectors(fwd, atkDir);
 
-			if (collider->isAttack)						// ±Ùµ¥ ±× ÄÝ¸®´õ°¡ °ø°Ý ÄÝ¸®´õ¾ß
+			if (collider->isAttack && collider->Active())						// ±Ùµ¥ ±× ÄÝ¸®´õ°¡ °ø°Ý ÄÝ¸®´õ¾ß
 			{
 				if (curState >= L_400)
 					return;
@@ -1125,7 +1125,11 @@ void Player::HurtCheck()
 					return;
 				}
 
+				evadeCheckCollider->SetActive(false);
+				evadeCheckCollider->UpdateWorld();
+
 				int str = collider->atkStrength;
+				holdingSword = false;
 				if (rad.x > XM_PIDIV2)
 				{
 					Rot().y = atan2(reDir.x, reDir.z);
@@ -1161,9 +1165,6 @@ void Player::HurtCheck()
 	{
 		if (bodyCollider->IsSphereCollision(collider))  /// ±¸Ã¼ Ãæµ¹À» Çß¾î
 		{
-			if (!collider->Active())
-				return;
-
 			Vector3 fwd = Forward();
 			Vector3 atkDir = -1 * collider->direction;
 			if (collider->direction == Vector3(0, 0, 0))
@@ -1172,32 +1173,38 @@ void Player::HurtCheck()
 			Vector3 reDir = -1 * atkDir;
 			Vector3 rad = XMVector3AngleBetweenVectors(fwd, atkDir);
 
-			
-			if (curState >= L_400)
-				return;
-
-			if (curState == L_155 && RATIO < 0.36)
+			if (collider->Active())
 			{
-				isEvaded = true;
-				return;
-			}
+				if (curState >= L_400)
+					return;
 
-			if (rad.x > XM_PIDIV2)
-			{
-				Rot().y = atan2(reDir.x, reDir.z);
-				UpdateWorld();
+				if (curState == L_155 && RATIO < 0.36)
+				{
+					isEvaded = true;
+					return;
+				}
 
-				SetState(D_015);
-			}
-			else
-			{
-				Rot().y = atan2(atkDir.x, atkDir.z);
-				UpdateWorld();
+				evadeCheckCollider->SetActive(false);
+				evadeCheckCollider->UpdateWorld();
 
-				SetState(D_021);
+				holdingSword = false;
+
+				if (rad.x > XM_PIDIV2)
+				{
+					Rot().y = atan2(reDir.x, reDir.z);
+					UpdateWorld();
+
+					SetState(D_015);
+				}
+				else
+				{
+					Rot().y = atan2(atkDir.x, atkDir.z);
+					UpdateWorld();
+
+					SetState(D_021);
+				}
+				UI->curHP -= collider->atkDmg;
 			}
-			UI->curHP -= collider->atkDmg;
-			
 		}
 	}
 
@@ -1205,9 +1212,6 @@ void Player::HurtCheck()
 	{
 		if (bodyCollider->IsBoxCollision(collider))  /// ¹Ú½º Ãæµ¹À» Çß¾î
 		{
-			if (!collider->Active())
-				return;
-
 			Vector3 fwd = Forward();
 			Vector3 atkDir = -1 * collider->direction;
 			if (collider->direction == Vector3(0, 0, 0))
@@ -1216,31 +1220,38 @@ void Player::HurtCheck()
 			Vector3 reDir = -1 * atkDir;
 			Vector3 rad = XMVector3AngleBetweenVectors(fwd, atkDir);
 
-
-			if (curState >= L_400)
-				return;
-
-			if (curState == L_155 && RATIO < 0.36)
+			if (collider->Active())
 			{
-				isEvaded = true;
-				return;
-			}
+				if (curState >= L_400)
+					return;
 
-			if (rad.x > XM_PIDIV2)
-			{
-				Rot().y = atan2(reDir.x, reDir.z);
-				UpdateWorld();
+				if (curState == L_155 && RATIO < 0.36)
+				{
+					isEvaded = true;
+					return;
+				}
 
-				SetState(D_015);
-			}
-			else
-			{
-				Rot().y = atan2(atkDir.x, atkDir.z);
-				UpdateWorld();
+				evadeCheckCollider->SetActive(false);
+				evadeCheckCollider->UpdateWorld();
 
-				SetState(D_021);
+				holdingSword = false;
+
+				if (rad.x > XM_PIDIV2)
+				{
+					Rot().y = atan2(reDir.x, reDir.z);
+					UpdateWorld();
+
+					SetState(D_015);
+				}
+				else
+				{
+					Rot().y = atan2(atkDir.x, atkDir.z);
+					UpdateWorld();
+
+					SetState(D_021);
+				}
+				UI->curHP -= collider->atkDmg;
 			}
-			UI->curHP -= collider->atkDmg;
 		}
 	}
 }
@@ -2696,7 +2707,7 @@ void Player::L128()	// ³¯¶óÂ÷±â ½ÃÀÛ
 	}
 }
 
-void Player::L130()	// ³¯¶óÂ÷±â Ã¼°øÁß
+void Player::L130()	// ³¯¶óÂ÷±â Ã¼°øÁß 
 {
 	PLAY;
 
@@ -2705,7 +2716,7 @@ void Player::L130()	// ³¯¶óÂ÷±â Ã¼°øÁß
 		if(Jump(850))
 		// °ø°ÝÆÇÁ¤ ÇÁ·¹ÀÓ
 		{
-			if ( Pos().y > 50 )
+			if ( Pos().y > 50 )//TODO
 			{
 				if (Attack(2, true, 3))
 				{
@@ -3079,7 +3090,7 @@ void Player::L155() // ¾É¾Æ¹ßµµ ±âÀÎº£±â
 	if (INIT)
 	{
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_25", .5f);
-		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_8", .5f);
+		//Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_8", .5f);
 	}
 	if (RATIO > 0.11 && RATIO < 0.15)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
@@ -3262,7 +3273,7 @@ void Player::D011()  // 7ÀÇ ¹Ý´ë
 void Player::D015() // ÃÄ¸Â°í ´ýºí¸µ ³¯¶ó°¡±â
 {
 	PLAY;
-	if (Jump(1000))
+	if (Jump(300))
 	{
 		Pos() += Back() * temp4 * DELTA;
 	}
@@ -3286,7 +3297,7 @@ void Player::D021() // ¾Õº¸°í ¾ÕÀ¸·Î ³¯¶ó°¡±â
 {
 	PLAY;
 
-	if (Jump(1000))
+	if (Jump(300))
 	{
 		Pos() += Forward() * temp4 * DELTA;
 	}
@@ -3449,7 +3460,7 @@ void Player::MotionRotate(float degree)
 
 bool Player::State_S() // ³³µµ ½ºÅ×ÀÌÆ® ¸ñ·Ï
 {
-	return curState >= S_001 && curState <= S_122;
+	return (curState >= S_001 && curState <= S_122) || curState >= D_001;
 }
 
 void Player::StatusRender()
