@@ -628,6 +628,7 @@ void Valphalk::EnergyBullets()
 
 	if (sequence == 3) // 탄의 포지션 잡아주기
 	{
+		Sounds::Get()->Play("em086_05_fx_media_32", .3f);
 		bullets[0]->Pos() = GetTranslationByNode(61) + fire1 * .81f;
 		bullets[1]->Pos() = GetTranslationByNode(64) + fire2 * .81f;
 		bullets[2]->Pos() = GetTranslationByNode(67) + fire3 * .81f;
@@ -1212,7 +1213,7 @@ void Valphalk::ConditionCheck()
 		angerTimer = 0.0f;
 	}
 
-	if (roarAfterTimer > 5.0f && !needHupGi)  // 인식 포효 1분 후 흡기 시작
+	if (roarAfterTimer > 60.0f && !needHupGi)  // 인식 포효 1분 후 흡기 시작
 	{
 		needHupGi = true;
 		isFindTrgt = false;
@@ -1387,12 +1388,13 @@ void Valphalk::ChooseNextPattern()
 		return;
 	}
 	
-	//int i = rand() % 2;
-	//switch (i)
-	//{
-	//case 0:	curPattern = B_SMALLSTAGGER;	 break;
-	//case 1:	curPattern = B_HUGESTAGGER;		 break;
-	//}
+	/*int i = rand() % 3;
+	switch (i)
+	{
+	case 0:	curPattern = S_STABATK;	 break;
+	case 1:	curPattern = B_DOWNBLAST;		 break;
+	case 2:	curPattern = B_ENERGYBLAST;		 break;
+	}*/
 	
 	if (!needHupGi && !angerRoar90 && !angerRoar40 && !ult50)
 	{
@@ -1791,15 +1793,14 @@ int Valphalk::SetRadAndMirror(bool needMirror)
 void Valphalk::FlameOn()
 {
 	// 흡기상태 몸에 불번짐
-		hupgiFire[0]->Play(GetTranslationByNode(15), 0); // 왼쪽 어깨
-		hupgiFire[1]->Play(GetTranslationByNode(35), 0); // 오른쪽 어깨
-		hupgiFire[2]->Play(GetTranslationByNode(61), 0); // 날개
-		hupgiFire[3]->Play(GetTranslationByNode(64), 0); // 날개
-		hupgiFire[4]->Play(GetTranslationByNode(67), 0); // 날개
-		hupgiFire[5]->Play(GetTranslationByNode(81), 0); // 날개
-		hupgiFire[6]->Play(GetTranslationByNode(84), 0); // 날개
-		hupgiFire[7]->Play(GetTranslationByNode(87), 0); // 날개	
-	
+	hupgiFire[0]->Play(GetTranslationByNode(15), 0); // 왼쪽 어깨
+	hupgiFire[1]->Play(GetTranslationByNode(35), 0); // 오른쪽 어깨
+	hupgiFire[2]->Play(GetTranslationByNode(61), 0); // 날개
+	hupgiFire[3]->Play(GetTranslationByNode(64), 0); // 날개
+	hupgiFire[4]->Play(GetTranslationByNode(67), 0); // 날개
+	hupgiFire[5]->Play(GetTranslationByNode(81), 0); // 날개
+	hupgiFire[6]->Play(GetTranslationByNode(84), 0); // 날개
+	hupgiFire[7]->Play(GetTranslationByNode(87), 0); // 날개		
 }
 
 void Valphalk::FlameOff()
@@ -1881,7 +1882,7 @@ void Valphalk::S_LegAtk()
 void Valphalk::S_StabAtk()
 {
 	static int whichPattern = 0;
-
+	int randSound = rand() % 2;
 	if (sequence == 0) // 사이드스탭 할지 앞다리 찍기 할지 판단
 	{
 		if ((realPos->Pos() - target->GlobalPos()).Length() < 1000)
@@ -1907,6 +1908,18 @@ void Valphalk::S_StabAtk()
 		case 5:		SetState(E_2044);  E2044(XM_PIDIV2);  break;
 		case 6:		SetState(E_2045);  E2045(XM_PI);  break;
 		}
+		if (RATIO > 0.18 && RATIO < 0.2)
+		{
+			if (randSound == 0)
+				Sounds::Get()->Play("em086_05_vo_media_1", 0.3f);
+			if (randSound == 1)
+				Sounds::Get()->Play("em086_05_vo_media_5", 0.3f);
+		}		
+		if (RATIO < 0.8 && RATIO > 0.79)
+		{
+			Sounds::Get()->Play("em086_05_fx_media_25", 0.1f);
+			randSound = 0;
+		}
 	}
 
 	if (sequence == 3) // 공격 모션
@@ -1914,11 +1927,17 @@ void Valphalk::S_StabAtk()
 		if (!renderJetRight)
 			renderJetRight = true;
 		SetState(E_2038);	E2038();
+		
+		if (RATIO > 0.18 && RATIO < 0.2)
+			Sounds::Get()->Play("em086_05_se_media_20", 0.4f);
+
 	}
 
 	if (sequence == 4) // 공격 모션2 - 휘두르기
 	{
 		SetState(E_2056);	E2056();
+		if (RATIO > 0.30 && RATIO < 0.31)
+			Sounds::Get()->Play("em086_05_se_media_32", 0.4f);
 	}
 
 	if (sequence == 5)
@@ -2383,10 +2402,15 @@ void Valphalk::B_DownBlast()
 		case 5:	SetState(E_2381); E2381();  break;
 		case 6:	SetState(E_2382); E2382();  break;
 		}
+			if (RATIO < 0.15 && RATIO > 0.13)
+				Sounds::Get()->Play("em086_05_vo_media_14", 0.3f);
+			if (RATIO < 0.65 && RATIO > 0.63)
+				Sounds::Get()->Play("em086_05_fx_media_32", 0.3f);
 	}
 
 	if (sequence == 2) // 공격 모션
 	{
+
 		SetState(E_2082);
 		E2082();
 	}
@@ -3489,6 +3513,14 @@ void Valphalk::E2054() // 찌르기 날개 회수
 void Valphalk::E2079()
 {
 	PLAY;
+	if(RATIO<0.14f && RATIO > 0.13f)
+		Sounds::Get()->Play("em086_05_fx_media_50", .3f);
+	if (RATIO < 0.17 && RATIO > 0.16f)
+		Sounds::Get()->Play("em086_05_fx_media_50_2", .3f);
+	if (RATIO < 0.2f && RATIO > 0.19f)
+		Sounds::Get()->Play("em086_05_fx_media_50", .3f);
+	if (RATIO < 0.22f && RATIO > 0.21f)
+		Sounds::Get()->Play("em086_05_fx_media_50_2", .3f);
 
 	for (int i = 0; i < bullets.size(); ++i)
 	{
@@ -4702,11 +4734,21 @@ void Valphalk::E2082()
 {
 	PLAY;
 	forwardBoom->Pos() = 0;
-	forwardBoom->Scale().x = 3000;
+	forwardBoom->Scale().x = 3000;	
+
 	if (RATIO > 0.2 && RATIO < 0.21)
+	{
 		forwardBoom->SetActive(true);
+		Sounds::Get()->Play("em086_05_se_media_10", 0.5f);
+	}
+	if(RATIO>0.22 && RATIO < 0.23)
+		Sounds::Get()->Play("em086_05_se_media_10_2", 0.5f);
+
 	if (RATIO > 0.4 && RATIO < 0.41)
 		forwardBoom->SetActive(false);
+
+	if (RATIO < 0.2 && RATIO > 0.18)
+		Sounds::Get()->Play("em086_05_vo_media_1", 0.3f);
 
 	if (RATIO > 0.98)
 	{
@@ -4852,7 +4894,7 @@ void Valphalk::E4013() // 조우 포효
 void Valphalk::E4071()
 {
 	PLAY;
-	if (RATIO < 0.3f && RATIO > 0.29f)
+	if (RATIO < 0.76f && RATIO > 0.75f)
 	{
 		Sounds::Get()->Play("em086_05_vo_media_20", 0.5f); // 흡기 시작 voice
 		Sounds::Get()->Play("em086_05_fx_media_40", 0.5f); // 흡기 시작 sfx
