@@ -12,9 +12,16 @@ public:
     virtual bool IsSphereCollision(SphereCollider* collider) override;
     virtual bool IsCapsuleCollision(CapsuleCollider* collider) override;
 
+    void Update();
+
     float Radius() { return radius * max(GlobalScale().x, max(GlobalScale().y, GlobalScale().z)); }
 
     bool isAttack = false;
+
+    float atkDmg = 10.0f;
+    Vector3 lastPos = {};
+    Vector3 curPos = {};
+    Vector3 direction = {};
 private:
     virtual void MakeMesh() override;
 

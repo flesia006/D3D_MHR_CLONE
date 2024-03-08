@@ -165,8 +165,14 @@
     <ClCompile Include="Objects\Particle\PotionParticle.cpp" />
     <ClCompile Include="Objects\Particle\Val_Jet_Particle.cpp" />
     <ClCompile Include="Scenes\FightTestScene.cpp" />
+    <ClCompile Include="Objects\Particle\Val_fire.cpp" />
     <ClCompile Include="Objects\Particle\ValZet.cpp" />
+<<<<<<< HEAD
     <ClCompile Include="Objects\Character\Sample.cpp" />
+=======
+    <ClCompile Include="Objects\Particle\HupgiFire.cpp" />
+    <ClCompile Include="Objects\Particle\Wind.cpp" />
+>>>>>>> 7af5bbedd0d1cbb3f931caef322e152ab9c3b95a
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Objects\Character\DummyValphalk.h" />
@@ -312,8 +318,14 @@
     <ClInclude Include="Objects\Particle\PotionParticle.h" />
     <ClInclude Include="Objects\Particle\Val_Jet_Particle.h" />
     <ClInclude Include="Scenes\FightTestScene.h" />
+    <ClInclude Include="Objects\Particle\Val_fire.h" />
     <ClInclude Include="Objects\Particle\ValZet.h" />
+<<<<<<< HEAD
     <ClInclude Include="Objects\Character\Sample.h" />
+=======
+    <ClInclude Include="Objects\Particle\HupgiFire.h" />
+    <ClInclude Include="Objects\Particle\Wind.h" />
+>>>>>>> 7af5bbedd0d1cbb3f931caef322e152ab9c3b95a
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DirectX3D.rc" />

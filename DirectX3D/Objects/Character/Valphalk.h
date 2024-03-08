@@ -72,7 +72,9 @@ public:
 		TAIL_START, // 시작 부분
 		TAIL_1,		// 1/4 지점
 		TAIL_2,		// 1/2 지점
-		TAIL		// 끝 지점
+		TAIL,		// 끝 지점
+
+		ROAR		// 포효 충돌체
 	};
 	enum WingName
 	{
@@ -142,8 +144,15 @@ public:
 
 	Transform* GetTransform(int index) { return transforms[index]; }
 	vector<CapsuleCollider*> GetCollider() { return colliders; }
+	vector<SphereCollider*> GetSphereCollider() { return sphereColliders; }
+	vector<BoxCollider*> GetBoxCollider() { return boxColliders; }
 
 	void minusCurHP(int damage) { curHP -= damage; }
+	void minusHeadHP(int damage) { colliders[HEAD]->partHp -= damage; }
+	void minusChestHP(int damage) { colliders[CHEST]->partHp -= damage; }
+	void minusLLegHP(int damage) { colliders[LLEG1]->partHp -= damage; }
+	void minusRLegHP(int damage) { colliders[RLEG1]->partHp -= damage; }
+	void minusTailHP(int damage) { colliders[TAIL]->partHp -= damage; }
 	bool GetIsHupgi() { return isHupGi; }
 
 	//ColliderName GetName() { return colliderName; }
@@ -170,7 +179,6 @@ private:
 	void HS_FlyFallAtk();
 	void HS_FlyWingBlast();
 	void HB_WingAtk();
-	void FindRoar();
 	void AngerRoar();
 
 	void Storm();
@@ -189,6 +197,8 @@ private:
 	void Patrol();
 	Vector3 GetPlayerPos();
 
+	void Jet();
+
 private:
 	void SetEvent(int clip, Event event, float timeRatio);
 	void ExecuteEvent();
@@ -206,10 +216,12 @@ private:
 	void UpdateUI(); //캐릭터 UI가 있으면 이후 업데이트
 	float GetRadBtwTrgt();
 	void RotateToTarget(float ratio1, float ratio2); // 
-	void SetColliderAttack(ColliderName name, float ratio, float dmg = 10.0f);
+	void SetColliderAttack(ColliderName name, float ratio, float dmg = 10.0f, UINT atkStrength = 2);
 	int  SetRadAndMirror(bool needMirror);
 	void Loop() { GetClip(curState)->ResetPlayTime(); Pos() = realPos->Pos(); }
 
+	void FlameOn();
+	void FlameOff();
 	// 모션 함수
 
 	void E0003();
@@ -451,7 +463,9 @@ private:
 	SphereCollider* effectSphere2;
 	Vector3 forwardBoomPosInit = { 0,-300,-1000 };
 
-
+	//공격 충돌체 보관용 벡터
+	vector<SphereCollider*> sphereColliders;
+	vector<BoxCollider*> boxColliders;
 
 	Vector3 fullBurstScale;
 	Vector3 fullBurstPos;
@@ -471,7 +485,7 @@ private:
 	bool combo = false;
 
 	bool isSlashMode = true;
-	bool isHupGi = true;
+	bool isHupGi = false;
 	bool renderJet = false;
 	bool renderJetRight = false;
 
@@ -485,9 +499,11 @@ private:
 	float angerTimer = 0.0f;
 	bool isAnger = false;
 
-	bool  ult50 = false;
+	bool ult50 = false;
 
-
+	bool angerRoar90Threshold = false;
+	bool angerRoar40Threshold = false;
+	bool ult50Threshold = false;
 
 	bool playOncePerPattern = false;
 
@@ -516,10 +532,16 @@ public:
 	// 파티클
 private:
 	vector<Val_Jet_Particle*> jetParticle;
+	vector<Val_fire*> fireParticle;
 	float timer2 = 0;
 	Transform* jetpos;
 	Transform* jetposend;
-	Vector3 jetpos2;
+	Vector3 jetpos1_1, jetpos2_1, jetpos3_1, jetpos4_1, jetpos5_1, jetpos6_1;
+	Vector3 jetpos1_2, jetpos2_2, jetpos3_2, jetpos4_2, jetpos5_2, jetpos6_2;
+	Vector3 jetpos1, jetpos2, jetpos3, jetpos4, jetpos5, jetpos6;
+
+	vector<HupgiFire*> hupgiFire;
+	//Vector3 jetpos2;
 
 	vector<Transform*> zetPos;
 	vector<ValZet*> valZets;

@@ -3,6 +3,7 @@
 class Particle;
 class Trail;
 class Sample;
+class Valphalk;
 class Player : public ModelAnimator
 {
 private:
@@ -73,6 +74,8 @@ public:
 	CapsuleCollider* getSwordCollider() { return swordCollider; }
 	Transform* GetRealPos() { return realPos; }
 
+	void SetValphalk(Valphalk* val) { this->val = val; }
+
 private:
 	void Control();
 	void Move();
@@ -83,6 +86,7 @@ private:
 
 	void UpdateWorlds();
 	void Potion();
+	void SharpeningStone();
 
 	void Rotate(float rotateSpeed = 5.0f);   // 앞으로 쭉 달리는 루프모션
 	void LimitRotate(float limit, float rotSpeed = 5.0f);   // 공격모션  15 , 180
@@ -363,6 +367,9 @@ private:
 	bool callGaruk = false;
 	bool rideCAM = false;
 
+
+	Valphalk* val;
+	
 	///////////////////////////////////////////
 	// Particle
 	vector<HitParticle*> hitParticle;

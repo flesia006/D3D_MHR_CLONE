@@ -103,15 +103,23 @@ Player::~Player()
 
 void Player::Update()
 {
-	if (!DeathCheck())
-	{
-		TermAttackUpdate();
-		HurtCheck();
-		Potion();
-	}
 
+	//if (!DeathCheck())
+	//{
+	//	TermAttackUpdate();
+	//	HurtCheck();
+	//	Potion();
+	//	SharpeningStone();
+	//}
+	///////////////////////////////////
+	//µð¹ö±ëÀ» À§ÇØ¼­ DeathCheck() ¹ÛÀ¸·Î »©µÐ°Í.
 	if (callGaruk)
 		ReadyRide();
+	TermAttackUpdate();
+	HurtCheck();
+	Potion();
+	SharpeningStone();
+	////////////////////////////////////
 	Control();
 	ResetPlayTime();
 
@@ -124,15 +132,12 @@ void Player::Update()
 	criticalParticle->Update();
 	spAtkParticle->Update();
 	potionParticle->Update();
-	potionParticle->SetParent(realPos);
-	potionParticle->SetVortex({ Pos().x,Pos().y + 100,Pos().z });
+	//potionParticle->SetParent(realPos);
+	potionParticle->SetPos(realPos->Pos());
+	potionParticle->SetVortex({ realPos->Pos().x,realPos->Pos().y+100,realPos->Pos().z });
 
 	ModelAnimator::Update();
-	UIManager::Get()->Update();
 	GroundCheck();
-
-	if (KEY_DOWN('5'))/// µð¹ö±× È®ÀÎ¿ëÀÌ¶ó ÇÊ¿ä¾øÀ¸¸é Áö¿öµµ µÊ
-		UI->curHP -= 30;
 }
 
 void Player::Render()
@@ -292,18 +297,23 @@ void Player::UpdateWorlds()
 void Player::Potion()
 {
 	time += DELTA;
-
-	if (UIManager::Get()->useQuickSlot1)
+	if (UI->useQuickSlot1 && UI->haveGPotion > 0 && !Lcure && !cure
+		|| UI->useDragSlot1 && UI->haveGPotion > 0 && KEY_DOWN('E') && !Lcure && !cure
+		|| UI->useNumberBar && UI->haveGPotion > 0 && KEY_DOWN('2') && !Lcure && !cure)
 	{
 		Sounds::Get()->Play("health_potion", 0.3f);
-		UIManager::Get()->useQuickSlot1 = false;
-		cure = true;
+		UI->haveGPotion--;
+		Lcure = true;
 		time = 0;
 	}
-	if (cure == true)
+	if (Lcure == true)
 	{
+		UI->useQuickSlot1 = false;
+		UI->useQuickSlot2 = false;
 		if (time < 0.1f)
+		{
 			potionParticle->Play({ Pos().x,Pos().y + 100,Pos().z }, { 0,0,0 });
+		}
 
 		if (time < 3)
 		{
@@ -311,37 +321,52 @@ void Player::Potion()
 		}
 		else if (time >= 3)
 		{
-			cure = false;
-			return;
+			Lcure = false;
 		}
 	}
 
-	if (UIManager::Get()->useQuickSlot2)
+	if (UI->useQuickSlot2 && UI->havePotion > 10 && !cure && !Lcure
+		|| UI->useDragSlot3 && UI->havePotion > 10 && KEY_DOWN('E') && !cure && !Lcure
+		|| UI->useNumberBar && UI->havePotion > 10 && KEY_DOWN('1') && !Lcure && !cure)
 	{
 		Sounds::Get()->Play("health_potion", 0.3f);
-		UIManager::Get()->useQuickSlot2 = false;
-		Lcure = true;
+		UI->havePotion--;
+		cure = true;
 		time = 0;
 	}
-	if (Lcure == true)
+	if (cure == true)
 	{
+		UI->useQuickSlot1 = false;
+		UI->useQuickSlot2 = false;
 		if (time < 0.1f)
+		{
 			potionParticle->Play({ Pos().x,Pos().y + 100,Pos().z }, { 0,0,0 });
+		}
 
 		if (time < 2)
 		{
-			UIManager::Get()->HealthPotion();
+			UI->HealthPotion();
 		}
 		else if (time >= 2)
 		{
-			Lcure = false;
-			return;
+			cure = false;
 		}
 	}
+
 	if (KEY_DOWN('T'))
 	{
 		Sounds::Get()->Play("health_potion", 0.3f);
-		UIManager::Get()->curStamina = 100;
+		UI->curStamina = 100;
+	}
+}
+
+void Player::SharpeningStone()
+{
+	if (UI->useQuickSlot3 && !cure && !Lcure
+		|| UI->useDragSlot2 &&  KEY_DOWN('E') && !cure && !Lcure
+		|| UI->useNumberBar &&  KEY_DOWN('3') && !Lcure && !cure)
+	{
+		UI->SharpeningStone();
 	}
 }
 
@@ -364,6 +389,7 @@ void Player::GUIRender()
 	//	ImGui::DragFloat("CAM.y", &y);
 
 	Vector3 realpos = realPos->Pos();
+	ImGui::DragFloat3("Pos", (float*)&Pos());
 
 	ImGui::DragFloat3("RealPos", (float*)&realpos);
 
@@ -754,7 +780,7 @@ void Player::Move()
 		}
 	}
 
-	if (KEY_FRONT(Keyboard::CTRL))
+	if (KEY_FRONT(Keyboard::CTRL) && UI->curSpiritGauge >= 10)
 	{
 		SetState(L_106);
 		return;
@@ -905,7 +931,10 @@ bool Player::Attack(float power, bool push, UINT useOtherCollider) // Ãæµ¹ÆÇÁ¤ Ç
 	for (auto collider : colliders)
 	{
 		if (playerCollider->IsCapsuleCollision(collider, &contact) && !attackOnlyOncePerMotion)
-		{
+		{			
+			if (!collider->Active())
+				return false;
+
 			criticalParticle->ParticleRotate();
 			hitBoomParticle->Play(contact.hitPoint, swordSwingDir);
 			criticalParticle->Play(contact.hitPoint, swordSwingDir);
@@ -916,8 +945,11 @@ bool Player::Attack(float power, bool push, UINT useOtherCollider) // Ãæµ¹ÆÇÁ¤ Ç
 
 			attackOnlyOncePerMotion = true;
 
-			if (curState == L_101 || curState == L_102 || curState == L_103 || curState == L_104 || curState == L_105) // ±âÀÎº£±â ¾Æ´Ï¶ó¸é °ÔÀÌÁö Áõ°¡
-				UIManager::Get()->PlusSpritGauge();
+			if (curState == L_101 || curState == L_102 || curState == L_103) // ±âÀÎº£±â ¾Æ´Ï¶ó¸é °ÔÀÌÁö Áõ°¡
+				UIManager::Get()->DoublePlusSpritGauge();
+
+			if (curState == L_104 || curState == L_105)
+				UI->PlusSpritGauge();
 
 			if (curState == L_109) // ±âÀÎ Å« È¸Àüº£±â ÀûÁß½Ã¿¡¸¸
 			{
@@ -936,16 +968,27 @@ bool Player::Attack(float power, bool push, UINT useOtherCollider) // Ãæµ¹ÆÇÁ¤ Ç
 			float hardness = 1.0f;
 			switch (collider->part)
 			{
-			case Valphalk::HEAD: hardness = 55; break;
-			case Valphalk::BODY: hardness = 30; break;
-			case Valphalk::LWING: hardness = 22; break;
-			case Valphalk::RWING: hardness = 22; break;
-			case Valphalk::LLEG1: hardness = 25; break;
-			case Valphalk::LLEG2: hardness = 25; break;
-			case Valphalk::RLEG1: hardness = 25; break;
-			case Valphalk::RLEG2: hardness = 25; break;
-			case Valphalk::TAIL: hardness = 45; break;
-			default: hardness = 1; break;
+				case Valphalk::HEAD			: hardness = 55; break;
+				case Valphalk::NECK			: hardness = 55; break;
+				case Valphalk::CHEST		: hardness = 30; break;
+				case Valphalk::BODY			: hardness = 30; break;
+				case Valphalk::LWING		: hardness = 22; break;
+				case Valphalk::LWING_RADIUS : hardness = 22; break;
+				case Valphalk::RWING		: hardness = 22; break;
+				case Valphalk::RWING_RADIUS	: hardness = 22; break;
+				case Valphalk::LLEG1		: hardness = 25; break;
+				case Valphalk::LLEG1_FOOT	: hardness = 25; break;
+				case Valphalk::LLEG2		: hardness = 25; break;
+				case Valphalk::LLEG2_FOOT	: hardness = 25; break;
+				case Valphalk::RLEG1		: hardness = 25; break;
+				case Valphalk::RLEG1_FOOT	: hardness = 25; break;
+				case Valphalk::RLEG2		: hardness = 25; break;
+				case Valphalk::RLEG2_FOOT	: hardness = 25; break;
+				case Valphalk::TAIL_START	: hardness = 45; break;
+				case Valphalk::TAIL_1		: hardness = 45; break;
+				case Valphalk::TAIL_2		: hardness = 45; break;
+				case Valphalk::TAIL			: hardness = 45; break;
+				default						: hardness = 1 ; break;
 			}
 			UIManager::Get()->MinusDurability();
 
@@ -962,13 +1005,26 @@ bool Player::Attack(float power, bool push, UINT useOtherCollider) // Ãæµ¹ÆÇÁ¤ Ç
 			val->minusCurHP(deal);
 
 			if (collider->part == Valphalk::HEAD
-				|| collider->part == Valphalk::LLEG1
-				|| collider->part == Valphalk::RLEG1
-				|| collider->part == Valphalk::TAIL)
-				collider->minusPartHP(deal);
+				|| collider->part == Valphalk::NECK)
+				val->minusHeadHP(deal);
 
-			if (collider->part == Valphalk::CHEST && val->GetIsHupgi())
-				collider->minusPartHP(deal);
+			if ((collider->part == Valphalk::CHEST
+				|| collider->part == Valphalk::BODY) && val->GetIsHupgi())
+				val->minusChestHP(deal);
+
+			if (collider->part == Valphalk::LLEG1
+				|| collider->part == Valphalk::LLEG1_FOOT)
+				val->minusLLegHP(deal);
+
+			if (collider->part == Valphalk::RLEG1
+				|| collider->part == Valphalk::RLEG1_FOOT)
+				val->minusRLegHP(deal);
+
+			if (collider->part == Valphalk::TAIL_START
+				|| collider->part == Valphalk::TAIL_1
+				|| collider->part == Valphalk::TAIL_2
+				|| collider->part == Valphalk::TAIL)
+				val->minusTailHP(deal);
 
 			if (hardness >= 30)				// À°ÁúÀÌ 30 ÀÌ»óÀ¸·Î ³ë¶õµ¥¹ÌÁö°¡ ¶ß´Â »óÈ²
 				damage.isWeakness = true;
@@ -1139,6 +1195,9 @@ void Player::AttackWOCollision(float power)
 
 void Player::HurtCheck()
 {
+	if (!bodyCollider->Active())
+		return;
+
 	Valphalk* val = nullptr;
 	if (SceneManager::Get()->Add("ShadowScene") == nullptr && SceneManager::Get()->Add("FightTestScene") != nullptr)
 		val = dynamic_cast<FightTestScene*>(SceneManager::Get()->Add("FightTestScene"))->GetValphalk();
@@ -1148,18 +1207,22 @@ void Player::HurtCheck()
 		return;
 
 	auto colliders = val->GetCollider();
+	auto sphereColliders = val->GetSphereCollider();
+	auto boxColliders = val->GetBoxCollider();
 
 	for (auto collider : colliders)
 	{
-		if (bodyCollider->IsCapsuleCollision(collider))  /// Ãæµ¹À» Çß¾î
+		if (bodyCollider->IsCapsuleCollision(collider))  /// ¹ßÆÄ·çÅ© Ä¸½¶µéÀÌ¶û Ãæµ¹À» Çß¾î
 		{
 			Vector3 fwd = Forward();
 			Vector3 atkDir = -1 * collider->direction;
+			if (collider->direction == Vector3(0, 0, 0))
+				collider->direction = realPos->Pos() - collider->Pos();
 			atkDir.y = 0;
 			Vector3 reDir = -1 * atkDir;
 			Vector3 rad = XMVector3AngleBetweenVectors(fwd, atkDir);
 
-			if (collider->isAttack)						// ±Ùµ¥ ±× ÄÝ¸®´õ°¡ °ø°Ý ÄÝ¸®´õ¾ß
+			if (collider->isAttack && collider->Active())						// ±Ùµ¥ ±× ÄÝ¸®´õ°¡ °ø°Ý ÄÝ¸®´õ¾ß
 			{
 				if (curState >= L_400)
 					return;
@@ -1170,7 +1233,11 @@ void Player::HurtCheck()
 					return;
 				}
 
+				evadeCheckCollider->SetActive(false);
+				evadeCheckCollider->UpdateWorld();
+
 				int str = collider->atkStrength;
+				holdingSword = false;
 				if (rad.x > XM_PIDIV2)
 				{
 					Rot().y = atan2(reDir.x, reDir.z);
@@ -1180,6 +1247,7 @@ void Player::HurtCheck()
 					{
 					case 1:   SetState(D_001); 	break;
 					case 2:   SetState(D_015); 	break;
+					case 3:   SetState(D_045); 	break;
 					default:  SetState(D_015); 	break;
 					}
 				}
@@ -1192,8 +1260,103 @@ void Player::HurtCheck()
 					{
 					case 1:   SetState(D_004); 	break;
 					case 2:   SetState(D_021); 	break;
+					case 3:   SetState(D_045); 	break;
 					default:  SetState(D_021); 	break;
 					}
+				}
+				UI->curHP -= collider->atkDmg;
+			}
+		}
+	}
+
+	for (auto collider : sphereColliders)
+	{
+		if (bodyCollider->IsSphereCollision(collider))  /// ±¸Ã¼ Ãæµ¹À» Çß¾î
+		{
+			Vector3 fwd = Forward();
+			Vector3 atkDir = -1 * collider->direction;
+			if (collider->direction == Vector3(0, 0, 0))
+				collider->direction = realPos->Pos() - collider->Pos();
+			atkDir.y = 0;
+			Vector3 reDir = -1 * atkDir;
+			Vector3 rad = XMVector3AngleBetweenVectors(fwd, atkDir);
+
+			if (collider->Active())
+			{
+				if (curState >= L_400)
+					return;
+
+				if (curState == L_155 && RATIO < 0.36)
+				{
+					isEvaded = true;
+					return;
+				}
+
+				evadeCheckCollider->SetActive(false);
+				evadeCheckCollider->UpdateWorld();
+
+				holdingSword = false;
+
+				if (rad.x > XM_PIDIV2)
+				{
+					Rot().y = atan2(reDir.x, reDir.z);
+					UpdateWorld();
+
+					SetState(D_015);
+				}
+				else
+				{
+					Rot().y = atan2(atkDir.x, atkDir.z);
+					UpdateWorld();
+
+					SetState(D_021);
+				}
+				UI->curHP -= collider->atkDmg;
+			}
+		}
+	}
+
+	for (auto collider : boxColliders)
+	{
+		if (bodyCollider->IsBoxCollision(collider))  /// ¹Ú½º Ãæµ¹À» Çß¾î
+		{
+			Vector3 fwd = Forward();
+			Vector3 atkDir = -1 * collider->direction;
+			if (collider->direction == Vector3(0, 0, 0))
+				collider->direction = realPos->Pos() - collider->Pos();
+			atkDir.y = 0;
+			Vector3 reDir = -1 * atkDir;
+			Vector3 rad = XMVector3AngleBetweenVectors(fwd, atkDir);
+
+			if (collider->Active())
+			{
+				if (curState >= L_400)
+					return;
+
+				if (curState == L_155 && RATIO < 0.36)
+				{
+					isEvaded = true;
+					return;
+				}
+
+				evadeCheckCollider->SetActive(false);
+				evadeCheckCollider->UpdateWorld();
+
+				holdingSword = false;
+
+				if (rad.x > XM_PIDIV2)
+				{
+					Rot().y = atan2(reDir.x, reDir.z);
+					UpdateWorld();
+
+					SetState(D_015);
+				}
+				else
+				{
+					Rot().y = atan2(atkDir.x, atkDir.z);
+					UpdateWorld();
+
+					SetState(D_021);
 				}
 				UI->curHP -= collider->atkDmg;
 			}
@@ -1655,11 +1818,11 @@ void Player::S005() // ´ë±âÁß ´Þ¸®±â ½ÃÀÛ
 
 	// 101 ³»µðµ® º£±â
 	if (K_LMB)			SetState(L_101);
-	else if (K_CTRL)	SetState(L_106);
+	else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106);
 	else if (KEY_DP(VK_SPACE))	Roll();
 	else if (KEY_DP('F'))  callGaruk = true;
 
-	if (RATIO > 0.97)
+	if (RATIO > 0.97 )
 	{
 		SetState(S_011);
 	}
@@ -1714,8 +1877,8 @@ void Player::S011() // ´Þ¸®±â ·çÇÁ
 	}
 
 	// 101 ³»µðµ® º£±â
-	if (K_LMB)		SetState(L_101);
-	else if (K_CTRL)	SetState(L_106);
+	if		(K_LMB)		SetState(L_101);
+	else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106);
 	else if (K_SPACE)	Roll();
 	else if (KEY_DP('F'))  callGaruk = true;
 
@@ -1923,7 +2086,7 @@ void Player::L001() // ¹ßµµ»óÅÂ ´ë±â
 	else if (K_LMB)		SetState(L_101);	// 101 ³»µðµ® º£±â	
 	else if (K_RMB)		SetState(L_104);	// 104 Âî¸£±â	
 	else if (K_LMBRMB)	SetState(L_103);	// 103 º£¾î³»¸®±â
-	else if (K_CTRL)	SetState(L_106);	// 106 ±âÀÎ º£±â	
+	else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106);	// 106 ±âÀÎ º£±â	
 	else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// ³¯¶óÂ÷±â
 	else if (K_SPACE)	Roll();				// 010 ±¸¸£±â
 
@@ -1951,7 +2114,7 @@ void Player::L004() // ¹ßµµ»óÅÂ °È±â Áß // ·çÇÁ
 	else if (K_LMB)		SetState(L_101);	// 101 ³»µðµ® º£±â	
 	else if (K_RMB)		SetState(L_104);	// 104 Âî¸£±â	
 	else if (K_LMBRMB)	SetState(L_103);	// 103 º£¾î³»¸®±â
-	else if (K_CTRL)	SetState(L_106);	// 106 ±âÀÎ º£±â	
+	else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106);	// 106 ±âÀÎ º£±â	
 	else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// ³¯¶óÂ÷±â
 	else if (K_SPACE)	Roll();				// 010 ±¸¸£±â
 
@@ -1973,7 +2136,7 @@ void Player::L005() // ¹ßµµ»óÅÂ °È±â ½ÃÀÛ (¹ßµ¸¿ò)
 	else if (K_LMB)		SetState(L_101);	// 101 ³»µðµ® º£±â	
 	else if (K_RMB)		SetState(L_104);	// 104 Âî¸£±â	
 	else if (K_LMBRMB)	SetState(L_103);	// 103 º£¾î³»¸®±â
-	else if (K_CTRL)	SetState(L_106);	// 106 ±âÀÎ º£±â	
+	else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106);	// 106 ±âÀÎ º£±â	
 	else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// ³¯¶óÂ÷±â
 	else if (K_SPACE)	Roll();				// 010 ±¸¸£±â
 
@@ -2009,7 +2172,7 @@ void Player::L008() // ¸ØÃã
 	else if (K_LMB)		SetState(L_101);	// 101 ³»µðµ® º£±â	
 	else if (K_RMB)		SetState(L_104);	// 104 Âî¸£±â	
 	else if (K_LMBRMB)	SetState(L_103);	// 103 º£¾î³»¸®±â
-	else if (K_CTRL)	SetState(L_106);	// 106 ±âÀÎ º£±â	
+	else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106);	// 106 ±âÀÎ º£±â	
 	else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// ³¯¶óÂ÷±â
 	else if (K_SPACE)	Roll();				// 010 ±¸¸£±â
 
@@ -2108,6 +2271,7 @@ void Player::L101() // ³»µðµ®º£±â
 		UIManager::Get()->staminaActive = false;
 		PlayClip(L_101);
 		initRotY = Rot().y;
+		isEvaded = false;
 	}
 	if (RATIO > 0.3 && RATIO < 0.35)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
@@ -2143,7 +2307,7 @@ void Player::L101() // ³»µðµ®º£±â
 		if (K_LMB)				SetState(L_102);	// ¼¼·Îº£±â		
 		else if (K_RMB)				SetState(L_104);	// Âî¸£±â
 		else if (K_LMBRMB)			SetState(L_103);	// º£¾î³»¸®±â
-		else if (K_CTRL)			SetState(L_106);	// ±âÀÎº£±â1		
+		else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106);	// ±âÀÎº£±â1		
 		else if (K_CTRLRMB)			SetState(L_147);	// °£ÆÄ º£±â
 		else if (K_CTRLSPACE)		SetState(L_151);	// Æ¯¼ö ³³µµ
 		else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// ³¯¶óÂ÷±â
@@ -2187,7 +2351,7 @@ void Player::L102() // ¼¼·Îº£±â
 	{
 		if (K_LMB || K_RMB)	SetState(L_104);	// Âî¸£±â
 		else if (K_LMBRMB)			SetState(L_103);	// º£¾î³»¸®±â
-		else if (K_CTRL)			SetState(L_106);	// ±âÀÎº£±â1		
+		else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106);	// ±âÀÎº£±â1		
 		else if (K_CTRLRMB)			SetState(L_147);	// °£ÆÄ º£±â
 		else if (K_CTRLSPACE)		SetState(L_151);	// Æ¯¼ö ³³µµ
 		else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// ³¯¶óÂ÷±â
@@ -2208,6 +2372,7 @@ void Player::L103() // º£¾î³»¸®±â
 		UIManager::Get()->staminaActive = false;
 		PlayClip(L_103);
 		initRotY = Rot().y;
+		isEvaded = false;
 	}
 
 	if (RATIO > 0.2 && RATIO < 0.25)
@@ -2225,8 +2390,8 @@ void Player::L103() // º£¾î³»¸®±â
 
 	if (RATIO > 0.87)
 	{
-		if (K_RMB)				SetState(L_104);	// Âî¸£±â
-		else if (K_CTRL)			SetState(L_110);	// ±âÀÎ³»µðµ®º£±â		
+		if		(K_RMB)				SetState(L_104);	// Âî¸£±â
+		else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_110);	// ±âÀÎ³»µðµ®º£±â		
 		else if (K_CTRLRMB)			SetState(L_147);	// °£ÆÄ º£±â
 		else if (K_CTRLSPACE)		SetState(L_151);	// Æ¯¼ö ³³µµ
 		else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// ³¯¶óÂ÷±â
@@ -2243,7 +2408,10 @@ void Player::L104() // Âî¸£±â
 {
 	PLAY;
 	if (INIT)
+	{
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_5", .5f);
+		isEvaded = false;
+	}
 
 	if (RATIO > 0.1 && RATIO < 0.15)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
@@ -2265,7 +2433,7 @@ void Player::L104() // Âî¸£±â
 	{
 		if (K_LMB || K_RMB)	SetState(L_105);	// º£¾î¿Ã¸®±â
 		else if (K_LMBRMB)			SetState(L_103);	// º£¾î³»¸®±â
-		else if (K_CTRL)			SetState(L_106);	// ±âÀÎº£±â1		
+		else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106);	// ±âÀÎº£±â1		
 		else if (K_CTRLRMB)			SetState(L_147);	// °£ÆÄ º£±â
 		else if (K_CTRLSPACE)		SetState(L_151);	// Æ¯¼ö ³³µµ
 		else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// ³¯¶óÂ÷±â
@@ -2304,7 +2472,7 @@ void Player::L105() // º£¾î ¿Ã¸®±â
 		if (K_LMB)			SetState(L_102);	// ¼¼·Îº£±â		
 		else if (K_RMB)			SetState(L_104);	// Âî¸£±â		
 		else if (K_LMBRMB)		SetState(L_103);	// º£¾î³»¸®±â		
-		else if (K_CTRL)		SetState(L_106);	// ±âÀÎº£±â1		
+		else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106);	// ±âÀÎº£±â1		
 		else if (K_CTRLRMB)		SetState(L_147);	// °£ÆÄ º£±â
 		else if (K_CTRLSPACE)	SetState(L_151);	// Æ¯¼ö ³³µµ
 		else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// ³¯¶óÂ÷±â
@@ -2347,7 +2515,7 @@ void Player::L106() // ±âÀÎ º£±â 1
 
 		if (K_RMB)			SetState(L_104);	// Âî¸£±â		
 		else if (K_LMBRMB)		SetState(L_103);	// º£¾î³»¸®±â		
-		else if (K_CTRL)		SetState(L_107);	// ±âÀÎ º£±â2		
+		else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_107);	// ±âÀÎ º£±â2		
 		else if (K_CTRLRMB)		SetState(L_147);	// °£ÆÄ º£±â		
 		else if (K_CTRLSPACE)	SetState(L_151);	// Æ¯¼ö ³³µµ		
 		else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// ³¯¶óÂ÷±â
@@ -2390,7 +2558,7 @@ void Player::L107() // ±âÀÎº£±â 2
 		{
 			if (K_LMB || K_RMB)	SetState(L_105);	// º£¾î¿Ã¸®±â
 			else if (K_LMBRMB)			SetState(L_103);	// º£¾î³»¸®±â		
-			else if (K_CTRL)			SetState(L_108);	// ±âÀÎ º£±â3		
+			else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_108);	// ±âÀÎ º£±â3		
 			else if (K_CTRLRMB)			SetState(L_147);	// °£ÆÄ º£±â
 			else if (K_CTRLSPACE)		SetState(L_151);	// Æ¯¼ö ³³µµ		
 			else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// ³¯¶óÂ÷±â
@@ -2457,7 +2625,7 @@ void Player::L108() // ±âÀÎº£±â 3
 	{
 		if (K_RMB || K_LMB)	SetState(L_104);  // Âî¸£±â		
 		else if (K_LMBRMB)			SetState(L_103);  // º£¾î³»¸®±â		
-		else if (K_CTRL)			SetState(L_109);  // ±âÀÎ Å«È¸Àüº£±â
+		else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_109);  // ±âÀÎ Å«È¸Àüº£±â
 		else if (K_CTRLRMB)			SetState(L_147);  // °£ÆÄ º£±â
 		else if (K_CTRLSPACE)		SetState(L_151);  // Æ¯¼ö ³³µµ		
 		else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// ³¯¶óÂ÷±â
@@ -2475,6 +2643,7 @@ void Player::L109() // ±âÀÎ Å«È¸Àüº£±â
 	{
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_25", .5f);
 		UIManager::Get()->MinusSpiritGauge(); // ±âÀÎ°ÔÀÌÁö ¼Ò¸ðÇÏ±â( ´Ü 1¹ø )
+		isEvaded = false;
 	}
 	if (RATIO > 0.2 && RATIO < 0.21)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
@@ -2555,7 +2724,7 @@ void Player::L110() // ±âÀÎ ³»µðµ®º£±â
 		if (K_LMB || K_RMB)							SetState(L_105);    // º£¾î¿Ã¸®±â		
 		else if (K_CTRLRMB)							SetState(L_147);    // °£ÆÄ º£±â
 		else if (K_CTRLSPACE)						SetState(L_151);	// Æ¯¼ö ³³µµ
-		else if (K_CTRL)							SetState(L_108);	// ±âÀÎº£±â3
+		else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_108);	// ±âÀÎº£±â3
 		else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// ³¯¶óÂ÷±â
 		else if (K_SPACE)							Roll();				// ±¸¸£±â
 	}
@@ -2582,7 +2751,7 @@ void Player::L116()
 
 }
 
-void Player::L119() // ³¯¶óÂ÷±â ÂøÁö
+void Player::L119()
 {
 	PLAY;
 	if (RATIO > 0.001 && RATIO < 0.002)
@@ -2611,9 +2780,17 @@ void Player::L119() // ³¯¶óÂ÷±â ÂøÁö
 		ReturnIdle();
 }
 
-void Player::L122()
+void Player::L122() // ³¯¶óÂ÷±â ÂøÁö
 {
 	PLAY;
+
+	//if (!playOncePerMotion)
+	//{
+	//	Pos().y = 0.0f;
+	//	UpdateWorld();
+	//	playOncePerMotion = true;
+	//}
+
 	if (RATIO > 0.2 && RATIO < 0.3)
 		Sounds::Get()->Play("Heeee", .5f);
 	// °ø°ÝÆÇÁ¤ ÇÁ·¹ÀÓ 
@@ -2632,7 +2809,10 @@ void Player::L122()
 	}
 
 	if (RATIO > 0.96)
+	{
+		playOncePerMotion = false;
 		ReturnIdle();
+	}
 }
 
 void Player::L128()	// ³¯¶óÂ÷±â ½ÃÀÛ
@@ -2642,6 +2822,7 @@ void Player::L128()	// ³¯¶óÂ÷±â ½ÃÀÛ
 	{
 		UI->UseBugSkill();
 		playOncePerMotion = true;
+		isEvaded = false;
 	}
 
 	if (RATIO < 0.2)
@@ -2662,16 +2843,16 @@ void Player::L128()	// ³¯¶óÂ÷±â ½ÃÀÛ
 	}
 }
 
-void Player::L130()	// ³¯¶óÂ÷±â Ã¼°øÁß
+void Player::L130()	// ³¯¶óÂ÷±â Ã¼°øÁß 
 {
 	PLAY;
 
 	// Ã¼°øÁß
 	{
-		if (Jump(850))
-			// °ø°ÝÆÇÁ¤ ÇÁ·¹ÀÓ
+		if(Jump(550))
+		// °ø°ÝÆÇÁ¤ ÇÁ·¹ÀÓ
 		{
-			if (Pos().y > 50)
+			if ( Pos().y > 50 )//TODO ³¯¶óÂ÷±â Ã¼°øÁß¿¡ ´Ê°Ô ³»·Á¿À´Â °Å
 			{
 				if (Attack(2, true, 3))
 				{
@@ -2692,7 +2873,7 @@ void Player::L130()	// ³¯¶óÂ÷±â Ã¼°øÁß
 		}
 		else
 		{
-			SetState(L_119);
+			SetState(L_122);
 		}
 	}
 }
@@ -2702,7 +2883,7 @@ void Player::L131() // Ã¼°ø ·çÇÁ
 	PLAY;
 	// Ã¼°øÁß
 	{
-		if (Jump(850))
+		if (Jump(550))
 			// °ø°ÝÆÇÁ¤ ÇÁ·¹ÀÓ
 		{
 			if (Attack(2, true, 3))
@@ -2720,10 +2901,9 @@ void Player::L131() // Ã¼°ø ·çÇÁ
 		}
 		else
 		{
-			SetState(L_119);
+			SetState(L_122);
 		}
 	}
-
 }
 
 void Player::L132()
@@ -2753,7 +2933,7 @@ void Player::L133()	// Åõ±¸±ú±â
 		// °ø°ÝÆÇÁ¤ Å¸ÀÌ¹Ö
 		if (RATIO > 0.38)
 		{
-			if (Attack(0, false))
+			if (Attack(40))
 				isHitL133 = true;
 			CAM->Zoom(400, 5);
 		}
@@ -2848,6 +3028,7 @@ void Player::L147() // °£ÆÄº£±â
 		evadeCheckCollider->SetParent(realPos);
 		evadeCheckCollider->SetActive(true);
 		evadeCheckCollider->UpdateWorld();
+		UI->curSpiritGauge = 0;
 	}
 
 	if (RATIO > 0.2 && RATIO < 0.3)
@@ -2871,6 +3052,7 @@ void Player::L147() // °£ÆÄº£±â
 		{
 			if (isEvaded)
 				isEvaded = false;
+			evadeCheckCollider->SetActive(false);
 			SetState(L_151);	// Æ¯¼ö ³³µµ
 		}
 	}
@@ -2890,25 +3072,22 @@ void Player::L147() // °£ÆÄº£±â
 			CAM->Zoom(400);
 	}
 
-	if (RATIO > 0.56)
-	{
-		if (isEvaded)
-			isEvaded = false;
-	}
-
 	if (RATIO > 0.56) // Äµ½½ °¡´É Å¸ÀÌ¹Ö
 	{
 		if (K_LMB)			SetState(L_101);    // ¼¼·Îº£±â		
 		else if (K_RMB)			SetState(L_104);	// Âî¸£±â		
 		else if (K_LMBRMB)		SetState(L_103);	// º£¾î³»¸®±â		
 		else if (K_CTRLSPACE)	SetState(L_151);	// Æ¯¼ö ³³µµ
-		else if (K_CTRL)		SetState(L_109);	// ±âÀÎÅ«È¸Àüº£±â (TODO :: ÀÌ°Ç Á¶°Ç µûÁ®¾ßÇÔ)	
+		else if (K_CTRL && isEvaded)	SetState(L_109);	// ±âÀÎÅ«È¸Àüº£±â
 		else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// ³¯¶óÂ÷±â
 		else if (K_SPACE)		Roll();				// ±¸¸£±â
 	}
 
 	if (RATIO > 0.96)
+	{
+		isEvaded = false;
 		ReturnIdle();
+	}
 }
 
 void Player::L151() // Æ¯¼ö ³³µµ
@@ -2920,6 +3099,7 @@ void Player::L151() // Æ¯¼ö ³³µµ
 		holdingSword = true;
 		EndEffect();
 		UIManager::Get()->staminaActive = false;
+		isEvaded = false;
 	}
 	if (RATIO > 0.2 && RATIO < 0.3)
 		Sounds::Get()->Play("Heeee", .5f);
@@ -3027,7 +3207,7 @@ void Player::L154() // ¾É¾Æ¹ßµµ º£±â
 		{
 			if (K_LMB)			SetState(L_102); // ¼¼·Îº£±â
 			else if (K_RMB)			SetState(L_104); // Âî¸£±â
-			else if (K_CTRL)		SetState(L_106); // ±âÀÎ º£±â 1		
+			else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106); // ±âÀÎ º£±â 1		
 			else if (K_CTRLRMB)		SetState(L_147); // °£ÆÄ º£±â
 			else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// ³¯¶óÂ÷±â
 			else if (K_SPACE)		Roll();			 // ±¸¸£±â
@@ -3046,7 +3226,7 @@ void Player::L155() // ¾É¾Æ¹ßµµ ±âÀÎº£±â
 	if (INIT)
 	{
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_25", .5f);
-		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_8", .5f);
+		//Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_8", .5f);
 	}
 	if (RATIO > 0.11 && RATIO < 0.15)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
@@ -3077,7 +3257,7 @@ void Player::L155() // ¾É¾Æ¹ßµµ ±âÀÎº£±â
 	{
 		if (isEvaded && isHit && (RATIO > 0.385 && RATIO < 0.39))
 		{
-			if (isHitL155 == false)
+			if(isHitL155==false)
 				UIManager::Get()->PlusCotingLevel();
 
 			isHitL155 = true;
@@ -3093,7 +3273,7 @@ void Player::L155() // ¾É¾Æ¹ßµµ ±âÀÎº£±â
 			isEvaded = false; // ¸¸¾à ¾Õ¿¡¼­ true·Î ³²¾ÆÀÖ´Â °æ¿ì º¸Çè¿ë
 
 			if (K_LMB)			SetState(L_101); // ³»µðµ®º£±â
-			else if (K_CTRL)		SetState(L_108); // ±âÀÎ º£±â 3		
+			else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_108); // ±âÀÎ º£±â 3		
 			else if (K_CTRLSPACE)	SetState(L_151); // Æ¯¼ö ³³µµ
 			else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// ³¯¶óÂ÷±â
 			else if (K_SPACE)		Roll();			 // ±¸¸£±â
@@ -3372,7 +3552,7 @@ void Player::D011()  // 7ÀÇ ¹Ý´ë
 void Player::D015() // ÃÄ¸Â°í ´ýºí¸µ ³¯¶ó°¡±â
 {
 	PLAY;
-	if (Jump(1000))
+	if (Jump(300))
 	{
 		Pos() += Back() * temp4 * DELTA;
 	}
@@ -3396,7 +3576,7 @@ void Player::D021() // ¾Õº¸°í ¾ÕÀ¸·Î ³¯¶ó°¡±â
 {
 	PLAY;
 
-	if (Jump(1000))
+	if (Jump(300))
 	{
 		Pos() += Forward() * temp4 * DELTA;
 	}
@@ -3559,7 +3739,7 @@ void Player::MotionRotate(float degree)
 
 bool Player::State_S() // ³³µµ ½ºÅ×ÀÌÆ® ¸ñ·Ï
 {
-	return curState >= S_001 && curState <= R_602;
+	return (curState >= S_001 && curState <= R_602) || curState >= D_001;
 }
 
 void Player::StatusRender()

@@ -19,5 +19,7 @@ private:
 
     //-----------------------------------
     SphereCollider* collider; // 클릭용 표적
+    Sprite* sprite;
+    Wind* wind;
 };
 
