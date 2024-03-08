@@ -1235,6 +1235,14 @@ void Valphalk::PartDestroyCheck()
 		radDifference = 0;
 		initialRad = Rot().y;
 		isStagger = true;
+		if (UI->partDestruct)
+		{
+			UI->partDestruct2 = true;
+		}
+		else if (!UI->partDestruct) 
+		{
+			UI->partDestruct = true;
+		}
 
 		for (auto collider : colliders)
 			if (collider->isAttack)
@@ -1252,6 +1260,14 @@ void Valphalk::PartDestroyCheck()
 		radDifference = 0;
 		initialRad = Rot().y;
 		isStagger = true;
+		if (UI->partDestruct)
+		{
+			UI->partDestruct2 = true;
+		}
+		else if (!UI->partDestruct)
+		{
+			UI->partDestruct = true;
+		}
 
 		for (auto collider : colliders)
 			if (collider->isAttack)
@@ -1269,6 +1285,14 @@ void Valphalk::PartDestroyCheck()
 		radDifference = 0;
 		initialRad = Rot().y;
 		isStagger = true;
+		if (UI->partDestruct)
+		{
+			UI->partDestruct2 = true;
+		}
+		else if (!UI->partDestruct)
+		{
+			UI->partDestruct = true;
+		}
 
 		for (auto collider : colliders)
 			if (collider->isAttack)
@@ -1286,6 +1310,14 @@ void Valphalk::PartDestroyCheck()
 		radDifference = 0;
 		initialRad = Rot().y;
 		isStagger = true;
+		if (UI->partDestruct)
+		{
+			UI->partDestruct2 = true;
+		}
+		else if (!UI->partDestruct)
+		{
+			UI->partDestruct = true;
+		}
 
 		for (auto collider : colliders)
 			if (collider->isAttack)
@@ -1303,6 +1335,14 @@ void Valphalk::PartDestroyCheck()
 		radDifference = 0;
 		initialRad = Rot().y;
 		isStagger = true;
+		if (UI->partDestruct)
+		{
+			UI->partDestruct2 = true;
+		}
+		else if (!UI->partDestruct)
+		{
+			UI->partDestruct = true;
+		}
 
 		for (auto collider : colliders)
 			if (collider->isAttack)
@@ -3215,7 +3255,17 @@ void Valphalk::E1155() // ºñ»ó
 
 	PLAY;
 	if (RATIO < 0.1)
+	{
+		if (!UI->partDestruct)
+		{
+			UI->specialMove = true;
+		}
+		else if (UI->partDestruct)
+		{
+			UI->specialMove2 = true;
+		}
 		Sounds::Get()->Play("em086_05_fx_media_22", 0.5f);
+	}
 
 	if (Pos().y > 80000)
 		Sounds::Get()->Play("em086_05_fx_media_33", 0.5f);

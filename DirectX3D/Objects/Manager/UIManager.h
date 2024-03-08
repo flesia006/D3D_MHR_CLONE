@@ -65,6 +65,12 @@ public:
     float SetMaxGauge() { return curSpiritGauge = maxSpiritGauge; }
     float curStamina = 100;//임시로 public에 올려둠
     bool staminaActive = false;
+
+    // 발파 상태 아이콘 관령 내용
+    bool specialMove = false;
+    bool specialMove2 = false;
+    bool partDestruct = false;
+    bool partDestruct2 = false;
     
 private:
     // 퀵 슬롯 관한 내용
@@ -76,6 +82,8 @@ private:
     void NumberSlot(); // 넘버 슬롯 내용
     void NumberSlotBar(); // 넘버 슬롯 내용
     //=====================
+    // 발파 상태 아이콘 관령 내용
+    void StateIcon();
 
 private:
     Quad* clockFrame;
@@ -107,8 +115,7 @@ private:
     vector<Quad*> numberBoxs;
     vector<Quad*> numberBoxFrames;
     // 슬롯 안에 아이템 이름
-    Quad* slotName1;
-    Quad* slotName2;
+    vector<Quad*> slotNames;
 
     Quad* blackCircle;
     Quad* blackHalfCircle;
@@ -124,6 +131,7 @@ private:
     Quad* orangeRightHalfCircle3;
 
     // 아이템 아이콘 추가 ( 이건 퀵 슬롯에 있는것들 )
+    Quad* rideGarukIcon;
     //===================
     Quad* potionIcon_Q;
     Quad* greatepotionIcon_Q;
@@ -155,13 +163,15 @@ private:
     //예리도 UI
     ProgressBar* durability_gauge;
 
-
     //기인게이지 UI
     ProgressBar* lsGauge2;
 
-
     //코팅 UI
     ProgressBar* lsCoting;
+
+    // 발파 상태 UI
+    Quad* valphalkStateIcon1;
+    Quad* valphalkStateIcon2;
 
 public:
     UINT cotingLevel = 0;
@@ -236,5 +246,9 @@ public:
     bool useNumberSlot8 = false;
 
     int DragCout = 0;
+
+    // 발파 상태 내용
+    float stateIconTimer = 0.0f;
+    float stateIconTimer2 = 0.0f;
 };
 

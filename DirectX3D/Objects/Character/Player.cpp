@@ -108,12 +108,14 @@ void Player::Update()
 	//	TermAttackUpdate();
 	//	HurtCheck();
 	//	Potion();
+	//	SharpeningStone();
 	//}
 	///////////////////////////////////
 	//µð¹ö±ëÀ» À§ÇØ¼­ DeathCheck() ¹ÛÀ¸·Î »©µÐ°Í.
 	TermAttackUpdate();
 	HurtCheck();
 	Potion();
+	SharpeningStone();
 	////////////////////////////////////
 	Control();
 	ResetPlayTime();
@@ -331,6 +333,16 @@ void Player::Potion()
 	{
 		Sounds::Get()->Play("health_potion", 0.3f);
 		UI->curStamina = 100;
+	}
+}
+
+void Player::SharpeningStone()
+{
+	if (UI->useQuickSlot3 && !cure && !Lcure
+		|| UI->useDragSlot2 &&  KEY_DOWN('E') && !cure && !Lcure
+		|| UI->useNumberBar &&  KEY_DOWN('3') && !Lcure && !cure)
+	{
+		UI->SharpeningStone();
 	}
 }
 
