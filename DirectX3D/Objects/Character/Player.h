@@ -2,6 +2,7 @@
 
 class Particle;
 class Trail;
+class Valphalk;
 class Player : public ModelAnimator
 {
 
@@ -64,6 +65,8 @@ public:
 	CapsuleCollider* getCollider() { return tmpCollider; }
 	CapsuleCollider* getSwordCollider() { return swordCollider; }
 	Transform* GetRealPos() { return realPos; }
+
+	void SetValphalk(Valphalk* val) { this->val = val; }
 
 private:
 	void Control();
@@ -326,6 +329,8 @@ private:
 	vector<Damage> damages;
 
 	bool isEvaded = false; // 회피했는지 여부
+
+	Valphalk* val;
 	
 	///////////////////////////////////////////
 	// Particle

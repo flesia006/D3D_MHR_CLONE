@@ -32,6 +32,7 @@ public:
     }
 
     float PlusSpritGauge()   { return curSpiritGauge += 15; }   // 기인게이지 늘리는 함수
+    float DoublePlusSpritGauge() { return curSpiritGauge += 25; }
     float MinusSpiritGauge() { return curSpiritGauge -= 10; }   // 기인게이지 깎는 함수
 
     float GetCotingLevel() { return cotingLevel; }
