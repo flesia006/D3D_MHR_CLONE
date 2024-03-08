@@ -288,6 +288,7 @@
     <ClInclude Include="Objects\Manager\UIManager.h" />
     <ClInclude Include="Scenes\ValphalkTestScene.h" />
     <ClInclude Include="Objects\Particle\ValZet.h" />
+    <ClInclude Include="Objects\Particle\Wind.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Objects\Particle\HupgiFire.cpp" />
@@ -428,6 +429,7 @@
     <ClCompile Include="Scenes\ValphalkTestScene.cpp" />
     <ClCompile Include="Objects\Particle\Sp_atk_ready_Particle.cpp" />
     <ClCompile Include="Objects\Particle\ValZet.cpp" />
+    <ClCompile Include="Objects\Particle\Wind.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DirectX3D.rc" />

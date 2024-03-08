@@ -62,8 +62,8 @@ GameManager::GameManager()
 //    SceneManager::Get()->Create("ValphalkTestScene", new ValphalkTestScene());
 //    SceneManager::Get()->Add("ValphalkTestScene");
 
-//   SceneManager::Get()->Create("PlayerTestScene", new PlayerTestScene());
-//   SceneManager::Get()->Add("PlayerTestScene");
+   //SceneManager::Get()->Create("PlayerTestScene", new PlayerTestScene());
+   //SceneManager::Get()->Add("PlayerTestScene");
 
    SceneManager::Get()->Create("FightTestScene", new FightTestScene());
    SceneManager::Get()->Add("FightTestScene");
@@ -195,6 +195,14 @@ void GameManager::Create()
     sound->AddSound("em086_05_vo_media_10", SoundPath + L"em086_05_vo_media_10.mp3");
     // 흡기 사운드
     sound->AddSound("em086_05_vo_media_20", SoundPath + L"em086_05_vo_media_20.mp3");
+    // DownBlast(옆으로돌아 측면 폭발)
+    sound->AddSound("em086_05_vo_media_14", SoundPath + L"em086_05_vo_media_14.mp3");
+    // 공격 사운드 1 아웅 (downblast 폭발 후)
+    sound->AddSound("em086_05_vo_media_1", SoundPath + L"em086_05_vo_media_1.mp3");
+    // 공격 사운드 4 (찌르기 준비)
+    sound->AddSound("em086_05_vo_media_1", SoundPath + L"em086_05_vo_media_4.mp3");
+    // 공격 사운드 5 크앙
+    sound->AddSound("em086_05_vo_media_5", SoundPath + L"em086_05_vo_media_5.mp3");
 
     // = SFX =     
     // 흡기 시작
@@ -211,6 +219,21 @@ void GameManager::Create()
     sound->AddSound("em086_05_fx_media_19", SoundPath + L"em086_05_fx_media_19.mp3");
     // 습격 낙하
     sound->AddSound("em086_05_fx_media_20", SoundPath + L"em086_05_fx_media_20.mp3");
+    // 탄발사 차지 (6탄, downblast 등 차지에 쓰임)
+    sound->AddSound("em086_05_fx_media_32", SoundPath + L"em086_05_fx_media_32.mp3");    
+    // 탄발사 사운드
+    sound->AddSound("em086_05_fx_media_50", SoundPath + L"em086_05_fx_media_50.mp3");
+    sound->AddSound("em086_05_fx_media_50_2", SoundPath + L"em086_05_fx_media_50.mp3");
+
+    // = SE = ( 폭발음, 걸음 소리 등)
+    // 기본 폭발 사운드
+    sound->AddSound("em086_05_se_media_10", SoundPath + L"em086_05_se_media_10.mp3");
+    sound->AddSound("em086_05_se_media_10_2", SoundPath + L"em086_05_se_media_10.mp3");
+    // 찌르기
+    sound->AddSound("em086_05_se_media_20", SoundPath + L"em086_05_se_media_20.mp3");
+    // 찌르고 돌리기
+    sound->AddSound("em086_05_se_media_32", SoundPath + L"em086_05_se_media_32.mp3");
+
 
     
     /////////////////////////////////////////////////////////////

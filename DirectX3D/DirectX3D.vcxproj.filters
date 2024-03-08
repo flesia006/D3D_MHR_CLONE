@@ -168,6 +168,7 @@
     <ClCompile Include="Objects\Particle\Val_fire.cpp" />
     <ClCompile Include="Objects\Particle\ValZet.cpp" />
     <ClCompile Include="Objects\Particle\HupgiFire.cpp" />
+    <ClCompile Include="Objects\Particle\Wind.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Objects\Character\DummyValphalk.h" />
@@ -316,6 +317,7 @@
     <ClInclude Include="Objects\Particle\Val_fire.h" />
     <ClInclude Include="Objects\Particle\ValZet.h" />
     <ClInclude Include="Objects\Particle\HupgiFire.h" />
+    <ClInclude Include="Objects\Particle\Wind.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DirectX3D.rc" />

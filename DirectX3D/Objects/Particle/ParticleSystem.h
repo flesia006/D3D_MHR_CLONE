@@ -83,7 +83,7 @@ public:
     void ParticleRotate();
     void HaloPos();
     void SetRotation(Vector3 rot);
-    void SetScale();
+    void SetScale(float scale);
     void SetParent(Transform* transform) { parent = transform; }
     void SetPos(Vector3 pos) { quad->Pos() = pos; }
     void SetRot(Vector3 rot) { quad->Rot() = rot; }
@@ -116,5 +116,7 @@ private:
     //이미지 출력을 위한 스테이트
     BlendState* blendState[2];
     DepthStencilState* depthState[2];
+    RasterizerState* rasterizerState[2];
+
 };
 

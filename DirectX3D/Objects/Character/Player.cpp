@@ -129,7 +129,6 @@ void Player::Update()
 	potionParticle->SetVortex({ realPos->Pos().x,realPos->Pos().y+100,realPos->Pos().z });
 
 	ModelAnimator::Update();
-	UIManager::Get()->Update();
 	GroundCheck();
 }
 
@@ -271,22 +270,24 @@ void Player::UpdateWorlds()
 
 void Player::Potion()
 {
-	time += DELTA;	
-
-	if (UIManager::Get()->useQuickSlot1 && UIManager::Get()->haveGPotion > 0 && !Lcure && !cure
-		|| UIManager::Get()->useDragSlot1 && UIManager::Get()->haveGPotion > 0 && KEY_DOWN('E') && !Lcure && !cure)
-	{		
+	time += DELTA;
+	if (UI->useQuickSlot1 && UI->haveGPotion > 0 && !Lcure && !cure
+		|| UI->useDragSlot1 && UI->haveGPotion > 0 && KEY_DOWN('E') && !Lcure && !cure
+		|| UI->useNumberBar && UI->haveGPotion > 0 && KEY_DOWN('2') && !Lcure && !cure)
+	{
 		Sounds::Get()->Play("health_potion", 0.3f);
-		UIManager::Get()->haveGPotion--;
+		UI->haveGPotion--;
 		Lcure = true;
 		time = 0;
 	}
 	if (Lcure == true)
 	{
-		UIManager::Get()->useQuickSlot1 = false;
-		UIManager::Get()->useQuickSlot2 = false;
+		UI->useQuickSlot1 = false;
+		UI->useQuickSlot2 = false;
 		if (time < 0.1f)
-			potionParticle->Play({ Pos().x,Pos().y+100,Pos().z }, { 0,0,0 });
+		{
+			potionParticle->Play({ Pos().x,Pos().y + 100,Pos().z }, { 0,0,0 });
+		}
 
 		if (time < 3)
 		{
@@ -298,24 +299,27 @@ void Player::Potion()
 		}
 	}
 
-	if (UIManager::Get()->useQuickSlot2 && UIManager::Get()->havePotion > 10 && !cure && !Lcure
-		|| UIManager::Get()->useDragSlot3 && UIManager::Get()->havePotion > 10 && KEY_DOWN('E') && !cure && !Lcure)
+	if (UI->useQuickSlot2 && UI->havePotion > 10 && !cure && !Lcure
+		|| UI->useDragSlot3 && UI->havePotion > 10 && KEY_DOWN('E') && !cure && !Lcure
+		|| UI->useNumberBar && UI->havePotion > 10 && KEY_DOWN('1') && !Lcure && !cure)
 	{
 		Sounds::Get()->Play("health_potion", 0.3f);
-		UIManager::Get()->havePotion--;
+		UI->havePotion--;
 		cure = true;
 		time = 0;
 	}
 	if (cure == true)
 	{
-		UIManager::Get()->useQuickSlot1 = false;
-		UIManager::Get()->useQuickSlot2 = false;
+		UI->useQuickSlot1 = false;
+		UI->useQuickSlot2 = false;
 		if (time < 0.1f)
-			potionParticle->Play({ Pos().x,Pos().y+100,Pos().z }, { 0,0,0 });
+		{
+			potionParticle->Play({ Pos().x,Pos().y + 100,Pos().z }, { 0,0,0 });
+		}
 
 		if (time < 2)
 		{
-			UIManager::Get()->HealthPotion();
+			UI->HealthPotion();
 		}
 		else if (time >= 2)
 		{
@@ -326,7 +330,7 @@ void Player::Potion()
 	if (KEY_DOWN('T'))
 	{
 		Sounds::Get()->Play("health_potion", 0.3f);
-		UIManager::Get()->curStamina = 100;
+		UI->curStamina = 100;
 	}
 }
 

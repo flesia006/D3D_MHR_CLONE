@@ -212,6 +212,7 @@ using namespace GameMath;
 #include "Objects/Particle/Val_Jet_Particle.h"
 #include "Objects/Particle/Val_fire.h"
 #include "Objects/Particle/HupgiFire.h"
+#include "Objects/Particle/Wind.h"
 #include "Objects/Particle/PotionParticle.h"
 #include "Objects/Particle/ValZet.h"
 

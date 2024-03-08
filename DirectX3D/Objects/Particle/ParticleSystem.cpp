@@ -20,6 +20,10 @@ ParticleSystem::ParticleSystem(string file)
 
     parent = new Transform();
     parent->Pos() = {};
+    FOR(2) rasterizerState[i] = new RasterizerState();
+
+    rasterizerState[1]->CullMode(D3D11_CULL_NONE);
+
 }
 
 // 외부 탐색기에서 파일 가져오기 (=그림 파일)
@@ -74,24 +78,28 @@ void ParticleSystem::Update()
 void ParticleSystem::Render()
 {
     if (!quad->Active()) return;
+    rasterizerState[1]->SetState(); // 후면도 그림
+    {
+        //인스턴스 준비
+        instanceBuffer->Set(1);
 
-    //인스턴스 준비
-    instanceBuffer->Set(1);
+        //그림준비
+        quad->SetRender();
 
-    //그림준비
-    quad->SetRender();
+        //스테이트 준비
+        blendState[1]->SetState();
+        depthState[1]->SetState();
 
-    //스테이트 준비
-    blendState[1]->SetState();
-    depthState[1]->SetState();
+        //출력장치로 호출
+        DC->DrawIndexedInstanced(6, drawCount, 0, 0, 0); // 매개변수는 어떤 단위를, 얼마나 많이
+                                                         // 어디서, 어떤 추가 참조 자료로 출력할 것인가
 
-    //출력장치로 호출
-    DC->DrawIndexedInstanced(6, drawCount, 0, 0, 0); // 매개변수는 어떤 단위를, 얼마나 많이
-                                                     // 어디서, 어떤 추가 참조 자료로 출력할 것인가
+        //원상복구
+        blendState[0]->SetState();
+        depthState[0]->SetState();
+    }
+    rasterizerState[0]->SetState();
 
-    //원상복구
-    blendState[0]->SetState();
-    depthState[0]->SetState();
 }
 
 void ParticleSystem::GUIRender()
@@ -139,9 +147,9 @@ void ParticleSystem::SetRotation(Vector3 rot)
     quad->Rot() = rot;
 }
 
-void ParticleSystem::SetScale()
+void ParticleSystem::SetScale(float scale)
 {
-    quad->Scale() *= 3;
+    quad->Scale() *= scale;
 }
 
 void ParticleSystem::SetVortex(Vector3 pos)
