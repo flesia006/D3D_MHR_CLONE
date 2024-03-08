@@ -191,7 +191,7 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 	}
 
 	forwardBoom = new BoxCollider();
-	forwardBoom->Scale() *= 700;
+	forwardBoom->Scale() *= 1000;
 	forwardBoom->SetColor(1, 0, 0);
 	forwardBoom->Pos() = forwardBoomPosInit;
 	forwardBoom->SetParent(head);
@@ -1235,6 +1235,14 @@ void Valphalk::PartDestroyCheck()
 		radDifference = 0;
 		initialRad = Rot().y;
 		isStagger = true;
+		if (UI->partDestruct)
+		{
+			UI->partDestruct2 = true;
+		}
+		else if (!UI->partDestruct) 
+		{
+			UI->partDestruct = true;
+		}
 
 		for (auto collider : colliders)
 			if (collider->isAttack)
@@ -1252,6 +1260,14 @@ void Valphalk::PartDestroyCheck()
 		radDifference = 0;
 		initialRad = Rot().y;
 		isStagger = true;
+		if (UI->partDestruct)
+		{
+			UI->partDestruct2 = true;
+		}
+		else if (!UI->partDestruct)
+		{
+			UI->partDestruct = true;
+		}
 
 		for (auto collider : colliders)
 			if (collider->isAttack)
@@ -1269,6 +1285,14 @@ void Valphalk::PartDestroyCheck()
 		radDifference = 0;
 		initialRad = Rot().y;
 		isStagger = true;
+		if (UI->partDestruct)
+		{
+			UI->partDestruct2 = true;
+		}
+		else if (!UI->partDestruct)
+		{
+			UI->partDestruct = true;
+		}
 
 		for (auto collider : colliders)
 			if (collider->isAttack)
@@ -1286,6 +1310,14 @@ void Valphalk::PartDestroyCheck()
 		radDifference = 0;
 		initialRad = Rot().y;
 		isStagger = true;
+		if (UI->partDestruct)
+		{
+			UI->partDestruct2 = true;
+		}
+		else if (!UI->partDestruct)
+		{
+			UI->partDestruct = true;
+		}
 
 		for (auto collider : colliders)
 			if (collider->isAttack)
@@ -1303,6 +1335,14 @@ void Valphalk::PartDestroyCheck()
 		radDifference = 0;
 		initialRad = Rot().y;
 		isStagger = true;
+		if (UI->partDestruct)
+		{
+			UI->partDestruct2 = true;
+		}
+		else if (!UI->partDestruct)
+		{
+			UI->partDestruct = true;
+		}
 
 		for (auto collider : colliders)
 			if (collider->isAttack)
@@ -3215,7 +3255,17 @@ void Valphalk::E1155() // 비상
 
 	PLAY;
 	if (RATIO < 0.1)
+	{
+		if (!UI->partDestruct)
+		{
+			UI->specialMove = true;
+		}
+		else if (UI->partDestruct)
+		{
+			UI->specialMove2 = true;
+		}
 		Sounds::Get()->Play("em086_05_fx_media_22", 0.5f);
+	}
 
 	if (Pos().y > 80000)
 		Sounds::Get()->Play("em086_05_fx_media_33", 0.5f);
@@ -4896,18 +4946,18 @@ void Valphalk::E4001()
 void Valphalk::E4013() // 조우 포효
 {
 	PLAY;
-	if (RATIO > 0.325 && RATIO < 0.425)
+	if (RATIO > 0.325 && RATIO < 0.375)
 	{
 		Sounds::Get()->Play("em086_05_vo_media_10", 0.5f);
 		if (!playOncePerPattern)
 		{
 			colliders[ROAR]->SetActive(true);
-			SetColliderAttack(ROAR, 0.425f, 0, 3);
+			SetColliderAttack(ROAR, 0.375f, 0, 3);
 			playOncePerPattern = true;
 		}
 	}
 
-	if (RATIO > 0.425)
+	if (RATIO > 0.375)
 		colliders[ROAR]->SetActive(false);
 
 	if (RATIO > 0.96)

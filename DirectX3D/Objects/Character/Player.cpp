@@ -114,12 +114,14 @@ void Player::Update()
 	//	TermAttackUpdate();
 	//	HurtCheck();
 	//	Potion();
+	//	SharpeningStone();
 	//}
 	///////////////////////////////////
 	//µð¹ö±ëÀ» À§ÇØ¼­ DeathCheck() ¹ÛÀ¸·Î »©µÐ°Í.
 	TermAttackUpdate();
 	HurtCheck();
 	Potion();
+	SharpeningStone();
 	////////////////////////////////////
 	Control();
 	ResetPlayTime();
@@ -140,9 +142,6 @@ void Player::Update()
 	spiritParticle->Update();
 	ModelAnimator::Update();
 	GroundCheck();
-
-	if (KEY_DOWN('5'))/// µð¹ö±× È®ÀÎ¿ëÀÌ¶ó ÇÊ¿ä¾øÀ¸¸é Áö¿öµµ µÊ
-		UI->curHP -= 30;
 }
 
 void Player::Render()
@@ -348,6 +347,16 @@ void Player::Potion()
 	}
 }
 
+void Player::SharpeningStone()
+{
+	if (UI->useQuickSlot3 && !cure && !Lcure
+		|| UI->useDragSlot2 &&  KEY_DOWN('E') && !cure && !Lcure
+		|| UI->useNumberBar &&  KEY_DOWN('3') && !Lcure && !cure)
+	{
+		UI->SharpeningStone();
+	}
+}
+
 
 void Player::GUIRender()
 {
@@ -367,7 +376,8 @@ void Player::GUIRender()
 //	ImGui::DragFloat("CAM.y", &y);
 
 	Vector3 realpos = realPos->Pos();
-	
+	ImGui::DragFloat3("Pos", (float*)&Pos());
+
 	ImGui::DragFloat3("RealPos", (float*)&realpos);
 
 	Vector3 rot = Rot();
@@ -855,8 +865,11 @@ bool Player::Attack(float power, bool push, UINT useOtherCollider) // Ãæµ¹ÆÇÁ¤ Ç
 
 			attackOnlyOncePerMotion = true;
 
-			if (curState == L_101 || curState == L_102 || curState == L_103 || curState == L_104 || curState == L_105) // ±âÀÎº£±â ¾Æ´Ï¶ó¸é °ÔÀÌÁö Áõ°¡
-				UIManager::Get()->PlusSpritGauge();
+			if (curState == L_101 || curState == L_102 || curState == L_103) // ±âÀÎº£±â ¾Æ´Ï¶ó¸é °ÔÀÌÁö Áõ°¡
+				UIManager::Get()->DoublePlusSpritGauge();
+
+			if (curState == L_104 || curState == L_105)
+				UI->PlusSpritGauge();
 
 			if (curState == L_109) // ±âÀÎ Å« È¸Àüº£±â ÀûÁß½Ã¿¡¸¸
 			{
@@ -2652,7 +2665,7 @@ void Player::L116()
 
 }
 
-void Player::L119() // ³¯¶óÂ÷±â ÂøÁö
+void Player::L119()
 {
 	PLAY;	
 	if (RATIO > 0.001 && RATIO < 0.002)
@@ -2681,9 +2694,17 @@ void Player::L119() // ³¯¶óÂ÷±â ÂøÁö
 		ReturnIdle();
 }
 
-void Player::L122()
+void Player::L122() // ³¯¶óÂ÷±â ÂøÁö
 {
 	PLAY;
+
+	//if (!playOncePerMotion)
+	//{
+	//	Pos().y = 0.0f;
+	//	UpdateWorld();
+	//	playOncePerMotion = true;
+	//}
+
 	if (RATIO > 0.2 && RATIO < 0.3)
 		RandVoice();
 	// °ø°ÝÆÇÁ¤ ÇÁ·¹ÀÓ 
@@ -2702,7 +2723,10 @@ void Player::L122()
 	}
 
 	if (RATIO > 0.96)
+	{
+		playOncePerMotion = false;
 		ReturnIdle();
+	}
 }
 
 void Player::L128()	// ³¯¶óÂ÷±â ½ÃÀÛ
@@ -2739,10 +2763,10 @@ void Player::L130()	// ³¯¶óÂ÷±â Ã¼°øÁß
 
 	// Ã¼°øÁß
 	{
-		if(Jump(850))
+		if(Jump(550))
 		// °ø°ÝÆÇÁ¤ ÇÁ·¹ÀÓ
 		{
-			if ( Pos().y > 50 )//TODO
+			if ( Pos().y > 50 )//TODO ³¯¶óÂ÷±â Ã¼°øÁß¿¡ ´Ê°Ô ³»·Á¿À´Â °Å
 			{
 				if (Attack(2, true, 3))
 				{
@@ -2762,7 +2786,7 @@ void Player::L130()	// ³¯¶óÂ÷±â Ã¼°øÁß
 		}
 		else
 		{
-			SetState(L_119);
+			SetState(L_122);
 		}
 	}
 }
@@ -2772,7 +2796,7 @@ void Player::L131() // Ã¼°ø ·çÇÁ
 	PLAY;
 	// Ã¼°øÁß
 	{
-		if (Jump(850))
+		if (Jump(550))
 			// °ø°ÝÆÇÁ¤ ÇÁ·¹ÀÓ
 		{
 			if (Attack(2,true, 3))
@@ -2790,10 +2814,9 @@ void Player::L131() // Ã¼°ø ·çÇÁ
 		}
 		else
 		{
-			SetState(L_119);
+			SetState(L_122);
 		}
 	}
-
 }
 
 void Player::L132()
@@ -2823,7 +2846,7 @@ void Player::L133()	// Åõ±¸±ú±â
 		// °ø°ÝÆÇÁ¤ Å¸ÀÌ¹Ö
 		if (RATIO > 0.38)
 		{
-			if (Attack(0, false))
+			if (Attack(40))
 				isHitL133 = true;
 			CAM->Zoom(300, 5);
 		}
@@ -3591,7 +3614,7 @@ void Player::DamageRender()
 bool Player::Jump(float moveSpeed)
 {
 	jumpVelocity -= 9.8f * gravityMult * DELTA;
-	Pos() += -1 * initForward * moveSpeed * DELTA;
+	Pos() += -1 * Forward() * moveSpeed * DELTA;
 	Pos().y += jumpVelocity;
 
 	if (realPos->Pos().y >= 0)
@@ -3609,10 +3632,9 @@ bool Player::Jump(float moveSpeed)
 
 void Player::GroundCheck()
 {
-
 	if (SceneManager::Get()->Add("ShadowScene") == nullptr)
 	{
-		if (Pos().y < 0)
+		if (realPos->Pos().y < 0)
 			Pos().y = 0;
 		return;
 	}

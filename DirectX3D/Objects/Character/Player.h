@@ -2,6 +2,7 @@
 
 class Particle;
 class Trail;
+class Valphalk;
 class Player : public ModelAnimator
 {
 
@@ -65,6 +66,8 @@ public:
 	CapsuleCollider* getSwordCollider() { return swordCollider; }
 	Transform* GetRealPos() { return realPos; }
 
+	void SetValphalk(Valphalk* val) { this->val = val; }
+
 private:
 	void Control();
 	void Move();
@@ -72,6 +75,7 @@ private:
 
 	void UpdateWorlds();
 	void Potion();
+	void SharpeningStone();
 
 	void Rotate(float rotateSpeed = 5.0f);   // 앞으로 쭉 달리는 루프모션
 	void LimitRotate(float limit);   // 공격모션  15 , 180
@@ -329,6 +333,8 @@ private:
 	vector<Damage> damages;
 
 	bool isEvaded = false; // 회피했는지 여부
+
+	Valphalk* val;
 	
 	int randVoice = 0;
 	///////////////////////////////////////////
