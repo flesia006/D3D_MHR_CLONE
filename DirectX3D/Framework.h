@@ -228,6 +228,7 @@ using namespace GameMath;
 #include "Objects/Character/Player.h"
 #include "Objects/Character/Valphalk.h"
 #include "Objects/Character/DummyValphalk.h"
+#include "Objects/Character/Sample.h"
 
 #include "Objects/Manager/BlockManager.h"
 #include "Objects/Manager/KunaiManager.h"

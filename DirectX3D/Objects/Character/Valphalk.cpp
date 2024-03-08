@@ -1591,12 +1591,13 @@ void Valphalk::RotateToTarget(float ratio1, float ratio2)
 	Rot().y = initialRad + rad;
 }
 
-void Valphalk::SetColliderAttack(ColliderName name, float ratio)
+void Valphalk::SetColliderAttack(ColliderName name, float ratio, float dmg)
 {
 	static bool ON = false;
 	if (!ON)
 	{
 		colliders[name]->isAttack = true;
+		colliders[name]->atkDmg = dmg;
 		colliders[name]->SetColor(Float4(1, 0, 1, 1));
 		ON = true;
 	}
@@ -1604,6 +1605,7 @@ void Valphalk::SetColliderAttack(ColliderName name, float ratio)
 	if (RATIO > ratio - 0.01)
 	{
 		colliders[name]->isAttack = false;
+		colliders[name]->atkDmg = 10.0f;
 		colliders[name]->SetColor(Float4(0, 1, 0, 1));
 		ON = false;
 	}
@@ -4071,10 +4073,8 @@ void Valphalk::EX2276()
 void Valphalk::EX2277(float y)
 {
 	PLAY;
-	SetColliderAttack(BODY, 0.93);
-	SetColliderAttack(CHEST, 0.93);
-	SetColliderAttack(HEAD, 0.93);
-	SetColliderAttack(RLEG1, 0.93);
+	FOR(19)
+		SetColliderAttack((ColliderName)i, 0.93);
 
 	Pos().y -= y * DELTA;
 
@@ -4082,10 +4082,9 @@ void Valphalk::EX2277(float y)
 	{
 		preState = curState;
 		curState = E_2278;
-		colliders[BODY]->isAttack = false;
-		colliders[CHEST]->isAttack = false;
-		colliders[HEAD]->isAttack = false;
-		colliders[RLEG1]->isAttack = false;
+
+		FOR(19)
+			colliders[(ColliderName)i]->isAttack = false;
 
 
 		sequence++;

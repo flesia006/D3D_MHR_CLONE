@@ -206,7 +206,7 @@ private:
 	void UpdateUI(); //캐릭터 UI가 있으면 이후 업데이트
 	float GetRadBtwTrgt();
 	void RotateToTarget(float ratio1, float ratio2); // 
-	void SetColliderAttack(ColliderName name, float ratio);
+	void SetColliderAttack(ColliderName name, float ratio, float dmg = 10.0f);
 	int  SetRadAndMirror(bool needMirror);
 	void Loop() { GetClip(curState)->ResetPlayTime(); Pos() = realPos->Pos(); }
 

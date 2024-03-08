@@ -42,7 +42,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -142,6 +142,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Objects\Character\Sample.h" />
     <ClInclude Include="Scenes\FightTestScene.h" />
     <ClInclude Include="Objects\Character\DummyValphalk.h" />
     <ClInclude Include="Objects\Particle\CriticalParticle.h" />
@@ -288,6 +289,7 @@
     <ClInclude Include="Objects\Particle\ValZet.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Objects\Character\Sample.cpp" />
     <ClCompile Include="Scenes\FightTestScene.cpp" />
     <ClCompile Include="Objects\Character\DummyValphalk.cpp" />
     <ClCompile Include="Objects\Particle\CriticalParticle.cpp" />
