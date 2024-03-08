@@ -10,7 +10,7 @@ VertexBuffer::VertexBuffer(void* data, UINT stride, UINT count)
 
     D3D11_SUBRESOURCE_DATA initData = {};
     initData.pSysMem = data;//&vertices[0]
-
+    
     DEVICE->CreateBuffer(&bufferDesc, &initData, &buffer);
 }
 

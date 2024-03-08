@@ -7,7 +7,7 @@ Particle::Particle()
 
     FOR(2) blendState[i] = new BlendState();
     FOR(2) depthState[i] = new DepthStencilState();
-
+    
     blendState[1]->Alpha(true);
     depthState[1]->DepthWriteMask(D3D11_DEPTH_WRITE_MASK_ZERO);
     //depthState[1]->DepthWriteMask(D3D11_DEPTH_WRITE_MASK_ALL); //나중에 옵션 바꿀 때를 대비
@@ -30,7 +30,6 @@ void Particle::Render()
     // 조정된 이미지 출력용 출력상태 설정
     blendState[1]->SetState();
     depthState[1]->SetState();
-
     vertexBuffer->Set(D3D_PRIMITIVE_TOPOLOGY_POINTLIST); //범용 파티클과 마찬가지로 포인트 출력
 
     //렌더 준비
@@ -39,10 +38,11 @@ void Particle::Render()
 
     DC->Draw(particleCount, 0); // 얼마나, 어디서부터 그릴 것인가 (무엇을 = 위에서 설정해둔 정점버퍼)
     DC->GSSetShader(nullptr, nullptr, 0); //설정은 미리 해두었고 지금은 추가 옵션이 없다
-
+    
     //출력 상태 원상복구
     blendState[0]->SetState();
     depthState[0]->SetState();
+    
 }
 
 void Particle::Play(Vector3 pos)

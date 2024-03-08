@@ -62,11 +62,11 @@ GameManager::GameManager()
 //    SceneManager::Get()->Create("ValphalkTestScene", new ValphalkTestScene());
 //    SceneManager::Get()->Add("ValphalkTestScene");
 
-   //SceneManager::Get()->Create("PlayerTestScene", new PlayerTestScene());
-   //SceneManager::Get()->Add("PlayerTestScene");
+   SceneManager::Get()->Create("PlayerTestScene", new PlayerTestScene());
+   SceneManager::Get()->Add("PlayerTestScene");
 
-   SceneManager::Get()->Create("FightTestScene", new FightTestScene());
-   SceneManager::Get()->Add("FightTestScene");
+//   SceneManager::Get()->Create("FightTestScene", new FightTestScene());
+//   SceneManager::Get()->Add("FightTestScene");
 
 //    SceneManager::Get()->Add("Terrain");
 
@@ -172,7 +172,18 @@ void GameManager::Create()
     sound->Play("env_114", .5f);
     /////////////////////////////////////////////////////////////
     // Player
-    Sounds::Get()->AddSound("Heeee", SoundPath + L"Heeee.mp3");
+    Sounds::Get()->AddSound("attack1", SoundPath + L"Player/attack1.mp3");
+    Sounds::Get()->AddSound("attack2", SoundPath + L"Player/attack2.mp3");
+    Sounds::Get()->AddSound("attack3", SoundPath + L"Player/attack3.mp3");
+    Sounds::Get()->AddSound("attack4", SoundPath + L"Player/attack4.mp3");
+    Sounds::Get()->AddSound("attack5", SoundPath + L"Player/attack5.mp3");
+    Sounds::Get()->AddSound("special1", SoundPath + L"Player/special_1.mp3");
+    Sounds::Get()->AddSound("special2", SoundPath + L"Player/special_2.mp3");
+    Sounds::Get()->AddSound("special3", SoundPath + L"Player/special_3.mp3");
+    Sounds::Get()->AddSound("special4", SoundPath + L"Player/special_4.mp3");
+    
+
+
     /////////////////////////////////////////////////////////////
     // Weapon
     // 공격시검뽑는소리

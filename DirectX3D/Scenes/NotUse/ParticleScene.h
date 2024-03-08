@@ -20,6 +20,12 @@ private:
     //-----------------------------------
     SphereCollider* collider; // 클릭용 표적
     Sprite* sprite;
+    Sprite* sprite2;
+    Sprite* sprite3;
+    Sprite* sprite4;
     Wind* wind;
+    
+
+    float timer = 0;
 };
 
