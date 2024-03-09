@@ -27,7 +27,7 @@ private:
 		S_014, S_017, S_018, S_019, S_020, S_026, S_029,
 		S_038, S_118, S_119, S_120, S_122,
 
-		// 발도 피격모션
+		// 발도 피격모션 대경직: 451,453, D15,d16,d21,d22,d26,d29,d31,d32,
 		L_400, L_403, L_451, L_453, L_455,
 		// 납도 피격모션
 		D_001, D_004, D_007, D_011, D_015,
@@ -112,7 +112,8 @@ private:
 
 	void RandVoice();
 	void RandSpecialVoice();
-
+	void RandHurtVoice();
+	void RandBreath();
 private:
 	void ReadClips();
 	void RecordLastPos();
@@ -337,6 +338,7 @@ private:
 	Valphalk* val;
 	
 	int randVoice = 0;
+	float breathCount = 0;
 	///////////////////////////////////////////
 	// Particle
 	vector<HitParticle*> hitParticle;
