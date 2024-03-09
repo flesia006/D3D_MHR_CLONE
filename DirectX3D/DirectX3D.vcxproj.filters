@@ -340,6 +340,6 @@
     <None Include="Shaders\VertexHeader.hlsli" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="����.txt" />
+    <Text Include="패턴.txt" />
   </ItemGroup>
 </Project>

@@ -45,8 +45,8 @@ GameManager::GameManager()
 //    SceneManager::Get()->Create("ModelExport", new ModelExportScene());
 //    SceneManager::Get()->Add("ModelExport");
 //
-//    SceneManager::Get()->Create("Grid", new GridScene());
-//    SceneManager::Get()->Add("Grid");
+    SceneManager::Get()->Create("Grid", new GridScene());
+    SceneManager::Get()->Add("Grid");
 
 
 //    SceneManager::Get()->Create("ShadowScene", new ShadowScene());
@@ -62,11 +62,11 @@ GameManager::GameManager()
 //    SceneManager::Get()->Create("ValphalkTestScene", new ValphalkTestScene());
 //    SceneManager::Get()->Add("ValphalkTestScene");
 
-    SceneManager::Get()->Create("PlayerTestScene", new PlayerTestScene());
-    SceneManager::Get()->Add("PlayerTestScene");
+    //SceneManager::Get()->Create("PlayerTestScene", new PlayerTestScene());
+    //SceneManager::Get()->Add("PlayerTestScene");
 
-//   SceneManager::Get()->Create("FightTestScene", new FightTestScene());
-//   SceneManager::Get()->Add("FightTestScene");
+   SceneManager::Get()->Create("FightTestScene", new FightTestScene());
+   SceneManager::Get()->Add("FightTestScene");
 
 //    SceneManager::Get()->Add("Terrain");
 
@@ -200,6 +200,8 @@ void GameManager::Create()
     Sounds::Get()->AddSound("special3", SoundPath + L"Player/special_3.mp3");
     Sounds::Get()->AddSound("special4", SoundPath + L"Player/special_4.mp3");
     Sounds::Get()->AddSound("start", SoundPath + L"Player/start.mp3");
+    Sounds::Get()->AddSound("igonan1", SoundPath + L"Player/igonan1.mp3");
+    Sounds::Get()->AddSound("igonan2", SoundPath + L"Player/igonan2.mp3");
 
 
 
