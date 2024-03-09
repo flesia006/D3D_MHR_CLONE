@@ -1724,6 +1724,7 @@ void Valphalk::SetColliderAttack(ColliderName name, float ratio, float dmg, UINT
 	if (!ON)
 	{
 		colliders[name]->isAttack = true;
+		colliders[name]->atkDmg = dmg;
 		colliders[name]->SetColor(Float4(1, 0, 1, 1));
 		colliders[name]->atkDmg = dmg;
 		colliders[name]->atkStrength = atkStrength;
@@ -1733,6 +1734,7 @@ void Valphalk::SetColliderAttack(ColliderName name, float ratio, float dmg, UINT
 	if (RATIO > ratio - 0.01)
 	{
 		colliders[name]->isAttack = false;
+		colliders[name]->atkDmg = 10.0f;
 		colliders[name]->SetColor(Float4(0, 1, 0, 1));
 		colliders[name]->atkDmg = 10;
 		colliders[name]->atkStrength = 2;
@@ -4281,10 +4283,8 @@ void Valphalk::EX2276()
 void Valphalk::EX2277(float y)
 {
 	PLAY;
-	SetColliderAttack(BODY, 0.93, 40, 2);
-	SetColliderAttack(CHEST, 0.93, 40, 2);
-	SetColliderAttack(HEAD, 0.93, 40, 2);
-	SetColliderAttack(RLEG1, 0.93, 40, 2);
+	FOR(19)
+		SetColliderAttack((ColliderName)i, 0.93, 40, 2);
 
 	Pos().y -= y * DELTA;
 
@@ -4292,10 +4292,9 @@ void Valphalk::EX2277(float y)
 	{
 		preState = curState;
 		curState = E_2278;
-		colliders[BODY]->isAttack = false;
-		colliders[CHEST]->isAttack = false;
-		colliders[HEAD]->isAttack = false;
-		colliders[RLEG1]->isAttack = false;
+
+		FOR(19)
+			colliders[(ColliderName)i]->isAttack = false;
 
 
 		sequence++;

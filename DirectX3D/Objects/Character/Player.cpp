@@ -8,27 +8,27 @@
 
 Player::Player() : ModelAnimator("Player")
 {
-	head			= new Transform();
-	realPos			= new Transform();
-	backPos			= new Transform();
-	forwardPos		= new Transform();
-	swordStart		= new Transform();
-	swordEnd		= new Transform();
-	mainHand		= new Transform();
-	backSwd			= new Transform();
+	head = new Transform();
+	realPos = new Transform();
+	backPos = new Transform();
+	forwardPos = new Transform();
+	swordStart = new Transform();
+	swordEnd = new Transform();
+	mainHand = new Transform();
+	backSwd = new Transform();
 
-	swordCollider	= new CapsuleCollider(2.0f, 100.0f);
+	swordCollider = new CapsuleCollider(2.0f, 100.0f);
 	swordCollider->Rot().x += XM_PIDIV2;
 	swordCollider->SetParent(mainHand);
 	swordCollider->Pos().z -= 100.0f;
 	swordCollider->Scale() *= 3.0f;
 
 	trail = new Trail(L"Textures/Effect/Snow.png", swordStart, swordEnd, 20, 85);
-	
+
 	/////////////////////////////////////////////////////////////
 	// Particles
-	
-	FOR(7) 
+
+	FOR(7)
 		hitParticle.push_back(new HitParticle());
 	hitBoomParticle = new HitBoomParticle();
 	criticalParticle = new CriticalParticle();
@@ -39,7 +39,7 @@ Player::Player() : ModelAnimator("Player")
 	potionParticle = new PotionParticle();
 	haloTransform = new Transform();
 	haloCollider = new CapsuleCollider();
-	haloCollider->SetParent(swordStart);	
+	haloCollider->SetParent(swordStart);
 	/////////////////////////////////////////////////////////////
 	longSword = new Model("kal");
 	longSword->SetParent(mainHand);
@@ -49,7 +49,7 @@ Player::Player() : ModelAnimator("Player")
 
 	//	longSword->Rot().x -= XM_PIDIV2;	
 
-	tmpCollider = new CapsuleCollider(1,0.1);
+	tmpCollider = new CapsuleCollider(1, 0.1);
 	tmpCollider->Scale() *= 6.0f;
 
 	tmpCollider2 = new CapsuleCollider(1, 0.1);
@@ -108,7 +108,8 @@ Player::~Player()
 }
 
 void Player::Update()
-{	
+{
+
 	//if (!DeathCheck())
 	//{
 	//	TermAttackUpdate();
@@ -118,6 +119,8 @@ void Player::Update()
 	//}
 	///////////////////////////////////
 	//µð¹ö±ëÀ» À§ÇØ¼­ DeathCheck() ¹ÛÀ¸·Î »©µÐ°Í.
+	if (callGaruk)
+		ReadyRide();
 	TermAttackUpdate();
 	HurtCheck();
 	Potion();
@@ -125,6 +128,9 @@ void Player::Update()
 	////////////////////////////////////
 	Control();
 	ResetPlayTime();
+
+
+
 	UpdateWorlds();
 	trail->Update();
 	FOR(hitParticle.size())		hitParticle[i]->Update();
@@ -142,6 +148,7 @@ void Player::Update()
 	spiritParticle->Update();
 	ModelAnimator::Update();
 	GroundCheck();
+	ModelAnimator::Update();
 }
 
 void Player::Render()
@@ -151,14 +158,14 @@ void Player::Render()
 	tmpCollider2->Render();
 	bodyCollider->Render();
 	evadeCheckCollider->Render();
-//	tmpCollider3->Render();
-	//swordCollider->Render();
+	//	tmpCollider3->Render();
+		//swordCollider->Render();
 	longSword->Render();
 	kalzip->Render();
 	if (renderEffect)
 	{
 		trail->Render();
-	}		
+	}
 	////////////////////////////////////////////
 	// Particles
 	FOR(hitParticle.size())
@@ -175,10 +182,15 @@ void Player::Render()
 
 	if (isSetState)
 	{
-		Pos() = realPos->Pos();
+		Pos().x = realPos->Pos().x;
+		Pos().z = realPos->Pos().z;
+
+		if (curState < R_001 || curState > R_602)
+			Pos().y = realPos->Pos().y;
+
 		isSetState = false;
 	}
-		
+
 }
 
 
@@ -216,10 +228,17 @@ void Player::UpdateWorlds()
 	if (Rot().y > 3.14)
 		Rot().y -= XM_2PI;
 
+	if (isRiding)
+	{
+		Pos().x = garuk->GlobalPos().x + Forward().x * 50;
+		Pos().z = garuk->GlobalPos().z + Forward().z * 50;
+		Rot().y = garuk->Rot().y;
+	}
+
 	Vector3 camRot = CAM->Rot();
 	camRot.y += XM_PI;
 
-	if	(KEY_DP('W') && KEY_DP('D'))
+	if (KEY_DP('W') && KEY_DP('D'))
 		keyboardRot = camRot.y + XM_PIDIV4;
 	else if (KEY_DP('W') && KEY_DP('A'))
 		keyboardRot = camRot.y - XM_PIDIV4;
@@ -250,9 +269,15 @@ void Player::UpdateWorlds()
 	realPos->UpdateWorld();
 
 	backPos->Pos() = GetTranslationByNode(1) + Forward() * 100;
-	forwardPos->Pos() = GetTranslationByNode(1) + Back() * 50 + Vector3::Up() * 80 ;
+	forwardPos->Pos() = GetTranslationByNode(1) + Back() * 50 + Vector3::Up() * 80;
 
-	head->Pos() = realPos->Pos() + Vector3::Up() * 200;
+
+	head->Pos().x = realPos->Pos().x;
+	if (isRiding)
+		head->Pos().y = 200;
+	else
+		head->Pos().y = realPos->Pos().y + 200;
+	head->Pos().z = realPos->Pos().z;
 
 	lastSwordEnd = swordStart->Pos();
 
@@ -285,8 +310,8 @@ void Player::Potion()
 {
 	time += DELTA;
 	if (UI->useQuickSlot1 && UI->haveGPotion > 0 && !Lcure && !cure
-		|| UI->useDragSlot1 && UI->haveGPotion > 0 && KEY_DOWN('E') && !Lcure && !cure
-		|| UI->useNumberBar && UI->haveGPotion > 0 && KEY_DOWN('2') && !Lcure && !cure)
+		|| UI->useDragSlot1 && KEY_DOWN('E')
+		|| UI->useNumberBar && KEY_DOWN('2'))
 	{
 		Sounds::Get()->Play("health_potion", 0.3f);
 		UI->haveGPotion--;
@@ -361,19 +386,19 @@ void Player::SharpeningStone()
 void Player::GUIRender()
 {
 	ModelAnimator::GUIRender();
-//	trail->GetMaterial()->GUIRender();
-//	hitParticle->GUIRender();
+	//	trail->GetMaterial()->GUIRender();
+	//	hitParticle->GUIRender();
 
-	//particle->GetMaterial()->GUIRender();
+		//particle->GetMaterial()->GUIRender();
 
-//	Vector3 Forward = root->Forward();
-//	float t = atan2(Forward.x, Forward.z);
-//	float t = root->Rot().y;
-//	ImGui::DragFloat("Player.y", &t); 
-//
-//	Vector3 CAMForward = CAM->Forward();	
-//	float y = atan2(CAMForward.x, CAMForward.z);
-//	ImGui::DragFloat("CAM.y", &y);
+	//	Vector3 Forward = root->Forward();
+	//	float t = atan2(Forward.x, Forward.z);
+	//	float t = root->Rot().y;
+	//	ImGui::DragFloat("Player.y", &t); 
+	//
+	//	Vector3 CAMForward = CAM->Forward();	
+	//	float y = atan2(CAMForward.x, CAMForward.z);
+	//	ImGui::DragFloat("CAM.y", &y);
 
 	Vector3 realpos = realPos->Pos();
 	ImGui::DragFloat3("Pos", (float*)&Pos());
@@ -436,7 +461,7 @@ void Player::GUIRender()
 
 void Player::PostRender()
 {
-//	StatusRender(); // ¸ð¼Ç Ãß°¡ÁßÀÌ¹Ç·Î ÁÖ¼®
+	//	StatusRender(); // ¸ð¼Ç Ãß°¡ÁßÀÌ¹Ç·Î ÁÖ¼®
 	DamageRender();
 }
 
@@ -463,7 +488,7 @@ void Player::Control()
 	case Player::S_120:		S120();		break;
 	case Player::S_122:		S122();		break;
 
-	// ÀÌµ¿ ¸ð¼Ç
+		// ÀÌµ¿ ¸ð¼Ç
 	case Player::L_001:		L001();		break;
 	case Player::L_002:					break;
 	case Player::L_003:					break;
@@ -485,8 +510,8 @@ void Player::Control()
 	case Player::L_077:					break;
 	case Player::L_078:					break;
 	case Player::L_079:					break;
-		
-	// °ø°Ý ¸ð¼Ç
+
+		// °ø°Ý ¸ð¼Ç
 	case Player::L_101:		L101();		break;
 	case Player::L_102:		L102();		break;
 	case Player::L_103:		L103();		break;
@@ -523,7 +548,25 @@ void Player::Control()
 	case Player::L_155:		L155();		break;
 	case Player::L_156:		L156();		break;
 
-	// ÇÇ°Ý ¸ð¼Ç
+		// °¡·çÅ© Å¾½Â ¸ð¼Ç
+	case Player::R_001:		R001();		break;
+	case Player::R_013:		R013();		break;
+	case Player::R_024:		R024();		break;
+	case Player::R_031:		R031();		break;
+	case Player::R_041:		R041();		break;
+	case Player::R_104:		R104();		break;
+	case Player::R_142:		R142();		break;
+	case Player::R_143:		R143();		break;
+	case Player::R_144:		R144();		break;
+	case Player::R_400:		R400();		break;
+	case Player::R_401:		R401();		break;
+	case Player::R_402:		R402();		break;
+	case Player::R_600:		R600();		break;
+	case Player::R_601:		R601();		break;
+	case Player::R_602:		R602();		break;
+
+
+		// ÇÇ°Ý ¸ð¼Ç			
 	case Player::L_400:		L400();		break;
 	case Player::L_403:		L403();		break;
 	case Player::L_451:		L451();		break;
@@ -616,7 +659,7 @@ void Player::Move()
 		if (rotSpeed <= 3)
 			rotSpeed = 3;
 	}
-		if (KEY_PRESS('W'))
+	if (KEY_PRESS('W'))
 	{
 		Vector3 cross = Cross(forward, CAMForward);//¹æÇâÂ÷ÀÌ¿¡¼­ ³ª¿Â ¹ý¼±
 
@@ -625,9 +668,9 @@ void Player::Move()
 			Rot().y += rotSpeed * DELTA;
 		}
 		else if (cross.y > 0)//¹Ý´ëÀÇ °æ¿ì
-		{			
+		{
 			Rot().y -= rotSpeed * DELTA;
-		}			
+		}
 	}
 	if (KEY_PRESS('S'))
 	{
@@ -668,7 +711,7 @@ void Player::Move()
 			Rot().y -= rotSpeed * DELTA;
 		}
 	}
-	if (KEY_PRESS('A') && KEY_PRESS('W') )
+	if (KEY_PRESS('A') && KEY_PRESS('W'))
 	{
 		Vector3 cross = Cross(forward, CAMLeftForward);
 
@@ -761,6 +804,55 @@ void Player::Move()
 	//	velocity.x = Lerp(velocity.x, 0, deceleration * DELTA);	
 }
 
+void Player::ReadyRide()
+{
+	// °¡·çÅ©¸¦ ºÒ·¯
+	if (dog->isCallDog == false)
+		dog->isCallDog = true;
+
+	// °¡·çÅ©°¡ ±ÙÃ³¿¡ ÀÖ³ª È®ÀÎÇØ
+	// ³»°¡ ³³µµ »óÅÂ°í Áö»ó¿¡ ÀÖ¾î¼­ »óÅÂÀÎÁö Ã¼Å©ÇØ
+	// °¡´ÉÇÏ¸é Å¾½ÂÇØ
+	if (dog->readyToRide == true)
+	{
+		// Å¾½ÂÇØµµ ¾È¾î»öÇÑ »óÅÂµé
+		if (State_S())
+		{
+			Ride();
+		}
+		else
+		{
+			dog->isCallDog = false;
+			dog->readyToRide = false;
+			callGaruk = false;
+		}
+	}
+}
+
+void Player::Ride()
+{
+	if (dog == nullptr)
+		return;
+
+	dog->SetRide();
+	dog->SetRotPos(Rot(), realPos->Pos());
+	dog->isCallDog = false;
+	dog->readyToRide = false;
+	callGaruk = false;
+	isRiding = true;
+	SetState(R_031);
+}
+
+void Player::EndRide()
+{
+	if (dog == nullptr)
+		return;
+
+	Rot().y += XM_PI;
+	dog->SetFollow();
+	isRiding = false;
+}
+
 void Player::ResetPlayTime()
 {
 	if (preState != curState)
@@ -785,7 +877,7 @@ void Player::Rotate(float rotateSpeed)
 
 }
 
-void Player::LimitRotate(float limit)
+void Player::LimitRotate(float limit, float rotSpeed)
 {
 	if (keyboardRot != 0.0f)
 	{
@@ -793,23 +885,23 @@ void Player::LimitRotate(float limit)
 		{
 			if (keyboardRot < 0)	keyboardRot += XM_2PI;
 			else					keyboardRot -= XM_2PI;
-		}		
+		}
 
 
 		if (keyboardRot > Rot().y)
 		{
-			sumRot += 5* DELTA;
+			sumRot += rotSpeed * DELTA;
 			if (sumRot < unitRad * limit)
 			{
-				RealRotate(5 * DELTA);
+				RealRotate(rotSpeed * DELTA);
 			}
 		}
 		else
 		{
-			sumRot += 5 * DELTA;
+			sumRot += rotSpeed * DELTA;
 			if (sumRot < unitRad * limit)
 			{
-				RealRotate(-5 * DELTA);
+				RealRotate(-rotSpeed * DELTA);
 			}
 		}
 	}
@@ -823,7 +915,7 @@ bool Player::Attack(float power, bool push, UINT useOtherCollider) // Ãæµ¹ÆÇÁ¤ Ç
 		return AttackDummy(power, push, useOtherCollider);
 
 	Valphalk* val = nullptr;
-	if(SceneManager::Get()->Add("ShadowScene") == nullptr && SceneManager::Get()->Add("FightTestScene") != nullptr)
+	if (SceneManager::Get()->Add("ShadowScene") == nullptr && SceneManager::Get()->Add("FightTestScene") != nullptr)
 		val = dynamic_cast<FightTestScene*>(SceneManager::Get()->Add("FightTestScene"))->GetValphalk();
 	else
 		val = dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetValphalk();
@@ -832,7 +924,7 @@ bool Player::Attack(float power, bool push, UINT useOtherCollider) // Ãæµ¹ÆÇÁ¤ Ç
 	Contact contact;
 
 	auto colliders = val->GetCollider();
-	
+
 	CapsuleCollider* playerCollider = swordCollider;
 	if (useOtherCollider != 0)
 	{
@@ -857,7 +949,7 @@ bool Player::Attack(float power, bool push, UINT useOtherCollider) // Ãæµ¹ÆÇÁ¤ Ç
 
 			criticalParticle->ParticleRotate();
 			hitBoomParticle->Play(contact.hitPoint, swordSwingDir);
-			criticalParticle->Play(contact.hitPoint, swordSwingDir );
+			criticalParticle->Play(contact.hitPoint, swordSwingDir);
 			hitParticle[lastParticleIndex]->Play(contact.hitPoint, swordSwingDir);
 			lastParticleIndex++;
 			if (lastParticleIndex >= hitParticle.size())
@@ -911,7 +1003,7 @@ bool Player::Attack(float power, bool push, UINT useOtherCollider) // Ãæµ¹ÆÇÁ¤ Ç
 				default						: hardness = 1 ; break;
 			}
 			UIManager::Get()->MinusDurability();
-			
+
 
 			Damage damage;
 			float deal = 300 * 0.06 * power * hardness * 0.01f * UIManager::Get()->GetCotingLevelCoefft() * UIManager::Get()->GetDurabilityLevelCoefft();
@@ -951,7 +1043,7 @@ bool Player::Attack(float power, bool push, UINT useOtherCollider) // Ãæµ¹ÆÇÁ¤ Ç
 			else
 				damage.isWeakness = false;
 
-			if(push)
+			if (push)
 				damages.push_back(damage);
 
 			return true;;
@@ -1068,7 +1160,7 @@ void Player::AttackWOCollision(float power)
 
 	int hitPart = lastHitPart;
 
-	Vector3 hitPos    = colliders[hitPart]->GetHitPointPos();
+	Vector3 hitPos = colliders[hitPart]->GetHitPointPos();
 	Vector3 MinHitPos = hitPos + Vector3::Down() * 30;
 	Vector3 MaxHitPos = hitPos + Vector3::Up() * 30;
 	Vector3 RandomPos = Random(MinHitPos, MaxHitPos);
@@ -1121,7 +1213,7 @@ void Player::HurtCheck()
 	Valphalk* val = nullptr;
 	if (SceneManager::Get()->Add("ShadowScene") == nullptr && SceneManager::Get()->Add("FightTestScene") != nullptr)
 		val = dynamic_cast<FightTestScene*>(SceneManager::Get()->Add("FightTestScene"))->GetValphalk();
-	else if(SceneManager::Get()->Add("ShadowScene") != nullptr)
+	else if (SceneManager::Get()->Add("ShadowScene") != nullptr)
 		val = dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetValphalk();
 	else
 		return;
@@ -1396,7 +1488,7 @@ void Player::TermAttackUpdate()
 	{
 		TermAttackTimer2 += DELTA;
 		int dmg = 0;
-		if		(UI->cotingLevel == 2) dmg = 28;
+		if (UI->cotingLevel == 2) dmg = 28;
 		else if (UI->cotingLevel == 1) dmg = 17.5f;
 		else if (UI->cotingLevel == 0) dmg = 10.5f;
 
@@ -1511,8 +1603,8 @@ void Player::SetState(State state)
 
 	//Pos() = realPos->Pos();
 	randVoice = rand() % 5;
-
-	isSetState = true;
+	if (curState <R_001 || curState >R_602) // °¡·çÅ© Å¾½Â¶§´Â ÇÊ¿ä¾øÀ½
+		isSetState = true;
 
 	if (curState == L_155)
 	{
@@ -1622,12 +1714,28 @@ void Player::ReadClips()
 	ReadClip("S_120");
 	ReadClip("S_122");
 
+	ReadClip("R_001");
+	ReadClip("R_013");
+	ReadClip("R_024");
+	ReadClip("R_031");
+	ReadClip("R_041");
+	ReadClip("R_104");
+	ReadClip("R_142");
+	ReadClip("R_143");
+	ReadClip("R_144");
+	ReadClip("R_400");
+	ReadClip("R_401");
+	ReadClip("R_402");
+	ReadClip("R_600");
+	ReadClip("R_601");
+	ReadClip("R_602");
+
 	ReadClip("L_400");
 	ReadClip("L_403");
 	ReadClip("L_451");
 	ReadClip("L_453");
 	ReadClip("L_455");
-	
+
 	ReadClip("D_001");
 	ReadClip("D_004");
 	ReadClip("D_007");
@@ -1663,11 +1771,10 @@ void Player::S001() // ³³µµ Idle
 		SetState(S_005);
 
 	// ¿Þ Å¬¸¯ À¸·Î °ø°Ý ÇÏ´Â°Å Ãß°¡
-	if (KEY_FRONT(Keyboard::LMB))
-	{
-		SetState(L_101);
-		return;
-	}
+	if (K_LMB)		SetState(L_101);
+	else if (KEY_DP('F'))  callGaruk = true;
+	else if (KEY_DP(VK_SPACE))	Roll();
+
 
 	if (RATIO > 0.95)
 		Loop();
@@ -1675,38 +1782,38 @@ void Player::S001() // ³³µµ Idle
 
 void Player::S003() // ³³µµ»óÅÂ ´Þ¸®±â
 {
-//	PLAY;
-//	Move();
-//	Rotate();
-//
-//	if (UIManager::Get()->curStamina < 0.1f)
-//		SetState(S_118);
-//
-//	if (KEY_UP('W') || KEY_UP('S') || KEY_UP('A') || KEY_UP('D')) // ÀÌµ¿ Áß Å°¸¦ ¶¿ ¶§
-//	{
-//		if (KEY_PRESS('W') || KEY_PRESS('A') || KEY_PRESS('S') || KEY_PRESS('D')) // ´Ù¸¥ Å°°¡ ¾ÆÁ÷ ´­·ÁÀÖÀ¸¸é µ¹¾Æ°£´Ù.
-//			return;
-//		// ¸ðµç ÀÌµ¿Å°°¡ ÀÔ·ÂµÇÁö ¾ÊÀ» ½Ã ¸ØÃã
-//		SetState(S_014);
-//		return;
-//	}
-//
-//	if (KEY_PRESS(VK_LSHIFT)) // ½ÃÇÁÆ® ´©¸£¸é Àü·ÂÁúÁÖ
-//	{
-//		SetState(S_038);
-//		return;
-//	}
-//
-//	if (KEY_FRONT(Keyboard::LMB))
-//	{
-//		SetState(L_101);
-//		return;
-//	}
-//
-//	if (KEY_DOWN(VK_SPACE))
-//		Roll();
-//	UIManager::Get()->staminaActive = false;
-//
+	//	PLAY;
+	//	Move();
+	//	Rotate();
+	//
+	//	if (UIManager::Get()->curStamina < 0.1f)
+	//		SetState(S_118);
+	//
+	//	if (KEY_UP('W') || KEY_UP('S') || KEY_UP('A') || KEY_UP('D')) // ÀÌµ¿ Áß Å°¸¦ ¶¿ ¶§
+	//	{
+	//		if (KEY_PRESS('W') || KEY_PRESS('A') || KEY_PRESS('S') || KEY_PRESS('D')) // ´Ù¸¥ Å°°¡ ¾ÆÁ÷ ´­·ÁÀÖÀ¸¸é µ¹¾Æ°£´Ù.
+	//			return;
+	//		// ¸ðµç ÀÌµ¿Å°°¡ ÀÔ·ÂµÇÁö ¾ÊÀ» ½Ã ¸ØÃã
+	//		SetState(S_014);
+	//		return;
+	//	}
+	//
+	//	if (KEY_PRESS(VK_LSHIFT)) // ½ÃÇÁÆ® ´©¸£¸é Àü·ÂÁúÁÖ
+	//	{
+	//		SetState(S_038);
+	//		return;
+	//	}
+	//
+	//	if (KEY_FRONT(Keyboard::LMB))
+	//	{
+	//		SetState(L_101);
+	//		return;
+	//	}
+	//
+	//	if (KEY_DOWN(VK_SPACE))
+	//		Roll();
+	//	UIManager::Get()->staminaActive = false;
+	//
 }
 
 void Player::S005() // ´ë±âÁß ´Þ¸®±â ½ÃÀÛ
@@ -1723,19 +1830,20 @@ void Player::S005() // ´ë±âÁß ´Þ¸®±â ½ÃÀÛ
 	// 101 ³»µðµ® º£±â
 	if (K_LMB)			SetState(L_101);
 	else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106);
-	else if (K_SPACE)	Roll();
-	
+	else if (KEY_DP(VK_SPACE))	Roll();
+	else if (KEY_DP('F'))  callGaruk = true;
+
 	if (RATIO > 0.97 )
 	{
 		SetState(S_011);
-	}	
+	}
 }
 
 void Player::S008() // ¼­¼­ ³³µµ
 {
 	PLAY;
 
-	if(RATIO>0.6)
+	if (RATIO > 0.6)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_9", .5f);
 
 	if (RATIO > 0.95 && K_MOVE)
@@ -1748,21 +1856,21 @@ void Player::S008() // ¼­¼­ ³³µµ
 
 void Player::S009() // °ÉÀ¸¸é¼­ ³³µµ
 {
-//	PLAY;
-//	Rotate();
-//
-//	if (RATIO > 0.4)
-//		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_9", .5f);
-//
-//	if (RATIO > 0.94 && (KEY_PRESS('W') || KEY_PRESS('S') || KEY_PRESS('A') || KEY_PRESS('D')))
-//	{
-//		SetState(S_011);
-//	}
-//
-//	if (RATIO > 0.96)
-//	{
-//		SetState(S_001);
-//	}
+	//	PLAY;
+	//	Rotate();
+	//
+	//	if (RATIO > 0.4)
+	//		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_9", .5f);
+	//
+	//	if (RATIO > 0.94 && (KEY_PRESS('W') || KEY_PRESS('S') || KEY_PRESS('A') || KEY_PRESS('D')))
+	//	{
+	//		SetState(S_011);
+	//	}
+	//
+	//	if (RATIO > 0.96)
+	//	{
+	//		SetState(S_001);
+	//	}
 }
 
 void Player::S011() // ´Þ¸®±â ·çÇÁ
@@ -1783,12 +1891,12 @@ void Player::S011() // ´Þ¸®±â ·çÇÁ
 	if		(K_LMB)		SetState(L_101);
 	else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106);
 	else if (K_SPACE)	Roll();
-
+	else if (KEY_DP('F'))  callGaruk = true;
 
 	if (RATIO > 0.95)
 	{
 		Loop();
-		
+
 	}
 
 }
@@ -1799,17 +1907,17 @@ void Player::S014() // ´Þ¸®´Ù ¸ØÃã
 
 	if (K_MOVE)
 		SetState(S_005);
+	else if (KEY_DP('F'))  callGaruk = true;
 
 
 
-	
 	if (RATIO > 0.96)
 	{
 		SetState(S_001);
 	}
 }
 
-void Player::S017() 
+void Player::S017()
 {
 
 }
@@ -1866,6 +1974,7 @@ void Player::S020()
 	{
 		if (!K_MOVE)			SetState(S_014);
 		else if (K_SPACE)		Roll();
+		else if (KEY_DOWN('F')) callGaruk = true;
 
 	}
 
@@ -1883,58 +1992,58 @@ void Player::S029() // °È´ÂÁß
 
 void Player::S038() // Àü·ÂÁúÁÖ
 {
-//	PLAY;
-//	Move();
-//	Rotate();
-//	if (moveSpeed <= 650)
-//		moveSpeed += 500 * DELTA;
-//	if (UIManager::Get()->curStamina < 0.1f) // ½ºÅÂ¹Ì³ª ÀÏÁ¤¼öÄ¡ ¹Ì¸¸¿¡¼­´Â ´Þ¸®±â ¸·±â
-//	{
-//		SetState(S_118);
-//		return;
-//	}
-//	UIManager::Get()->Running();
-//	/*if (RATIO > 0.96)
-//		moveSpeed++;*/
-//
-//	if (KEY_UP(VK_LSHIFT))
-//	{
-//		moveSpeed = 400;
-//		SetState(S_003);
-//		return;
-//	}
-//
-//	//Rotate();
-//	/*if (RATIO > 0.96 && (KEY_PRESS('W') || KEY_PRESS('S') || KEY_PRESS('A') || KEY_PRESS('D')))
-//	{
-//		SetState(S_003);
-//		moveSpeed = 500;
-//		return;
-//	}*/
-//
-//	if (KEY_UP('W') || KEY_UP('S') || KEY_UP('A') || KEY_UP('D'))
-//	{
-//		if (KEY_PRESS('W') || KEY_PRESS('A') || KEY_PRESS('S') || KEY_PRESS('D'))
-//			return;
-//
-//		moveSpeed = 400;
-//		SetState(S_014);
-//		return;
-//	}
-//
-//
-//	// 101 ³»µðµ® º£±â
-//	if (KEY_FRONT(Keyboard::LMB))
-//	{
-//		SetState(L_101);
-//		return;
-//	}
-//
-//	//if (KEY_PRESS(VK_LSHIFT))
-//	//	SetState(S_008);
-//	if (KEY_DOWN(VK_SPACE))
-//		Roll();
-//	UIManager::Get()->staminaActive = true;
+	//	PLAY;
+	//	Move();
+	//	Rotate();
+	//	if (moveSpeed <= 650)
+	//		moveSpeed += 500 * DELTA;
+	//	if (UIManager::Get()->curStamina < 0.1f) // ½ºÅÂ¹Ì³ª ÀÏÁ¤¼öÄ¡ ¹Ì¸¸¿¡¼­´Â ´Þ¸®±â ¸·±â
+	//	{
+	//		SetState(S_118);
+	//		return;
+	//	}
+	//	UIManager::Get()->Running();
+	//	/*if (RATIO > 0.96)
+	//		moveSpeed++;*/
+	//
+	//	if (KEY_UP(VK_LSHIFT))
+	//	{
+	//		moveSpeed = 400;
+	//		SetState(S_003);
+	//		return;
+	//	}
+	//
+	//	//Rotate();
+	//	/*if (RATIO > 0.96 && (KEY_PRESS('W') || KEY_PRESS('S') || KEY_PRESS('A') || KEY_PRESS('D')))
+	//	{
+	//		SetState(S_003);
+	//		moveSpeed = 500;
+	//		return;
+	//	}*/
+	//
+	//	if (KEY_UP('W') || KEY_UP('S') || KEY_UP('A') || KEY_UP('D'))
+	//	{
+	//		if (KEY_PRESS('W') || KEY_PRESS('A') || KEY_PRESS('S') || KEY_PRESS('D'))
+	//			return;
+	//
+	//		moveSpeed = 400;
+	//		SetState(S_014);
+	//		return;
+	//	}
+	//
+	//
+	//	// 101 ³»µðµ® º£±â
+	//	if (KEY_FRONT(Keyboard::LMB))
+	//	{
+	//		SetState(L_101);
+	//		return;
+	//	}
+	//
+	//	//if (KEY_PRESS(VK_LSHIFT))
+	//	//	SetState(S_008);
+	//	if (KEY_DOWN(VK_SPACE))
+	//		Roll();
+	//	UIManager::Get()->staminaActive = true;
 
 }
 
@@ -1949,14 +2058,14 @@ void Player::S118() // Å»Áø ½ÃÀÛ
 }
 
 void Player::S119() // Å»Áø ³¡
-{	
+{
 	PLAY;
 	UIManager::Get()->curStamina += 2.0f * DELTA;
 	if (RATIO > 0.96f)
 	{
 		SetState(S_001);
 		return;
-	}	
+	}
 }
 
 void Player::S120() // Å»Áø Áß
@@ -1979,11 +2088,12 @@ void Player::S122()   // Àü·ÂÁúÁÖ
 	if (KEY_UP(VK_LSHIFT))
 		SetState(S_011);
 
-	if (!K_MOVE)
-		SetState(S_014);
+	if (!K_MOVE)	SetState(S_014);
 
-	
-	if		(K_LMB)		SetState(L_101);
+	if (KEY_DOWN('F')) callGaruk = true;
+
+
+	if (K_LMB)		SetState(L_101);
 	else if (K_SPACE)	Roll();
 
 	if (RATIO > 0.95)
@@ -1994,8 +2104,7 @@ void Player::S122()   // Àü·ÂÁúÁÖ
 void Player::L001() // ¹ßµµ»óÅÂ ´ë±â
 {
 	PLAY;
-	moveSpeed = 400;
-	if (KEY_PRESS('W') || KEY_PRESS('A') || KEY_PRESS('S') || KEY_PRESS('D'))
+	if (K_MOVE)
 		SetState(L_005);
 
 	else if (KEY_PRESS(VK_LSHIFT))		SetState(S_008); // ³³µµ	
@@ -2048,7 +2157,7 @@ void Player::L004() // ¹ßµµ»óÅÂ °È±â Áß // ·çÇÁ
 void Player::L005() // ¹ßµµ»óÅÂ °È±â ½ÃÀÛ (¹ßµ¸¿ò)
 {
 	PLAY;
-	
+
 	if (KEY_PRESS(VK_LSHIFT))		SetState(L_009); // ³³µµ	
 	else if (K_LMB)		SetState(L_101);	// 101 ³»µðµ® º£±â	
 	else if (K_RMB)		SetState(L_104);	// 104 Âî¸£±â	
@@ -2063,11 +2172,11 @@ void Player::L005() // ¹ßµµ»óÅÂ °È±â ½ÃÀÛ (¹ßµ¸¿ò)
 		SetState(L_008);
 
 
-	if (RATIO > 0.96 )
+	if (RATIO > 0.96)
 	{
-		if(K_MOVE)
+		if (K_MOVE)
 			SetState(L_004);
-		else 
+		else
 			ReturnIdle();
 	}
 
@@ -2150,7 +2259,7 @@ void Player::L010() // ±¸¸£±â
 	// ÁÜ Á¤»óÈ­
 	{
 		if (RATIO > 0 && RATIO < 0.9)
-			CAM->Zoom(300, 5);
+			CAM->Zoom(400, 5);
 	}
 
 	if (RATIO > 0.45f && K_MOVE)
@@ -2161,7 +2270,7 @@ void Player::L010() // ±¸¸£±â
 	{
 		ReturnIdle();
 	}
-	
+
 }
 
 void Player::L014() // ¹ßµµ»óÅÂ ±¸¸£±â ÈÄ ÀÌµ¿Å° À¯Áö½Ã
@@ -2171,7 +2280,7 @@ void Player::L014() // ¹ßµµ»óÅÂ ±¸¸£±â ÈÄ ÀÌµ¿Å° À¯Áö½Ã
 	// ÁÜ Á¤»óÈ­
 	{
 		if (RATIO > 0 && RATIO < 0.9)
-			CAM->Zoom(300, 5);
+			CAM->Zoom(400, 5);
 	}
 
 	if (!K_MOVE)
@@ -2191,7 +2300,7 @@ void Player::L014() // ¹ßµµ»óÅÂ ±¸¸£±â ÈÄ ÀÌµ¿Å° À¯Áö½Ã
 }
 
 void Player::L101() // ³»µðµ®º£±â
-{	
+{
 	// PlayClip ÇÏ´Âµ¥ °è¼Ó ¹Ýº¹ÇØ¼­ È£ÃâµÇ¸é ¸ð¼Ç ¹Ýº¹µÇ´Ï±î ¹æÁö + µü ÇÑ¹ø¸¸ ½ÇÇàµÇ´Â°Å ³õ±â
 	if (INIT)
 	{
@@ -2201,7 +2310,7 @@ void Player::L101() // ³»µðµ®º£±â
 		initRotY = Rot().y;
 		isEvaded = false;
 	}
-	if(RATIO>0.3 && RATIO<0.35)
+	if (RATIO > 0.3 && RATIO < 0.35)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
 	if (RATIO > 0.34 && RATIO < 0.35)	
 		RandVoice();
@@ -2215,7 +2324,7 @@ void Player::L101() // ³»µðµ®º£±â
 	// ÁÜ Á¤»óÈ­ (¾É¾Æ ±âÀÎ È¸Àü º£±â¿¡¼­ ³Ñ¾î¿Â °æ¿ì)
 	{
 		if (RATIO > 0 && RATIO < 0.45)
-			CAM->Zoom(300, 5);
+			CAM->Zoom(400, 5);
 	}
 
 
@@ -2232,14 +2341,14 @@ void Player::L101() // ³»µðµ®º£±â
 	if (RATIO > 0.6 && RATIO < 0.96)
 	{
 
-		if		(K_LMB)				SetState(L_102);	// ¼¼·Îº£±â		
+		if (K_LMB)				SetState(L_102);	// ¼¼·Îº£±â		
 		else if (K_RMB)				SetState(L_104);	// Âî¸£±â
 		else if (K_LMBRMB)			SetState(L_103);	// º£¾î³»¸®±â
 		else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106);	// ±âÀÎº£±â1		
 		else if (K_CTRLRMB)			SetState(L_147);	// °£ÆÄ º£±â
 		else if (K_CTRLSPACE)		SetState(L_151);	// Æ¯¼ö ³³µµ
 		else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// ³¯¶óÂ÷±â
- 		else if (K_SPACE)			Roll();		
+		else if (K_SPACE)			Roll();
 	}
 
 	// º¹±Í ÇÁ·¹ÀÓ
@@ -2277,7 +2386,7 @@ void Player::L102() // ¼¼·Îº£±â
 	// ÆÄ»ý ¿¬°è ÇÁ·¹ÀÓ
 	if (RATIO > 0.5 && RATIO < 0.96)
 	{
-		if		(K_LMB || K_RMB)	SetState(L_104);	// Âî¸£±â
+		if (K_LMB || K_RMB)	SetState(L_104);	// Âî¸£±â
 		else if (K_LMBRMB)			SetState(L_103);	// º£¾î³»¸®±â
 		else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106);	// ±âÀÎº£±â1		
 		else if (K_CTRLRMB)			SetState(L_147);	// °£ÆÄ º£±â
@@ -2307,7 +2416,7 @@ void Player::L103() // º£¾î³»¸®±â
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
 	if (RATIO < 0.272)
 		LimitRotate(15);
-		
+
 	// °ø°ÝÆÇÁ¤ ÇÁ·¹ÀÓ
 	{
 		if (RATIO > 0.272 && RATIO < 0.456)
@@ -2359,14 +2468,14 @@ void Player::L104() // Âî¸£±â
 
 	if (RATIO > 0.40 && RATIO < 0.96)
 	{
-		if		(K_LMB || K_RMB)	SetState(L_105);	// º£¾î¿Ã¸®±â
+		if (K_LMB || K_RMB)	SetState(L_105);	// º£¾î¿Ã¸®±â
 		else if (K_LMBRMB)			SetState(L_103);	// º£¾î³»¸®±â
 		else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106);	// ±âÀÎº£±â1		
 		else if (K_CTRLRMB)			SetState(L_147);	// °£ÆÄ º£±â
 		else if (K_CTRLSPACE)		SetState(L_151);	// Æ¯¼ö ³³µµ
 		else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// ³¯¶óÂ÷±â
 		else if (K_SPACE)			Roll();
-		
+
 	}
 
 	if (RATIO > 0.96)
@@ -2376,7 +2485,7 @@ void Player::L104() // Âî¸£±â
 void Player::L105() // º£¾î ¿Ã¸®±â
 {
 	PLAY;
-	if(INIT)
+	if (INIT)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_5", .5f);
 
 	if (RATIO < 0.1)
@@ -2384,7 +2493,7 @@ void Player::L105() // º£¾î ¿Ã¸®±â
 
 	if (RATIO > 0.1 && RATIO < 0.12)
 	{
-		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);		
+		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
 	}
 
 	// °ø°ÝÆÇÁ¤ ÇÁ·¹ÀÓ
@@ -2396,8 +2505,8 @@ void Player::L105() // º£¾î ¿Ã¸®±â
 	}
 
 	if (RATIO > 0.4 && RATIO < 0.96)
-	{		
-		if		(K_LMB)			SetState(L_102);	// ¼¼·Îº£±â		
+	{
+		if (K_LMB)			SetState(L_102);	// ¼¼·Îº£±â		
 		else if (K_RMB)			SetState(L_104);	// Âî¸£±â		
 		else if (K_LMBRMB)		SetState(L_103);	// º£¾î³»¸®±â		
 		else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106);	// ±âÀÎº£±â1		
@@ -2419,7 +2528,7 @@ void Player::L106() // ±âÀÎ º£±â 1
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_25", .5f);
 		PlayClip(curState);
 		initForward = Forward();
-		UIManager::Get()->MinusSpiritGauge() ; // ±âÀÎ°ÔÀÌÁö ¼Ò¸ðÇÏ±â( ´Ü 1¹ø )
+		UIManager::Get()->MinusSpiritGauge(); // ±âÀÎ°ÔÀÌÁö ¼Ò¸ðÇÏ±â( ´Ü 1¹ø )
 	}
 	if (RATIO > 0.3 && RATIO < 0.31)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
@@ -2441,8 +2550,8 @@ void Player::L106() // ±âÀÎ º£±â 1
 
 	if (RATIO > 0.43)
 	{
-		
-		if		(K_RMB)			SetState(L_104);	// Âî¸£±â		
+
+		if (K_RMB)			SetState(L_104);	// Âî¸£±â		
 		else if (K_LMBRMB)		SetState(L_103);	// º£¾î³»¸®±â		
 		else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_107);	// ±âÀÎ º£±â2		
 		else if (K_CTRLRMB)		SetState(L_147);	// °£ÆÄ º£±â		
@@ -2480,14 +2589,14 @@ void Player::L107() // ±âÀÎº£±â 2
 		if (RATIO > 0.26 && RATIO < 0.38)
 			Attack(33);
 		else // 
-			EndEffect(); 
+			EndEffect();
 	}
 
 	// Äµ½½ °¡´É ÇÁ·¹ÀÓ
 	{
 		if (RATIO > 0.41)
 		{
-			if		(K_LMB || K_RMB)	SetState(L_105);	// º£¾î¿Ã¸®±â
+			if (K_LMB || K_RMB)	SetState(L_105);	// º£¾î¿Ã¸®±â
 			else if (K_LMBRMB)			SetState(L_103);	// º£¾î³»¸®±â		
 			else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_108);	// ±âÀÎ º£±â3		
 			else if (K_CTRLRMB)			SetState(L_147);	// °£ÆÄ º£±â
@@ -2521,7 +2630,7 @@ void Player::L108() // ±âÀÎº£±â 3
 	// ÁÜ Á¤»óÈ­ (¾É¾Æ ±âÀÎ È¸Àü º£±â¿¡¼­ ³Ñ¾î¿Â °æ¿ì)
 	{
 		if (RATIO > 0 && RATIO < 0.45)
-			CAM->Zoom(300, 5);
+			CAM->Zoom(400, 5);
 	}
 
 	// °ø°ÝÆÇÁ¤ ÇÁ·¹ÀÓ (ÀÌ ¸ð¼ÇÀº 3¹ø º£±â µ¿ÀÛÀÌ ÀÖÀ½)
@@ -2555,8 +2664,8 @@ void Player::L108() // ±âÀÎº£±â 3
 	}
 
 	if (RATIO > 0.50)
-	{		
-		if		(K_RMB || K_LMB)	SetState(L_104);  // Âî¸£±â		
+	{
+		if (K_RMB || K_LMB)	SetState(L_104);  // Âî¸£±â		
 		else if (K_LMBRMB)			SetState(L_103);  // º£¾î³»¸®±â		
 		else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_109);  // ±âÀÎ Å«È¸Àüº£±â
 		else if (K_CTRLRMB)			SetState(L_147);  // °£ÆÄ º£±â
@@ -2614,14 +2723,14 @@ void Player::L109() // ±âÀÎ Å«È¸Àüº£±â
 	// ÁÜ Á¤»óÈ­
 	{
 		if (RATIO > 0.47 && RATIO < 0.84)
-			CAM->Zoom(300, 5);
+			CAM->Zoom(400, 5);
 	}
 
 
 	if (RATIO > 0.30) // Æ¯³³ ¿¬°è °¡´É Å¸ÀÌ¹Ö ¾ðÁ¦?
 	{
-		 if (K_CTRLSPACE)	SetState(L_151);	// Æ¯¼ö ³³µµ
-		 else if(KEY_DOWN(VK_XBUTTON1)) SetState(L_101);
+		if (K_CTRLSPACE)	SetState(L_151);	// Æ¯¼ö ³³µµ
+		else if (KEY_DOWN(VK_XBUTTON1)) SetState(L_101);
 	}
 
 	if (RATIO > 0.96)
@@ -2690,7 +2799,7 @@ void Player::L116()
 
 void Player::L119()
 {
-	PLAY;	
+	PLAY;
 	if (RATIO > 0.001 && RATIO < 0.002)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
 	if (RATIO > 0.2 && RATIO < 0.3)
@@ -2756,7 +2865,7 @@ void Player::L128()	// ³¯¶óÂ÷±â ½ÃÀÛ
 {
 	PLAY;
 	if (!playOncePerMotion)
-	{		
+	{
 		UI->UseBugSkill();
 		playOncePerMotion = true;
 		isEvaded = false;
@@ -2769,7 +2878,7 @@ void Player::L128()	// ³¯¶óÂ÷±â ½ÃÀÛ
 	// ÁÜ Á¤»óÈ­ (¾É¾Æ ±âÀÎ È¸Àü º£±â¿¡¼­ ³Ñ¾î¿Â °æ¿ì)
 	{
 		if (RATIO > 0 && RATIO < 0.9)
-			CAM->Zoom(300, 5);
+			CAM->Zoom(400, 5);
 	}
 
 
@@ -2798,7 +2907,8 @@ void Player::L130()	// ³¯¶óÂ÷±â Ã¼°øÁß
 						UI->MinusCotingLevel();
 						SetState(L_133);  // Åõ±¸±ú±â
 					}
-					else	 	SetState(L_136);  // ³«ÇÏÂî¸£±â
+					else
+						SetState(L_136);  // ³«ÇÏÂî¸£±â
 				}
 			}
 
@@ -2822,9 +2932,9 @@ void Player::L131() // Ã¼°ø ·çÇÁ
 		if (Jump(550))
 			// °ø°ÝÆÇÁ¤ ÇÁ·¹ÀÓ
 		{
-			if (Attack(2,true, 3))
+			if (Attack(2, true, 3))
 			{
-				if (K_CTRL && UIManager::Get()->GetCotingLevel() > 0) 
+				if (K_CTRL && UIManager::Get()->GetCotingLevel() > 0)
 				{
 					UIManager::Get()->MinusCotingLevel();
 					SetState(L_133);
@@ -2850,7 +2960,7 @@ void Player::L132()
 void Player::L133()	// Åõ±¸±ú±â
 {
 	PLAY;
-	if(INIT)
+	if (INIT)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_25", .5f);
 
 	if (RATIO > 0.2 && RATIO < 0.3)
@@ -2871,7 +2981,7 @@ void Player::L133()	// Åõ±¸±ú±â
 		{
 			if (Attack(40))
 				isHitL133 = true;
-			CAM->Zoom(300, 5);
+			CAM->Zoom(400, 5);
 		}
 
 
@@ -2893,12 +3003,12 @@ void Player::L135()	// Åõ±¸±ú±â ³¡
 {
 	PLAY;
 	EndEffect();
-	CAM->Zoom(300, 5);	
+	CAM->Zoom(400, 5);
 	{
 		if (RATIO > 0.23)
 		{
 			if (K_LMB || K_RMB)		SetState(L_104);	// Âî¸£±â
-			else if(K_CTRLSPACE)	SetState(L_151);	// Æ¯¼ö³³µµ
+			else if (K_CTRLSPACE)	SetState(L_151);	// Æ¯¼ö³³µµ
 			else if (K_SPACE)		Roll();				// ±¸¸£±â
 		}
 
@@ -2912,7 +3022,7 @@ void Player::L135()	// Åõ±¸±ú±â ³¡
 void Player::L136() // ³«ÇÏÂî¸£±â
 {
 	PLAY;
-	if(INIT)
+	if (INIT)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_5", .5f);
 
 	if (RATIO > 0.2 && RATIO < 0.3)
@@ -3005,12 +3115,12 @@ void Player::L147() // °£ÆÄº£±â
 	// ÁÜ Á¤»óÈ­
 	{
 		if (RATIO > 0.33 && RATIO < 0.56)
-			CAM->Zoom(300);
+			CAM->Zoom(400);
 	}
 
 	if (RATIO > 0.56) // Äµ½½ °¡´É Å¸ÀÌ¹Ö
 	{
-		if		(K_LMB)			SetState(L_101);    // ¼¼·Îº£±â		
+		if (K_LMB)			SetState(L_101);    // ¼¼·Îº£±â		
 		else if (K_RMB)			SetState(L_104);	// Âî¸£±â		
 		else if (K_LMBRMB)		SetState(L_103);	// º£¾î³»¸®±â		
 		else if (K_CTRLSPACE)	SetState(L_151);	// Æ¯¼ö ³³µµ
@@ -3028,7 +3138,7 @@ void Player::L147() // °£ÆÄº£±â
 
 void Player::L151() // Æ¯¼ö ³³µµ
 {
-	if (GetClip(curState)->isFirstPlay()) 
+	if (GetClip(curState)->isFirstPlay())
 	{
 		PlayClip(curState, 2.8);
 		initForward = Forward();
@@ -3047,20 +3157,20 @@ void Player::L151() // Æ¯¼ö ³³µµ
 		spAtkParticle->Play(haloCollider->Pos() + Right() * 1.0f, { 0,1,0 });
 
 	if (RATIO < 0.2)
-		LimitRotate(180);
+		LimitRotate(180, 15);
 
 
 	// ÁÜ Á¤»óÈ­ (±âÀÎ Å«È¸Àü º£±â¿¡¼­ ³Ñ¾î¿Â °æ¿ì)
 	{
 		if (RATIO > 0 && RATIO < 0.45)
-			CAM->Zoom(300, 5);
-	}	
+			CAM->Zoom(400, 5);
+	}
 
 	// Äµ½½ °¡´É ÇÁ·¹ÀÓ
 	{
 		if (RATIO > 0.72)
 		{
-			if		(K_LMB)		SetState(L_154); // ¾É¾Æ¹ßµµº£±â					
+			if (K_LMB)		SetState(L_154); // ¾É¾Æ¹ßµµº£±â					
 			else if (K_CTRL)	SetState(L_155); // ¾É¾Æ¹ßµµ±âÀÎº£±â
 		}
 	}
@@ -3075,7 +3185,7 @@ void Player::L152() // Æ¯¼ö³³µµ´ë±â
 {
 	PLAY;
 
-	if		(K_LMB)		SetState(L_154); // ¾É¾Æ¹ßµµº£±â					
+	if (K_LMB)		SetState(L_154); // ¾É¾Æ¹ßµµº£±â					
 	else if (K_CTRL)	SetState(L_155); // ¾É¾Æ¹ßµµ±âÀÎº£±â
 	else if (K_SPACE)   Roll();
 
@@ -3102,7 +3212,7 @@ void Player::L153() // Æ¯¼ö³³µµ Ãë¼Ò µ¿ÀÛ
 void Player::L154() // ¾É¾Æ¹ßµµ º£±â
 {
 	PLAY;
-	if(INIT)
+	if (INIT)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_5", .5f);
 	if (RATIO > 0.01 && RATIO < 0.05)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
@@ -3141,7 +3251,7 @@ void Player::L154() // ¾É¾Æ¹ßµµ º£±â
 	{
 		if (RATIO > 0.40)
 		{
-			if		(K_LMB)			SetState(L_102); // ¼¼·Îº£±â
+			if (K_LMB)			SetState(L_102); // ¼¼·Îº£±â
 			else if (K_RMB)			SetState(L_104); // Âî¸£±â
 			else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106); // ±âÀÎ º£±â 1		
 			else if (K_CTRLRMB)		SetState(L_147); // °£ÆÄ º£±â
@@ -3158,7 +3268,7 @@ void Player::L154() // ¾É¾Æ¹ßµµ º£±â
 void Player::L155() // ¾É¾Æ¹ßµµ ±âÀÎº£±â
 {
 	PLAY;
-	
+
 	if (INIT)
 	{
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_25", .5f);
@@ -3185,7 +3295,7 @@ void Player::L155() // ¾É¾Æ¹ßµµ ±âÀÎº£±â
 		if (RATIO > 0.1 && RATIO < 0.36)
 		{
 			holdingSword = false;
-			if(Attack(35)) 
+			if (Attack(35))
 				isHit = true;
 		}
 		else
@@ -3194,14 +3304,14 @@ void Player::L155() // ¾É¾Æ¹ßµµ ±âÀÎº£±â
 
 	// Ä«¿îÅÍ ¼º°ø ½Ã Ãß°¡ °ø°Ý ÇÁ·¹ÀÓ
 	{
-		if (isEvaded && isHit && (RATIO >0.385  && RATIO < 0.39))
+		if (isEvaded && isHit && (RATIO > 0.385 && RATIO < 0.39))
 		{
 			spSuccessParticle->Play(Pos(), 0);
 			if(isHitL155==false)
 				UIManager::Get()->PlusCotingLevel();
 
 			isHitL155 = true;
-			Sounds::Get()->Play("pl_wp_l_swd_epv_media.bnk.2_8", .5f);			
+			Sounds::Get()->Play("pl_wp_l_swd_epv_media.bnk.2_8", .5f);
 			isEvaded = false;
 		}
 	}
@@ -3223,7 +3333,7 @@ void Player::L155() // ¾É¾Æ¹ßµµ ±âÀÎº£±â
 	// ÁÜ Á¤»óÈ­
 	{
 		if (RATIO > 0.40 && RATIO < 0.85)
-			CAM->Zoom(300, 5);
+			CAM->Zoom(400, 5);
 	}
 
 	if (RATIO > 0.96)
@@ -3238,6 +3348,154 @@ void Player::L156()
 {
 
 
+}
+
+void Player::R001()  // Å¾½Â ÈÄ ´ë±â idle
+{
+	PLAY;
+
+	if (K_MOVE)				SetState(R_013);
+	if (K_SPACE)			SetState(R_104);
+	if (KEY_DOWN('E'))
+	{
+		if (UI->useDragSlot2)	SetState(R_600);
+		else					SetState(R_400);
+	}
+}
+
+void Player::R013() // ½¬ÇÁÆ® ¾È´©¸£°í ¶Ù±â ·çÇÁ, ±Ùµ¥ Æ÷Áö¼ÇÀÌ¶û ·ÎÅ×ÀÌ¼Ç ´Ù °¡·çÅ©¿¡¼­ ¹Þ¾Æ¿À´Ï±î ·çÇÁ¾ÈÇØµµ µÊ
+{
+	PLAY;
+
+	if (!K_MOVE)		SetState(R_024);
+	if (K_SPACE)		SetState(R_104);
+	if (KEY_DOWN('E'))		
+	{
+		if(UI->useDragSlot2)	SetState(R_600);
+		else					SetState(R_400);
+	}
+}
+
+void Player::R024() // ¶Ù´Ù°¡ ¸ØÃã
+{
+	PLAY;
+
+
+
+	if (K_MOVE && RATIO > 0.5)
+		SetState(R_013);
+
+	if (RATIO > 0.96)
+		SetState(R_001);
+}
+
+void Player::R031() // Å¾½Â
+{
+	PLAY;
+
+	if (RATIO > 0.43)
+	{
+		if (K_MOVE)
+		{
+			SetState(R_013);
+		}
+	}
+
+
+
+	if (RATIO > 0.96)
+	{
+		if (K_MOVE)
+			SetState(R_013);
+		else
+			SetState(R_001);
+	}
+}
+
+void Player::R041() // µÚµ¹¾Æ Å¾½Â
+{
+}
+
+void Player::R104() // ´Þ¸®´Ù°¡ ³»¸®±â
+{
+	PLAY;
+
+	if (RATIO > 0.46)
+	{
+		EndRide();
+
+		if (K_MOVE)
+			SetState(S_005);
+		else
+			SetState(S_001);
+	}
+
+}
+
+void Player::R142() // Æ÷È¿ ¸®¾×¼Ç
+{
+}
+
+void Player::R143() // Æ÷È¿ ¸®¾×¼Ç loop
+{
+}
+
+void Player::R144() // ¸®¾×¼Ç ¸¶¹«¸®
+{
+}
+
+void Player::R400() //¹°¾à ¸Ô±â ½ÃÀÛ
+{
+	PLAY;
+	if (RATIO > 0.96)
+		SetState(R_401);
+}
+
+void Player::R401() // ¹°¾à ºü´ÂÁß
+{
+	PLAY;
+	if (RATIO > 0.96)
+		SetState(R_402);
+}
+
+void Player::R402() // ¹°¾à ´Ù¸ÔÀº
+{
+	PLAY;
+	if (RATIO > 0.96)
+	{
+		if (K_MOVE)
+			SetState(R_013);
+		else
+			SetState(R_001);
+
+	}
+}
+
+void Player::R600() // ¼ýµ¹Áú
+{
+	PLAY;
+	if (RATIO > 0.96)
+		SetState(R_601);
+}
+
+void Player::R601() // ¼ýµ¹Áú
+{
+	PLAY;
+	if (RATIO > 0.96)
+		SetState(R_602);
+}
+
+void Player::R602() // ¼ýµ¹ ¸¶¹«¸®
+{
+	PLAY;
+	if (RATIO > 0.96)
+	{
+		if (K_MOVE)
+			SetState(R_013);
+		else
+			SetState(R_001);
+
+	}
 }
 
 void Player::L400()
@@ -3555,7 +3813,7 @@ void Player::MotionRotate(float degree)
 
 bool Player::State_S() // ³³µµ ½ºÅ×ÀÌÆ® ¸ñ·Ï
 {
-	return (curState >= S_001 && curState <= S_122) || curState >= D_001;
+	return (curState >= S_001 && curState <= R_602) || curState >= D_001;
 }
 
 void Player::StatusRender()
@@ -3618,7 +3876,7 @@ void Player::DamageRender()
 			FOR(dmg.size())
 				Font::Get()->RenderText(dmg.substr(i, 1), { pos.x + temp3 * i + temp ,  pos.y - temp2 }, "Black");
 
-			if(d.isWeakness)
+			if (d.isWeakness)
 				Font::Get()->RenderText(dmg, { pos.x, pos.y }, "Yellow");
 			else
 				Font::Get()->RenderText(dmg, { pos.x, pos.y }, "Gray");
@@ -3635,7 +3893,7 @@ void Player::DamageRender()
 			FOR(dmg.size())
 				Font::Get()->RenderText(dmg.substr(i, 1), { pos.x + temp3 * i + temp ,  pos.y - temp2 }, "Black", Float2(), alpha);
 
-			if(d.isWeakness)
+			if (d.isWeakness)
 				Font::Get()->RenderText(dmg, { pos.x, pos.y }, "Yellow", Float2(), alpha);
 			else
 				Font::Get()->RenderText(dmg, { pos.x, pos.y }, "Gray", Float2(), alpha);
@@ -3656,7 +3914,7 @@ void Player::DamageRender()
 bool Player::Jump(float moveSpeed)
 {
 	jumpVelocity -= 9.8f * gravityMult * DELTA;
-	Pos() += -1 * Forward() * moveSpeed * DELTA;
+	Pos() -= Forward() * moveSpeed * DELTA;
 	Pos().y += jumpVelocity;
 
 	if (realPos->Pos().y >= 0)
@@ -3674,7 +3932,8 @@ bool Player::Jump(float moveSpeed)
 
 void Player::GroundCheck()
 {
-	if (SceneManager::Get()->Add("ShadowScene") == nullptr)
+
+	if (terrain == nullptr)
 	{
 		if (realPos->Pos().y < 0)
 			Pos().y = 0;
@@ -3682,15 +3941,10 @@ void Player::GroundCheck()
 	}
 
 
-	TerrainEditor* terrain = dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetTerrain();
-
 	Vector3 pos1;
-	terrain->ComputePicking(pos1, realPos->Pos() + Vector3::Up() * 200, Vector3::Down());
+	terrain->ComputePicking(pos1, realPos->Pos() + Vector3::Up() * 400, Vector3::Down());
 
-	//Vector3 pos2;
-	//terrain->ComputePicking(pos2, realPos->Pos(), Vector3::Up());
 
-//	float y = max(pos1.y, pos2.y);
 	Pos().y = pos1.y;
 }
 

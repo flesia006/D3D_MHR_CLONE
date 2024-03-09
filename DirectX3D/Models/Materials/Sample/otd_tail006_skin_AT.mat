@@ -1,0 +1,10 @@
+<Material Name="otd_tail006_skin_AT">
+    <Shader Vertex="" Pixel="Shaders/Model/ModelAnimation.hlsl"/>
+    <Texture Diffuse="Textures\M41\otd_tail006_ALB.texout.tga" Specular="Textures/Color/White.png" Normal="Textures/Color/White.png" Emissive="Textures/Color/Black.png"/>
+    <Property Shininess="20" HasNormalMap="0">
+        <Diffuse R="0.64313728" G="0.71372551" B="1" A="1"/>
+        <Specular R="0.2" G="0.2" B="0.2" A="1"/>
+        <Ambient R="0.2" G="0.2" B="0.2" A="1"/>
+        <Emissive R="0" G="0" B="0" A="1"/>
+    </Property>
+</Material>

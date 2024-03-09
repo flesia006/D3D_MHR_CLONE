@@ -42,7 +42,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -142,6 +142,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Objects\Character\Sample.h" />
     <ClInclude Include="Objects\Particle\HupgiFire.h" />
     <ClInclude Include="Objects\Particle\SpiritFlame.h" />
     <ClInclude Include="Objects\Particle\Sp_atk_start.h" />
@@ -294,6 +295,7 @@
     <ClInclude Include="Objects\Particle\Wind.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Objects\Character\Sample.cpp" />
     <ClCompile Include="Objects\Particle\HupgiFire.cpp" />
     <ClCompile Include="Objects\Particle\SpiritFlame.cpp" />
     <ClCompile Include="Objects\Particle\Sp_atk_start.cpp" />
