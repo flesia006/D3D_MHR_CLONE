@@ -83,6 +83,7 @@ private:
 	void Ride();
 	void EndRide();
 	void ResetPlayTime();
+	void EffectUpdates();
 
 	void UpdateWorlds();
 	void Potion();
@@ -118,7 +119,7 @@ private:
 	void StatusRender();
 	void DamageRender();
 
-	bool Jump(float moveSpeed);
+	bool Jump(float moveSpeed, float jumpSpeed = 0.6f);
 	void GroundCheck();
 
 	void RandVoice();
@@ -301,6 +302,7 @@ private:
 	const float motionSpeed = 1.5f;
 
 	Vector3 velocity = Vector3::Zero();
+	float height = 0.0f;
 	Vector3 targetPos = Vector3::Zero();
 	Vector3 prevMousePos = Vector3();
 	Vector3 prevPos = Vector3();
@@ -368,7 +370,7 @@ private:
 	bool isRiding = false;
 	bool callGaruk = false;
 	bool rideCAM = false;
-
+	bool isJump = false;
 
 	Valphalk* val;
 	

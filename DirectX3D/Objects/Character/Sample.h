@@ -5,14 +5,15 @@ private:
 	enum State
 	{
 		IDLE, WALK, DIGIN, DIGOUT, G_0022,
-		G_0040, G_0084, G_0126, G_0127
+		G_0040, G_0084, G_0126, G_0127, 
+		FIRE, BACKSTEP, FWDSTEP, TURNLEFT, TURNBACk,
 	};
 
 	enum Mode
 	{
 		RIDING,
 		FOLLOWING,
-		FIGHTING
+		BATTLE
 	};
 
 public:
@@ -36,7 +37,7 @@ public:
 
 	void SetRide() { mode = RIDING; }
 	void SetFollow() { mode = FOLLOWING; SetState(G_0084); }
-	void SetFight() { mode = FIGHTING; }
+	void SetFight() { mode = BATTLE; }
 	void SetTerrain(TerrainEditor* terrain) { this->terrain = terrain; }
 
 	bool isCallDog = false;
@@ -72,11 +73,16 @@ private:
 	void DigIn(); // motlist 01 의 초반부
 	void DigOut();// motlist 01 의 초반부
 
+	// Battle
+	void G0040_B();
+	void G0084_B();
+	void Fire_B();
+	void FwdStep_B();
+	void BackStep_B();
 
 
 
 	void Loop() { GetClip(curState)->ResetPlayTime(); isLoop = true; }
-
 	void SetState(State state);
 
 
@@ -89,24 +95,26 @@ private:
 	Transform* realPos = nullptr;
 	Transform* camTrgt = nullptr;
 	Transform* target;
-	TerrainEditor* terrain;
+	Transform* enemy;
+
+	TerrainEditor*  terrain;
 
 private:
 
 	bool isRiding = false;
 	bool isFighting = false;
 	bool playOncePerMotion = false;
-	const float unitRad = 0.01744444f;
+	bool isSetState = false;
+	bool isLoop = false;
 
+	const float unitRad = 0.01744444f;
 	const float rot135 = 2.36f;
 	const float rot45 = 0.785f;
+
 	float keyboardRot = 0.0f;
 	float sumRot = 0.0f;
 	float initRotY = 0.0f;
 	float lengToTrgt = 0.0f;
-	bool isSetState = false;
-	bool  isLoop = false;
-
 	float radBtwTarget = 0.0f;
 	float radDifference = 0.0f;
 };

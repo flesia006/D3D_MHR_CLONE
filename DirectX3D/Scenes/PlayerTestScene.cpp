@@ -50,13 +50,14 @@ void PlayerTestScene::Update()
 
 void PlayerTestScene::PreRender()
 {
+	player->PreRender();
 }
 
 void PlayerTestScene::Render()
 {
 	valphalk->Render();
-	garuk->Render();
 	player->Render();
+	garuk->Render();
 	terrain->Render();
 }
 

@@ -14,10 +14,6 @@ Sample::Sample() : ModelAnimator("Sample")
 	ReadClip("G_0127");
 
 	realPos = new Transform();
-	camTrgt = new Transform();
-
-	CAM->SetTarget(camTrgt);
-	PlayClip(0);
 }
 
 Sample::~Sample()
@@ -33,7 +29,7 @@ void Sample::Update()
 	{
 	case Sample::RIDING:		Control();		break;
 	case Sample::FOLLOWING:		Follow();		break;
-	case Sample::FIGHTING:		Fight();		break;
+	case Sample::BATTLE:		Fight();		break;
 	}
 
 
@@ -98,10 +94,6 @@ void Sample::UpdateWorlds()
 	lengToTrgt = (target->GlobalPos() - realPos->Pos()).Length();
 	realPos->Pos() = GetTranslationByNode(1);
 	realPos->Rot() = Rot();
-
-	camTrgt->Pos() = realPos->Pos();
-	camTrgt->Pos().y += 200;
-	camTrgt->UpdateWorld();
 	realPos->UpdateWorld();
 }
 
@@ -133,6 +125,14 @@ void Sample::Follow()
 
 void Sample::Fight()
 {
+	switch (curState)
+	{
+	case Sample::IDLE:		Idle_F(); 	break;
+	case Sample::G_0040:	G0040_F();	break;
+	case Sample::G_0084:	G0084_F();	break;
+	case Sample::G_0126:	G0126_F();	break;
+	case Sample::G_0127:	G0127_F();	break;
+	}
 }
 
 void Sample::ResetPlayTime()
@@ -364,7 +364,7 @@ void Sample::G0040_F()
 
 	if (isCallDog)
 	{
-		if (lengToTrgt < 50)
+		if (lengToTrgt < 70)
 			readyToRide = true;
 	}
 

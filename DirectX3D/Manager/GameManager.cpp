@@ -45,8 +45,8 @@ GameManager::GameManager()
 //    SceneManager::Get()->Create("ModelExport", new ModelExportScene());
 //    SceneManager::Get()->Add("ModelExport");
 //
-//    SceneManager::Get()->Create("Grid", new GridScene());
-//    SceneManager::Get()->Add("Grid");
+    SceneManager::Get()->Create("Grid", new GridScene());
+    SceneManager::Get()->Add("Grid");
 
 
 //    SceneManager::Get()->Create("ShadowScene", new ShadowScene());
@@ -90,13 +90,15 @@ void GameManager::Update()
 
 void GameManager::Render()
 {
-    SceneManager::Get()->PreRender();
     
     Device::Get()->Clear();
     Font::Get()->GetDC()->BeginDraw();
     
     Environment::Get()->Set();    
     SceneManager::Get()->Render();
+    SceneManager::Get()->PreRender();
+
+
     
     Environment::Get()->PostSet();
     SceneManager::Get()->PostRender();
