@@ -3014,8 +3014,8 @@ void Player::L151() // Æ¯¼ö ³³µµ
 		UIManager::Get()->staminaActive = false;
 		isEvaded = false;
 	}
-	if (RATIO > 0.2 && RATIO < 0.3)
-		RandVoice();
+	//if (RATIO > 0.2 && RATIO < 0.3)
+	//	RandVoice();
 
 	if (RATIO > 0.5 && RATIO < 0.6)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_9", .5f);

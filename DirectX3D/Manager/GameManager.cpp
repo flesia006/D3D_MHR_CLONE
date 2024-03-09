@@ -181,7 +181,10 @@ void GameManager::Create()
     Sounds::Get()->AddSound("special2", SoundPath + L"Player/special_2.mp3");
     Sounds::Get()->AddSound("special3", SoundPath + L"Player/special_3.mp3");
     Sounds::Get()->AddSound("special4", SoundPath + L"Player/special_4.mp3");
-    
+    Sounds::Get()->AddSound("breath1", SoundPath + L"Player/breath.mp3");
+    Sounds::Get()->AddSound("breath2", SoundPath + L"Player/breath2.mp3");
+    Sounds::Get()->AddSound("breath3", SoundPath + L"Player/breath3.mp3");
+
 
 
     /////////////////////////////////////////////////////////////
