@@ -17,5 +17,6 @@ public:
 private:
     Player* player;
     DummyValphalk* valphalk;
+    WireBug* wireBug;
 };
 

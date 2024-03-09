@@ -676,7 +676,7 @@ void UIManager::Update()
 	{
 		slingerBug->Pos() = { 997.5,180,0 };
 		slingerBug2->Pos() = { 922.5,180,0 };
-
+		slingerBug3->SetActive(false);
 	}
 	else if (bugCount == 3)
 	{
@@ -685,6 +685,16 @@ void UIManager::Update()
 
 		slingerBug3->SetActive(true);
 		slingerBug3->Pos() = { 1035,180,0 };
+	}
+
+	if (getWildBug)
+		wildBugDuration += DELTA;
+
+	if (wildBugDuration > wildBugDurationLimit)
+	{
+		getWildBug = false;
+		bugCount = 2;
+		wildBugDuration = 0.0f;
 	}
 
 	blackCircle->Pos() = slingerBug->Pos();
@@ -923,6 +933,8 @@ void UIManager::TargetMonster()
 void UIManager::GetWildBug()
 {
 	bugCount++;
+
+	getWildBug = true;
 }
 
 void UIManager::QuickSlot()

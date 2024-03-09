@@ -3,19 +3,19 @@
 
 ModelExportScene::ModelExportScene()
 {
-    string name = "Player";
+    string name = "WireBug";
     string file = "Models/FBX/" + name + ".fbx";
-    //ModelExporter* exporter;
+    ModelExporter* exporter;
     string clipName;
 
-//    exporter = new ModelExporter(name, file);
-//    exporter->ExportMaterial();
-//    exporter->ExportMesh();
-//    delete exporter;    
+    exporter = new ModelExporter(name, file);
+    exporter->ExportMaterial();
+    exporter->ExportMesh();
+    delete exporter;    
 
 
 // Å¬¸³µþ ¶§ ÀÌ°Å ¾²¼À
-    ExportClip(name, "L_131");
+    ExportClip(name, "IDLE");
 //    ExportClip(name, "L_014");
 //    ExportClip(name, "S_005");
 //    ExportClip(name, "S_011");

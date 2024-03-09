@@ -142,6 +142,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Objects\Character\WireBug.h" />
     <ClInclude Include="Objects\Particle\HupgiFire.h" />
     <ClInclude Include="Objects\Particle\Val_fire.h" />
     <ClInclude Include="Scenes\FightTestScene.h" />
@@ -291,6 +292,7 @@
     <ClInclude Include="Objects\Particle\Wind.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Objects\Character\WireBug.cpp" />
     <ClCompile Include="Objects\Particle\HupgiFire.cpp" />
     <ClCompile Include="Objects\Particle\Val_fire.cpp" />
     <ClCompile Include="Scenes\FightTestScene.cpp" />

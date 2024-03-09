@@ -9,18 +9,22 @@ PlayerTestScene::PlayerTestScene()
 	player = new Player();
 	UI;
 
+	wireBug = new WireBug();
+	player->SetWireBug(wireBug);
 }
 
 PlayerTestScene::~PlayerTestScene()
 {
 	delete valphalk;
 	delete player;
+	delete wireBug;
 }
 
 void PlayerTestScene::Update()
 {
 	valphalk->Update();
 	player->Update();
+	wireBug->Update();
 	UI->Update();
 }
 
@@ -32,6 +36,7 @@ void PlayerTestScene::Render()
 {
 	valphalk->Render();
 	player->Render();
+	wireBug->Render();
 }
 
 void PlayerTestScene::PostRender()
@@ -43,5 +48,6 @@ void PlayerTestScene::PostRender()
 void PlayerTestScene::GUIRender()
 {
 	//valphalk->GUIRender();
-	player->GUIRender();
+	//player->GUIRender();
+	wireBug->GUIRender();
 }

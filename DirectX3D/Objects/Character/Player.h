@@ -3,6 +3,7 @@
 class Particle;
 class Trail;
 class Valphalk;
+class WireBug;
 class Player : public ModelAnimator
 {
 
@@ -67,6 +68,7 @@ public:
 	Transform* GetRealPos() { return realPos; }
 
 	void SetValphalk(Valphalk* val) { this->val = val; }
+	void SetWireBug(WireBug* wireBug) { this->wireBug = wireBug; }
 
 private:
 	void Control();
@@ -108,6 +110,8 @@ private:
 
 	bool Jump(float moveSpeed);
 	void GroundCheck();
+
+	void GetWireBug();
 
 private:
 	void ReadClips();
@@ -330,8 +334,10 @@ private:
 
 	bool isEvaded = false; // 회피했는지 여부
 
-	Valphalk* val;
+	Valphalk* val = nullptr;
 	
+	WireBug* wireBug = nullptr;
+
 	///////////////////////////////////////////
 	// Particle
 	vector<HitParticle*> hitParticle;
