@@ -142,8 +142,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Objects\Character\Sample.h" />
     <ClInclude Include="Objects\Character\WireBug.h" />
     <ClInclude Include="Objects\Particle\HupgiFire.h" />
+    <ClInclude Include="Objects\Particle\SpiritFlame.h" />
+    <ClInclude Include="Objects\Particle\Sp_atk_start.h" />
+    <ClInclude Include="Objects\Particle\Sp_atk_success.h" />
     <ClInclude Include="Objects\Particle\Val_fire.h" />
     <ClInclude Include="Scenes\FightTestScene.h" />
     <ClInclude Include="Objects\Character\DummyValphalk.h" />
@@ -292,8 +296,12 @@
     <ClInclude Include="Objects\Particle\Wind.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Objects\Character\Sample.cpp" />
     <ClCompile Include="Objects\Character\WireBug.cpp" />
     <ClCompile Include="Objects\Particle\HupgiFire.cpp" />
+    <ClCompile Include="Objects\Particle\SpiritFlame.cpp" />
+    <ClCompile Include="Objects\Particle\Sp_atk_start.cpp" />
+    <ClCompile Include="Objects\Particle\Sp_atk_success.cpp" />
     <ClCompile Include="Objects\Particle\Val_fire.cpp" />
     <ClCompile Include="Scenes\FightTestScene.cpp" />
     <ClCompile Include="Objects\Character\DummyValphalk.cpp" />

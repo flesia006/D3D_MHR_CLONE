@@ -5,16 +5,22 @@ WireBug::WireBug()
 {
 	ReadClip("IDLE");
 	Pos().y += 130; // ¹åÁÙ¹ú·¹ À§Ä¡´Â ¿©±â¼­ Á¶Á¤ÇÏ¸é µÊ
+	UpdateWorld();
+
+	wireBugPickUpUI = new Quad(L"Textures/UI/WireBugPickUpUI.png");
+	wireBugPickUpUI->Scale() *= 1.5f;
 }
 
 WireBug::~WireBug()
 {
+	delete wireBugPickUpUI;
 }
 
 void WireBug::Update()
 {
 	SetAnimation();
 	Respawn();
+	UpdateUI();
 
 	ModelAnimator::Update();
 }
@@ -32,6 +38,8 @@ void WireBug::GUIRender()
 
 void WireBug::PostRender()
 {
+	if (isWireBugPickUpUIActive)
+		wireBugPickUpUI->Render();
 }
 
 void WireBug::Respawn()
@@ -57,4 +65,19 @@ void WireBug::SetState(State state)
 
 	curState = state;
 	PlayClip(state);
+}
+
+void WireBug::UpdateUI()
+{
+	UIPos = Pos() + Vector3::Up() * 60;
+
+	if (!CAM->ContainPoint(UIPos))
+	{
+		SetWireBugPickUpUIActive(false);
+		return;
+	}
+
+	wireBugPickUpUI->Pos() = CAM->WorldToScreen(UIPos);
+	
+	wireBugPickUpUI->UpdateWorld();
 }

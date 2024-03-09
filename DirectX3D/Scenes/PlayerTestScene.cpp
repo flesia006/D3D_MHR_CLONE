@@ -69,6 +69,7 @@ void PlayerTestScene::PostRender()
 {
 	player->PostRender();
 	UI->PostRender();
+	wireBug->PostRender();
 }
 
 void PlayerTestScene::GUIRender()

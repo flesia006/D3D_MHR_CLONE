@@ -4064,12 +4064,19 @@ void Player::GetWireBug()
 
 	float distance = (playerPos - wireBugPos).Length();
 
-	if (KEY_PRESS('G')) // 키 변경 가능
+	wireBug->UpdateUI();
+
+	if (distance <= 150)
 	{
-		if (distance <= 150)
+		wireBug->SetWireBugPickUpUIActive(true);
+
+		if (KEY_PRESS('G')) // 키 변경 가능
 		{
 			UI->GetWildBug();
+			wireBug->SetWireBugPickUpUIActive(false);
 			wireBug->SetActive(false);
 		}
 	}
+	else
+		wireBug->SetWireBugPickUpUIActive(false);
 }
