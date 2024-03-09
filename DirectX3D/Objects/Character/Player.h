@@ -121,6 +121,8 @@ private:
 	bool Jump(float moveSpeed);
 	void GroundCheck();
 
+	void RandVoice();
+	void RandSpecialVoice();
 
 private:
 	void ReadClips();
@@ -370,13 +372,17 @@ private:
 
 	Valphalk* val;
 	
+	int randVoice = 0;
 	///////////////////////////////////////////
 	// Particle
 	vector<HitParticle*> hitParticle;
 	HitBoomParticle* hitBoomParticle;
 	CriticalParticle* criticalParticle;
 	Sp_atk_ready_Particle* spAtkParticle;
+	Sp_atk_start* spStartParticle;
+	Sp_atk_success* spSuccessParticle;
 	PotionParticle* potionParticle;
+	SpiritFlame* spiritParticle;
 
 	Transform* haloTransform = nullptr;
 	CapsuleCollider* haloCollider = nullptr;

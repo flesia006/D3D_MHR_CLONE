@@ -15,7 +15,7 @@ Sprite::Sprite(wstring imageFile, float width, float height, UINT frameCol, UINT
 
     if (isAdditive) blendState[1]->Additive();
 
-    Create();
+    Create();    
 }
 
 Sprite::~Sprite()
@@ -31,7 +31,7 @@ void Sprite::Update()
 
     time += speed * DELTA;
 
-    if (time > 0.04f) //0.1f : 임의의 기준시간. 나중에 개발자가 수정 가능
+    if (time > 0.02f) //0.1f : 임의의 기준시간. 나중에 개발자가 수정 가능
     {
         curFrameCount++; //프레임 +1
         //프레임 위치 찾기
@@ -52,6 +52,7 @@ void Sprite::Render()
 
 void Sprite::GUIRender()
 {
+    material->GUIRender();
 }
 
 void Sprite::Play(Vector3 pos)
@@ -79,7 +80,7 @@ void Sprite::PlayLoop(Vector3 pos)
     }
 
     vertex.pos = pos;
-    vertex.uv = size;
+    vertex.uv = size;    
 
     vertexBuffer->Update(&vertex, particleCount);
 
@@ -103,6 +104,12 @@ void Sprite::PlayLoop(Vector3 pos)
             isLoop = true;
         }
     }
+}
+
+void Sprite::SetPos(Vector3 pos)
+{
+    vertex.pos = pos;
+    //vertex.uv = size;
 }
 
 void Sprite::Create()

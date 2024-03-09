@@ -33,6 +33,9 @@ Player::Player() : ModelAnimator("Player")
 	hitBoomParticle = new HitBoomParticle();
 	criticalParticle = new CriticalParticle();
 	spAtkParticle = new Sp_atk_ready_Particle();
+	spStartParticle = new Sp_atk_start();
+	spSuccessParticle = new Sp_atk_success();
+	spiritParticle = new SpiritFlame();
 	potionParticle = new PotionParticle();
 	haloTransform = new Transform();
 	haloCollider = new CapsuleCollider();
@@ -88,6 +91,9 @@ Player::~Player()
 	delete spAtkParticle;
 	delete criticalParticle;
 	delete hitBoomParticle;
+	delete spStartParticle;
+	delete spSuccessParticle;
+	delete spiritParticle;
 	hitParticle.clear();
 	delete trail;
 	delete swordCollider;
@@ -130,12 +136,17 @@ void Player::Update()
 	FOR(hitParticle.size())		hitParticle[i]->Update();
 	hitBoomParticle->Update();
 	criticalParticle->Update();
-	spAtkParticle->Update();
+	spAtkParticle->Update();	
+	spStartParticle->Update();
+	spSuccessParticle->Update();
 	potionParticle->Update();
 	//potionParticle->SetParent(realPos);
 	potionParticle->SetPos(realPos->Pos());
-	potionParticle->SetVortex({ realPos->Pos().x,realPos->Pos().y+100,realPos->Pos().z });
-
+	potionParticle->SetVortex({ realPos->Pos().x,realPos->Pos().y + 100,realPos->Pos().z });
+	spSuccessParticle->SetPos({ realPos->Pos().x,realPos->Pos().y + 100,realPos->Pos().z });
+	//spiritParticle->SetPos({ realPos->Pos().x,realPos->Pos().y + 100,realPos->Pos().z });
+	spiritParticle->Update();
+	ModelAnimator::Update();
 	GroundCheck();
 	ModelAnimator::Update();
 }
@@ -151,7 +162,6 @@ void Player::Render()
 		//swordCollider->Render();
 	longSword->Render();
 	kalzip->Render();
-
 	if (renderEffect)
 	{
 		trail->Render();
@@ -163,9 +173,12 @@ void Player::Render()
 	hitBoomParticle->Render();
 	criticalParticle->Render();
 	haloCollider->Render();
-	spAtkParticle->Render();
+	spAtkParticle->Render();	
+	spStartParticle->Render();
+	spSuccessParticle->Render();
+	spiritParticle->Render();
 	potionParticle->Render();
-	spAtkParticle->Render();
+		
 
 	if (isSetState)
 	{
@@ -1598,7 +1611,7 @@ void Player::SetState(State state)
 		Vector3 realForward = forwardPos->GlobalPos() - backPos->GlobalPos();
 		Rot().y = atan2(realForward.x, realForward.z);
 	}
-
+	randVoice = rand() % 5;
 	sumRot = 0.0f;
 	preState = curState;
 	curState = state;
@@ -2274,8 +2287,8 @@ void Player::L101() // 내디뎌베기
 	}
 	if (RATIO > 0.3 && RATIO < 0.35)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
-	if (RATIO > 0.18 && RATIO < 0.21)
-		Sounds::Get()->Play("Heeee", .5f);
+	if (RATIO > 0.34 && RATIO < 0.35)	
+		RandVoice();
 
 	if (RATIO < 0.3)
 	{
@@ -2486,6 +2499,7 @@ void Player::L106() // 기인 베기 1
 {
 	if (INIT)
 	{
+		spiritParticle->Play({ realPos->Pos().x, realPos->Pos().y + 100, realPos->Pos().z },0);
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_25", .5f);
 		PlayClip(curState);
 		initForward = Forward();
@@ -2530,9 +2544,11 @@ void Player::L107() // 기인베기 2
 	PLAY;
 	if (INIT)
 	{
+		spiritParticle->Play({ realPos->Pos().x, realPos->Pos().y + 100, realPos->Pos().z },0);
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_25", .5f);
 		UIManager::Get()->MinusSpiritGauge(); // 기인게이지 소모하기( 단 1번 )
 	}
+	
 	if (RATIO > 0.25 && RATIO < 0.26)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
 
@@ -2574,10 +2590,12 @@ void Player::L108() // 기인베기 3
 {
 	if (INIT)
 	{
-		PlayClip(curState);
+		spiritParticle->Play({ realPos->Pos().x, realPos->Pos().y + 100, realPos->Pos().z },0);
+		PlayClip(curState);		
 		initForward = Forward();
 		UIManager::Get()->MinusSpiritGauge(); // 기인게이지 소모하기( 단 1번 )
 	}
+	
 	if (RATIO > 0.1 && RATIO < 0.11)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
 	if (RATIO > 0.2 && RATIO < 0.21)
@@ -2640,6 +2658,10 @@ void Player::L109() // 기인 큰회전베기
 	PLAY;
 	if (INIT)
 	{
+		spSuccessParticle->Play(Pos(), 0);
+		spiritParticle->Play({ realPos->Pos().x, realPos->Pos().y + 100, realPos->Pos().z }, 0);
+	}
+	{				
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_25", .5f);
 		UIManager::Get()->MinusSpiritGauge(); // 기인게이지 소모하기( 단 1번 )
 		isEvaded = false;
@@ -2647,7 +2669,7 @@ void Player::L109() // 기인 큰회전베기
 	if (RATIO > 0.2 && RATIO < 0.21)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
 	if (RATIO > 0.1 && RATIO < 0.15)
-		Sounds::Get()->Play("Heeee", .5f);
+		RandVoice();
 	if (RATIO > 0.7 && RATIO < 0.75)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_9", .5f);
 
@@ -2697,13 +2719,15 @@ void Player::L110() // 기인 내디뎌베기
 	PLAY;
 	if (INIT)
 	{
+		spiritParticle->Play({ realPos->Pos().x, realPos->Pos().y + 100, realPos->Pos().z },0);
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_25", .5f);
 		UIManager::Get()->MinusSpiritGauge(); // 기인게이지 소모하기( 단 1번 )
 	}
+	
 	if (RATIO > 0.3 && RATIO < 0.31)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
 	if (RATIO > 0.2 && RATIO < 0.3)
-		Sounds::Get()->Play("Heeee", .5f);
+		RandVoice();
 
 	if (RATIO < 0.30)
 		LimitRotate(15);
@@ -2756,7 +2780,7 @@ void Player::L119()
 	if (RATIO > 0.001 && RATIO < 0.002)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
 	if (RATIO > 0.2 && RATIO < 0.3)
-		Sounds::Get()->Play("Heeee", .5f);
+		RandVoice();
 
 
 
@@ -2791,7 +2815,7 @@ void Player::L122() // 날라차기 착지
 	//}
 
 	if (RATIO > 0.2 && RATIO < 0.3)
-		Sounds::Get()->Play("Heeee", .5f);
+		RandVoice();
 	// 공격판정 프레임 
 	{
 		if (RATIO > 0.03f && RATIO < 0.19f)
@@ -2917,7 +2941,7 @@ void Player::L133()	// 투구깨기
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_25", .5f);
 
 	if (RATIO > 0.2 && RATIO < 0.3)
-		Sounds::Get()->Play("Heeee", .5f);
+		RandSpecialVoice();
 	if (RATIO > 0.4 && RATIO < 0.44)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
 
@@ -2979,8 +3003,8 @@ void Player::L136() // 낙하찌르기
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_5", .5f);
 
 	if (RATIO > 0.2 && RATIO < 0.3)
-		Sounds::Get()->Play("Heeee", .5f);
-	if (RATIO > 0.5 && RATIO < 0.54)
+		RandVoice();
+	if(RATIO>0.5&&RATIO<0.54)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
 
 	// 체공중
@@ -3029,9 +3053,10 @@ void Player::L147() // 간파베기
 		evadeCheckCollider->UpdateWorld();
 		UI->curSpiritGauge = 0;
 	}
-
-	if (RATIO > 0.2 && RATIO < 0.3)
-		Sounds::Get()->Play("Heeee", .5f);
+	if (RATIO < 0.1)
+		spStartParticle->Play(Pos(), 0);
+	if (RATIO > 0.2 && RATIO < 0.3)	
+		RandVoice();
 	UIManager::Get()->staminaActive = false;
 	// 줌아웃 && 회피 판정 프레임
 	{
@@ -3040,7 +3065,6 @@ void Player::L147() // 간파베기
 			CAM->Zoom(450);
 			EvadeCheck(); // 성공하면 띵 소리 나야함
 		}
-
 		if (RATIO > 0.30)
 			evadeCheckCollider->SetActive(false);
 	}
@@ -3101,7 +3125,7 @@ void Player::L151() // 특수 납도
 		isEvaded = false;
 	}
 	if (RATIO > 0.2 && RATIO < 0.3)
-		Sounds::Get()->Play("Heeee", .5f);
+		RandVoice();
 
 	if (RATIO > 0.5 && RATIO < 0.6)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_9", .5f);
@@ -3172,7 +3196,7 @@ void Player::L154() // 앉아발도 베기
 	if (RATIO > 0.17 && RATIO < 0.18)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
 	if (RATIO > 0.2 && RATIO < 0.3)
-		Sounds::Get()->Play("Heeee", .5f);
+		RandVoice();
 
 	if (RATIO < 0.1)
 		LimitRotate(30);
@@ -3234,9 +3258,12 @@ void Player::L155() // 앉아발도 기인베기
 		if (RATIO > 0.1 && RATIO < 0.18)
 			CAM->Zoom(450);
 	}
-
+	
 	if (RATIO < 0.1)
+	{
+		spStartParticle->Play(Pos(), 0);
 		LimitRotate(15);
+	}
 
 	static bool isHit = false;	// hit 하고 바로 3번 공격 들어가면 어색하니까 넣어주는 bool 
 
@@ -3256,6 +3283,7 @@ void Player::L155() // 앉아발도 기인베기
 	{
 		if (isEvaded && isHit && (RATIO > 0.385 && RATIO < 0.39))
 		{
+			spSuccessParticle->Play(Pos(), 0);
 			if(isHitL155==false)
 				UIManager::Get()->PlusCotingLevel();
 
@@ -3876,4 +3904,32 @@ void Player::GroundCheck()
 
 
 	Pos().y = pos1.y;
+}
+
+void Player::RandVoice()
+{
+	switch (randVoice)
+	{
+	case 0:		Sounds::Get()->Play("attack1", 2.5f);		break;
+	case 1:		Sounds::Get()->Play("attack2", 2.5f);		break;
+	case 2:		Sounds::Get()->Play("attack3", 2.5f);		break;
+	case 3:		Sounds::Get()->Play("attack4", 2.5f);		break;
+	case 4:		Sounds::Get()->Play("attack5", 2.5f);		break;
+	default:
+		break;
+	}
+}
+
+void Player::RandSpecialVoice()
+{
+	switch (randVoice)
+	{
+	case 0:		Sounds::Get()->Play("special1", 2.5f);		break;
+	case 1:		Sounds::Get()->Play("special2", 2.5f);		break;
+	case 2:		Sounds::Get()->Play("special3", 2.5f);		break;
+	case 3:		Sounds::Get()->Play("special4", 2.5f);		break;
+	case 4:		Sounds::Get()->Play("special1", 2.5f);		break;
+	default:
+		break;
+	}
 }
