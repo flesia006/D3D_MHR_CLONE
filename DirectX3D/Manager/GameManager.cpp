@@ -55,8 +55,8 @@ GameManager::GameManager()
 //    SceneManager::Get()->Add("MapDesignScene");
 //      SceneManager::Get()->Create("Particle", new ParticleScene());
 //      SceneManager::Get()->Add("Particle");
-//    SceneManager::Get()->Create("ParticleConfig", new ParticleConfigScene());
-//    SceneManager::Get()->Add("ParticleConfig");
+    SceneManager::Get()->Create("ParticleConfig", new ParticleConfigScene());
+    SceneManager::Get()->Add("ParticleConfig");
 
 
 //    SceneManager::Get()->Create("ValphalkTestScene", new ValphalkTestScene());
@@ -65,8 +65,8 @@ GameManager::GameManager()
     //SceneManager::Get()->Create("PlayerTestScene", new PlayerTestScene());
     //SceneManager::Get()->Add("PlayerTestScene");
 
-   SceneManager::Get()->Create("FightTestScene", new FightTestScene());
-   SceneManager::Get()->Add("FightTestScene");
+//   SceneManager::Get()->Create("FightTestScene", new FightTestScene());
+//   SceneManager::Get()->Add("FightTestScene");
 
 //    SceneManager::Get()->Add("Terrain");
 
