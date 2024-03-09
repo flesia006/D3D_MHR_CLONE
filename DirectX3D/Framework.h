@@ -209,6 +209,9 @@ using namespace GameMath;
 #include "Objects/Particle/HitBoomParticle.h"
 #include "Objects/Particle/CriticalParticle.h"
 #include "Objects/Particle/Sp_atk_ready_Particle.h"
+#include "Objects/Particle/Sp_atk_start.h"
+#include "Objects/Particle/Sp_atk_success.h"
+#include "Objects/Particle/SpiritFlame.h"
 #include "Objects/Particle/Val_Jet_Particle.h"
 #include "Objects/Particle/Val_fire.h"
 #include "Objects/Particle/HupgiFire.h"
@@ -231,6 +234,7 @@ using namespace GameMath;
 #include "Objects/Character/Player.h"
 #include "Objects/Character/Valphalk.h"
 #include "Objects/Character/DummyValphalk.h"
+#include "Objects/Character/Sample.h"
 #include "Objects/Character/WireBug.h"
 
 #include "Objects/Manager/BlockManager.h"

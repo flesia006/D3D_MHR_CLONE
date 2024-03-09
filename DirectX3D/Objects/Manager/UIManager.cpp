@@ -26,7 +26,7 @@ UIManager::UIManager()
 	idBar->UpdateWorld();
 
 	itemSlot = new Quad(L"Textures/UI/ItemSlot.png");
-	itemSlot->Pos() = { 1740,180,0 };
+	itemSlot->Pos() = { 1740,120,0 };
 	itemSlot->Scale() *= 1.5f;
 	itemSlot->UpdateWorld();
 
@@ -36,7 +36,7 @@ UIManager::UIManager()
 	lsGauge->UpdateWorld();
 
 	quickSlot = new Quad(L"Textures/UI/ActionSlide.png");
-	quickSlot->Pos() = { 1500,180,0 };
+	quickSlot->Pos() = { 1500,120,0 };
 	quickSlot->Scale() *= 1.5f;
 	quickSlot->UpdateWorld();
 
@@ -114,33 +114,122 @@ UIManager::UIManager()
 
 	// 퀵슬롯 UI 추가
 	quickSlot_Back = new Quad(L"Textures/UI/QickSlot_Back.png");
-	quickSlot_Back->Pos() = { 1224, 260, 0 };
+	quickSlot_Back->Pos() = { 1224, 200, 0 };
 	quickSlot_Back->Scale() *= 0.3f;
 	quickSlot_Back->UpdateWorld();
 
 	quickSlot_Select = new Quad(L"Textures/UI/QickSlot_Select.png");
-	quickSlot_Select->Pos() = { 1224, 260, 0 };
+	quickSlot_Select->Pos() = { quickSlot_Back->Pos().x, quickSlot_Back->Pos().y, 0};
 	quickSlot_Select->Scale() *= 0.42f;
 	quickSlot_Select->Scale().x *= 0.88f;
+
+	quickSlot_Button = new Quad(L"Textures/UI/MouseKeyIcon_WheelClick.png");
+	quickSlot_Button->Pos() = { quickSlot_Back->Pos().x, quickSlot_Back->Pos().y };
+	quickSlot_Button->Scale() *= 2.0f;
 
 	// 드래그 UI 추가
 	dragSlotBox = new Quad(L"Textures/UI/DragSlotBox.png");
 	dragSlotBox->Scale() *= 2.3f;
 	dragSlotBox->Scale().x *= 1.2f;
 	dragSlotBox->Scale().y *= 1.25f;
-	dragSlotBox->Pos() = { 1750,135,0 };
+	dragSlotBox->Pos() = { itemSlot->Pos().x + 10,itemSlot->Pos().y - 45,0};
+
+	dragSlot_ButtonUp = new Quad(L"Textures/UI/MouseKeyIcon_WheelUp.png");
+	dragSlot_ButtonUp->Pos() = { quickSlot->Pos().x + 130, quickSlot->Pos().y - 35 };
+	dragSlot_ButtonUp->Scale() *= 0.9f;
+	dragSlot_ButtonWheel = new Quad(L"Textures/UI/MouseKeyIcon_Wheel.png");
+	dragSlot_ButtonWheel->Pos() = { quickSlot->Pos().x + 190, quickSlot->Pos().y };
+	dragSlot_ButtonWheel->Scale() *= 0.9f;
+	dragSlot_ButtonDown = new Quad(L"Textures/UI/MouseKeyIcon_WheelDown.png");
+	dragSlot_ButtonDown->Pos() = { quickSlot->Pos().x + 358, quickSlot->Pos().y - 35 };
+	dragSlot_ButtonDown->Scale() *= 0.9f;
+	dragSlot_KeyButton = new Quad(L"Textures/UI/Keybord_E.png");
+	dragSlot_KeyButton->Pos() = { quickSlot->Pos().x + 213, quickSlot->Pos().y - 35 };
+	dragSlot_KeyButton->Scale() *= 0.9f;
+
+	rideGarukIcon = new Quad(L"Textures/UI/RideGaruk_Icon.png");
+	rideGarukIcon->Pos() = { quickSlot->Pos().x, quickSlot->Pos().y + 4,0 };
+	rideGarukIcon->Scale() *= 1.2f;
+	rideGarukIcon->UpdateWorld();
 
 	// 슬롯 내임 들어갈 박스 추가
-	slotName1 = new Quad(L"Textures/UI/SlotName.png");
-	slotName1->Scale() *= 2.0f;
-	slotName1->Scale().x *= 2.4f;
-	slotName1->Pos() = { 1468, 230, 0 };
-	slotName1->UpdateWorld();
+	FOR(11)
+	{
+		Quad* quad = new Quad(L"Textures/UI/SlotName.png");
+		if (i == 0)
+		{
+			quad->Scale() *= 2.0f;
+			quad->Scale().x *= 2.1f;
+			quad->Pos() = { quickSlot->Pos().x - 28 , quickSlot->Pos().y + 43, 0};
+		}
+		if (i == 1)
+		{
+			quad->Scale() *= 2.0f;
+			quad->Scale().x *= 1.6f;
+			quad->Pos() = { quickSlot_Back->Pos().x - 24, quickSlot_Back->Pos().y - 77, 0 };
+		}
+		if (i == 2)
+		{
+			quad->Scale() *= 2.0f;
+			quad->Scale().x *= 2.1f;
+			quad->Pos() = { itemSlot->Pos().x - 20, itemSlot->Pos().y - 85, 0 };
+		}
+		if (i == 3)
+		{
+			quad->Scale() *= 1.8f;
+			quad->Scale().x *= 1.6f;
+			quad->Pos() = { 193, 160, 0 };
+		}
+		if (i == 4)
+		{
+			quad->Scale() *= 1.8f;
+			quad->Scale().x *= 1.6f;
+			quad->Pos() = { 393, 160, 0 };
+		}
+		if (i == 5)
+		{
+			quad->Scale() *= 1.8f;
+			quad->Scale().x *= 1.6f;
+			quad->Pos() = { 593, 160, 0 };
+		}
 
-	slotName2 = new Quad(L"Textures/UI/SlotName.png");
-	slotName2->Scale() *= 2.5f;
-	slotName2->Pos() = { 1216, 180, 0 };
-	slotName2->UpdateWorld();
+		if (i == 6)
+		{
+			quad->Scale() *= 1.8f;
+			quad->Scale().x *= 1.6f;
+			quad->Pos() = { 793, 160, 0 };
+		}
+
+		if (i == 7)
+		{
+			quad->Scale() *= 1.8f;
+			quad->Scale().x *= 1.6f;
+			quad->Pos() = { 993, 160, 0 };
+		}
+
+		if (i == 8)
+		{
+			quad->Scale() *= 1.8f;
+			quad->Scale().x *= 1.6f;
+			quad->Pos() = { 1193, 160, 0 };
+		}
+
+		if (i == 9)
+		{
+			quad->Scale() *= 1.8f;
+			quad->Scale().x *= 1.6f;
+			quad->Pos() = { 1393, 160, 0 };
+		}
+
+		if (i == 10)
+		{
+			quad->Scale() *= 1.8f;
+			quad->Scale().x *= 1.6f;
+			quad->Pos() = { 1593, 160, 0 };
+		}
+		slotNames.push_back(quad);
+		slotNames[i]->UpdateWorld();
+	}
 
 	FOR(8)
 	{
@@ -148,35 +237,35 @@ UIManager::UIManager()
 		quad->Scale() *= 0.5f;
 		if (i == 0)
 		{
-			quad->Pos() = { 1224, 390, 0 }; // 0 번째
+			quad->Pos() = { quickSlot_Back->Pos().x, quickSlot_Back->Pos().y + 130, 0}; // 0 번째
 		}
 		if (i == 1)
 		{
-			quad->Pos() = { 1317, 345, 0 }; // 1 번째
+			quad->Pos() = { quickSlot_Back->Pos().x + 93, quickSlot_Back->Pos().y + 85, 0 }; // 1 번째
 		}
 		if (i == 2)
 		{
-			quad->Pos() = { 1354, 260, 0 }; // 2 번째
+			quad->Pos() = { quickSlot_Back->Pos().x + 130, quickSlot_Back->Pos().y, 0 }; // 2 번째
 		}
 		if (i == 3)
 		{
-			quad->Pos() = { 1317, 170, 0 }; // 3 번째
+			quad->Pos() = { quickSlot_Back->Pos().x + 93, quickSlot_Back->Pos().y - 90, 0 }; // 3 번째
 		}
 		if (i == 4)
 		{
-			quad->Pos() = { 1224, 131, 0 }; // 4 번째
+			quad->Pos() = { quickSlot_Back->Pos().x, quickSlot_Back->Pos().y - 129, 0 }; // 4 번째
 		}
 		if (i == 5)
 		{
-			quad->Pos() = { 1131, 170, 0 }; // 5 번째
+			quad->Pos() = { quickSlot_Back->Pos().x - 93, quickSlot_Back->Pos().y - 90, 0 }; // 5 번째
 		}
 		if (i == 6)
 		{
-			quad->Pos() = { 1094, 260, 0 }; // 6 번째
+			quad->Pos() = { quickSlot_Back->Pos().x - 130, quickSlot_Back->Pos().y, 0 }; // 6 번째
 		}
 		if (i == 7)
 		{
-			quad->Pos() = { 1131, 345, 0 }; // 7 번째
+			quad->Pos() = { quickSlot_Back->Pos().x - 93, quickSlot_Back->Pos().y + 85, 0 }; // 7 번째
 		}
 		selectBoxs.push_back(quad);
 		selectBoxs[i]->UpdateWorld();
@@ -198,36 +287,35 @@ UIManager::UIManager()
 		quad->Scale() *= 1.5f;
 		if (i == 0)
 		{
-			//quad->Pos() = { 250, 270, 0 }; // 0 번째
-			quad->Pos() = { 250, 100, 0 }; // 0 번째
+			quad->Pos() = { 210, 220, 0 }; // 0 번째
 		}
 		if (i == 1)
 		{
-			quad->Pos() = { 450, 100, 0 }; // 1 번째
+			quad->Pos() = { 410, 220, 0 }; // 1 번째
 		}
 		if (i == 2)
 		{
-			quad->Pos() = { 650, 100, 0 }; // 2 번째
+			quad->Pos() = { 610, 220, 0 }; // 2 번째
 		}
 		if (i == 3)
 		{
-			quad->Pos() = { 850, 100, 0 }; // 3 번째
+			quad->Pos() = { 810, 220, 0 }; // 3 번째
 		}
 		if (i == 4)
 		{
-			quad->Pos() = { 1050, 100, 0 }; // 4 번째
+			quad->Pos() = { 1010, 220, 0 }; // 4 번째
 		}
 		if (i == 5)
 		{
-			quad->Pos() = { 1250, 100, 0 }; // 5 번째
+			quad->Pos() = { 1210, 220, 0 }; // 5 번째
 		}
 		if (i == 6)
 		{
-			quad->Pos() = { 1450, 100, 0 }; // 6 번째
+			quad->Pos() = { 1410, 220, 0 }; // 6 번째
 		}
 		if (i == 7)
 		{
-			quad->Pos() = { 1650, 100, 0 }; // 7 번째
+			quad->Pos() = { 1610, 220, 0 }; // 7 번째
 		}
 		numberBoxs.push_back(quad);
 		numberBoxs[i]->UpdateWorld();
@@ -268,35 +356,40 @@ UIManager::UIManager()
 		L"Textures/UI/LSCoting_none.png"
 	);
 
+	valphalkStateIcon1 = new Quad(L"Textures/UI/StateIcon.png");
+	valphalkStateIcon1->Pos() = { 1700, 600 };
+	valphalkStateIcon2 = new Quad(L"Textures/UI/StateIcon.png");
+	valphalkStateIcon2->Pos() = { 1700, 500 };
+
 	// 아이템 아이콘 추가 (퀵슬롯 쪽)
 	potionIcon_Q = new Quad(L"Textures/UI/Potion.png");
-	potionIcon_Q->Pos() = { 1313.5, 347, 0 };
+	potionIcon_Q->Pos() = { quickSlot_Back->Pos().x + 89.5f, quickSlot_Back->Pos().y + 87, 0 };
 	potionIcon_Q->Scale() *= 0.9;
 	greatepotionIcon_Q = new Quad(L"Textures/UI/GreatePotion.png");
-	greatepotionIcon_Q->Pos() = { 1219.5, 393.5, 0 };
+	greatepotionIcon_Q->Pos() = { quickSlot_Back->Pos().x - 4.5f, quickSlot_Back->Pos().y + 133.5f, 0 };
 	greatepotionIcon_Q->Scale() *= 0.9;
 	whetstoneIcon_Q = new Quad(L"Textures/UI/Whetstone-icon.png");
-	whetstoneIcon_Q->Pos() = { 1351.5, 262.5, 0 };
+	whetstoneIcon_Q->Pos() = { quickSlot_Back->Pos().x + 127.5f, quickSlot_Back->Pos().y + 2.5f, 0 };
 	whetstoneIcon_Q->Scale() *= 0.95;
 	// 아이템 아이콘 추가 (드래그 슬롯 쪽)
 	potionIcon_D = new Quad(L"Textures/UI/Potion.png");
-	potionIcon_D->Pos() = { 1657,182,0 };
+	potionIcon_D->Pos() = { itemSlot->Pos().x -83,itemSlot->Pos().y + 2,0 };
 	potionIcon_D->Scale() *= 1.2;
 	greatepotionIcon_D = new Quad(L"Textures/UI/GreatePotion.png");
-	greatepotionIcon_D->Pos() = { 1737,183,0 };
+	greatepotionIcon_D->Pos() = { itemSlot->Pos().x - 3,itemSlot->Pos().y + 3,0 };
 	greatepotionIcon_D->Scale() *= 1.2;
 	whetstoneIcon_D = new Quad(L"Textures/UI/Whetstone-icon.png");
-	whetstoneIcon_D->Pos() = { 1821,184,0 };
+	whetstoneIcon_D->Pos() = { itemSlot->Pos().x + 81,itemSlot->Pos().y + 4,0 };
 	whetstoneIcon_D->Scale() *= 1.25;
 	// 아이템 아이콘 추가 (넘버 슬롯 쪽)
 	potionIcon_N = new Quad(L"Textures/UI/Potion.png");
-	potionIcon_N->Pos() = { 250, 100, 0 };
+	potionIcon_N->Pos() = { 210, 220, 0 };
 	potionIcon_N->Scale() *= 1.1;
 	greatepotionIcon_N = new Quad(L"Textures/UI/GreatePotion.png");
-	greatepotionIcon_N->Pos() = { 448, 100, 0 };
+	greatepotionIcon_N->Pos() = { 408, 220, 0 };
 	greatepotionIcon_N->Scale() *= 1.1;
 	whetstoneIcon_N = new Quad(L"Textures/UI/Whetstone-icon.png");
-	whetstoneIcon_N->Pos() = { 650, 102, 0 };
+	whetstoneIcon_N->Pos() = { 610, 222, 0 };
 	whetstoneIcon_N->Scale() *= 1.25;
 
 	FOR(20)
@@ -359,6 +452,17 @@ UIManager::UIManager()
 			itemNumber_N.push_back(quad);
 			itemNumber_N[i]->UpdateWorld();
 		}
+	}
+
+	FOR(8)
+	{
+		wstring texture;
+		texture = L"Textures/UI/KeybordNumber" + to_wstring(i+1) + L".png";
+		Quad* quad = new Quad(texture);
+		quad->Pos().x = slotNames[i + 3]->Pos().x + 17;
+		quad->Pos().y = slotNames[i + 3]->Pos().y - 18;
+		itemKeyNumber_N.push_back(quad);
+		itemKeyNumber_N[i]->UpdateWorld();
 	}
 
 	// hp bar ui
@@ -430,6 +534,7 @@ UIManager::~UIManager()
 	delete orangeRightHalfCircle3;
 	delete quickSlot_Back;
 	delete quickSlot_Select;
+	delete quickSlot_Button;
 	FOR(selectBoxs.size())
 	{
 		delete selectBoxs[i];
@@ -440,15 +545,21 @@ UIManager::~UIManager()
 	}
 	FOR(numberBoxs.size())
 	{
-		delete numberBoxs[1];
+		delete numberBoxs[i];
 	}
 	FOR(numberBoxFrames.size())
 	{
-		delete numberBoxFrames[1];
+		delete numberBoxFrames[i];
 	}
 	delete dragSlotBox;
-	delete slotName1;
-	delete slotName2;
+	delete dragSlot_ButtonUp;
+	delete dragSlot_ButtonWheel;
+	delete dragSlot_ButtonDown;
+	delete dragSlot_KeyButton;
+	FOR(slotNames.size())
+	{
+		delete slotNames[i];
+	}
 	delete potionIcon_Q;
 	delete greatepotionIcon_Q;
 	delete whetstoneIcon_Q;
@@ -470,6 +581,12 @@ UIManager::~UIManager()
 	{
 		delete itemNumber_N[i];
 	}
+	FOR(itemKeyNumber_N.size())
+	{
+		delete itemKeyNumber_N[i];
+	}
+	delete valphalkStateIcon1;
+	delete valphalkStateIcon2;
 }
 
 void UIManager::Update()
@@ -477,6 +594,7 @@ void UIManager::Update()
 	NumberSlotBar();
 	DragSlotBar();
 	QuickSlotBar();
+	StateIcon();
 
 	stamina->UpdateWorld();
 	recover->UpdateWorld();
@@ -506,12 +624,14 @@ void UIManager::Update()
 	orangeRightHalfCircle3->UpdateWorld();
 	quickSlot_Back->UpdateWorld();
 	quickSlot_Select->UpdateWorld();
+	quickSlot_Button->UpdateWorld();
 	dragSlotBox->UpdateWorld();
-
+	dragSlot_ButtonUp->UpdateWorld();
+	dragSlot_ButtonWheel->UpdateWorld();
+	dragSlot_ButtonDown->UpdateWorld();
+	dragSlot_KeyButton->UpdateWorld();
 	// 잠시 넣음
 	//===================
-	slotName1->UpdateWorld();
-	slotName2->UpdateWorld();
 	potionIcon_Q->UpdateWorld();
 	greatepotionIcon_Q->UpdateWorld();
 	whetstoneIcon_Q->UpdateWorld();
@@ -533,6 +653,10 @@ void UIManager::Update()
 	{
 		itemNumber_N[i]->UpdateWorld();
 	}
+	FOR(itemKeyNumber_N.size())
+	{
+		itemKeyNumber_N[i]->UpdateWorld();
+	}
 	//===================
 
 	FOR(selectBoxs.size())
@@ -551,6 +675,8 @@ void UIManager::Update()
 	{
 		numberBoxFrames[i]->UpdateWorld();
 	}
+	valphalkStateIcon1->UpdateWorld();
+	valphalkStateIcon2->UpdateWorld();
 	//hp, stamina 부분
 	hp->SetAmount(curHP / maxHP);
 	recover->SetAmount(recoverHP / maxHP);
@@ -583,8 +709,8 @@ void UIManager::Update()
 	if (curDurability <= 0.0f)
 		curDurability = 0;
 
-	if (curDurability < 0.0f)
-		SharpeningStone();
+	//if (curDurability < 0.0f)
+	//	SharpeningStone();
 	////////////////////////////////
 
 	//기인게이지 부분
@@ -674,17 +800,18 @@ void UIManager::Update()
 	//밧줄벌레 쿨타임 부분 - 회복속도는 샘플, 조정 필요
 	if (bugCount == 2)
 	{
-		slingerBug->Pos() = { 997.5,180,0 };
-		slingerBug2->Pos() = { 922.5,180,0 };
+		slingerBug->Pos() = { 997.5,120,0 };
+		slingerBug2->Pos() = { 922.5,120,0 };
+
 		slingerBug3->SetActive(false);
 	}
 	else if (bugCount == 3)
 	{
-		slingerBug->Pos() = { 960,180,0 };
-		slingerBug2->Pos() = { 885,180,0 };
+		slingerBug->Pos() = { 960,120,0 };
+		slingerBug2->Pos() = { 885,120,0 };
 
 		slingerBug3->SetActive(true);
-		slingerBug3->Pos() = { 1035,180,0 };
+		slingerBug3->Pos() = { 1035,120,0 };
 	}
 
 	if (getWildBug)
@@ -808,7 +935,9 @@ void UIManager::PostRender()
 	lsGauge->Render();
 	lsGauge2->Render();
 	// 이건 한번 더 봐야 알듯
-	slotName1->Render();
+	// 액션 슬롯 내임 스페이스
+	slotNames[0]->Render();
+	Font::Get()->RenderText("탑승한다", {slotNames[0]->Pos().x + 70 ,slotNames[0]->Pos().y + 18});
 
 	quickSlot->Render();
 	slingerBug->Render();
@@ -822,6 +951,8 @@ void UIManager::PostRender()
 	staminarBarEdge->Render();
 	clockHand->Render();
 	clockHand2->Render();
+
+	rideGarukIcon->Render();
 
 	blackCircle->Render();
 	orangeLeftHalfCircle->Render();
@@ -847,6 +978,30 @@ void UIManager::PostRender()
 	DragSlot();
 	QuickSlot();
 	NumberSlot();
+	if (partDestruct)
+	{
+		valphalkStateIcon1->Render();
+		Font::Get()->RenderText("영묘한 광채의 발파루크", { valphalkStateIcon1->Pos().x + 108, valphalkStateIcon1->Pos().y + 18 });
+		Font::Get()->RenderText("부위 파괴", { valphalkStateIcon1->Pos().x - 18, valphalkStateIcon1->Pos().y - 15 });
+	}
+	if (partDestruct2)
+	{
+		valphalkStateIcon2->Render();
+		Font::Get()->RenderText("영묘한 광채의 발파루크", { valphalkStateIcon2->Pos().x + 108, valphalkStateIcon2->Pos().y + 18 });
+		Font::Get()->RenderText("부위 파괴", { valphalkStateIcon2->Pos().x - 18, valphalkStateIcon2->Pos().y - 15 });
+	}
+	if (specialMove)
+	{
+		valphalkStateIcon1->Render();
+		Font::Get()->RenderText("영묘한 광채의 발파루크", { valphalkStateIcon1->Pos().x + 108, valphalkStateIcon1->Pos().y + 18 });
+		Font::Get()->RenderText("습격", { valphalkStateIcon1->Pos().x - 68, valphalkStateIcon1->Pos().y - 15 });	
+	}
+	if (specialMove2)
+	{
+		valphalkStateIcon2->Render();
+		Font::Get()->RenderText("영묘한 광채의 발파루크", { valphalkStateIcon2->Pos().x + 108, valphalkStateIcon2->Pos().y + 18 });
+		Font::Get()->RenderText("습격", { valphalkStateIcon2->Pos().x - 68, valphalkStateIcon2->Pos().y - 15 });
+	}
 }
 
 void UIManager::GUIRender()
@@ -869,6 +1024,11 @@ void UIManager::GUIRender()
 	//ImGui::Text("CamRot_X: %f", CamRot);
 	//ImGui::Text("CAM_Rot_Y: %f", CAM->Rot().y);
 	//ImGui::Text("CamRot_Y: %f", CamRot.y);
+
+	ImGui::Text("IconColorX : %f", valphalkStateIcon1->GetMaterial()->GetData().diffuse.x);
+	ImGui::Text("IconColorY : %f", valphalkStateIcon1->GetMaterial()->GetData().diffuse.y);
+	ImGui::Text("IconColorZ : %f", valphalkStateIcon1->GetMaterial()->GetData().diffuse.z);
+	ImGui::Text("IconColorW : %f", valphalkStateIcon1->GetMaterial()->GetData().diffuse.w);
 }
 
 void UIManager::Hit(float damage)
@@ -943,7 +1103,7 @@ void UIManager::QuickSlot()
 	if (KEY_PRESS('X')) // X 만 누르면 슬롯만 나옴
 	{
 		quickSlot_Back->Render();
-		slotName2->Render();
+		slotNames[1]->Render();
 
 		FOR(selectBoxs.size())
 		{
@@ -953,19 +1113,23 @@ void UIManager::QuickSlot()
 		if (quickSlot_Select->Rot().z > -0.42f && useSelectBar)
 		{
 			selectBoxFrames[0]->Render();
+			Font::Get()->RenderText("그레이트 물약", { slotNames[1]->Pos().x + 88, slotNames[1]->Pos().y + 18 });
 		}
 		if (quickSlot_Select->Rot().z < -5.98f && useSelectBar)
 		{
 			selectBoxFrames[0]->Render();
+			Font::Get()->RenderText("그레이트 물약", { slotNames[1]->Pos().x + 88, slotNames[1]->Pos().y + 18 });
 		}
 		if (quickSlot_Select->Rot().z <= -0.42f && quickSlot_Select->Rot().z > -1.2f && useSelectBar)
 		{
 			selectBoxFrames[1]->Render();
+			Font::Get()->RenderText("일반 물약", { slotNames[1]->Pos().x + 70, slotNames[1]->Pos().y + 18 });
 
 		}
 		if (quickSlot_Select->Rot().z <= -1.2f && quickSlot_Select->Rot().z > -1.98f && useSelectBar)
 		{
 			selectBoxFrames[2]->Render();
+			Font::Get()->RenderText("숫돌", { slotNames[1]->Pos().x + 40, slotNames[1]->Pos().y + 18 });
 
 		}
 		if (quickSlot_Select->Rot().z <= -1.98f && quickSlot_Select->Rot().z > -2.78f && useSelectBar)
@@ -997,6 +1161,7 @@ void UIManager::QuickSlot()
 		{
 			quickSlot_Select->Render();
 		}
+		quickSlot_Button->Render();
 
 		potionIcon_Q->Render();
 		greatepotionIcon_Q->Render();
@@ -1035,11 +1200,11 @@ void UIManager::QuickSlotBar()
 
 	if (quickSlot_Select->Rot().z <= -3.0f && quickSlot_Select->Rot().z >= -6.0f)
 	{
-		quickSlot_Select->Pos() = { 1221.5, 260, 0 };
+		quickSlot_Select->Pos() = { quickSlot_Back->Pos().x - 2.5f, quickSlot_Back->Pos().y, 0 };
 	}
 	else if (quickSlot_Select->Rot().z > -3.0f && quickSlot_Select->Rot().z < -6.0f)
 	{
-		quickSlot_Select->Pos() = { 1224, 260, 0 };
+		quickSlot_Select->Pos() = { quickSlot_Back->Pos().x, quickSlot_Back->Pos().y, 0 };
 	}
 
 	if (KEY_DOWN('X'))
@@ -1091,8 +1256,8 @@ void UIManager::QuickSlotBar()
 		{
 			SetCursorPos(MousePos.x + 8.0f, CENTER_Y + Distance(MousePos.y, CENTER_Y) + 31.0f);
 		}
-		Vector3 pos = mousePos - Vector3(MousePos.x, CENTER_Y - Distance(MousePos.y, CENTER_Y));
-		quickSlot_Select->Rot().z -= pos.x * 0.25f * DELTA;
+		Vector3 pos = mousePos - Vector3(MousePos.x , CENTER_Y - Distance(MousePos.y, CENTER_Y));
+		quickSlot_Select->Rot().z -= pos.x * 0.4f * DELTA;
 
 		if (0.01f <= quickSlot_Select->Rot().z)
 		{
@@ -1152,15 +1317,19 @@ void UIManager::QuickSlotBar()
 
 void UIManager::DragSlot()
 {
-	if (KEY_PRESS('X'))
+	dragSlot_ButtonWheel->Render();
+	dragSlot_KeyButton->Render();
+	if (useDragBar)
 	{
+		dragSlot_ButtonWheel->SetActive(false);
+		dragSlot_KeyButton->SetActive(false);
 		dragSlotBox->Render();
 		itemSlot->Render();
 		if (DragCout == 0) // 그레이트 포션 중앙
 		{
-			potionIcon_D->Pos() = { 1657,182,0 };
-			greatepotionIcon_D->Pos() = { 1737,183,0 };
-			whetstoneIcon_D->Pos() = { 1821,184,0 };
+			potionIcon_D->Pos() = { itemSlot->Pos().x - 83,itemSlot->Pos().y + 2,0 };
+			greatepotionIcon_D->Pos() = { itemSlot->Pos().x - 3,itemSlot->Pos().y + 3,0 };
+			whetstoneIcon_D->Pos() = { itemSlot->Pos().x + 81,itemSlot->Pos().y + 4,0 };
 			potionIcon_D->Render();
 			greatepotionIcon_D->Render();
 			whetstoneIcon_D->Render();
@@ -1168,11 +1337,11 @@ void UIManager::DragSlot()
 			useDragSlot2 = false;
 			useDragSlot3 = false;
 		}
-		if (DragCout == 1 || DragCout == -2) // 숫돌 중앙
+		if (DragCout == 1 || DragCout == -2) // 숫돌 중앙 1740 120
 		{
-			potionIcon_D->Pos() = { 1821,182,0 };
-			greatepotionIcon_D->Pos() = { 1657, 182, 0 };
-			whetstoneIcon_D->Pos() = { 1741, 183, 0 };
+			potionIcon_D->Pos() = { itemSlot->Pos().x + 81,itemSlot->Pos().y + 2,0 };
+			greatepotionIcon_D->Pos() = { itemSlot->Pos().x - 83,itemSlot->Pos().y + 2,0 };
+			whetstoneIcon_D->Pos() = { itemSlot->Pos().x + 1,itemSlot->Pos().y + 3,0 }; 
 			potionIcon_D->Render();
 			greatepotionIcon_D->Render();
 			whetstoneIcon_D->Render();
@@ -1182,9 +1351,9 @@ void UIManager::DragSlot()
 		}
 		if (DragCout == 2 || DragCout == -1) // 일반 포션 중앙
 		{
-			potionIcon_D->Pos() = { 1739,181,0 };
-			greatepotionIcon_D->Pos() = { 1821, 182, 0 };
-			whetstoneIcon_D->Pos() = { 1657, 184, 0 };
+			potionIcon_D->Pos() = { itemSlot->Pos().x - 1,itemSlot->Pos().y + 1,0 };
+			greatepotionIcon_D->Pos() = { itemSlot->Pos().x + 81,itemSlot->Pos().y + 2,0 };
+			whetstoneIcon_D->Pos() = { itemSlot->Pos().x - 83,itemSlot->Pos().y + 4,0 };
 			potionIcon_D->Render();
 			greatepotionIcon_D->Render();
 			whetstoneIcon_D->Render();
@@ -1192,10 +1361,14 @@ void UIManager::DragSlot()
 			useDragSlot2 = false;
 			useDragSlot3 = true;
 		}
+		dragSlot_ButtonUp->Render();
+		dragSlot_ButtonDown->Render();
 	}
 
 	if (useDragSlot1)
 	{
+		slotNames[2]->Render();
+		Font::Get()->RenderText("그레이트 물약", { slotNames[2]->Pos().x + 90,slotNames[2]->Pos().y + 16.5f });
 		greatepotionIcon_D->Render();
 		if (haveGPotion < 10)
 		{
@@ -1212,10 +1385,14 @@ void UIManager::DragSlot()
 	}
 	if (useDragSlot2)
 	{
+		slotNames[2]->Render();
+		Font::Get()->RenderText("숫돌", { slotNames[2]->Pos().x + 42,slotNames[2]->Pos().y + 16.5f });
 		whetstoneIcon_D->Render();
 	}
 	if (useDragSlot3)
 	{
+		slotNames[2]->Render();
+		Font::Get()->RenderText("일반 물약", { slotNames[2]->Pos().x + 65,slotNames[2]->Pos().y + 16.5f });
 		potionIcon_D->Render();
 		if (10 <= havePotion && havePotion < 20)
 		{
@@ -1234,18 +1411,32 @@ void UIManager::DragSlot()
 
 void UIManager::DragSlotBar()
 {
-	if (wheelPos.z < 0)
+	if (useDragBar)
+	{
+		dragTimer += DELTA;
+		if (dragTimer > 1.0f)
+		{
+			useDragBar = false;
+			dragSlot_ButtonWheel->SetActive(true);
+			dragSlot_KeyButton->SetActive(true);
+		}
+	}
+	if (wheelPos.z > 0)
 	{
 		DragCout--;
+		useDragBar = true;
+		dragTimer = 0.0f;
 		if (DragCout < -2)
 		{
 			DragCout = 0;
 		}
 		wheelPos = {};
 	}
-	else if (wheelPos.z > 0)
+	else if (wheelPos.z < 0)
 	{
 		DragCout++;
+		useDragBar = true;
+		dragTimer = 0.0f;
 		if (DragCout > 2)
 		{
 			DragCout = 0;
@@ -1301,28 +1492,40 @@ void UIManager::NumberSlot()
 
 		if (haveGPotion < 10)
 		{
-			itemNumber_N[haveGPotion]->Pos().x = 463;
+			itemNumber_N[haveGPotion]->Pos().x = 423;
 			itemNumber_N[haveGPotion]->Render();
 		}
 		else if (haveGPotion == 10)
 		{
-			itemNumber_N[1]->Pos().x = 457;
-			itemNumber_N[0]->Pos().x = 468;
+			itemNumber_N[1]->Pos().x = 417;
+			itemNumber_N[0]->Pos().x = 428;
 			itemNumber_N[1]->Render();
 			itemNumber_N[0]->Render();
 		}
 
 		if (10 <= havePotion && havePotion < 20)
 		{
-			itemNumber_N[havePotion]->Pos().x = 265;
+			itemNumber_N[havePotion]->Pos().x = 225;
 			itemNumber_N[havePotion]->Render();
 		}
 		else if (havePotion == 20)
 		{
-			itemNumber_N[11]->Pos().x = 259;
-			itemNumber_N[10]->Pos().x = 270;
+			itemNumber_N[11]->Pos().x = 219;
+			itemNumber_N[10]->Pos().x = 230;
 			itemNumber_N[11]->Render();
 			itemNumber_N[10]->Render();
+		}
+
+		FOR(8)
+		{
+			slotNames[i + 3]->Render();
+		}
+		Font::Get()->RenderText("일반 물약", { slotNames[3]->Pos().x + 65, slotNames[3]->Pos().y + 17 });
+		Font::Get()->RenderText("그레이트 물약", { slotNames[4]->Pos().x + 85, slotNames[4]->Pos().y + 17 });
+		Font::Get()->RenderText("숫돌", { slotNames[5]->Pos().x + 37, slotNames[5]->Pos().y + 17 });
+		FOR(itemKeyNumber_N.size())
+		{
+			itemKeyNumber_N[i]->Render();
 		}
 	}
 
@@ -1447,6 +1650,49 @@ void UIManager::NumberSlotBar()
 		timer = 0;
 	}
 
+}
+
+void UIManager::StateIcon()
+{
+	if (partDestruct || specialMove)
+	{
+		//Float4 color = valphalkStateIcon1->GetMaterial()->GetData().diffuse;
+		stateIconTimer += DELTA;
+		if (stateIconTimer > 5.0f)
+		{
+			valphalkStateIcon1->Pos().y += 15.0f * DELTA;
+			//color.x -= stateIconTimer * 0.001f;
+			//color.y -= stateIconTimer * 0.001f;
+			//color.z -= stateIconTimer * 0.001f;
+			//color.w -= stateIconTimer * 0.001f;
+			//valphalkStateIcon1->GetMaterial()->GetData().diffuse = color;
+			if (stateIconTimer > 6.5f)
+			{
+				partDestruct = false;
+				specialMove = false;
+				stateIconTimer = 0.0f;
+				valphalkStateIcon1->Pos() = { 1700, 600 };
+			}
+		}
+	}
+	if (partDestruct2 || specialMove2)
+	{
+		stateIconTimer2 += DELTA;
+
+		if (stateIconTimer2 > 5.0f)
+		{
+			valphalkStateIcon2->Pos().y += 15.0f * DELTA;
+			if (stateIconTimer2 > 6.5f)
+			{
+				partDestruct2 = false;
+				specialMove2 = false;
+				stateIconTimer2 = 0.0f;
+				valphalkStateIcon2->Pos() = { 1700, 500 };
+			}
+		}
+	}
+
+	
 }
 
 bool UIManager::IsAbleBugSkill()

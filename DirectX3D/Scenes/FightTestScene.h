@@ -16,9 +16,11 @@ public:
     RasterizerState* rasterizer;
     Valphalk* GetValphalk() { return valphalk; }
     Player* GetPlayer() { return player; }
+    Sample* GetGaruk() { return garuk; }
 
 private:
     Player* player;
+    Sample* garuk;
     Valphalk* valphalk;
     CapsuleCollider* capsule;
 };

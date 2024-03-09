@@ -37,6 +37,13 @@ public:
 
     void Play(Vector3 pos);
     void PlayLoop(Vector3 pos);
+    void SetPos(Vector3 pos);
+
+    void SetColor(Float4 color) { material->GetData().diffuse = color; }
+    void SetColor(float r, float g, float b)
+    {
+        material->GetData().diffuse = { r, g, b, 1 };
+    }
     
 private:
     void Create();
@@ -50,6 +57,9 @@ private:
 
     SpriteBuffer* buffer;
     VertexUV vertex;
+    vector<VertexColor> vertices;
+
+    
     bool isLoop = false;
 };
 

@@ -2,11 +2,11 @@
 
 class Particle;
 class Trail;
+class Sample;
 class Valphalk;
 class WireBug;
 class Player : public ModelAnimator
 {
-
 private:
 	enum State
 	{
@@ -16,17 +16,22 @@ private:
 		L_071, L_072, L_073, L_077, L_078,
 		L_079, L_101, L_102, L_103, L_104,
 		L_105, L_106, L_107, L_108, L_109,
-		L_110, 
+		L_110,
 
 		L_113, L_114, L_115, L_116, L_119, L_122,
-		L_128, L_130, L_131, L_132, L_133, 
-		L_134, L_135, L_136, L_137, L_138,	
+		L_128, L_130, L_131, L_132, L_133,
+		L_134, L_135, L_136, L_137, L_138,
 
 		L_147, L_151, L_152, L_153, L_154,
 		L_155, L_156,
 		S_001, S_003, S_005, S_008, S_009, S_011,
 		S_014, S_017, S_018, S_019, S_020, S_026, S_029,
 		S_038, S_118, S_119, S_120, S_122,
+
+		// 가루크 모션들
+		R_001, R_013, R_024, R_031, R_041, R_104,
+		R_142, R_143, R_144, R_400, R_401, R_402,
+		R_600, R_601, R_602,
 
 		// 발도 피격모션
 		L_400, L_403, L_451, L_453, L_455,
@@ -62,6 +67,9 @@ public:
 	void Render();
 	void GUIRender();
 	void PostRender();
+	void SetGaruk(Transform* Garuk) { garuk = Garuk; }
+	void SetDog(Sample* dog) { this->dog = dog; }
+	void SetTerrain(TerrainEditor* terrain) { this->terrain = terrain; }
 
 	CapsuleCollider* getCollider() { return tmpCollider; }
 	CapsuleCollider* getSwordCollider() { return swordCollider; }
@@ -73,13 +81,17 @@ public:
 private:
 	void Control();
 	void Move();
+	void ReadyRide(); // 가루크 답승 대기
+	void Ride();
+	void EndRide();
 	void ResetPlayTime();
 
 	void UpdateWorlds();
 	void Potion();
+	void SharpeningStone();
 
 	void Rotate(float rotateSpeed = 5.0f);   // 앞으로 쭉 달리는 루프모션
-	void LimitRotate(float limit);   // 공격모션  15 , 180
+	void LimitRotate(float limit, float rotSpeed = 5.0f);   // 공격모션  15 , 180
 	void RealRotate(float rad);
 
 	bool Attack(float power, bool push = true, UINT useOtherCollider = 0); // TODO : 데미지 계산 넣어야함
@@ -96,7 +108,7 @@ private:
 
 	bool DeathCheck();
 
-	void SetState(State state);	
+	void SetState(State state);
 	void EndEffect();
 
 	void SetIdle() { SetState((State)1); }
@@ -111,6 +123,10 @@ private:
 	bool Jump(float moveSpeed);
 	void GroundCheck();
 
+	void RandVoice();
+	void RandSpecialVoice();
+	void RandHurtVoice();
+	void RandBreath();
 	void GetWireBug();
 
 private:
@@ -120,14 +136,13 @@ private:
 	{
 		GetClip(L_001)->ResetPlayTime();
 		SetState(L_001);
-
 	}
 	void ReturnIdle2()
 	{
 		GetClip(S_001)->ResetPlayTime();
 		SetState(S_001);
 	}
-	void Loop() {GetClip(curState)->ResetPlayTime();}
+	void Loop() { GetClip(curState)->ResetPlayTime(); }
 
 	void S001();
 	void S003();
@@ -197,6 +212,23 @@ private:
 	void L155();
 	void L156();
 
+
+	void R001();
+	void R013();
+	void R024();
+	void R031();
+	void R041();
+	void R104();
+	void R142();
+	void R143();
+	void R144();
+	void R400();
+	void R401();
+	void R402();
+	void R600();
+	void R601();
+	void R602();
+
 	void L400();
 	void L403();
 	void L451();
@@ -236,8 +268,10 @@ private:
 
 	Transform* swordStart = nullptr;
 	Transform* swordEnd = nullptr;
-	
-	Vector3 lastSwordEnd = {0, 0, 0};
+
+	Transform* garuk;
+
+	Vector3 lastSwordEnd = { 0, 0, 0 };
 	Vector3 swordSwingDir;
 
 	CapsuleCollider* tmpCollider = nullptr;
@@ -247,6 +281,9 @@ private:
 
 	CapsuleCollider* bodyCollider = nullptr;
 	CapsuleCollider* evadeCheckCollider = nullptr;
+
+	Sample* dog = nullptr;
+	TerrainEditor* terrain = nullptr;
 
 	Model* longSword = nullptr;
 	Model* kalzip = nullptr;
@@ -303,7 +340,7 @@ private:
 	const float temp3 = 14.067f; // 텍스트 띄우기 용 수치
 	float temp4 = -580.0f;
 
-	float jumpVelocity = 2.8f;
+	float jumpVelocity = 2.0f;
 	const float originJumpVelocity = jumpVelocity;
 	float gravityMult = 0.6f;
 
@@ -333,18 +370,27 @@ private:
 	vector<Damage> damages;
 
 	bool isEvaded = false; // 회피했는지 여부
+	bool isRiding = false;
+	bool callGaruk = false;
+	bool rideCAM = false;
+
 
 	Valphalk* val = nullptr;
 	
 	WireBug* wireBug = nullptr;
-
+	
+	int randVoice = 0;
+	float breathCount = 0;
 	///////////////////////////////////////////
 	// Particle
 	vector<HitParticle*> hitParticle;
 	HitBoomParticle* hitBoomParticle;
 	CriticalParticle* criticalParticle;
 	Sp_atk_ready_Particle* spAtkParticle;
+	Sp_atk_start* spStartParticle;
+	Sp_atk_success* spSuccessParticle;
 	PotionParticle* potionParticle;
+	SpiritFlame* spiritParticle;
 
 	Transform* haloTransform = nullptr;
 	CapsuleCollider* haloCollider = nullptr;
