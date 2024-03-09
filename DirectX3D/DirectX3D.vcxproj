@@ -142,12 +142,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-<<<<<<< HEAD
     <ClInclude Include="Objects\Character\Sample.h" />
-=======
     <ClInclude Include="Objects\Particle\HupgiFire.h" />
     <ClInclude Include="Objects\Particle\Val_fire.h" />
->>>>>>> 7af5bbedd0d1cbb3f931caef322e152ab9c3b95a
     <ClInclude Include="Scenes\FightTestScene.h" />
     <ClInclude Include="Objects\Character\DummyValphalk.h" />
     <ClInclude Include="Objects\Particle\CriticalParticle.h" />
@@ -295,12 +292,9 @@
     <ClInclude Include="Objects\Particle\Wind.h" />
   </ItemGroup>
   <ItemGroup>
-<<<<<<< HEAD
     <ClCompile Include="Objects\Character\Sample.cpp" />
-=======
     <ClCompile Include="Objects\Particle\HupgiFire.cpp" />
     <ClCompile Include="Objects\Particle\Val_fire.cpp" />
->>>>>>> 7af5bbedd0d1cbb3f931caef322e152ab9c3b95a
     <ClCompile Include="Scenes\FightTestScene.cpp" />
     <ClCompile Include="Objects\Character\DummyValphalk.cpp" />
     <ClCompile Include="Objects\Particle\CriticalParticle.cpp" />

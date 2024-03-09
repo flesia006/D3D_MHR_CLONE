@@ -136,8 +136,8 @@ void Player::Update()
 	potionParticle->SetPos(realPos->Pos());
 	potionParticle->SetVortex({ realPos->Pos().x,realPos->Pos().y+100,realPos->Pos().z });
 
-	ModelAnimator::Update();
 	GroundCheck();
+	ModelAnimator::Update();
 }
 
 void Player::Render()
@@ -165,7 +165,6 @@ void Player::Render()
 	haloCollider->Render();
 	spAtkParticle->Render();
 	potionParticle->Render();
-
 	spAtkParticle->Render();
 
 	if (isSetState)
@@ -298,8 +297,8 @@ void Player::Potion()
 {
 	time += DELTA;
 	if (UI->useQuickSlot1 && UI->haveGPotion > 0 && !Lcure && !cure
-		|| UI->useDragSlot1 && UI->haveGPotion > 0 && KEY_DOWN('E') && !Lcure && !cure
-		|| UI->useNumberBar && UI->haveGPotion > 0 && KEY_DOWN('2') && !Lcure && !cure)
+		|| UI->useDragSlot1 && KEY_DOWN('E')
+		|| UI->useNumberBar && KEY_DOWN('2'))
 	{
 		Sounds::Get()->Play("health_potion", 0.3f);
 		UI->haveGPotion--;
@@ -3304,10 +3303,13 @@ void Player::R001()  // 탑승 후 대기 idle
 {
 	PLAY;
 
-	if (K_MOVE)		SetState(R_013);
-	if (K_SPACE)		SetState(R_104);
-	if (KEY_DOWN('1'))		SetState(R_400);
-	if (KEY_DOWN('2'))		SetState(R_600);
+	if (K_MOVE)				SetState(R_013);
+	if (K_SPACE)			SetState(R_104);
+	if (KEY_DOWN('E'))
+	{
+		if (UI->useDragSlot2)	SetState(R_600);
+		else					SetState(R_400);
+	}
 }
 
 void Player::R013() // 쉬프트 안누르고 뛰기 루프, 근데 포지션이랑 로테이션 다 가루크에서 받아오니까 루프안해도 됨
@@ -3316,9 +3318,11 @@ void Player::R013() // 쉬프트 안누르고 뛰기 루프, 근데 포지션이랑 로테이션 다 가
 
 	if (!K_MOVE)		SetState(R_024);
 	if (K_SPACE)		SetState(R_104);
-	if (KEY_DOWN('1'))		SetState(R_400);
-	if (KEY_DOWN('2'))		SetState(R_600);
-
+	if (KEY_DOWN('E'))		
+	{
+		if(UI->useDragSlot2)	SetState(R_600);
+		else					SetState(R_400);
+	}
 }
 
 void Player::R024() // 뛰다가 멈춤
