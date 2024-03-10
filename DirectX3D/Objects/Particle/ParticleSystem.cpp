@@ -180,6 +180,7 @@ void ParticleSystem::UpdatePhysical()
 {
     drawCount = 0;
 
+
     FOR(data.count) //동시 이펙트 고려
     {
         // * particleInfos[i] : 미리 만들어진 파티클을 사용할 경우 호출할 대상
@@ -200,6 +201,8 @@ void ParticleSystem::UpdatePhysical()
         {
             particleInfos[i].transform.Rot().x = CAM->Rot().x;
             particleInfos[i].transform.Rot().y = CAM->Rot().y;
+            //            particleInfos[i].transform.Rot().z = atan2(particleInfos[i].velocity.x, particleInfos[i].velocity.y);
+
         }
         // 벡터를 쓰면 연산은 빠르고 간단하지만 -> 그림이 언제나 100% 2D 정면으로 보인다는 보장은 없다
         // 지오메트리 셰이더를 써도 되지만 -> 렌더 절차가 달라져야 할 수도 있다 (옵션에 무관한 렌더 일원화)
@@ -213,6 +216,12 @@ void ParticleSystem::UpdatePhysical()
         //위에서 만든 시간 경과 비율을 이용해서 크기 (경우에 따라 다른 옵션이 있다면 그것도) 보간
         particleInfos[i].transform.Scale() =
             Lerp(particleInfos[i].startScale, particleInfos[i].endScale, t);
+
+//        Vector3 camFwd = CAM->Forward();
+//        float mul = 1 - abs(Dot(particleInfos[i].velocity, camFwd));
+//        particleInfos[i].transform.Scale() *= mul;
+
+
 
         //위치, 회전, 크기 값이 각각 나온 대로 정점 업데이트
         particleInfos[i].transform.UpdateWorld();

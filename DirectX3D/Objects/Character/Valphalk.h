@@ -146,6 +146,7 @@ public:
 	vector<CapsuleCollider*> GetCollider() { return colliders; }
 	vector<SphereCollider*> GetSphereCollider() { return sphereColliders; }
 	vector<BoxCollider*> GetBoxCollider() { return boxColliders; }
+	Transform* GetRealPos() { return realPos; }
 
 	void minusCurHP(int damage) { curHP -= damage; }
 	void minusHeadHP(int damage) { colliders[HEAD]->partHp -= damage; }

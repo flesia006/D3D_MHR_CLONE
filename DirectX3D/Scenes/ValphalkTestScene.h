@@ -19,6 +19,7 @@ public:
 private:
     Player* player;
     Valphalk* valphalk;
+    Sample* garuk;
     CapsuleCollider* capsule;
 };
 

@@ -126,13 +126,20 @@ void ParticleConfigScene::UpdatePhysical()
         {
             particleInfos[i].transform.Rot().x = CAM->Rot().x;
             particleInfos[i].transform.Rot().y = CAM->Rot().y;
+//            particleInfos[i].transform.Rot().z = atan2(particleInfos[i].velocity.x, particleInfos[i].velocity.y);
         }
+
 
         float t = (lifeTime - particleInfos[i].startTime)
             / (data.duration - particleInfos[i].startTime);
 
         particleInfos[i].transform.Scale() =
             Lerp(particleInfos[i].startScale, particleInfos[i].endScale, t);
+        
+//        Vector3 camFwd = CAM->Forward();
+//        float mul = 1 - abs(Dot(particleInfos[i].velocity, camFwd));
+//        particleInfos[i].transform.Scale() *= mul;
+
 
         particleInfos[i].transform.UpdateWorld();
         instances[drawCount++].transform =

@@ -10,12 +10,15 @@ PlayerTestScene::PlayerTestScene()
 	player = new Player();
 	terrain = new TerrainEditor();
 	garuk->SetTarget(player->GetRealPos());
+	garuk->SetEnemy(player->GetRealPos());
 	garuk->SetTerrain(terrain);
 
 	player->SetGaruk(garuk->GetRealPos());
 	player->SetDog(garuk);
 	player->SetTerrain(terrain);
 	UI;
+	ARROW;
+
 }
 
 PlayerTestScene::~PlayerTestScene()
@@ -23,6 +26,7 @@ PlayerTestScene::~PlayerTestScene()
 	delete valphalk;
 	delete player;
 	delete garuk;
+	ARROW->Delete();
 }
 
 void PlayerTestScene::Update()
@@ -31,7 +35,7 @@ void PlayerTestScene::Update()
 	garuk->Update();
 	player->Update();
 	UI->Update();
-
+	ARROW->Update();
 	//	Vector3 playerPos;
 	//	Vector3 garuk1Pos;
 	//	Vector3 garuk2Pos;
@@ -59,6 +63,7 @@ void PlayerTestScene::Render()
 	player->Render();
 	garuk->Render();
 	terrain->Render();
+	ARROW->Render();
 }
 
 void PlayerTestScene::PostRender()

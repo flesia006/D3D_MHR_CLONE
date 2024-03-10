@@ -2,7 +2,7 @@
 
 KunaiManager::KunaiManager()
 {
-    kunaiInstancing = new ModelInstancing("Kunai"); // 쿠나이 모델을 공유하는 인스턴싱 생성
+    kunaiInstancing = new ModelInstancing("arrow"); // 쿠나이 모델을 공유하는 인스턴싱 생성
 
     kunaies.reserve(SIZE); // 개수만큼 예약
     FOR(SIZE)
@@ -10,6 +10,7 @@ KunaiManager::KunaiManager()
         Transform* transform = kunaiInstancing->Add(); // 인스턴싱에 새 트랜스폼 추가
         transform->SetActive(false); // 일단 비활성화 (안 날아감)
         Kunai* kunai = new Kunai(transform); // 지금 만든 (인스턴싱 속) 트랜스폼을 매개로 한 쿠나이 생성
+
         kunaies.push_back(kunai); // 쿠나이 벡터에 새로 만든 투사체 메인 클래스도 추가
     }
 
@@ -39,6 +40,12 @@ void KunaiManager::Render()
 
     for (Kunai* kunai : kunaies)
         kunai->Render();
+}
+
+void KunaiManager::PostRender()
+{
+    for (Kunai* kunai : kunaies)
+        kunai->PostRender();
 }
 
 void KunaiManager::Throw(Vector3 pos, Vector3 dir)

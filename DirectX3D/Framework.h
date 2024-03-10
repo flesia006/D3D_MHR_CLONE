@@ -38,9 +38,8 @@
 #define	K_MOVE		  Keyboard::Get()->IsMove()
 
 #define UI  UIManager::Get()
-
-
 #define CAM Environment::Get()->GetMainCamera()
+#define ARROW KunaiManager::Get()
 
 #define DIALOG ImGuiFileDialog::Instance()
 
@@ -49,6 +48,7 @@
 #define INIT  GetClip(curState)->isFirstPlay()
 #define PLAY  if (GetClip(curState)->isFirstPlay()) PlayClip(curState), initRotY = Rot().y
 #define PLAYLOOP  if (GetClip(curState)->isFirstPlay()) PlayClip(curState), initRotY = Rot().y, Pos() = realPos->Pos()
+
 
 
 #include <windows.h>

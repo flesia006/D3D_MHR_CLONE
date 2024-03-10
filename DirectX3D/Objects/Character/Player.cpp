@@ -797,7 +797,10 @@ void Player::ReadyRide()
 {
 	// 가루크를 불러
 	if (dog->isCallDog == false)
+	{
+		dog->SetFollow();
 		dog->isCallDog = true;
+	}
 
 	// 가루크가 근처에 있나 확인해
 	// 내가 납도 상태고 지상에 있어서 상태인지 체크해
@@ -876,9 +879,9 @@ void Player::Rotate(float rotateSpeed)
 			else					keyboardRot -= XM_2PI;
 		}
 
-		if (keyboardRot > Rot().y)
+		if (keyboardRot > Rot().y + unitRad)
 			RealRotate(rotateSpeed * DELTA);
-		else
+		else if(keyboardRot < Rot().y - unitRad)
 			RealRotate(-rotateSpeed * DELTA);
 	}
 

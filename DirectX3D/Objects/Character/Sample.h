@@ -6,7 +6,7 @@ private:
 	{
 		IDLE, WALK, DIGIN, DIGOUT, G_0022,
 		G_0040, G_0084, G_0126, G_0127, 
-		FIRE, BACKSTEP, FWDSTEP, TURNLEFT, TURNBACk,
+		BATTLEIDLE ,FIRE, BACKSTEP, FWDSTEP, TURNLEFT, TURNBACK,
 	};
 
 	enum Mode
@@ -26,6 +26,7 @@ public:
 	void GUIRender();
 
 	void SetTarget(Transform* target) { this->target = target; }
+	void SetEnemy(Transform* target) { this->enemy = target; }
 	Transform* GetRealPos() { return realPos; }
 	void SetRotPos(Vector3 rot, Vector3 pos)
 	{
@@ -37,7 +38,7 @@ public:
 
 	void SetRide() { mode = RIDING; }
 	void SetFollow() { mode = FOLLOWING; SetState(G_0084); }
-	void SetFight() { mode = BATTLE; }
+	void SetFight() { mode = BATTLE; SetState(BATTLEIDLE);}
 	void SetTerrain(TerrainEditor* terrain) { this->terrain = terrain; }
 
 	bool isCallDog = false;
@@ -46,7 +47,7 @@ private:
 	void UpdateWorlds();
 	void Control();
 	void Follow();
-	void Fight();
+	void Battle();
 	void ResetPlayTime();
 	void GroundCheck();
 
@@ -54,7 +55,12 @@ private:
 	void LimitRotate(float limit);   // 공격모션  15 , 180
 	void RealRotate(float rad);
 
+	void SetRad();
+	void RotateToEnemy(float ratio1, float ratio2); // 
+	void LimitRotateToEnemy(float ratio1, float ratio2, float limit); // 
+
 	float GetRadBtwTrgt();
+	float GetRadBtwEnemy();
 
 	// Riding
 	void Idle_R(); // G_0001
@@ -74,11 +80,14 @@ private:
 	void DigOut();// motlist 01 의 초반부
 
 	// Battle
+	void Idle_B();
 	void G0040_B();
 	void G0084_B();
 	void Fire_B();
 	void FwdStep_B();
 	void BackStep_B();
+	void TurnLeft_B();
+	void TurnBack_B();
 
 
 
@@ -96,6 +105,10 @@ private:
 	Transform* camTrgt = nullptr;
 	Transform* target;
 	Transform* enemy;
+	Transform* waist;
+
+	Model* bowGun;
+	Model* arrow;
 
 	TerrainEditor*  terrain;
 
@@ -114,7 +127,12 @@ private:
 	float keyboardRot = 0.0f;
 	float sumRot = 0.0f;
 	float initRotY = 0.0f;
+	float initialRad = 0.0f;   // 뭔가 뭔가인데 둘다 필요함..;;
 	float lengToTrgt = 0.0f;
+	float lengToEnemy = 0.0f;
 	float radBtwTarget = 0.0f;
+	float radBtwEnemy = 0.0f;
 	float radDifference = 0.0f;
+
+	const int waistNode = 3;
 };
