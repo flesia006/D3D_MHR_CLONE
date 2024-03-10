@@ -213,7 +213,7 @@ public:
 
     bool getWildBug = false;
 
-    const float wildBugDurationLimit = 180.0f;
+    const float wildBugDurationLimit = 5.0f;
     float wildBugDuration = 0.0f;
     
     // 퀵 슬롯 실행 할때 유무 확인 하기

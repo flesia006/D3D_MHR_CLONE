@@ -4,6 +4,7 @@ class Particle;
 class Trail;
 class Sample;
 class Valphalk;
+class WireBug;
 class Player : public ModelAnimator
 {
 private:
@@ -75,6 +76,7 @@ public:
 	Transform* GetRealPos() { return realPos; }
 
 	void SetValphalk(Valphalk* val) { this->val = val; }
+	void SetWireBug(WireBug* wireBug) { this->wireBug = wireBug; }
 
 private:
 	void Control();
@@ -125,6 +127,8 @@ private:
 	void RandSpecialVoice();
 	void RandHurtVoice();
 	void RandBreath();
+	void GetWireBug();
+
 private:
 	void ReadClips();
 	void RecordLastPos();
@@ -371,7 +375,9 @@ private:
 	bool rideCAM = false;
 
 
-	Valphalk* val;
+	Valphalk* val = nullptr;
+	
+	WireBug* wireBug = nullptr;
 	
 	int randVoice = 0;
 	float breathCount = 0;

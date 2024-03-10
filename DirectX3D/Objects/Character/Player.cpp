@@ -125,6 +125,7 @@ void Player::Update()
 	HurtCheck();
 	Potion();
 	SharpeningStone();
+	GetWireBug();
 	////////////////////////////////////
 	Control();
 	ResetPlayTime();
@@ -4047,5 +4048,28 @@ void Player::RandBreath()
 			break;
 		}
 		breathCount = 0;
+	}
+}
+
+void Player::GetWireBug()
+{
+	if (wireBug == nullptr || !(wireBug->Active()))
+		return;
+
+	Vector3 playerPos = realPos->Pos();
+	playerPos.y = 0;
+	
+	Vector3 wireBugPos = wireBug->Pos();
+	wireBugPos.y = 0;
+
+	float distance = (playerPos - wireBugPos).Length();
+
+	if (KEY_PRESS('G')) // 키 변경 가능
+	{
+		if (distance <= 150)
+		{
+			UI->GetWildBug();
+			wireBug->SetActive(false);
+		}
 	}
 }

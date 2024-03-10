@@ -16,6 +16,8 @@ PlayerTestScene::PlayerTestScene()
 	player->SetDog(garuk);
 	player->SetTerrain(terrain);
 	UI;
+	wireBug = new WireBug();
+	player->SetWireBug(wireBug);
 }
 
 PlayerTestScene::~PlayerTestScene()
@@ -23,6 +25,7 @@ PlayerTestScene::~PlayerTestScene()
 	delete valphalk;
 	delete player;
 	delete garuk;
+	delete wireBug;
 }
 
 void PlayerTestScene::Update()
@@ -30,6 +33,7 @@ void PlayerTestScene::Update()
 	valphalk->Update();
 	garuk->Update();
 	player->Update();
+	wireBug->Update();
 	UI->Update();
 
 	//	Vector3 playerPos;
@@ -58,6 +62,7 @@ void PlayerTestScene::Render()
 	garuk->Render();
 	player->Render();
 	terrain->Render();
+	wireBug->Render();
 }
 
 void PlayerTestScene::PostRender()
@@ -71,4 +76,5 @@ void PlayerTestScene::GUIRender()
 	//valphalk->GUIRender();
 	//player->GUIRender();
 	garuk->GUIRender();
+	wireBug->GUIRender();
 }
