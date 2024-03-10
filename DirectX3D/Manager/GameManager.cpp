@@ -5,6 +5,7 @@
 #include "Scenes/ParticleConfigScene.h"
 #include "Scenes/GridScene.h"
 #include "Scenes/MapDesignScene.h"
+#include "Scenes/ParticleScene.h"
 
 #include "Scenes/NotUse/CubeScene.h"
 #include "Scenes/NotUse/SphereScene.h"
@@ -20,7 +21,6 @@
 #include "Scenes/NotUse/AStarScene.h"
 #include "Scenes/NotUse/LightScene.h"
 #include "Scenes/NotUse/BillboardScene.h"
-#include "Scenes/NotUse/ParticleScene.h"
 #include "Scenes/NotUse/MirrorScene.h"
 #include "Scenes/NotUse/WaterScene.h"
 #include "Scenes/NotUse/QuadTreeScene.h"
@@ -55,15 +55,15 @@ GameManager::GameManager()
 //    SceneManager::Get()->Add("MapDesignScene");
 //      SceneManager::Get()->Create("Particle", new ParticleScene());
 //      SceneManager::Get()->Add("Particle");
-    SceneManager::Get()->Create("ParticleConfig", new ParticleConfigScene());
-    SceneManager::Get()->Add("ParticleConfig");
+//    SceneManager::Get()->Create("ParticleConfig", new ParticleConfigScene());
+//    SceneManager::Get()->Add("ParticleConfig");
 
 
-//    SceneManager::Get()->Create("ValphalkTestScene", new ValphalkTestScene());
-//    SceneManager::Get()->Add("ValphalkTestScene");
+    SceneManager::Get()->Create("ValphalkTestScene", new ValphalkTestScene());
+    SceneManager::Get()->Add("ValphalkTestScene");
 
-   SceneManager::Get()->Create("PlayerTestScene", new PlayerTestScene());
-   SceneManager::Get()->Add("PlayerTestScene");
+//   SceneManager::Get()->Create("PlayerTestScene", new PlayerTestScene());
+//   SceneManager::Get()->Add("PlayerTestScene");
 
 //   SceneManager::Get()->Create("FightTestScene", new FightTestScene());
 //   SceneManager::Get()->Add("FightTestScene");
@@ -90,13 +90,13 @@ void GameManager::Update()
 
 void GameManager::Render()
 {
-    SceneManager::Get()->PreRender();
     
     Device::Get()->Clear();
     Font::Get()->GetDC()->BeginDraw();
     
     Environment::Get()->Set();    
     SceneManager::Get()->Render();
+    SceneManager::Get()->PreRender();
     
     Environment::Get()->PostSet();
     SceneManager::Get()->PostRender();

@@ -23,9 +23,11 @@ private:
     Sprite* sprite2;
     Sprite* sprite3;
     Sprite* sprite4;
+    Sprite* sprite5;
+    Sprite* sprite6;
     Wind* wind;
     
-
+    bool on = false;
     float timer = 0;
 };
 

@@ -89,6 +89,8 @@ public:
     void SetRot(Vector3 rot) { quad->Rot() = rot; }
     void SetVortex(Vector3 pos);
 
+    Vector3 GetPos() { return quad->Pos(); }
+
 private:
     void UpdatePhysical(); //실체를 업데이트하는 함수
     void UpdateColor();    //색깔을 업데이트하는 함수

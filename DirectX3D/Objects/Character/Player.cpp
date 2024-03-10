@@ -39,6 +39,8 @@ Player::Player() : ModelAnimator("Player")
 	potionParticle = new PotionParticle();
 	haloTransform = new Transform();
 	haloCollider = new CapsuleCollider();
+	wireBugParticle = new Wire_Bug();
+	
 	haloCollider->SetParent(swordStart);
 	/////////////////////////////////////////////////////////////
 	longSword = new Model("kal");
@@ -50,7 +52,7 @@ Player::Player() : ModelAnimator("Player")
 	//	longSword->Rot().x -= XM_PIDIV2;	
 
 	tmpCollider = new CapsuleCollider(1, 0.1);
-	tmpCollider->Scale() *= 6.0f;
+	tmpCollider->Scale().x *= 6.0f;
 
 	tmpCollider2 = new CapsuleCollider(1, 0.1);
 	tmpCollider2->Scale() *= 6.0f;
@@ -109,6 +111,8 @@ Player::~Player()
 
 void Player::Update()
 {
+	if (KEY_DOWN('B'))
+		SetState(L_001);
 
 	//if (!DeathCheck())
 	//{
@@ -141,10 +145,12 @@ void Player::Update()
 	spStartParticle->Update();
 	spSuccessParticle->Update();
 	potionParticle->Update();
+	wireBugParticle->Update();
 	//potionParticle->SetParent(realPos);
 	potionParticle->SetPos(realPos->Pos());
 	potionParticle->SetVortex({ realPos->Pos().x,realPos->Pos().y + 100,realPos->Pos().z });
 	spSuccessParticle->SetPos({ realPos->Pos().x,realPos->Pos().y + 100,realPos->Pos().z });
+	wireBugParticle->SetPos(GetTranslationByNode(108));
 	//spiritParticle->SetPos({ realPos->Pos().x,realPos->Pos().y + 100,realPos->Pos().z });
 	spiritParticle->Update();	
 	GroundCheck();
@@ -168,8 +174,6 @@ void Player::Render()
 	}
 	////////////////////////////////////////////
 	// Particles
-	FOR(hitParticle.size())
-		hitParticle[i]->Render();
 	hitBoomParticle->Render();
 	criticalParticle->Render();
 	haloCollider->Render();
@@ -178,8 +182,10 @@ void Player::Render()
 	spSuccessParticle->Render();
 	spiritParticle->Render();
 	potionParticle->Render();
-		
+	wireBugParticle->Render();
 
+	FOR(hitParticle.size())
+		hitParticle[i]->Render();
 	if (isSetState)
 	{
 		Pos().x = realPos->Pos().x;
@@ -289,6 +295,7 @@ void Player::UpdateWorlds()
 
 	swordSwingDir = lastSwordEnd - swordStart->GlobalPos();
 	tmpCollider->Pos() = GetTranslationByNode(node);
+	tmpCollider->Rot() = GetRotationByNode(node);
 
 	backPos->UpdateWorld();
 	forwardPos->UpdateWorld();
@@ -433,7 +440,7 @@ void Player::GUIRender()
 	//ImGui::SliderInt("keyboard", &U, 0, 200);
 	//
 	//
-//	ImGui::SliderInt("node", &node, 1, 10);
+	ImGui::SliderInt("node", &node, 1, 210);
 //	ImGui::SliderFloat("temp", &temp, -10, 10);
 //	ImGui::SliderFloat("temp2", &temp2, -10, 10);
 //	ImGui::SliderFloat("temp3", &temp3, 10, 15);
@@ -2867,7 +2874,13 @@ void Player::L122() // 날라차기 착지
 
 void Player::L128()	// 날라차기 시작
 {
-	PLAY;
+	PLAY;	
+	Vector3 a = GetTranslationByNode(131);
+	Vector3 b = GetTranslationByNode(133);
+	Vector3 c = b - a;
+	c.GetNormalized();
+	
+	wireBugParticle->Play(GetTranslationByNode(108), GetRotationByNode(129));
 	if (!playOncePerMotion)
 	{
 		UI->UseBugSkill();
@@ -4067,7 +4080,8 @@ void Player::GetWireBug()
 	if (KEY_PRESS('G')) // 키 변경 가능
 	{
 		if (distance <= 150)
-		{
+		{			
+			wireBug->isPlay = true;
 			UI->GetWildBug();
 			wireBug->SetActive(false);
 		}

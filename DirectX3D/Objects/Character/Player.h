@@ -391,6 +391,7 @@ private:
 	Sp_atk_success* spSuccessParticle;
 	PotionParticle* potionParticle;
 	SpiritFlame* spiritParticle;
+	Wire_Bug* wireBugParticle;
 
 	Transform* haloTransform = nullptr;
 	CapsuleCollider* haloCollider = nullptr;
