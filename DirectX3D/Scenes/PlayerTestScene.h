@@ -19,5 +19,6 @@ private:
     Sample* garuk;
     DummyValphalk* valphalk;
     TerrainEditor* terrain;
+    WireBug* wireBug;
 };
 

@@ -125,6 +125,7 @@ void Player::Update()
 	HurtCheck();
 	Potion();
 	SharpeningStone();
+	GetWireBug();
 	////////////////////////////////////
 	Control();
 	ResetPlayTime();
@@ -302,7 +303,7 @@ void Player::Potion()
 		|| UI->useDragSlot1 && KEY_DOWN('E')
 		|| UI->useNumberBar && KEY_DOWN('2'))
 	{
-		Sounds::Get()->Play("health_potion", 0.3f);
+		
 		UI->haveGPotion--;
 		Lcure = true;
 		time = 0;
@@ -313,7 +314,6 @@ void Player::Potion()
 		UI->useQuickSlot2 = false;
 		if (time < 0.1f)
 		{
-			potionParticle->Play({ Pos().x,Pos().y + 100,Pos().z }, { 0,0,0 });
 		}
 
 		if (time < 3)
@@ -358,6 +358,8 @@ void Player::Potion()
 	{
 		Sounds::Get()->Play("health_potion", 0.3f);
 		UI->curStamina = 100;
+		UI->cotingLevel = 3;
+		UI->curCoting = UI->maxCoting;
 	}
 }
 
@@ -1286,6 +1288,7 @@ void Player::HurtCheck()
 					default:  SetState(D_021); 	break;
 					}
 				}
+				RandHurtVoice();
 				UI->curHP -= collider->atkDmg;
 			}
 		}
@@ -1333,6 +1336,7 @@ void Player::HurtCheck()
 
 					SetState(D_021);
 				}
+				RandHurtVoice();
 				UI->curHP -= collider->atkDmg;
 			}
 		}
@@ -1380,6 +1384,7 @@ void Player::HurtCheck()
 
 					SetState(D_021);
 				}
+				RandHurtVoice();
 				UI->curHP -= collider->atkDmg;
 			}
 		}
@@ -1433,8 +1438,7 @@ void Player::SetAnimation()
 }
 
 void Player::Roll()
-{
-
+{	
 	if (UIManager::Get()->curStamina < 20) // 스태미나 일정수치 미만에서는 구르기 막기
 		return;
 	UIManager::Get()->Roll();
@@ -1613,6 +1617,7 @@ void Player::SetState(State state)
 		return;
 
 	//Pos() = realPos->Pos();
+	randVoice = rand() % 5;
 	if (curState <R_001 || curState >R_602) // 가루크 탑승때는 필요없음
 		isSetState = true;
 
@@ -1621,7 +1626,6 @@ void Player::SetState(State state)
 		Vector3 realForward = forwardPos->GlobalPos() - backPos->GlobalPos();
 		Rot().y = atan2(realForward.x, realForward.z);
 	}
-	randVoice = rand() % 5;
 	sumRot = 0.0f;
 	preState = curState;
 	curState = state;
@@ -1889,7 +1893,7 @@ void Player::S011() // 달리기 루프
 	PLAYLOOP;
 
 	Rotate();
-
+	RandBreath();
 	if (KEY_DP(VK_LSHIFT))
 		SetState(S_122);
 
@@ -1933,10 +1937,21 @@ void Player::S017()
 
 }
 
-void Player::S018() // 구르기 후 제자리
+void Player::S018() // 납도상태 구르기
 {
 	PLAY;
-
+	if (RATIO < 0.1)
+	{
+		switch (randVoice)
+		{
+		case 0: Sounds::Get()->Play("roll1", 2.f); break;
+		case 1: Sounds::Get()->Play("roll2", 2.f); break;
+		case 2: Sounds::Get()->Play("roll3", 2.f); break;
+		case 3: Sounds::Get()->Play("roll2", 2.f); break;
+		case 4: Sounds::Get()->Play("roll3", 2.f); break;
+		default: break;
+		}
+	}
 	if (!playOncePerMotion)
 	{
 
@@ -2050,6 +2065,8 @@ void Player::S038() // 전력질주
 void Player::S118() // 탈진 시작
 {
 	PLAY;
+	if (RATIO < 0.1)
+		Sounds::Get()->Play("exhausted", 2.f);
 	UIManager::Get()->curStamina += 2.0f * DELTA;
 	if (RATIO > 0.96f)
 		SetState(S_120);
@@ -2078,6 +2095,7 @@ void Player::S122()   // 전력질주
 {
 	PLAYLOOP;
 	Rotate();
+	RandBreath();
 
 	if (UIManager::Get()->curStamina < 0.1f)
 		SetState(S_118);
@@ -2131,6 +2149,7 @@ void Player::L003() // 서서 납도
 void Player::L004() // 발도상태 걷기 중 // 루프
 {
 	PLAYLOOP;
+	RandBreath();
 
 	if (KEY_PRESS(VK_LSHIFT))		SetState(L_009); // 납도	
 	else if (K_LMB)		SetState(L_101);	// 101 내디뎌 베기	
@@ -2235,7 +2254,18 @@ void Player::L009() // 걸으면서 납도
 void Player::L010() // 구르기
 {
 	PLAY;
-
+	if (RATIO < 0.1)
+	{
+		switch (randVoice)
+		{
+		case 0: Sounds::Get()->Play("roll1", 2.f); break;
+		case 1: Sounds::Get()->Play("roll2", 2.f); break;
+		case 2: Sounds::Get()->Play("roll3", 2.f); break;
+		case 3: Sounds::Get()->Play("roll2", 2.f); break;
+		case 4: Sounds::Get()->Play("roll3", 2.f); break;
+		default: break;
+		}
+	}
 	if (RATIO < 0.40)
 		bodyCollider->SetActive(false);
 	else
@@ -2675,9 +2705,7 @@ void Player::L109() // 기인 큰회전베기
 	if (INIT)
 	{
 		spSuccessParticle->Play(Pos(), 0);
-		spiritParticle->Play({ realPos->Pos().x, realPos->Pos().y + 100, realPos->Pos().z }, 0);
-	}
-	{				
+		spiritParticle->Play({ realPos->Pos().x, realPos->Pos().y + 100, realPos->Pos().z }, 0);	
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_25", .5f);
 		UIManager::Get()->MinusSpiritGauge(); // 기인게이지 소모하기( 단 1번 )
 		isEvaded = false;
@@ -3141,8 +3169,8 @@ void Player::L151() // 특수 납도
 		UIManager::Get()->staminaActive = false;
 		isEvaded = false;
 	}
-	if (RATIO > 0.2 && RATIO < 0.3)
-		RandVoice();
+	//if (RATIO > 0.2 && RATIO < 0.3)
+	//	RandVoice();
 
 	if (RATIO > 0.5 && RATIO < 0.6)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_9", .5f);
@@ -3365,8 +3393,8 @@ void Player::R013() // 쉬프트 안누르고 뛰기 루프, 근데 포지션이랑 로테이션 다 가
 	if (K_SPACE)		SetState(R_104);
 	if (KEY_DOWN('E'))		
 	{
-		if(UI->useDragSlot2)	SetState(R_600);
-		else					SetState(R_400);
+		if(UI->useDragSlot2)	SetState(R_600); // 숫돌
+		else					SetState(R_400); // 물약
 	}
 }
 
@@ -3386,7 +3414,18 @@ void Player::R024() // 뛰다가 멈춤
 void Player::R031() // 탑승
 {
 	PLAY;
-
+	if(INIT)
+	{
+		switch (randVoice)
+		{
+		case 0: Sounds::Get()->Play("riding1", 2.5f); break;
+		case 1: Sounds::Get()->Play("riding2", 2.5f); break;
+		case 2: Sounds::Get()->Play("riding1", 2.5f); break;
+		case 3: Sounds::Get()->Play("riding2", 2.5f); break;
+		case 4: Sounds::Get()->Play("riding1", 2.5f); break;
+			default: break;
+		}
+	}
 	if (RATIO > 0.43)
 	{
 		if (K_MOVE)
@@ -3448,6 +3487,8 @@ void Player::R400() //물약 먹기 시작
 void Player::R401() // 물약 빠는중
 {
 	PLAY;
+	if (RATIO < 0.1)
+		Sounds::Get()->Play("eatting", 2.3f);
 	if (RATIO > 0.96)
 		SetState(R_402);
 }
@@ -3455,6 +3496,11 @@ void Player::R401() // 물약 빠는중
 void Player::R402() // 물약 다먹은
 {
 	PLAY;
+	if (RATIO < 0.1f)
+	{
+		Sounds::Get()->Play("health_potion", 0.3f);
+		potionParticle->Play(Pos() + Back()* 10, { 0,0,0 });
+	}
 	if (RATIO > 0.96)
 	{
 		if (K_MOVE)
@@ -3495,7 +3541,9 @@ void Player::R602() // 숫돌 마무리
 void Player::L400()
 {
 	PLAY;
-
+	//if (INIT)
+	//	RandHurtVoice();
+	
 	if (RATIO > 0.96)
 	{
 		ReturnIdle();
@@ -3505,7 +3553,8 @@ void Player::L400()
 void Player::L403()
 {
 	PLAY;
-
+	//if (INIT)
+	//	RandHurtVoice();
 	if (RATIO > 0.96)
 	{
 		ReturnIdle();
@@ -3515,7 +3564,8 @@ void Player::L403()
 void Player::L451()
 {
 	PLAY;
-
+	//if (INIT)
+	//	RandHurtVoice();
 	// 캔슬 가능 프레임
 	{
 		if (RATIO > 0.745)
@@ -3533,7 +3583,8 @@ void Player::L451()
 void Player::L453()
 {
 	PLAY;
-
+	//if (INIT)
+	//	RandHurtVoice();
 	// 캔슬 가능 프레임
 	{
 		if (RATIO > 0.745)
@@ -3551,7 +3602,8 @@ void Player::L453()
 void Player::L455()
 {
 	PLAY;
-
+	//if (INIT)
+	//	RandHurtVoice();
 	if (RATIO > 0.96)
 	{
 		ReturnIdle();
@@ -3561,7 +3613,8 @@ void Player::L455()
 void Player::D001()  // 소경직
 {
 	PLAY;
-
+	//if (INIT)
+	//	RandHurtVoice();
 	if (RATIO > 0.96)
 	{
 		ReturnIdle2();
@@ -3571,7 +3624,8 @@ void Player::D001()  // 소경직
 void Player::D004() // 뒤에서 맞고 앞으로 소경직
 {
 	PLAY;
-
+	//if (INIT)
+	//	RandHurtVoice();
 	if (RATIO > 0.96)
 	{
 		ReturnIdle2();
@@ -3581,7 +3635,8 @@ void Player::D004() // 뒤에서 맞고 앞으로 소경직
 void Player::D007() // 누운 상태에서 일어나기 시작
 {
 	PLAY;
-
+	//if (INIT)
+	//	RandHurtVoice();
 	if (RATIO > 0.96)
 	{
 		SetState(L_453);
@@ -3591,7 +3646,8 @@ void Player::D007() // 누운 상태에서 일어나기 시작
 void Player::D011()  // 7의 반대
 {
 	PLAY;
-
+	//if (INIT)
+	//	RandHurtVoice();
 	if (RATIO > 0.96)
 	{
 		SetState(L_451);
@@ -3601,6 +3657,8 @@ void Player::D011()  // 7의 반대
 void Player::D015() // 쳐맞고 덤블링 날라가기
 {
 	PLAY;
+	//if (INIT)
+	//	RandHurtVoice();
 	if (Jump(300))
 	{
 		Pos() += Back() * temp4 * DELTA;
@@ -3614,7 +3672,8 @@ void Player::D015() // 쳐맞고 덤블링 날라가기
 void Player::D016()  //덤블링하고 착지하며 두손으로 땅짚은 상태
 {
 	PLAY;
-
+	//if (INIT)
+	//	RandHurtVoice();
 	if (RATIO > 0.96)
 	{
 		SetState(L_451);
@@ -3624,7 +3683,8 @@ void Player::D016()  //덤블링하고 착지하며 두손으로 땅짚은 상태
 void Player::D021() // 앞보고 앞으로 날라가기
 {
 	PLAY;
-
+	//if (INIT)
+	//	RandHurtVoice();
 	if (Jump(300))
 	{
 		Pos() += Forward() * temp4 * DELTA;
@@ -3638,7 +3698,8 @@ void Player::D021() // 앞보고 앞으로 날라가기
 void Player::D022()
 {
 	PLAY;
-
+	//if (INIT)
+	//	RandHurtVoice();
 	if (RATIO > 0.96)
 	{
 		SetState(L_453);
@@ -3648,7 +3709,8 @@ void Player::D022()
 void Player::D026()
 {
 	PLAY;
-
+	//if (INIT)
+	//	RandHurtVoice();
 	if (RATIO > 0.96)
 	{
 		SetState(D_007);
@@ -3658,7 +3720,8 @@ void Player::D026()
 void Player::D029()
 {
 	PLAY;
-
+	//if (INIT)
+	//	RandHurtVoice();
 	if (RATIO > 0.96)
 	{
 		SetState(D_030);
@@ -3678,7 +3741,8 @@ void Player::D030() // Loop
 void Player::D031()
 {
 	PLAY;
-
+	//if (INIT)
+	//	RandHurtVoice();
 	if (RATIO > 0.96)
 	{
 		SetState(D_007);
@@ -3688,7 +3752,8 @@ void Player::D031()
 void Player::D032()
 {
 	PLAY;
-
+	//if (INIT)
+	//	RandHurtVoice();
 	if (RATIO > 0.96)
 	{
 		SetState(D_033);
@@ -3698,7 +3763,6 @@ void Player::D032()
 void Player::D033()
 {
 	PLAY;
-
 	if (RATIO > 0.96)
 	{
 		SetState(D_026);
@@ -3708,7 +3772,8 @@ void Player::D033()
 void Player::D045()
 {
 	PLAY;
-
+	//if (INIT)
+	//	RandHurtVoice();
 	if (RATIO > 0.96)
 	{
 		SetState(D_046);
@@ -3940,14 +4005,97 @@ void Player::RandVoice()
 
 void Player::RandSpecialVoice()
 {
+	randVoice = rand() % 4;
 	switch (randVoice)
 	{
 	case 0:		Sounds::Get()->Play("special1", 2.5f);		break;
 	case 1:		Sounds::Get()->Play("special2", 2.5f);		break;
 	case 2:		Sounds::Get()->Play("special3", 2.5f);		break;
 	case 3:		Sounds::Get()->Play("special4", 2.5f);		break;
-	case 4:		Sounds::Get()->Play("special1", 2.5f);		break;
 	default:
 		break;
 	}
+}
+
+void Player::RandHurtVoice()
+{
+	// 현재 상태가 대경직이 아니라면
+		randVoice = rand() % 4;
+	if (curState != L_451 && curState != L_453 && curState != D_015 && curState != D_016 && curState != D_021 &&
+		curState != D_022 && curState != D_026 && curState != D_029 && curState != D_031 && curState != D_032)
+	{
+		switch (randVoice)
+		{
+		case 0:		Sounds::Get()->Play("hurt1", 2.5f);		break;
+		case 1:		Sounds::Get()->Play("hurt2", 2.5f);		break;
+		case 2:		Sounds::Get()->Play("hurt3", 2.5f);		break;
+		case 3:		Sounds::Get()->Play("igonan1", .09f);	break;
+		default:
+			break;
+		}
+	}
+	else // 대경직이라면
+	{
+		randVoice = rand() % 3;
+		switch (randVoice)
+		{
+		case 0:		Sounds::Get()->Play("big_hurt1", 2.5f);		break;
+		case 1:		Sounds::Get()->Play("big_hurt2", 2.5f);		break;
+		case 2:		Sounds::Get()->Play("igonan2", .09f);		break;
+		default:
+			break;
+		}
+	}
+}
+
+void Player::RandBreath()
+{
+	// 달리다 일정 시간마다 체크해서 걸리면 사운드가 랜덤으로 나오는 식
+	breathCount += DELTA;
+	if (breathCount > 1.5) // 달리는 상태를 유지하는 동안 1.5초마다 체크한다.
+	{
+		randVoice = rand() % 6;
+		switch (randVoice)
+		{
+		case 0:		Sounds::Get()->Play("breath", 1.5f);		break;
+		case 1:		Sounds::Get()->Play("breath2", 1.5f);		break;
+		case 2:		Sounds::Get()->Play("breath3", 1.5f);		break;
+		case 3:		Sounds::Get()->Play("", 1.5f);		break;
+		case 4:		Sounds::Get()->Play("", 1.5f);		break;
+		case 5:		Sounds::Get()->Play("", 1.5f);		break;
+		default:
+			break;
+		}
+		breathCount = 0;
+	}
+}
+
+void Player::GetWireBug()
+{
+	if (wireBug == nullptr || !(wireBug->Active()))
+		return;
+
+	Vector3 playerPos = realPos->Pos();
+	playerPos.y = 0;
+	
+	Vector3 wireBugPos = wireBug->Pos();
+	wireBugPos.y = 0;
+
+	float distance = (playerPos - wireBugPos).Length();
+
+	wireBug->UpdateUI();
+
+	if (distance <= 150)
+	{
+		wireBug->SetWireBugPickUpUIActive(true);
+
+		if (KEY_PRESS('G')) // 키 변경 가능
+		{
+			UI->GetWildBug();
+			wireBug->SetWireBugPickUpUIActive(false);
+			wireBug->SetActive(false);
+		}
+	}
+	else
+		wireBug->SetWireBugPickUpUIActive(false);
 }

@@ -71,7 +71,7 @@ public:
     bool specialMove2 = false;
     bool partDestruct = false;
     bool partDestruct2 = false;
-    
+
 private:
     // 퀵 슬롯 관한 내용
     //=====================
@@ -107,10 +107,15 @@ private:
     // 퀵슬롯 추가 부분
     Quad* quickSlot_Back;
     Quad* quickSlot_Select;
+    Quad* quickSlot_Button;
     vector<Quad*> selectBoxs;
     vector<Quad*> selectBoxFrames;
     // 드래그 슬롯 추가 부분
     Quad* dragSlotBox;
+    Quad* dragSlot_ButtonUp;
+    Quad* dragSlot_ButtonWheel;
+    Quad* dragSlot_ButtonDown;
+    Quad* dragSlot_KeyButton;
     // 넘버 슬롯 추가 부분
     vector<Quad*> numberBoxs;
     vector<Quad*> numberBoxFrames;
@@ -148,6 +153,7 @@ private:
     vector<Quad*> itemNumber_Q;
     vector<Quad*> itemNumber_D;
     vector<Quad*> itemNumber_N;
+    vector<Quad*> itemKeyNumber_N;
     //===================
     
     //액터의 UI
@@ -207,7 +213,7 @@ public:
 
     bool getWildBug = false;
 
-    const float wildBugDurationLimit = 180.0f;
+    const float wildBugDurationLimit = 5.0f;
     float wildBugDuration = 0.0f;
     
     // 퀵 슬롯 실행 할때 유무 확인 하기
@@ -228,10 +234,12 @@ public:
     int haveGPotion = 10;
 
     // 드래그 슬롯 실행 할때 유무 확인 하기
+    bool useDragBar = false;
     bool useDragSlot1 = true;
     bool useDragSlot2 = false;
     bool useDragSlot3 = false;
 
+    float dragTimer = 0.0f;
     // 넘버 슬롯 실행 할때 유뮤 확인 하기
     bool useNumberBar = false;
     float timer = 0.0f;

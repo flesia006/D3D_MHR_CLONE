@@ -19,6 +19,8 @@ PlayerTestScene::PlayerTestScene()
 	UI;
 	ARROW;
 
+	wireBug = new WireBug();
+	player->SetWireBug(wireBug);
 }
 
 PlayerTestScene::~PlayerTestScene()
@@ -26,6 +28,7 @@ PlayerTestScene::~PlayerTestScene()
 	delete valphalk;
 	delete player;
 	delete garuk;
+	delete wireBug;
 	ARROW->Delete();
 }
 
@@ -34,6 +37,7 @@ void PlayerTestScene::Update()
 	valphalk->Update();
 	garuk->Update();
 	player->Update();
+	wireBug->Update();
 	UI->Update();
 	ARROW->Update();
 	//	Vector3 playerPos;
@@ -63,6 +67,7 @@ void PlayerTestScene::Render()
 	player->Render();
 	garuk->Render();
 	terrain->Render();
+	wireBug->Render();
 	ARROW->Render();
 }
 
@@ -70,6 +75,7 @@ void PlayerTestScene::PostRender()
 {
 	player->PostRender();
 	UI->PostRender();
+	wireBug->PostRender();
 }
 
 void PlayerTestScene::GUIRender()
@@ -77,4 +83,5 @@ void PlayerTestScene::GUIRender()
 	//valphalk->GUIRender();
 	//player->GUIRender();
 	garuk->GUIRender();
+	wireBug->GUIRender();
 }
