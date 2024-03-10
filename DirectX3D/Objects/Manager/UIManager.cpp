@@ -934,6 +934,7 @@ void UIManager::PostRender()
 	lsCoting->Render();
 	lsGauge->Render();
 	lsGauge2->Render();
+
 	// 이건 한번 더 봐야 알듯
 	// 액션 슬롯 내임 스페이스
 	slotNames[0]->Render();

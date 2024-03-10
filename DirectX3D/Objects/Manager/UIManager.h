@@ -71,7 +71,7 @@ public:
     bool specialMove2 = false;
     bool partDestruct = false;
     bool partDestruct2 = false;
-    
+
 private:
     // Äü ½½·Ô °üÇÑ ³»¿ë
     //=====================

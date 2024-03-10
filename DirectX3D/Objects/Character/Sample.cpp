@@ -13,29 +13,41 @@ Sample::Sample() : ModelAnimator("Sample")
 	ReadClip("G_0126");
 	ReadClip("G_0127");
 
-	realPos = new Transform();
-	camTrgt = new Transform();
+	ReadClip("BATTLEIDLE");
+	ReadClip("FIRE");
+	ReadClip("BACKSTEP");
+	ReadClip("FWDSTEP");
+	ReadClip("TURNLEFT");
+	ReadClip("TURNBACK");
 
-	CAM->SetTarget(camTrgt);
-	PlayClip(0);
+
+	realPos = new Transform();
+	waist = new Transform();
+
+	bowGun = new Model("bowGun");
+	arrow = new Model("arrow");
+	bowGun->SetParent(waist);
 }
 
 Sample::~Sample()
 {
-
+	delete realPos;
+	delete waist;
+	delete bowGun;
 }
 
 void Sample::Update()
 {
 	UpdateWorlds();
 
+	if (KEY_DP('3'))
+		SetFight();
 	switch (mode)
 	{
 	case Sample::RIDING:		Control();		break;
 	case Sample::FOLLOWING:		Follow();		break;
-	case Sample::FIGHTING:		Fight();		break;
+	case Sample::BATTLE:		Battle();		break;
 	}
-
 
 	ModelAnimator::Update();
 	ResetPlayTime();
@@ -46,6 +58,13 @@ void Sample::Render()
 {
 
 	ModelAnimator::Render();
+
+	if (mode == BATTLE)
+	{
+		bowGun->Render();
+	}
+
+	
 
 	if (isSetState)
 	{
@@ -63,14 +82,17 @@ void Sample::Render()
 
 void Sample::GUIRender()
 {
-	ModelAnimator::GUIRender();
-	Vector3 realpos = realPos->Pos();
-	Vector3 pos = Pos();
-
-	ImGui::DragFloat3("realPos", (float*)&realpos);
-	ImGui::DragFloat3("Pos", (float*)&pos);
-	ImGui::DragFloat("lengToTrgt", &lengToTrgt);
-
+//	ModelAnimator::GUIRender();
+//	Vector3 realpos = realPos->Pos();
+//	Vector3 pos = Pos();
+//
+//	ImGui::DragFloat3("realPos", (float*)&realpos);
+//	ImGui::DragFloat3("Pos", (float*)&pos);
+//	ImGui::DragFloat("lengToTrgt", &lengToTrgt);
+//	ImGui::DragFloat("radbtw", &radBtwEnemy);
+//	
+//	bowGun->GUIRender();	
+	arrow->GUIRender();
 }
 
 void Sample::UpdateWorlds()
@@ -95,14 +117,17 @@ void Sample::UpdateWorlds()
 	if (Rot().y > 3.14)				Rot().y -= XM_2PI;
 
 	GetRadBtwTrgt();
-	lengToTrgt = (target->GlobalPos() - realPos->Pos()).Length();
+	GetRadBtwEnemy();
+	if(target != nullptr)
+		lengToTrgt = (target->GlobalPos() - realPos->Pos()).Length();
+	if(enemy != nullptr)
+		lengToEnemy = (enemy->GlobalPos() - realPos->Pos()).Length();
 	realPos->Pos() = GetTranslationByNode(1);
 	realPos->Rot() = Rot();
-
-	camTrgt->Pos() = realPos->Pos();
-	camTrgt->Pos().y += 200;
-	camTrgt->UpdateWorld();
 	realPos->UpdateWorld();
+
+	waist->SetWorld(GetTransformByNode(waistNode));	
+	bowGun->UpdateWorld();
 }
 
 void Sample::Control()
@@ -131,8 +156,19 @@ void Sample::Follow()
 	}
 }
 
-void Sample::Fight()
+void Sample::Battle()
 {
+	switch (curState)
+	{
+	case Sample::BATTLEIDLE:	Idle_B();		break;
+	case Sample::G_0040:		G0040_B();		break;
+	case Sample::G_0084:		G0084_B();		break;
+	case Sample::FIRE:			Fire_B();		break;
+	case Sample::FWDSTEP:		FwdStep_B();	break;
+	case Sample::BACKSTEP:		BackStep_B();	break;
+	case Sample::TURNLEFT:		TurnLeft_B();	break;
+	case Sample::TURNBACK:		TurnBack_B();	break;
+	}
 }
 
 void Sample::ResetPlayTime()
@@ -216,6 +252,52 @@ void Sample::RealRotate(float rad)
 
 }
 
+void Sample::SetRad()
+{
+	if (radBtwEnemy > -rot135 && radBtwEnemy <= -rot45) // 왼쪽 90도
+	{
+		radDifference = radBtwEnemy + XM_PIDIV2;
+	}
+	else if (radBtwEnemy > -XM_PI && radBtwEnemy <= -rot135) // 왼뒤쪽 45도
+	{
+		radDifference = radBtwEnemy + XM_PI;
+	}
+	else if (radBtwEnemy > rot45 && radBtwEnemy <= rot135) // 오른쪽 90도
+	{
+		radDifference = radBtwEnemy - XM_PIDIV2;
+		Scale().x *= -1;
+	}
+	else if (radBtwEnemy > rot135 && radBtwEnemy <= XM_PI) // 오른뒤쪽 45도
+	{
+		radDifference = radBtwEnemy - XM_PI;
+		Scale().x *= -1;
+	}
+	initialRad = Rot().y;
+}
+
+void Sample::RotateToEnemy(float ratio1, float ratio2)
+{
+	float curRatio = RATIO;
+	curRatio = Clamp(ratio1, ratio2, curRatio);
+
+	float rad = ((curRatio - ratio1) / (ratio2 - ratio1)) * radDifference;
+
+	Rot().y = initialRad + rad;
+}
+
+void Sample::LimitRotateToEnemy(float ratio1, float ratio2, float limit)
+{
+	float curRatio = RATIO;
+	curRatio = Clamp(ratio1, ratio2, curRatio);
+
+	float rad = ((curRatio - ratio1) / (ratio2 - ratio1)) * radBtwEnemy;
+	sumRot += rad;
+	if (abs(sumRot) < unitRad * limit)
+	{
+		RealRotate(rad);
+	}
+}
+
 float Sample::GetRadBtwTrgt()
 {
 	UpdateWorld();
@@ -228,6 +310,20 @@ float Sample::GetRadBtwTrgt()
 		radBtwTarget *= -1;
 
 	return radBtwTarget;
+}
+
+float Sample::GetRadBtwEnemy()
+{
+	UpdateWorld();
+	Vector3 fwd = Forward();
+	Vector3 VtoP = (realPos->Pos() - enemy->GlobalPos()).GetNormalized();
+	Vector3 rad = XMVector3AngleBetweenVectors(fwd, VtoP);
+	Vector3 cross = Cross(fwd, VtoP);
+	radBtwEnemy = rad.x;
+	if (Cross(fwd, VtoP).y < 0)
+		radBtwEnemy *= -1;
+
+	return radBtwEnemy;
 }
 
 void Sample::Idle_R()
@@ -266,6 +362,170 @@ void Sample::DigOut()
 	if (RATIO > 0.96)
 	{
 		SetState(IDLE);
+	}
+}
+
+void Sample::Idle_B()
+{
+	// 혹시라도 잘못 배틀 모드에 들어온 경우 일단 팔로우 모드로
+	if (enemy == nullptr)
+		SetFollow();
+
+	PLAY;
+
+	if (RATIO > 0.5)
+	{
+		if (abs(radBtwEnemy) > rot45)
+		{
+			if (abs(radBtwEnemy) > rot135)
+				SetState(TURNBACK);
+			else
+				SetState(TURNLEFT);
+		}
+	}
+
+	//공격 가능한 범위라면
+	if (RATIO >= 0.96)
+	{
+		if (lengToEnemy < 700)			SetState(BACKSTEP);
+		else if (lengToEnemy < 1400)	SetState(FIRE);
+		else if (lengToEnemy > 1900)	SetState(G_0040);
+		else							SetState(FWDSTEP);
+	}
+}
+
+void Sample::G0040_B()
+{
+	PLAY;
+
+	if (radBtwEnemy < -unitRad)
+		RealRotate(-2.5 * DELTA);
+	else if (radBtwEnemy > unitRad)
+		RealRotate(2.5 * DELTA);
+
+	if (lengToEnemy < 700)
+		SetState(G_0084);
+
+
+	if (RATIO > 0.96)
+		Loop();
+}
+
+void Sample::G0084_B()
+{
+	PLAY;
+
+
+	if (RATIO > 0.96)
+	{
+		if (lengToEnemy < 700)			SetState(BACKSTEP);
+		else if (lengToEnemy < 1400)	SetState(FIRE);
+		else if (lengToEnemy > 1900)	SetState(G_0040);
+		else							SetState(FWDSTEP);
+	}
+}
+
+void Sample::Fire_B()
+{
+	PLAY;
+
+	if (RATIO < 0.25)
+	{
+		LimitRotateToEnemy(0, 0.3, 45);
+	}
+
+	if (RATIO > 0.291f)
+	{
+		if (!playOncePerMotion)
+		{
+			KunaiManager::Get()->Throw(bowGun->GlobalPos(), ((enemy->GlobalPos() + Vector3::Up() * 200) - bowGun->GlobalPos()).GetNormalized());
+			playOncePerMotion = true;
+		}
+	}
+
+	if (RATIO > 0.96)
+	{
+		playOncePerMotion = false;
+		if (lengToEnemy < 700)			SetState(BACKSTEP);
+		else if (lengToEnemy < 1400)	Loop();
+		else if (lengToEnemy > 1900)	SetState(G_0040);
+		else							SetState(FWDSTEP);
+	}
+}
+
+void Sample::FwdStep_B()
+{
+	PLAY;
+
+	if (RATIO > 0.093 && RATIO < 0.73)
+		LimitRotateToEnemy(0.093, 0.8, 90);
+
+	if (RATIO > 0.96)
+	{
+		if (lengToEnemy < 700)			SetState(BACKSTEP);
+		else if (lengToEnemy < 1400)	SetState(FIRE);
+		else if (lengToEnemy > 1900)	SetState(G_0040);
+		else							Loop();
+	}
+}
+
+void Sample::BackStep_B()
+{
+	PLAY;
+
+	if (RATIO > 0.093 && RATIO < 0.73)
+		LimitRotateToEnemy(0.093, 0.8, 90);
+
+	if (RATIO > 0.96)
+	{
+		if (lengToEnemy < 700)			Loop();
+		else if (lengToEnemy < 1400)	SetState(FIRE);
+		else if (lengToEnemy > 1900)	SetState(G_0040);
+		else							SetState(FWDSTEP);
+	}
+}
+
+void Sample::TurnLeft_B()
+{
+	PLAY;
+
+	if (!playOncePerMotion)
+	{
+		SetRad();
+		playOncePerMotion = true;
+	}
+
+	if (RATIO > 0.19 && RATIO < 0.65)
+		RotateToEnemy(0.19, 0.7);
+
+	if (RATIO > 0.96)
+	{
+		if (lengToEnemy < 700)			SetState(BACKSTEP);
+		else if (lengToEnemy < 1400)	SetState(FIRE);
+		else if (lengToEnemy > 1900)	SetState(G_0040);
+		else							SetState(FWDSTEP);
+	}
+}
+
+void Sample::TurnBack_B()
+{
+	PLAY;
+
+	if (!playOncePerMotion)
+	{
+		SetRad();
+		playOncePerMotion = true;
+	}
+
+	if (RATIO > 0.19 && RATIO < 0.65)
+		RotateToEnemy(0.19, 0.7);
+
+	if (RATIO > 0.96)
+	{
+		if (lengToEnemy < 700)			SetState(BACKSTEP);
+		else if (lengToEnemy < 1400)		SetState(FIRE);
+		else if (lengToEnemy > 1900)	SetState(G_0040);
+		else							SetState(FWDSTEP);
 	}
 }
 
@@ -349,10 +609,10 @@ void Sample::G0040_F()
 
 	// 1. 거리가 더 멀어져서 달려야 함
 
-	if (radBtwTarget < 0)
-		RealRotate(-2 * DELTA);
-	else
-		RealRotate(2 * DELTA);
+	if (radBtwTarget < -1)
+		RealRotate(-3 * DELTA);
+	else if(radBtwTarget > 1)
+		RealRotate(3 * DELTA);
 
 	if (!isCallDog)
 	{
@@ -364,7 +624,7 @@ void Sample::G0040_F()
 
 	if (isCallDog)
 	{
-		if (lengToTrgt < 50)
+		if (lengToTrgt < 70)
 			readyToRide = true;
 	}
 
@@ -403,6 +663,7 @@ void Sample::SetState(State state)
 	if (curState == state)
 		return;
 
+	Scale().x = 1;
 
 	isSetState = true;
 	isLoop = false;

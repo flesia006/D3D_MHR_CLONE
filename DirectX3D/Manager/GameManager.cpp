@@ -62,8 +62,8 @@ GameManager::GameManager()
     SceneManager::Get()->Create("ValphalkTestScene", new ValphalkTestScene());
     SceneManager::Get()->Add("ValphalkTestScene");
 
-//   SceneManager::Get()->Create("PlayerTestScene", new PlayerTestScene());
-//   SceneManager::Get()->Add("PlayerTestScene");
+//    SceneManager::Get()->Create("PlayerTestScene", new PlayerTestScene());
+//    SceneManager::Get()->Add("PlayerTestScene");
 
 //   SceneManager::Get()->Create("FightTestScene", new FightTestScene());
 //   SceneManager::Get()->Add("FightTestScene");
@@ -97,6 +97,8 @@ void GameManager::Render()
     Environment::Get()->Set();    
     SceneManager::Get()->Render();
     SceneManager::Get()->PreRender();
+
+
     
     Environment::Get()->PostSet();
     SceneManager::Get()->PostRender();
@@ -148,6 +150,9 @@ void GameManager::Create()
 
     Font::Get()->AddColor("Gray", 0.9, 0.9, 0.9);
     Font::Get()->AddStyle("Gray", L"Arial", 26, DWRITE_FONT_WEIGHT_MEDIUM);
+
+    Font::Get()->AddColor("RealGray", 0.4, 0.4, 0.4);
+    Font::Get()->AddStyle("RealGray", L"Arial", 26, DWRITE_FONT_WEIGHT_MEDIUM);
     
     Font::Get()->SetColor("White");
     Font::Get()->SetStyle("Default");

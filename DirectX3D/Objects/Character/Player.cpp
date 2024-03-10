@@ -134,27 +134,29 @@ void Player::Update()
 	Control();
 	ResetPlayTime();
 
-
-
 	UpdateWorlds();
-	trail->Update();
-	FOR(hitParticle.size())		hitParticle[i]->Update();
-	hitBoomParticle->Update();
-	criticalParticle->Update();
-	spAtkParticle->Update();	
-	spStartParticle->Update();
-	spSuccessParticle->Update();
-	potionParticle->Update();
-	wireBugParticle->Update();
-	//potionParticle->SetParent(realPos);
-	potionParticle->SetPos(realPos->Pos());
-	potionParticle->SetVortex({ realPos->Pos().x,realPos->Pos().y + 100,realPos->Pos().z });
-	spSuccessParticle->SetPos({ realPos->Pos().x,realPos->Pos().y + 100,realPos->Pos().z });
-	wireBugParticle->SetPos(GetTranslationByNode(108));
-	//spiritParticle->SetPos({ realPos->Pos().x,realPos->Pos().y + 100,realPos->Pos().z });
-	spiritParticle->Update();	
-	GroundCheck();
+	EffectUpdates();
+
 	ModelAnimator::Update();
+	GroundCheck();
+}
+
+void Player::PreRender()
+{
+	if (renderEffect)
+	{
+		trail->Render();
+	}
+	////////////////////////////////////////////
+	// Particles
+	hitBoomParticle->Render();
+	criticalParticle->Render();
+	haloCollider->Render();
+	spAtkParticle->Render();
+	spStartParticle->Render();
+	spSuccessParticle->Render();
+	spiritParticle->Render();
+	potionParticle->Render();
 }
 
 void Player::Render()
@@ -168,24 +170,9 @@ void Player::Render()
 		//swordCollider->Render();
 	longSword->Render();
 	kalzip->Render();
-	if (renderEffect)
-	{
-		trail->Render();
-	}
-	////////////////////////////////////////////
-	// Particles
-	hitBoomParticle->Render();
-	criticalParticle->Render();
-	haloCollider->Render();
-	spAtkParticle->Render();	
-	spStartParticle->Render();
-	spSuccessParticle->Render();
-	spiritParticle->Render();
-	potionParticle->Render();
-	wireBugParticle->Render();
 
-	FOR(hitParticle.size())
-		hitParticle[i]->Render();
+		
+
 	if (isSetState)
 	{
 		Pos().x = realPos->Pos().x;
@@ -236,38 +223,37 @@ void Player::UpdateWorlds()
 
 	if (isRiding)
 	{
-		Pos().x = garuk->GlobalPos().x + Forward().x * 50;
-		Pos().z = garuk->GlobalPos().z + Forward().z * 50;
+		if (curState == R_031)
+		{
+			Pos().x = garuk->GlobalPos().x + Forward().x * 50;
+			Pos().z = garuk->GlobalPos().z + Forward().z * 50;
+		}
+		else
+		{
+			if ((garuk->GlobalPos() - Pos()).Length() < 300)
+			{
+				Pos().x = garuk->GlobalPos().x + Forward().x * 50;
+				Pos().z = garuk->GlobalPos().z + Forward().z * 50;
+			}
+		}
 		Rot().y = garuk->Rot().y;
 	}
 
 	Vector3 camRot = CAM->Rot();
 	camRot.y += XM_PI;
 
-	if (KEY_DP('W') && KEY_DP('D'))
-		keyboardRot = camRot.y + XM_PIDIV4;
-	else if (KEY_DP('W') && KEY_DP('A'))
-		keyboardRot = camRot.y - XM_PIDIV4;
-	else if (KEY_DP('S') && KEY_DP('D'))
-		keyboardRot = camRot.y + XM_PIDIV4 * 3;
-	else if (KEY_DP('S') && KEY_DP('A'))
-		keyboardRot = camRot.y - XM_PIDIV4 * 3;
-	else if (KEY_DP('W'))
-		keyboardRot = camRot.y;
-	else if (KEY_DP('A'))
-		keyboardRot = camRot.y - XM_PIDIV2;
-	else if (KEY_DP('S'))
-		keyboardRot = camRot.y - XM_PI;
-	else if (KEY_DP('D'))
-		keyboardRot = camRot.y + XM_PIDIV2;
-	else
-		keyboardRot = 0.0f;
+	if (KEY_DP('W') && KEY_DP('D'))				keyboardRot = camRot.y + XM_PIDIV4;
+	else if (KEY_DP('W') && KEY_DP('A'))		keyboardRot = camRot.y - XM_PIDIV4;
+	else if (KEY_DP('S') && KEY_DP('D'))		keyboardRot = camRot.y + XM_PIDIV4 * 3;
+	else if (KEY_DP('S') && KEY_DP('A'))		keyboardRot = camRot.y - XM_PIDIV4 * 3;
+	else if (KEY_DP('W'))						keyboardRot = camRot.y;
+	else if (KEY_DP('A'))						keyboardRot = camRot.y - XM_PIDIV2;
+	else if (KEY_DP('S'))						keyboardRot = camRot.y - XM_PI;
+	else if (KEY_DP('D'))						keyboardRot = camRot.y + XM_PIDIV2;
+	else										keyboardRot = 0.0f;
 
-	if (keyboardRot < -3.14)
-		keyboardRot += XM_2PI;
-
-	if (keyboardRot > 3.14)
-		keyboardRot -= XM_2PI;
+	if (keyboardRot < -3.14)		keyboardRot += XM_2PI;
+	if (keyboardRot > 3.14)			keyboardRot -= XM_2PI;
 
 
 	realPos->Pos() = GetTranslationByNode(1);
@@ -279,8 +265,8 @@ void Player::UpdateWorlds()
 
 
 	head->Pos().x = realPos->Pos().x;
-	if (isRiding)
-		head->Pos().y = 200;
+	if (isRiding && curState != R_031)
+		head->Pos().y = realPos->Pos().y + 100;
 	else
 		head->Pos().y = realPos->Pos().y + 200;
 	head->Pos().z = realPos->Pos().z;
@@ -816,7 +802,10 @@ void Player::ReadyRide()
 {
 	// °¡·çÅ©¸¦ ºÒ·¯
 	if (dog->isCallDog == false)
+	{
+		dog->SetFollow();
 		dog->isCallDog = true;
+	}
 
 	// °¡·çÅ©°¡ ±ÙÃ³¿¡ ÀÖ³ª È®ÀÎÇØ
 	// ³»°¡ ³³µµ »óÅÂ°í Áö»ó¿¡ ÀÖ¾î¼­ »óÅÂÀÎÁö Ã¼Å©ÇØ
@@ -867,6 +856,24 @@ void Player::ResetPlayTime()
 		GetClip(preState)->ResetPlayTime();
 }
 
+void Player::EffectUpdates()
+{
+	trail->Update();
+	FOR(hitParticle.size())		hitParticle[i]->Update();
+	hitBoomParticle->Update();
+	criticalParticle->Update();
+	spAtkParticle->Update();
+	spStartParticle->Update();
+	spSuccessParticle->Update();
+	potionParticle->Update();
+	//potionParticle->SetParent(realPos);
+	potionParticle->SetPos(realPos->Pos());
+	potionParticle->SetVortex({ realPos->Pos().x,realPos->Pos().y + 100,realPos->Pos().z });
+	spSuccessParticle->SetPos({ realPos->Pos().x,realPos->Pos().y + 100,realPos->Pos().z });
+	//spiritParticle->SetPos({ realPos->Pos().x,realPos->Pos().y + 100,realPos->Pos().z });
+	spiritParticle->Update();
+}
+
 void Player::Rotate(float rotateSpeed)
 {
 	if (keyboardRot != 0.0f)
@@ -877,9 +884,9 @@ void Player::Rotate(float rotateSpeed)
 			else					keyboardRot -= XM_2PI;
 		}
 
-		if (keyboardRot > Rot().y)
+		if (keyboardRot > Rot().y + unitRad)
 			RealRotate(rotateSpeed * DELTA);
-		else
+		else if(keyboardRot < Rot().y - unitRad)
 			RealRotate(-rotateSpeed * DELTA);
 	}
 
@@ -941,7 +948,7 @@ bool Player::Attack(float power, bool push, UINT useOtherCollider) // Ãæµ¹ÆÇÁ¤ Ç
 		{
 		case 1:	playerCollider = tmpCollider; break;
 		case 2:	playerCollider = tmpCollider2; break;
-		case 3:	playerCollider = tmpCollider3; break;
+		case 3:	playerCollider = bodyCollider; break;
 		default: playerCollider = swordCollider; break;
 		}
 	}
@@ -2298,9 +2305,15 @@ void Player::L014() // ¹ßµµ»óÅÂ ±¸¸£±â ÈÄ ÀÌµ¿Å° À¯Áö½Ã
 		SetState(L_008);
 
 
-	if (RATIO > 0.48 && K_SPACE)
+	if (RATIO > 0.48 )
 	{
-		Roll();
+		if (KEY_PRESS(VK_LSHIFT))		SetState(L_009); // ³³µµ	
+		else if (K_LMB)		SetState(L_101);	// 101 ³»µðµ® º£±â	
+		else if (K_RMB)		SetState(L_104);	// 104 Âî¸£±â	
+		else if (K_LMBRMB)	SetState(L_103);	// 103 º£¾î³»¸®±â
+		else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106);	// 106 ±âÀÎ º£±â	
+		else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// ³¯¶óÂ÷±â
+		else if (K_SPACE)	Roll();				// 010 ±¸¸£±â
 	}
 
 	if (RATIO > 0.96)
@@ -2889,7 +2902,7 @@ void Player::L128()	// ³¯¶óÂ÷±â ½ÃÀÛ
 	}
 
 	if (RATIO < 0.2)
-		LimitRotate(180);
+		LimitRotate(180, 150);
 
 
 	// ÁÜ Á¤»óÈ­ (¾É¾Æ ±âÀÎ È¸Àü º£±â¿¡¼­ ³Ñ¾î¿Â °æ¿ì)
@@ -2912,10 +2925,10 @@ void Player::L130()	// ³¯¶óÂ÷±â Ã¼°øÁß
 
 	// Ã¼°øÁß
 	{
-		if(Jump(550))
-		// °ø°ÝÆÇÁ¤ ÇÁ·¹ÀÓ
+		if (RATIO > 0.05)
 		{
-			if ( Pos().y > 50 )//TODO ³¯¶óÂ÷±â Ã¼°øÁß¿¡ ´Ê°Ô ³»·Á¿À´Â °Å
+			if (Jump(650, 0.5))
+				// °ø°ÝÆÇÁ¤ ÇÁ·¹ÀÓ
 			{
 				if (Attack(2, true, 3))
 				{
@@ -2927,17 +2940,18 @@ void Player::L130()	// ³¯¶óÂ÷±â Ã¼°øÁß
 					else
 						SetState(L_136);  // ³«ÇÏÂî¸£±â
 				}
-			}
 
-			if (RATIO > 0.96)
+				if (RATIO > 0.96)
+				{
+					SetState(L_131);
+				}
+			}
+			else
 			{
-				SetState(L_131);
+				SetState(L_122);
 			}
 		}
-		else
-		{
-			SetState(L_122);
-		}
+
 	}
 }
 
@@ -2946,7 +2960,7 @@ void Player::L131() // Ã¼°ø ·çÇÁ
 	PLAY;
 	// Ã¼°øÁß
 	{
-		if (Jump(550))
+		if (Jump(650, 0.5))
 			// °ø°ÝÆÇÁ¤ ÇÁ·¹ÀÓ
 		{
 			if (Attack(2, true, 3))
@@ -3946,20 +3960,22 @@ void Player::DamageRender()
 		damages.erase(eraseiter);
 }
 
-bool Player::Jump(float moveSpeed)
+bool Player::Jump(float moveSpeed, float jumpSpeed)
 {
-	jumpVelocity -= 9.8f * gravityMult * DELTA;
+	jumpVelocity -= 9.8f * jumpSpeed * DELTA;
 	Pos() -= Forward() * moveSpeed * DELTA;
 	Pos().y += jumpVelocity;
 
-	if (realPos->Pos().y >= 0)
+	if (realPos->Pos().y >= height -100)
 	{
+		isJump = true;
 		return true;
 	}
 
-	if (realPos->Pos().y < 0)
+	else 
 	{
-		Pos().y = 0.0f;
+		isJump = false;
+		Pos().y = height;
 		jumpVelocity = originJumpVelocity;
 		return false;
 	}
@@ -3970,17 +3986,16 @@ void Player::GroundCheck()
 
 	if (terrain == nullptr)
 	{
-		if (realPos->Pos().y < 0)
-			Pos().y = 0;
+		height = 0.0f;
 		return;
 	}
 
 
-	Vector3 pos1;
-	terrain->ComputePicking(pos1, realPos->Pos() + Vector3::Up() * 400, Vector3::Down());
+	Vector3 pos;
+	terrain->ComputePicking(pos, realPos->Pos() + Vector3::Up() * 400, Vector3::Down());
+	height = pos.y;
 
-
-	Pos().y = pos1.y;
+	if(!isJump)		Pos().y = height;
 }
 
 void Player::RandVoice()
@@ -4077,13 +4092,19 @@ void Player::GetWireBug()
 
 	float distance = (playerPos - wireBugPos).Length();
 
-	if (KEY_PRESS('G')) // Å° º¯°æ °¡´É
+	wireBug->UpdateUI();
+
+	if (distance <= 150)
 	{
-		if (distance <= 150)
-		{			
-			wireBug->isPlay = true;
+		wireBug->SetWireBugPickUpUIActive(true);
+
+		if (KEY_PRESS('G')) // Å° º¯°æ °¡´É
+		{
 			UI->GetWildBug();
+			wireBug->SetWireBugPickUpUIActive(false);
 			wireBug->SetActive(false);
 		}
 	}
+	else
+		wireBug->SetWireBugPickUpUIActive(false);
 }
