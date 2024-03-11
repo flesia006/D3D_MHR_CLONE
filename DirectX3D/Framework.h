@@ -218,6 +218,8 @@ using namespace GameMath;
 #include "Objects/Particle/Wind.h"
 #include "Objects/Particle/PotionParticle.h"
 #include "Objects/Particle/ValZet.h"
+#include "Objects/Particle/Suwol.h"
+#include "Objects/Particle/TuguEft.h"
 
 #include "Objects/Algorithm/Node.h"
 #include "Objects/Algorithm/Heap.h"

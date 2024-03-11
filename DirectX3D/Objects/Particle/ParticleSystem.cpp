@@ -132,7 +132,7 @@ void ParticleSystem::Stop()
 void ParticleSystem::ParticleRotate()
 {
     float randX = Random(0.f, 3.14f);
-    quad->Rot().x = randX;
+    quad->Rot().z = randX;
 }
 
 void ParticleSystem::HaloPos()
