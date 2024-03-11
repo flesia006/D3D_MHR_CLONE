@@ -13,11 +13,15 @@ public:
 
     void Update();
     void Render();
+    void PostRender();
 
     void Throw(Vector3 pos, Vector3 dir); // 개별 쿠나이에게 던짐 함수를 전달하기 위한 매개함수
                                           // 캐릭터는 이 함수를 쓰고, 이 함수는 진짜 쿠나이를 던진다
 
     bool IsCollision(Collider* collider);
+    void SetEnemy(Valphalk* enemy) 
+    { for (Kunai* kunai : kunaies) 
+        kunai->SetEnemy(enemy); }
 
 private:
 
@@ -26,6 +30,6 @@ private:
                                       // (투사체도 애니메이션이 있는 경우라면 ModelAnimationInstancing 클래스가 필요할 것)
 
     vector<Kunai*> kunaies; // 실제 쿠나이의 주 클래스
-
+    Valphalk* enemy;
 };
 

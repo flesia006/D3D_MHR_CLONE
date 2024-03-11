@@ -5,6 +5,7 @@
 #include "Scenes/ParticleConfigScene.h"
 #include "Scenes/GridScene.h"
 #include "Scenes/MapDesignScene.h"
+#include "Scenes/ParticleScene.h"
 
 #include "Scenes/NotUse/CubeScene.h"
 #include "Scenes/NotUse/SphereScene.h"
@@ -20,7 +21,6 @@
 #include "Scenes/NotUse/AStarScene.h"
 #include "Scenes/NotUse/LightScene.h"
 #include "Scenes/NotUse/BillboardScene.h"
-#include "Scenes/NotUse/ParticleScene.h"
 #include "Scenes/NotUse/MirrorScene.h"
 #include "Scenes/NotUse/WaterScene.h"
 #include "Scenes/NotUse/QuadTreeScene.h"
@@ -59,11 +59,11 @@ GameManager::GameManager()
 //    SceneManager::Get()->Add("ParticleConfig");
 
 
-//    SceneManager::Get()->Create("ValphalkTestScene", new ValphalkTestScene());
-//    SceneManager::Get()->Add("ValphalkTestScene");
+    SceneManager::Get()->Create("ValphalkTestScene", new ValphalkTestScene());
+    SceneManager::Get()->Add("ValphalkTestScene");
 
-   SceneManager::Get()->Create("PlayerTestScene", new PlayerTestScene());
-   SceneManager::Get()->Add("PlayerTestScene");
+//    SceneManager::Get()->Create("PlayerTestScene", new PlayerTestScene());
+//    SceneManager::Get()->Add("PlayerTestScene");
 
 //   SceneManager::Get()->Create("FightTestScene", new FightTestScene());
 //   SceneManager::Get()->Add("FightTestScene");
@@ -90,13 +90,15 @@ void GameManager::Update()
 
 void GameManager::Render()
 {
-    SceneManager::Get()->PreRender();
     
     Device::Get()->Clear();
     Font::Get()->GetDC()->BeginDraw();
     
     Environment::Get()->Set();    
     SceneManager::Get()->Render();
+    SceneManager::Get()->PreRender();
+
+
     
     Environment::Get()->PostSet();
     SceneManager::Get()->PostRender();
@@ -148,6 +150,9 @@ void GameManager::Create()
 
     Font::Get()->AddColor("Gray", 0.9, 0.9, 0.9);
     Font::Get()->AddStyle("Gray", L"Arial", 26, DWRITE_FONT_WEIGHT_MEDIUM);
+
+    Font::Get()->AddColor("RealGray", 0.4, 0.4, 0.4);
+    Font::Get()->AddStyle("RealGray", L"Arial", 26, DWRITE_FONT_WEIGHT_MEDIUM);
     
     Font::Get()->SetColor("White");
     Font::Get()->SetStyle("Default");

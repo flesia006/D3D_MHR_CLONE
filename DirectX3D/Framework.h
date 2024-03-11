@@ -38,9 +38,8 @@
 #define	K_MOVE		  Keyboard::Get()->IsMove()
 
 #define UI  UIManager::Get()
-
-
 #define CAM Environment::Get()->GetMainCamera()
+#define ARROW KunaiManager::Get()
 
 #define DIALOG ImGuiFileDialog::Instance()
 
@@ -49,6 +48,7 @@
 #define INIT  GetClip(curState)->isFirstPlay()
 #define PLAY  if (GetClip(curState)->isFirstPlay()) PlayClip(curState), initRotY = Rot().y
 #define PLAYLOOP  if (GetClip(curState)->isFirstPlay()) PlayClip(curState), initRotY = Rot().y, Pos() = realPos->Pos()
+
 
 
 #include <windows.h>
@@ -212,12 +212,14 @@ using namespace GameMath;
 #include "Objects/Particle/Sp_atk_start.h"
 #include "Objects/Particle/Sp_atk_success.h"
 #include "Objects/Particle/SpiritFlame.h"
+#include "Objects/Particle/Wire_Bug.h"
 #include "Objects/Particle/Val_Jet_Particle.h"
 #include "Objects/Particle/Val_fire.h"
 #include "Objects/Particle/HupgiFire.h"
 #include "Objects/Particle/Wind.h"
 #include "Objects/Particle/PotionParticle.h"
 #include "Objects/Particle/ValZet.h"
+#include "Objects/Particle/Explosion.h"
 
 #include "Objects/Algorithm/Node.h"
 #include "Objects/Algorithm/Heap.h"

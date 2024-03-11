@@ -2,43 +2,65 @@
 #include "Val_fire.h"
 Val_fire::Val_fire()
 {
+	explosionParticle = new ParticleSystem("TextData/Particles/explosion_Particle.fx");
+	explosionParticle->SetScale(3);
 	particle = new ParticleSystem("TextData/Particles/val_energy.fx");
 	particle2 = new ParticleSystem("TextData/Particles/val_energy2.fx");
-	sprite = new Sprite(L"Textures/Effect/val_spark.png", 750, 750, 8, 4, true);
+	sprite = new Sprite(L"Textures/Effect/val_spark.png", 750, 750, 8, 4, true);	
 
-	//particle3 = new ParticleSystem("TextData/Particles/potion_05_v2.fx");
-	//particle4 = new ParticleSystem("TextData/Particles/potion_04.fx");
-	//particle2->SetScale();
-	//particle3->SetScale();		
+	bulletExplosion1 = new Sprite(L"Textures/Effect/Smoke.png", 550, 550, 8, 6, false);
+	bulletExplosion2 = new Sprite(L"Textures/Effect/Boom.png", 750, 750, 5, 4, false);
+	bulletExplosion3 = new Sprite(L"Textures/Effect/Boom.png", 750, 750, 5, 4, false);
+	bulletExplosion4 = new Sprite(L"Textures/Effect/Boom.png", 750, 750, 5, 4, false);
+	bulletSparkExplosion = new Sprite(L"Textures/Effect/val_spark.png", 750, 750, 8, 4, true);
 	particle->SetScale(3.0f);
 	particle2->SetScale(3.0f);	
 }
 
 Val_fire::~Val_fire()
 {
+	delete explosionParticle;
 	delete particle;
 	delete particle2;
 	delete sprite;
-	//delete particle3;
-	//delete particle4;
+	delete bulletExplosion1;
+	delete bulletExplosion2;
+	delete bulletExplosion3;
+	delete bulletExplosion4;
+	delete bulletSparkExplosion;
 }
 
 void Val_fire::Update()
 {
+	explosionParticle->Update();
 	sprite->Update();
 	particle->Update();
 	particle2->Update();
-	//particle3->Update();
-	//particle4->Update();
+	bulletExplosion1->Update();
+	bulletExplosion2->Update();
+	bulletExplosion3->Update();
+	bulletExplosion4->Update();
+	bulletSparkExplosion->Update();
+	//if (particle->GetPos().y <= 1 && IsActive() == true)
+	//{
+	//	bulletExplosion1->Play(particle->GetPos());
+	//	bulletExplosion2->Play(particle->GetPos());
+	//	bulletExplosion3->Play(particle->GetPos());
+	//	bulletExplosion4->Play(particle->GetPos());
+	//}	
 }
 
 void Val_fire::Render()
 {
+	explosionParticle->Render();
+	bulletSparkExplosion->Render();
+	bulletExplosion1->Render();
+	bulletExplosion2->Render();
+	bulletExplosion3->Render();
+	bulletExplosion4->Render();
 	sprite->Render();
 	particle->Render();
 	particle2->Render();
-	//particle3->Render();
-	//particle4->Render();
 }
 
 void Val_fire::GUIRender()
@@ -50,11 +72,8 @@ void Val_fire::GUIRender()
 
 void Val_fire::Play(Vector3 pos, Vector3 rot)
 {
-	//sprite->Play(pos);
 	particle->Play(pos, rot);
 	particle2->Play(pos, rot);
-	//particle3->Play(pos, rot);
-	//particle4->Play(pos, rot);
 }
 
 void Val_fire::PlaySpark(Vector3 pos)
@@ -64,11 +83,10 @@ void Val_fire::PlaySpark(Vector3 pos)
 
 void Val_fire::Stop()
 {
+	explosionParticle->Stop();
 	sprite->Stop();
 	particle->Stop();
 	particle2->Stop();
-	//particle3->Stop();
-	//particle4->Stop();
 }
 
 void Val_fire::ParticleRotate()
@@ -79,8 +97,6 @@ void Val_fire::SetPos(Vector3 pos)
 {
 	particle->SetPos(pos);
 	particle2->SetPos(pos);
-	//particle3->SetPos(pos);
-	//particle4->SetPos(pos);
 }
 
 void Val_fire::SetVortex(Vector3 pos)
@@ -88,10 +104,22 @@ void Val_fire::SetVortex(Vector3 pos)
 	particle->SetPos(pos);
 	particle2->SetPos(pos);
 	
-	//particle3->SetPos(pos);
-	//particle4->SetPos(pos);
 
 	particle2->SetVortex(pos);
 
+}
+
+void Val_fire::PlayExplosion()
+{
+	explosionParticle->Play(particle->GetPos());
+	bulletExplosion1->Play(particle->GetPos());
+	bulletExplosion2->Play(particle->GetPos());
+	bulletExplosion3->Play(particle->GetPos());
+	bulletExplosion4->Play(particle->GetPos());
+}
+
+void Val_fire::PlaySpark()
+{
+	bulletSparkExplosion->Play(particle->GetPos());
 }
 

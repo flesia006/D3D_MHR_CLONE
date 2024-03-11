@@ -146,6 +146,7 @@ public:
 	vector<CapsuleCollider*> GetCollider() { return colliders; }
 	vector<SphereCollider*> GetSphereCollider() { return sphereColliders; }
 	vector<BoxCollider*> GetBoxCollider() { return boxColliders; }
+	Transform* GetRealPos() { return realPos; }
 
 	void minusCurHP(int damage) { curHP -= damage; }
 	void minusHeadHP(int damage) { colliders[HEAD]->partHp -= damage; }
@@ -541,6 +542,7 @@ private:
 	Vector3 jetpos1, jetpos2, jetpos3, jetpos4, jetpos5, jetpos6;
 
 	vector<HupgiFire*> hupgiFire;
+	vector<Explosion*> explosionParticle;
 	//Vector3 jetpos2;
 
 	vector<Transform*> zetPos;
