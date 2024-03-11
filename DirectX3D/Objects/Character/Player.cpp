@@ -2871,6 +2871,7 @@ void Player::L128()	// 날라차기 시작
 	if (!playOncePerMotion)
 	{
 		UI->UseBugSkill();
+		Sounds::Get()->Play("wirebug", 2.0f);
 		playOncePerMotion = true;
 		isEvaded = false;
 	}
@@ -3503,6 +3504,10 @@ void Player::R600() // 숫돌질
 void Player::R601() // 숫돌질
 {
 	PLAY;
+
+	if (RATIO > 0.3 && RATIO < 0.4)
+		Sounds::Get()->Play("wheatstone1", 0.3f);
+
 	if (RATIO > 0.96)
 		SetState(R_602);
 }
@@ -3510,6 +3515,10 @@ void Player::R601() // 숫돌질
 void Player::R602() // 숫돌 마무리
 {
 	PLAY;
+
+	if (RATIO > 0.3 && RATIO < 0.4)
+		Sounds::Get()->Play("wheatstone2", 0.3f);
+
 	if (RATIO > 0.96)
 	{
 		if (K_MOVE)
@@ -4073,6 +4082,7 @@ void Player::GetWireBug()
 		if (KEY_PRESS('G')) // 키 변경 가능
 		{
 			UI->GetWildBug();
+			Sounds::Get()->Play("getWildBug", 1.0f);
 			wireBug->SetWireBugPickUpUIActive(false);
 			wireBug->SetActive(false);
 		}
