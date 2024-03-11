@@ -232,8 +232,8 @@ public:
     bool useSelectBar = false;
     Vector3 MousePos;
 
-    int havePotion = 10;
-    int haveGPotion = 0;
+    int havePotion = 10; // 애는 20이 10개
+    int haveGPotion = 0; // 애는 10이 10개
 
     // 드래그 슬롯 실행 할때 유무 확인 하기
     bool useDragBar = false;
