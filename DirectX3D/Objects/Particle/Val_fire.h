@@ -19,11 +19,20 @@ public:
 	void SetParent(Transform* transform) { parent = transform; }
 	void SetPos(Vector3 pos);
 	void SetVortex(Vector3 pos);
+	void PlayExplosion();
+	void PlaySpark();
 
 private:
 	ParticleSystem* particle = nullptr;
 	ParticleSystem* particle2 = nullptr;
 	Sprite* sprite;
+	ParticleSystem* explosionParticle = nullptr;
+
+	Sprite* bulletExplosion1;
+	Sprite* bulletExplosion2;
+	Sprite* bulletExplosion3;
+	Sprite* bulletExplosion4;
+	Sprite* bulletSparkExplosion;
 
 	float lifeTime = 0;
 	Transform* parent = nullptr;

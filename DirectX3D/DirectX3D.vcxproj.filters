@@ -58,7 +58,7 @@
     <ClCompile Include="Objects\Static\Reflector.cpp" />
     <ClCompile Include="Scenes\NotUse\QuadTreeScene.cpp" />
     <ClCompile Include="Scenes\ParticleConfigScene.cpp" />
-    <ClCompile Include="Scenes\NotUse\ParticleScene.cpp" />
+    <ClCompile Include="Scenes\ParticleScene.cpp" />
     <ClCompile Include="Scenes\NotUse\BillboardScene.cpp" />
     <ClCompile Include="Scenes\NotUse\AStarScene.cpp" />
     <ClCompile Include="DirectX3D.cpp" />
@@ -176,6 +176,10 @@
     <ClCompile Include="Objects\Character\Sample.cpp" />
     <ClCompile Include="Objects\Particle\Suwol.cpp" />
     <ClCompile Include="Objects\Particle\TuguEft.cpp" />
+    <ClCompile Include="Objects\Particle\Wire_Bug.cpp" />
+    <ClCompile Include="Objects\Particle\Explosion.cpp" />
+    <ClCompile Include="Objects\Particle\Garuk_Fire.cpp" />
+    <ClCompile Include="Objects\Particle\Sutdol.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Objects\Character\DummyValphalk.h" />
@@ -204,7 +208,7 @@
     <ClInclude Include="Objects\Static\Reflector.h" />
     <ClInclude Include="Scenes\NotUse\QuadTreeScene.h" />
     <ClInclude Include="Scenes\ParticleConfigScene.h" />
-    <ClInclude Include="Scenes\NotUse\ParticleScene.h" />
+    <ClInclude Include="Scenes\ParticleScene.h" />
     <ClInclude Include="Scenes\NotUse\BillboardScene.h" />
     <ClInclude Include="Scenes\NotUse\AStarScene.h" />
     <ClInclude Include="DirectX3D.h" />
@@ -326,12 +330,16 @@
     <ClInclude Include="Objects\Particle\HupgiFire.h" />
     <ClInclude Include="Objects\Particle\Wind.h" />
     <ClInclude Include="Objects\Character\WireBug.h" />
-    <ClInclude Include="Objects\Particle\Sp_atk_start.h" />
     <ClInclude Include="Objects\Particle\Sp_atk_success.h" />
+    <ClInclude Include="Objects\Particle\Sp_atk_start.h" />
     <ClInclude Include="Objects\Particle\SpiritFlame.h" />
     <ClInclude Include="Objects\Character\Sample.h" />
     <ClInclude Include="Objects\Particle\Suwol.h" />
     <ClInclude Include="Objects\Particle\TuguEft.h" />
+    <ClInclude Include="Objects\Particle\Wire_Bug.h" />
+    <ClInclude Include="Objects\Particle\Explosion.h" />
+    <ClInclude Include="Objects\Particle\Garuk_Fire.h" />
+    <ClInclude Include="Objects\Particle\Sutdol.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DirectX3D.rc" />

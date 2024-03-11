@@ -39,6 +39,9 @@ Player::Player() : ModelAnimator("Player")
 	potionParticle = new PotionParticle();
 	haloTransform = new Transform();
 	haloCollider = new CapsuleCollider();
+	wireBugParticle = new Wire_Bug();
+	sutdol = new Sutdol();
+
 	haloCollider->SetParent(swordStart);
 
 	suwol = new Suwol();
@@ -55,7 +58,7 @@ Player::Player() : ModelAnimator("Player")
 	//	longSword->Rot().x -= XM_PIDIV2;	
 
 	tmpCollider = new CapsuleCollider(1, 0.1);
-	tmpCollider->Scale() *= 6.0f;
+	tmpCollider->Scale().x *= 6.0f;
 
 	tmpCollider2 = new CapsuleCollider(1, 0.1);
 	tmpCollider2->Scale() *= 6.0f;
@@ -84,6 +87,7 @@ Player::Player() : ModelAnimator("Player")
 
 Player::~Player()
 {
+	delete sutdol;
 	delete evadeCheckCollider;
 	delete bodyCollider;
 	delete tmpCollider3;
@@ -114,6 +118,8 @@ Player::~Player()
 
 void Player::Update()
 {
+	if (KEY_DOWN('B'))
+		SetState(L_001);
 
 	//if (!DeathCheck())
 	//{
@@ -152,8 +158,7 @@ void Player::PreRender()
 	}
 	////////////////////////////////////////////
 	// Particles
-	FOR(hitParticle.size())
-		hitParticle[i]->Render();
+	sutdol->Render();
 	hitBoomParticle->Render();
 	criticalParticle->Render();
 	haloCollider->Render();
@@ -242,6 +247,18 @@ void Player::UpdateWorlds()
 			}
 		}
 		Rot().y = garuk->Rot().y;
+		if (curState == R_600 || curState == R_601 || curState == R_602)
+		{
+			mainHand->SetWorld(GetTransformByNode(lefeHandNode));
+			longSword->Pos() = {};
+			longSword->Rot() = {};
+		}
+		else
+		{
+			mainHand->SetWorld(GetTransformByNode(backSwdNode));
+			longSword->Pos() = { -32,32,23 };
+			longSword->Rot() = { -0.86f,-1.2f,+1.46f };
+		}
 	}
 
 	Vector3 camRot = CAM->Rot();
@@ -286,6 +303,7 @@ void Player::UpdateWorlds()
 
 	swordSwingDir = lastSwordEnd - swordStart->GlobalPos();
 	tmpCollider->Pos() = GetTranslationByNode(node);
+	tmpCollider->Rot() = GetRotationByNode(node);
 
 	backPos->UpdateWorld();
 	forwardPos->UpdateWorld();
@@ -376,7 +394,7 @@ void Player::SharpeningStone()
 		|| UI->useDragSlot2 && KEY_DOWN('E') && !cure && !Lcure
 		|| UI->useNumberBar && KEY_DOWN('3') && !Lcure && !cure)
 	{
-		UI->SharpeningStone();
+		//UI->SharpeningStone();
 	}
 }
 
@@ -431,7 +449,7 @@ void Player::GUIRender()
 	//ImGui::SliderInt("keyboard", &U, 0, 200);
 	//
 	//
-//	ImGui::SliderInt("node", &node, 1, 10);
+	ImGui::SliderInt("node", &node, 1, 210);
 //	ImGui::SliderFloat("temp", &temp, -10, 10);
 //	ImGui::SliderFloat("temp2", &temp2, -10, 10);
 //	ImGui::SliderFloat("temp3", &temp3, 10, 15);
@@ -877,6 +895,7 @@ void Player::EffectUpdates()
 	spSuccessParticle->SetPos({ realPos->Pos().x,realPos->Pos().y + 100,realPos->Pos().z });
 	//spiritParticle->SetPos({ realPos->Pos().x,realPos->Pos().y + 100,realPos->Pos().z });
 	spiritParticle->Update();
+	sutdol->Update();
 
 	suwol->Update();
 	tugu->Update();
@@ -2865,10 +2884,17 @@ void Player::L122() // 날라차기 착지
 
 void Player::L128()	// 날라차기 시작
 {
-	PLAY;
+	PLAY;	
+	Vector3 a = GetTranslationByNode(131);
+	Vector3 b = GetTranslationByNode(133);
+	Vector3 c = b - a;
+	c.GetNormalized();
+	
+	wireBugParticle->Play(GetTranslationByNode(108), GetRotationByNode(129));
 	if (!playOncePerMotion)
 	{
 		UI->UseBugSkill();
+		Sounds::Get()->Play("wirebug", 2.0f);
 		playOncePerMotion = true;
 		isEvaded = false;
 	}
@@ -2964,10 +2990,15 @@ void Player::L133()	// 투구깨기
 {
 	PLAY;
 	if (INIT)
+	{
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_25", .5f);
-
-	if (RATIO > 0.2 && RATIO < 0.3)
-		RandSpecialVoice();
+		if (isInitVoice == false)
+		{
+			RandSpecialVoice();
+			isInitVoice = true;
+		}
+	}
+	
 	if (RATIO > 0.4 && RATIO < 0.44)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
 
@@ -3011,6 +3042,7 @@ void Player::L134()	// 투구깨기 루프
 void Player::L135()	// 투구깨기 끝
 {
 	PLAY;
+	isInitVoice = false;
 	EndEffect();
 	CAM->Zoom(400, 5);
 	{
@@ -3488,6 +3520,7 @@ void Player::R402() // 물약 다먹은
 		Sounds::Get()->Play("health_potion", 0.3f);
 		potionParticle->Play(Pos() + Back() * 10, { 0,0,0 });
 	}
+	
 	if (RATIO > 0.96)
 	{
 		if (K_MOVE)
@@ -3501,6 +3534,16 @@ void Player::R402() // 물약 다먹은
 void Player::R600() // 숫돌질
 {
 	PLAY;
+	Vector3 r = GetTranslationByNode(rightHandNode) - GetTranslationByNode(145);
+	r.GetNormalized();
+	sutdol->SetPos(GetTranslationByNode(rightHandNode));
+
+	if (RATIO < 0.8 && RATIO > 0.79)
+	{
+		sutdol->Play(GetTranslationByNode(rightHandNode), r);
+		Sounds::Get()->Play("wheatstone1", 0.3f);
+	}
+
 	if (RATIO > 0.96)
 		SetState(R_601);
 }
@@ -3508,6 +3551,17 @@ void Player::R600() // 숫돌질
 void Player::R601() // 숫돌질
 {
 	PLAY;
+	Vector3 r = GetTranslationByNode(rightHandNode) - GetTranslationByNode(145);
+	r.GetNormalized();
+	sutdol->SetPos(GetTranslationByNode(rightHandNode));
+
+	if (RATIO < 0.35 && RATIO > 0.31)
+	{
+		sutdol->Play(GetTranslationByNode(rightHandNode), r);
+		Sounds::Get()->Play("wheatstone1", 0.3f);
+	}
+	
+
 	if (RATIO > 0.96)
 		SetState(R_602);
 }
@@ -3515,6 +3569,23 @@ void Player::R601() // 숫돌질
 void Player::R602() // 숫돌 마무리
 {
 	PLAY;
+	Vector3 r = GetTranslationByNode(rightHandNode) - GetTranslationByNode(145);
+	r.GetNormalized();
+	sutdol->SetPos(GetTranslationByNode(rightHandNode));
+
+	if (RATIO < 0.1 && RATIO > 0.09)
+	{
+		sutdol->Play(GetTranslationByNode(rightHandNode), r);
+		Sounds::Get()->Play("wheatstone1", 0.3f);
+	}
+	if(RATIO>0.59)
+		sutdol->SetPos(longSword->GlobalPos() + longSword->Back() * 120.0f);
+	if (RATIO < 0.6 && RATIO>0.59)
+	{
+		sutdol->PlayHalo(longSword->GlobalPos() + longSword->Back() * 120.0f);
+		Sounds::Get()->Play("wheatstone2", 0.3f);
+		UI->SharpeningStone();
+	}
 	if (RATIO > 0.96)
 	{
 		if (K_MOVE)
@@ -3995,10 +4066,10 @@ void Player::RandSpecialVoice()
 	randVoice = rand() % 4;
 	switch (randVoice)
 	{
-	case 0:		Sounds::Get()->Play("special1", 2.5f);		break;
-	case 1:		Sounds::Get()->Play("special2", 2.5f);		break;
-	case 2:		Sounds::Get()->Play("special3", 2.5f);		break;
-	case 3:		Sounds::Get()->Play("special4", 2.5f);		break;
+	case 0:		Sounds::Get()->Play("special1", 2.1f);		break;
+	case 1:		Sounds::Get()->Play("special2", 2.1f);		break;
+	case 2:		Sounds::Get()->Play("special3", 2.1f);		break;
+	case 3:		Sounds::Get()->Play("special4", 2.1f);		break;
 	default:
 		break;
 	}
@@ -4079,6 +4150,7 @@ void Player::GetWireBug()
 		if (KEY_PRESS('G')) // 키 변경 가능
 		{
 			UI->GetWildBug();
+			Sounds::Get()->Play("getWildBug", 1.0f);
 			wireBug->SetWireBugPickUpUIActive(false);
 			wireBug->SetActive(false);
 		}

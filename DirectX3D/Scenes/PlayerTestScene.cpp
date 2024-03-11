@@ -82,7 +82,7 @@ void PlayerTestScene::PostRender()
 void PlayerTestScene::GUIRender()
 {
 	//valphalk->GUIRender();
-	//player->GUIRender();
+	player->GUIRender();
 	garuk->GUIRender();
 	wireBug->GUIRender();
 }

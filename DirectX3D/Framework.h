@@ -212,6 +212,7 @@ using namespace GameMath;
 #include "Objects/Particle/Sp_atk_start.h"
 #include "Objects/Particle/Sp_atk_success.h"
 #include "Objects/Particle/SpiritFlame.h"
+#include "Objects/Particle/Wire_Bug.h"
 #include "Objects/Particle/Val_Jet_Particle.h"
 #include "Objects/Particle/Val_fire.h"
 #include "Objects/Particle/HupgiFire.h"
@@ -220,6 +221,9 @@ using namespace GameMath;
 #include "Objects/Particle/ValZet.h"
 #include "Objects/Particle/Suwol.h"
 #include "Objects/Particle/TuguEft.h"
+#include "Objects/Particle/Explosion.h"
+#include "Objects/Particle/Garuk_Fire.h"
+#include "Objects/Particle/Sutdol.h"
 
 #include "Objects/Algorithm/Node.h"
 #include "Objects/Algorithm/Heap.h"

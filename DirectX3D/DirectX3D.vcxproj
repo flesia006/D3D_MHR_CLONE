@@ -142,12 +142,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Objects\Particle\Explosion.h" />
     <ClInclude Include="Objects\Character\Sample.h" />
     <ClInclude Include="Objects\Character\WireBug.h" />
+    <ClInclude Include="Objects\Particle\Garuk_Fire.h" />
     <ClInclude Include="Objects\Particle\HupgiFire.h" />
     <ClInclude Include="Objects\Particle\SpiritFlame.h" />
     <ClInclude Include="Objects\Particle\Sp_atk_start.h" />
     <ClInclude Include="Objects\Particle\Sp_atk_success.h" />
+    <ClInclude Include="Objects\Particle\Sutdol.h" />
     <ClInclude Include="Objects\Particle\Val_fire.h" />
     <ClInclude Include="Scenes\FightTestScene.h" />
     <ClInclude Include="Objects\Character\DummyValphalk.h" />
@@ -178,7 +181,7 @@
     <ClInclude Include="Objects\Static\Reflector.h" />
     <ClInclude Include="Scenes\NotUse\QuadTreeScene.h" />
     <ClInclude Include="Scenes\ParticleConfigScene.h" />
-    <ClInclude Include="Scenes\NotUse\ParticleScene.h" />
+    <ClInclude Include="Scenes\ParticleScene.h" />
     <ClInclude Include="Scenes\NotUse\BillboardScene.h" />
     <ClInclude Include="Scenes\NotUse\AStarScene.h" />
     <ClInclude Include="DirectX3D.h" />
@@ -295,15 +298,19 @@
     <ClInclude Include="Scenes\ValphalkTestScene.h" />
     <ClInclude Include="Objects\Particle\ValZet.h" />
     <ClInclude Include="Objects\Particle\Wind.h" />
+    <ClInclude Include="Objects\Particle\Wire_Bug.h" />
     <ClInclude Include="Objects\Particle\TuguEft.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Objects\Particle\Explosion.cpp" />
     <ClCompile Include="Objects\Character\Sample.cpp" />
     <ClCompile Include="Objects\Character\WireBug.cpp" />
+    <ClCompile Include="Objects\Particle\Garuk_Fire.cpp" />
     <ClCompile Include="Objects\Particle\HupgiFire.cpp" />
     <ClCompile Include="Objects\Particle\SpiritFlame.cpp" />
     <ClCompile Include="Objects\Particle\Sp_atk_start.cpp" />
     <ClCompile Include="Objects\Particle\Sp_atk_success.cpp" />
+    <ClCompile Include="Objects\Particle\Sutdol.cpp" />
     <ClCompile Include="Objects\Particle\Val_fire.cpp" />
     <ClCompile Include="Scenes\FightTestScene.cpp" />
     <ClCompile Include="Objects\Character\DummyValphalk.cpp" />
@@ -334,7 +341,7 @@
     <ClCompile Include="Objects\Static\Reflector.cpp" />
     <ClCompile Include="Scenes\NotUse\QuadTreeScene.cpp" />
     <ClCompile Include="Scenes\ParticleConfigScene.cpp" />
-    <ClCompile Include="Scenes\NotUse\ParticleScene.cpp" />
+    <ClCompile Include="Scenes\ParticleScene.cpp" />
     <ClCompile Include="Scenes\NotUse\BillboardScene.cpp" />
     <ClCompile Include="Scenes\NotUse\AStarScene.cpp" />
     <ClCompile Include="DirectX3D.cpp" />
@@ -444,6 +451,7 @@
     <ClCompile Include="Objects\Particle\Wind.cpp" />
     <ClCompile Include="Objects\Particle\Suwol.cpp" />
     <ClCompile Include="Objects\Particle\TuguEft.cpp" />
+    <ClCompile Include="Objects\Particle\Wire_Bug.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DirectX3D.rc" />

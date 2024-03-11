@@ -378,6 +378,7 @@ private:
 	bool callGaruk = false;
 	bool rideCAM = false;
 	bool isJump = false;
+	bool isInitVoice = false;
 
 
 	WireBug* wireBug = nullptr;
@@ -394,7 +395,8 @@ private:
 	Sp_atk_success* spSuccessParticle;
 	PotionParticle* potionParticle;
 	SpiritFlame* spiritParticle;
-
+	Wire_Bug* wireBugParticle;
+	Sutdol* sutdol;
 	Transform* haloTransform = nullptr;
 	CapsuleCollider* haloCollider = nullptr;
 	Suwol* suwol = nullptr;

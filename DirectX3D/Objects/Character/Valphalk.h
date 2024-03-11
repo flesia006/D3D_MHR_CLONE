@@ -542,6 +542,7 @@ private:
 	Vector3 jetpos1, jetpos2, jetpos3, jetpos4, jetpos5, jetpos6;
 
 	vector<HupgiFire*> hupgiFire;
+	vector<Explosion*> explosionParticle;
 	//Vector3 jetpos2;
 
 	vector<Transform*> zetPos;

@@ -39,8 +39,8 @@ ParticleSystem::ParticleSystem(wstring file)
     blendState[1]->Alpha(true); //알파 적용 (반투명 설정 있으면 적용)
 
     FOR(2) depthState[i] = new DepthStencilState();
-    //depthState[1]->DepthWriteMask(D3D11_DEPTH_WRITE_MASK_ALL); // 가려지는 이펙트
-    depthState[1]->DepthWriteMask(D3D11_DEPTH_WRITE_MASK_ZERO); // 안 가려지는 이펙트
+    depthState[1]->DepthWriteMask(D3D11_DEPTH_WRITE_MASK_ALL); // 가려지는 이펙트
+    //depthState[1]->DepthWriteMask(D3D11_DEPTH_WRITE_MASK_ZERO); // 안 가려지는 이펙트
 
     quad->SetActive(false); // 일단 터질 때가 아니어서 비활성화
     
@@ -131,8 +131,8 @@ void ParticleSystem::Stop()
 
 void ParticleSystem::ParticleRotate()
 {
-    float randX = Random(0.f, 3.14f);
-    quad->Rot().z = randX;
+    float randZ = Random(0.f, 3.14f);
+    quad->Rot().z = randZ;
 }
 
 void ParticleSystem::HaloPos()
@@ -168,8 +168,8 @@ void ParticleSystem::SetVortex(Vector3 pos)
     //quad->SetParent(parent);
     //quad->Pos() = { pos.x + 10, pos.y, pos.z + 10 };
     quad->Rot().x = XM_PIDIV2;
-    quad->Rot().y += 10 * DELTA;
-    quad->Rot().z = XM_PIDIV2;
+    quad->Rot().z += 10 * DELTA;
+    quad->Rot().y = XM_PIDIV2;
     //quad->Pos() = pos;
     //parent->Rot().y += 1.01f * DELTA;
 
