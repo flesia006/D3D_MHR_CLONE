@@ -463,7 +463,8 @@ private:
 	SphereCollider* effectSphere1;
 	SphereCollider* effectSphere2;
 	Vector3 forwardBoomPosInit = { 0,-300,-1000 };
-
+	Vector3 explosionPos = {};
+	Vector3 explosionPos2 = {};
 	//공격 충돌체 보관용 벡터
 	vector<SphereCollider*> sphereColliders;
 	vector<BoxCollider*> boxColliders;

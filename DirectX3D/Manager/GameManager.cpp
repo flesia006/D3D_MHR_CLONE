@@ -230,55 +230,66 @@ void GameManager::Create()
     // Valphalk
     // = Voice = 
     // 포효
-    sound->AddSound("em086_05_vo_media_10", SoundPath + L"em086_05_vo_media_10.mp3");
+    sound->AddSound("em086_05_vo_media_10", SoundPath + L"Valphalk/em086_05_vo_media_10.mp3");
     // 흡기 사운드
-    sound->AddSound("em086_05_vo_media_20", SoundPath + L"em086_05_vo_media_20.mp3");
+    sound->AddSound("em086_05_vo_media_20", SoundPath + L"Valphalk/em086_05_vo_media_20.mp3");
     // DownBlast(옆으로돌아 측면 폭발)
-    sound->AddSound("em086_05_vo_media_14", SoundPath + L"em086_05_vo_media_14.mp3");
+    sound->AddSound("em086_05_vo_media_14", SoundPath + L"Valphalk/em086_05_vo_media_14.mp3");
     // 공격 사운드 1 아웅 (downblast 폭발 후)
-    sound->AddSound("em086_05_vo_media_1", SoundPath + L"em086_05_vo_media_1.mp3");
+    sound->AddSound("em086_05_vo_media_1", SoundPath + L"Valphalk/em086_05_vo_media_1.mp3");
     // 공격 사운드 4 (찌르기 준비)
-    sound->AddSound("em086_05_vo_media_4", SoundPath + L"em086_05_vo_media_4.mp3");
+    sound->AddSound("em086_05_vo_media_4", SoundPath + L"Valphalk/em086_05_vo_media_4.mp3");
     // 공격 사운드 5 크앙
-    sound->AddSound("em086_05_vo_media_5", SoundPath + L"em086_05_vo_media_5.mp3");
+    sound->AddSound("em086_05_vo_media_5", SoundPath + L"Valphalk/em086_05_vo_media_5.mp3");
+    // 급강하 전방폭발
+    sound->AddSound("em086_05_vo_media_18", SoundPath + L"Valphalk/em086_05_vo_media_18.mp3");
     // 대경직
-    sound->AddSound("em086_05_vo_media_25", SoundPath + L"em086_05_vo_media_25.mp3");
+    sound->AddSound("em086_05_vo_media_25", SoundPath + L"Valphalk/em086_05_vo_media_25.mp3");
     // 소경직
-    sound->AddSound("em086_05_vo_media_29", SoundPath + L"em086_05_vo_media_29.mp3");
+    sound->AddSound("em086_05_vo_media_29", SoundPath + L"Valphalk/em086_05_vo_media_29.mp3");
     // 사망
-    sound->AddSound("em086_05_vo_media_30", SoundPath + L"em086_05_vo_media_30.mp3");
+    sound->AddSound("em086_05_vo_media_30", SoundPath + L"Valphalk/em086_05_vo_media_30.mp3");
 
     // = SFX =     
     // 흡기 시작
-    sound->AddSound("em086_05_fx_media_40", SoundPath + L"em086_05_fx_media_40.mp3");
+    sound->AddSound("em086_05_fx_media_40", SoundPath + L"Valphalk/em086_05_fx_media_40.mp3");
     // 흡기 끝
-    sound->AddSound("em086_05_fx_media_51", SoundPath + L"em086_05_fx_media_51.mp3");
+    sound->AddSound("em086_05_fx_media_51", SoundPath + L"Valphalk/em086_05_fx_media_51.mp3");
     // 습격 부스터 가동
-    sound->AddSound("em086_05_fx_media_25", SoundPath + L"em086_05_fx_media_25.mp3");
+    sound->AddSound("em086_05_fx_media_25", SoundPath + L"Valphalk/em086_05_fx_media_25.mp3");
     // 습격 출발
-    sound->AddSound("em086_05_fx_media_22", SoundPath + L"em086_05_fx_media_22.mp3");
+    sound->AddSound("em086_05_fx_media_22", SoundPath + L"Valphalk/em086_05_fx_media_22.mp3");
     // 습격 비행중
-    sound->AddSound("em086_05_fx_media_33", SoundPath + L"em086_05_fx_media_33.mp3");
+    sound->AddSound("em086_05_fx_media_33", SoundPath + L"Valphalk/em086_05_fx_media_33.mp3");
     // 습격 낙하직전
-    sound->AddSound("em086_05_fx_media_19", SoundPath + L"em086_05_fx_media_19.mp3");
+    sound->AddSound("em086_05_fx_media_19", SoundPath + L"Valphalk/em086_05_fx_media_19.mp3");
     // 습격 낙하
-    sound->AddSound("em086_05_fx_media_20", SoundPath + L"em086_05_fx_media_20.mp3");
-    // 탄발사 차지 (6탄, downblast 등 차지에 쓰임)
-    sound->AddSound("em086_05_fx_media_32", SoundPath + L"em086_05_fx_media_32.mp3");    
+    sound->AddSound("em086_05_fx_media_20", SoundPath + L"Valphalk/em086_05_fx_media_20.mp3");
+    // 탄발사 차지 (6탄, downblast 등 차지에 쓰임 치지직 소리)
+    sound->AddSound("em086_05_fx_media_32", SoundPath + L"Valphalk/em086_05_fx_media_32.mp3");    
     // 탄발사 사운드
-    sound->AddSound("em086_05_fx_media_50", SoundPath + L"em086_05_fx_media_50.mp3");
-    sound->AddSound("em086_05_fx_media_50_2", SoundPath + L"em086_05_fx_media_50.mp3");
+    sound->AddSound("em086_05_fx_media_50", SoundPath + L"Valphalk/em086_05_fx_media_50.mp3");
+    sound->AddSound("em086_05_fx_media_50_2", SoundPath + L"Valphalk/em086_05_fx_media_50.mp3");
+    // 공중 체공
+    sound->AddSound("em086_05_fx_media_15", SoundPath + L"Valphalk/em086_05_fx_media_15.mp3");
+    // 체공중 돌진
+    sound->AddSound("em086_05_fx_media_5", SoundPath + L"Valphalk/em086_05_fx_media_5.mp3");
+    // 냅다 박기
+    sound->AddSound("em086_05_fx_media_30", SoundPath + L"Valphalk/em086_05_fx_media_30.mp3");
+    // 폭발 사운드
+    sound->AddSound("em086_05_fx_media_35", SoundPath + L"Valphalk/em086_05_fx_media_35.mp3");
+
 
     // = SE = ( 폭발음, 걸음 소리 등)
     // 기본 폭발 사운드
-    sound->AddSound("em086_05_se_media_10", SoundPath + L"em086_05_se_media_10.mp3");
-    sound->AddSound("em086_05_se_media_10_2", SoundPath + L"em086_05_se_media_10.mp3");
+    sound->AddSound("em086_05_se_media_10", SoundPath + L"Valphalk/em086_05_se_media_10.mp3");
+    sound->AddSound("em086_05_se_media_10_2", SoundPath + L"Valphalk/em086_05_se_media_10.mp3");
     // 찌르기
-    sound->AddSound("em086_05_se_media_20", SoundPath + L"em086_05_se_media_20.mp3");
+    sound->AddSound("em086_05_se_media_20", SoundPath + L"Valphalk/em086_05_se_media_20.mp3");
     // 찌르고 돌리기
-    sound->AddSound("em086_05_se_media_32", SoundPath + L"em086_05_se_media_32.mp3");
+    sound->AddSound("em086_05_se_media_32", SoundPath + L"Valphalk/em086_05_se_media_32.mp3");
     // 날개 휘두르기
-    sound->AddSound("em086_05_se_media_46", SoundPath + L"em086_05_se_media_46.mp3");
+    sound->AddSound("em086_05_se_media_46", SoundPath + L"Valphalk/em086_05_se_media_46.mp3");
 
 
     
