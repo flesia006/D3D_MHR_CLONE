@@ -173,7 +173,7 @@ void GameManager::Create()
     sound->AddSound("Valphalk_Thema", SoundPath + L"Valphalk_Thema.mp3", true);
     sound->AddSound("env_114", SoundPath + L"env_114.mp3", true);
 
-    sound->Play("Valphalk_Thema", 0.03f);
+    //sound->Play("Valphalk_Thema", 0.03f);
     sound->Play("env_114", .5f);
     /////////////////////////////////////////////////////////////
     // Player
@@ -237,9 +237,15 @@ void GameManager::Create()
     // 공격 사운드 1 아웅 (downblast 폭발 후)
     sound->AddSound("em086_05_vo_media_1", SoundPath + L"em086_05_vo_media_1.mp3");
     // 공격 사운드 4 (찌르기 준비)
-    sound->AddSound("em086_05_vo_media_1", SoundPath + L"em086_05_vo_media_4.mp3");
+    sound->AddSound("em086_05_vo_media_4", SoundPath + L"em086_05_vo_media_4.mp3");
     // 공격 사운드 5 크앙
     sound->AddSound("em086_05_vo_media_5", SoundPath + L"em086_05_vo_media_5.mp3");
+    // 대경직
+    sound->AddSound("em086_05_vo_media_25", SoundPath + L"em086_05_vo_media_25.mp3");
+    // 소경직
+    sound->AddSound("em086_05_vo_media_29", SoundPath + L"em086_05_vo_media_29.mp3");
+    // 사망
+    sound->AddSound("em086_05_vo_media_30", SoundPath + L"em086_05_vo_media_30.mp3");
 
     // = SFX =     
     // 흡기 시작
@@ -270,12 +276,21 @@ void GameManager::Create()
     sound->AddSound("em086_05_se_media_20", SoundPath + L"em086_05_se_media_20.mp3");
     // 찌르고 돌리기
     sound->AddSound("em086_05_se_media_32", SoundPath + L"em086_05_se_media_32.mp3");
+    // 날개 휘두르기
+    sound->AddSound("em086_05_se_media_46", SoundPath + L"em086_05_se_media_46.mp3");
 
 
     
     /////////////////////////////////////////////////////////////
     // Item
     Sounds::Get()->AddSound("health_potion", SoundPath + L"health_potion.mp3");
+    
+    Sounds::Get()->AddSound("getWildBug", SoundPath + L"getWildBug.mp3");
+
+    Sounds::Get()->AddSound("wheatstone1", SoundPath + L"wheatstone1.mp3");
+    Sounds::Get()->AddSound("wheatstone2", SoundPath + L"wheatstone2.mp3");
+
+    Sounds::Get()->AddSound("wirebug", SoundPath + L"Player/wirebug.mp3");
 }
 
 void GameManager::Delete()

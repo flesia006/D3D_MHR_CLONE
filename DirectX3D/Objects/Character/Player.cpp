@@ -2913,6 +2913,7 @@ void Player::L128()	// 날라차기 시작
 	if (!playOncePerMotion)
 	{
 		UI->UseBugSkill();
+		Sounds::Get()->Play("wirebug", 2.0f);
 		playOncePerMotion = true;
 		isEvaded = false;
 	}
@@ -3545,7 +3546,10 @@ void Player::R600() // 숫돌질
 	sutdol->SetPos(GetTranslationByNode(rightHandNode));
 
 	if (RATIO < 0.8 && RATIO > 0.79)
+	{
 		sutdol->Play(GetTranslationByNode(rightHandNode), r);
+		Sounds::Get()->Play("wheatstone1", 0.3f);
+	}
 
 	if (RATIO > 0.96)
 		SetState(R_601);
@@ -3559,8 +3563,12 @@ void Player::R601() // 숫돌질
 	sutdol->SetPos(GetTranslationByNode(rightHandNode));
 
 	if (RATIO < 0.35 && RATIO > 0.31)
+	{
 		sutdol->Play(GetTranslationByNode(rightHandNode), r);
+		Sounds::Get()->Play("wheatstone1", 0.3f);
+	}
 	
+
 	if (RATIO > 0.96)
 		SetState(R_602);
 }
@@ -3573,11 +3581,17 @@ void Player::R602() // 숫돌 마무리
 	sutdol->SetPos(GetTranslationByNode(rightHandNode));
 
 	if (RATIO < 0.1 && RATIO > 0.09)
+	{
 		sutdol->Play(GetTranslationByNode(rightHandNode), r);
+		Sounds::Get()->Play("wheatstone1", 0.3f);
+	}
 	if(RATIO>0.59)
 		sutdol->SetPos(longSword->GlobalPos() + longSword->Back() * 120.0f);
 	if (RATIO < 0.6 && RATIO>0.59)
+	{
 		sutdol->PlayHalo(longSword->GlobalPos() + longSword->Back() * 120.0f);
+		Sounds::Get()->Play("wheatstone2", 0.3f);
+	}
 	if (RATIO > 0.96)
 	{
 		if (K_MOVE)
@@ -4142,6 +4156,7 @@ void Player::GetWireBug()
 		if (KEY_PRESS('G')) // 키 변경 가능
 		{
 			UI->GetWildBug();
+			Sounds::Get()->Play("getWildBug", 1.0f);
 			wireBug->SetWireBugPickUpUIActive(false);
 			wireBug->SetActive(false);
 		}

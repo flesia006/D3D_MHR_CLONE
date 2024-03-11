@@ -417,6 +417,18 @@ void Valphalk::Update()
 		}
 	}
 	ModelAnimator::Update();
+
+	////////////////////////
+	//디버그 확인용
+	if (KEY_DOWN('5'))
+		colliders[HEAD]->partHp = -100;
+
+	if (KEY_DOWN('6'))
+		colliders[LLEG1]->partHp = -100;
+
+	if (KEY_DOWN('7'))
+		curHP = -100;
+	//////////////////////////
 }
 
 void Valphalk::PreRender()
@@ -3688,6 +3700,7 @@ void Valphalk::E2121()//왼쪽 날개 들었다가 찍은다음 살짝 일어나서 다시 자세잡음
 
 	if (RATIO > 0.277 && RATIO < 0.408)
 	{
+		Sounds::Get()->Play("em086_05_vo_media_5", 0.3f);
 		SetColliderAttack(LWING, 0.408, 40, 2);
 	}
 
@@ -3763,6 +3776,7 @@ void Valphalk::E2103(float degree) // 휘두르기 공격
 
 	if (RATIO < 0.15)
 	{
+		Sounds::Get()->Play("em086_05_se_media_46", 0.3f);
 		SetColliderAttack(RWING, 0.15, 30, 2);
 	}
 
@@ -4022,6 +4036,7 @@ void Valphalk::E2185()// 들었던 발을 내려찍으며 깨물기
 
 	if (RATIO > 0.121 && RATIO < 0.331)
 	{
+		Sounds::Get()->Play("em086_05_vo_media_5", 0.3f);
 		SetColliderAttack(HEAD, 0.331, 25, 1);
 	}
 
@@ -4039,6 +4054,8 @@ void Valphalk::E2188()//정면 보고 왼발 들기
 	if (RATIO > 0.16 && RATIO < 0.8)
 		RotateToTarget(0.16, 0.7);
 
+	if (RATIO > 0.8)
+		Sounds::Get()->Play("em086_05_vo_media_5", 0.3f);
 
 	if (RATIO > 0.96)
 		sequence++;
@@ -4050,6 +4067,9 @@ void Valphalk::E2189()//정면에서 왼쪽 보고 왼발 들기
 
 	if (RATIO > 0.19 && RATIO < 0.8)
 		RotateToTarget(0.19, 0.7);
+
+	if (RATIO > 0.8)
+		Sounds::Get()->Play("em086_05_vo_media_5", 0.3f);
 
 	if (RATIO > 0.96)
 	{
@@ -4065,6 +4085,9 @@ void Valphalk::E2190()//정면에서 왼쪽으로 돌면서 뒤보고 왼발 들기
 	if (RATIO > 0.1 && RATIO < 0.8)
 		RotateToTarget(0.1, 0.7);
 
+	if (RATIO > 0.8)
+		Sounds::Get()->Play("em086_05_vo_media_5", 0.3f);
+
 	if (RATIO > 0.96)
 	{
 		sequence++;
@@ -4079,6 +4102,9 @@ void Valphalk::E2192()//정면에서 오른쪽 보고 왼발 들기
 	if (RATIO > 0.19 && RATIO < 0.8)
 		RotateToTarget(0.19, 0.7);
 
+	if (RATIO > 0.8)
+		Sounds::Get()->Play("em086_05_vo_media_5", 0.3f);
+
 	if (RATIO > 0.96)
 	{
 		sequence++;
@@ -4092,6 +4118,9 @@ void Valphalk::E2193()//정면에서 오른쪽으로 돌면서 뒤보고 왼발 들기
 
 	if (RATIO > 0.1 && RATIO < 0.8)
 		RotateToTarget(0.1, 0.7);
+
+	if (RATIO > 0.8)
+		Sounds::Get()->Play("em086_05_vo_media_5", 0.3f);
 
 	if (RATIO > 0.96)
 	{
@@ -4148,6 +4177,7 @@ void Valphalk::E2211(float degree)//왼쪽 90도 날개찍기 공격동작
 
 	if (RATIO > 0.117 && RATIO < 0.185)
 	{
+		Sounds::Get()->Play("em086_05_vo_media_5", 0.3f);
 		SetColliderAttack(RWING, 0.185, 40, 2);
 	}
 
@@ -4904,6 +4934,9 @@ void Valphalk::E3001() // 작은 데미지 피격
 {
 	PLAY;
 
+	if (RATIO > 0.10 && RATIO < 0.20)
+		Sounds::Get()->Play("em086_05_vo_media_29", 0.3f);
+
 	if (RATIO > 0.96)
 		sequence++;
 }
@@ -4918,6 +4951,9 @@ void Valphalk::E3015()
 
 	PLAY;
 
+	if (RATIO > 0.10 && RATIO < 0.20)
+		Sounds::Get()->Play("em086_05_vo_media_25", 0.9f);
+
 	if (RATIO > 0.96)
 		sequence++;
 }
@@ -4925,6 +4961,9 @@ void Valphalk::E3015()
 void Valphalk::E3016()
 {
 	PLAY;
+
+	if (RATIO > 0.10 && RATIO < 0.20)
+		Sounds::Get()->Play("em086_05_vo_media_25", 0.9f);
 
 	if (RATIO > 0.96)
 		sequence++;
@@ -4945,6 +4984,9 @@ void Valphalk::E3023() // 사망
 {
 	PLAY;
 
+	if (RATIO > 0.40 && RATIO < 0.50)
+		Sounds::Get()->Play("em086_05_vo_media_30", 0.3f);
+
 	if (RATIO > 0.96)
 		isPlay = false;
 }
@@ -4952,6 +4994,9 @@ void Valphalk::E3023() // 사망
 void Valphalk::E3101()
 {
 	PLAY;
+
+	if (RATIO > 0.10 && RATIO < 0.20)
+		Sounds::Get()->Play("em086_05_vo_media_29", 0.3f);
 
 	if (RATIO > 0.96)
 		sequence++;
@@ -4967,6 +5012,9 @@ void Valphalk::E3114()
 
 	PLAY;
 
+	if (RATIO > 0.10 && RATIO < 0.20)
+		Sounds::Get()->Play("em086_05_vo_media_25", 0.9f);
+
 	if (RATIO > 0.96)
 	{
 		isSlashMode = true;
@@ -4977,6 +5025,9 @@ void Valphalk::E3114()
 void Valphalk::E3118()
 {
 	PLAY;
+
+	if (RATIO > 0.40 && RATIO < 0.50)
+		Sounds::Get()->Play("em086_05_vo_media_30", 0.3f);
 
 	if (RATIO > 0.96)
 		isPlay = false;
