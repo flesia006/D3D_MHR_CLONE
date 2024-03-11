@@ -1444,7 +1444,7 @@ void Valphalk::ChooseNextPattern()
 	//int i = rand() % 3;
 	//switch (0)
 	//{
-	//case 0:	curPattern = B_ENERGYBLAST;	 break;
+	//case 0:	curPattern = HS_FLYFALLATK;	 break;
 	//case 1:	curPattern = B_DOWNBLAST;		 break;
 	//case 2:	curPattern = B_ENERGYBLAST;		 break;
 	//}
@@ -1609,12 +1609,13 @@ void Valphalk::ChooseNextPattern()
 			{
 				if (isHupGi)       // 흡
 				{
-					int i = rand() % 3;
+					int i = rand() % 4;
 					switch (i)
 					{
 					case 0:	curPattern = FULLBURST;		break;
 					case 1:	curPattern = B_DUMBLING;  break;
 					case 2:	curPattern = HS_FLYFALLATK;  break; // 트랜스폼 하고 날게 수정
+					case 3: curPattern = HS_FLYBLAST; break;
 					}
 				}
 				else              // 흡ㄴ
@@ -2523,10 +2524,8 @@ void Valphalk::B_Dumbling()
 
 	if (sequence == 3) // 공격 모션
 	{
-
 		SetState(E_2151);
 		E2151();
-
 	}
 
 	if (sequence == 4) // 공격 모션 + 포격otherplay
@@ -2727,14 +2726,14 @@ void Valphalk::HS_FlyFallAtk()
 		EX2276();
 	}
 
-	if (sequence == 5) // 공격 모션
+	if (sequence == 5) // 돌진 모션
 	{
 		SetState(E_2277);
 		EX2277(yDifference);
 	}
 
 
-	if (sequence == 6) // 공격 모션
+	if (sequence == 6) // 돌진후 바닥 찍고 폭발 일으키며 뒤로 백스텝
 	{
 		if (renderJet)
 			renderJet = false;
@@ -2801,7 +2800,7 @@ void Valphalk::HS_FlyFallAtk()
 		EX2375();
 	}
 
-	if (sequence == 12) // 공격 모션
+	if (sequence == 12) // 내려와서 폭발시작
 	{
 		Pos().y = 0;
 		EX2376();
@@ -3794,6 +3793,9 @@ void Valphalk::E2144() // 전방 폭격 시작
 {
 	combo = true;
 	PLAY;
+	if (RATIO > 0.1 && RATIO < 0.2)
+		Sounds::Get()->Play("em086_05_vo_media_14", 0.5f);
+		
 	if (RATIO > 0.96)
 	{
 		sequence++;
@@ -3804,16 +3806,22 @@ void Valphalk::E2145() // 전방 폭격 시전 후 백스텝
 {
 	PLAY;
 	if (RATIO > 0.2f && RATIO < 0.21f)
+	{
+		Sounds::Get()->Play("em086_05_fx_media_32", 0.5f);
 		explosionParticle[0]->PlaySpark({ forwardBoom->GlobalPos().x,forwardBoom->GlobalPos().y + 250,forwardBoom->GlobalPos().z }, 0);
+	}
 	if (RATIO > 0.24f && RATIO < 0.25)
-		explosionParticle[0]->Play1(forwardBoom->GlobalPos(),0);
+	{
+		explosionParticle[0]->Play1(forwardBoom->GlobalPos(), 0);
+		Sounds::Get()->Play("em086_05_fx_media_35", 0.5f);
+	}
 	if (RATIO > 0.30f && RATIO < 0.31)
 		explosionParticle[0]->Play2(forwardBoom->GlobalPos(), 0);
 	if (RATIO > 0.35f && RATIO < 0.36)
 		explosionParticle[0]->Play3(forwardBoom->GlobalPos(), 0);
-	if (RATIO < 0.6f)
+	if (RATIO < 0.3f && RATIO>0.2f)
 		forwardBoom->SetActive(true);
-	if (RATIO > 0.6f)
+	if (RATIO > 0.3f)
 		forwardBoom->SetActive(false);
 
 	if (RATIO > 0.96)
@@ -3946,6 +3954,8 @@ void Valphalk::E2141()
 void Valphalk::E2151()
 {
 	PLAY;
+	if (RATIO < 0.2 && RATIO > 0.1)
+		Sounds::Get()->Play("em086_05_vo_media_14", 0.5f);
 	if (RATIO > 0.96)
 	{
 		sequence++;
@@ -3956,9 +3966,15 @@ void Valphalk::E2152()
 {
 	PLAY;
 	if (RATIO > 0.001 && RATIO < 0.05)
-		explosionParticle[0]->PlaySpark(Pos() + Back() * 500,0);
+	{
+		explosionParticle[0]->PlaySpark(Pos() + Back() * 500, 0);
+		Sounds::Get()->Play("em086_05_fx_media_32", 0.5f);
+	}
 	if (RATIO > 0.5 && RATIO < 0.51)
+	{
 		explosionParticle[0]->Play1(forwardBoom->GlobalPos(), 0);
+		Sounds::Get()->Play("em086_05_fx_media_35", 0.5f);
+	}
 	if (RATIO > 0.55 && RATIO < 0.56)
 		explosionParticle[0]->Play2(forwardBoom->GlobalPos(), 0);
 	if (RATIO > 0.6 && RATIO < 0.61)
@@ -4223,6 +4239,8 @@ void Valphalk::EX2265()
 {
 	PLAY;
 
+	if (RATIO < 0.8 && RATIO>0.79)
+		Sounds::Get()->Play("em086_05_fx_media_15", 0.3f);
 	if (RATIO > 0.96)
 	{
 		sequence++;
@@ -4319,6 +4337,11 @@ void Valphalk::EX2276()
 {
 	PLAY;
 
+	if (RATIO < 0.1)
+	{
+		Sounds::Get()->Play("em086_05_vo_media_14", 0.3f);		
+		Sounds::Get()->Play("em086_05_fx_media_5", 0.3f);
+	}
 	if (RATIO > 0.96)
 	{
 		sequence++;
@@ -4342,12 +4365,19 @@ void Valphalk::EX2277(float y)
 
 	if (realPos->Pos().y < 0)
 	{
+		Sounds::Get()->Play("em086_05_fx_media_30", 0.5f);
+		Sounds::Get()->Play("em086_05_fx_media_32", 0.5f);
 		preState = curState;
 		curState = E_2278;
 
 		FOR(19)
 			colliders[(ColliderName)i]->isAttack = false;
 
+		explosionPos = GlobalPos() + Back() * 100;
+		explosionPos2 = GlobalPos() + Back() * 900;
+
+		explosionParticle[0]->PlaySpark(GlobalPos() + Back() * 100, 0);
+		explosionParticle[1]->PlaySpark(GlobalPos() + Back() * 900, 0);
 
 		sequence++;
 		return;
@@ -4363,21 +4393,24 @@ void Valphalk::EX2277(float y)
 void Valphalk::EX2278()
 {
 	PLAY;
-
-	if (RATIO > 0.234f)
+	if (RATIO > 0.1f)
 	{
-		if (RATIO < 0.24f)
-		{
-			effectSphere1->Scale() = { 400, 400, 400 };
-			effectSphere1->Pos() = GetTranslationByNode(83) + Back() * 100;
-			effectSphere2->Scale() = { 400, 400, 400 };
-			effectSphere2->Pos() = effectSphere1->Pos() + Back() * 700;
-		}
+		effectSphere1->Scale() = { 400, 400, 400 };
+		effectSphere1->Pos() = explosionPos;
+		effectSphere2->Scale() = { 400, 400, 400 };
+		effectSphere2->Pos() = explosionPos2;
+	}
+	if (RATIO > 0.43f && RATIO < 0.44f)
+	{		
+		explosionParticle[0]->Play(explosionPos, 0);
+		explosionParticle[1]->Play(explosionPos2, 0);
+		Sounds::Get()->Play("em086_05_fx_media_35", 0.5f);
+		Sounds::Get()->Play("em086_05_fx_media_35", 0.5f);
 		effectSphere1->SetActive(true);
 		effectSphere2->SetActive(true);
 	}
 
-	if (RATIO > 0.4f)
+	if (RATIO > 0.5f)
 	{
 		effectSphere1->SetActive(false);
 		effectSphere2->SetActive(false);
@@ -4769,6 +4802,9 @@ void Valphalk::EX2374()
 {
 	PLAY;
 
+	if (RATIO < 0.1)
+		Sounds::Get()->Play("em086_05_vo_media_18", 0.3f);
+	
 	if (RATIO > 0.95)
 		sequence++;
 }
@@ -4778,7 +4814,7 @@ void Valphalk::EX2375()
 	PLAY;
 
 	if (realPos->Pos().y < 0)
-	{
+	{		
 		preState = curState;
 		curState = E_2376;
 
@@ -4796,20 +4832,31 @@ void Valphalk::EX2376()
 {
 	PLAY;
 
-	if (RATIO > 0.19f)
+	if (RATIO > 0.01f)
 	{
-		if (RATIO < 0.20f)
-		{
-			effectSphere1->Scale() = { 500, 500, 500 };
-			effectSphere1->Pos() = GetTranslationByNode(64) + Back() * 100;
-			effectSphere2->Scale() = { 500, 500, 500 };
-			effectSphere2->Pos() = GetTranslationByNode(84) + Back() * 100;
-		}
-		effectSphere1->SetActive(true);
-		effectSphere2->SetActive(true);;
+		effectSphere1->Scale() = { 500, 500, 500 };
+		effectSphere1->Pos() = GetTranslationByNode(64) + Back() * 100;
+		effectSphere2->Scale() = { 500, 500, 500 };
+		effectSphere2->Pos() = GetTranslationByNode(84) + Back() * 100;		
+	}
+	if (RATIO > 0.01 && RATIO < 0.03)
+	{
+		Sounds::Get()->Play("em086_05_fx_media_32", 0.3f);
+		explosionParticle[0]->PlaySpark(effectSphere1->GlobalPos(), 0);
+		explosionParticle[1]->PlaySpark(effectSphere2->GlobalPos(), 0);
 	}
 
-	if (RATIO > 0.4f)
+	if (RATIO > 0.27f && RATIO < 0.28)
+	{
+		Sounds::Get()->Play("em086_05_fx_media_35", 0.3f);
+		explosionParticle[0]->Play(effectSphere1->GlobalPos(), 0);
+		explosionParticle[1]->Play(effectSphere2->GlobalPos(), 0);
+
+		effectSphere1->SetActive(true);
+		effectSphere2->SetActive(true);
+	}
+
+	if (RATIO > 0.5f)
 	{
 		effectSphere1->SetActive(false);
 		effectSphere2->SetActive(false);
@@ -4987,9 +5034,13 @@ void Valphalk::E3023() // 사망
 {
 	PLAY;
 
-	if (RATIO > 0.40 && RATIO < 0.50)
+	if (RATIO > 0.40 && RATIO < 0.44)
+	{
 		Sounds::Get()->Play("em086_05_vo_media_30", 3.0f);
+		Sounds::Get()->Play("questClear", 0.1f);
+	}
 
+	
 	if (RATIO > 0.96)
 		isPlay = false;
 }

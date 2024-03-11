@@ -131,8 +131,8 @@ void ParticleSystem::Stop()
 
 void ParticleSystem::ParticleRotate()
 {
-    float randX = Random(0.f, 3.14f);
-    quad->Rot().x = randX;
+    float randZ = Random(0.f, 3.14f);
+    quad->Rot().z = randZ;
 }
 
 void ParticleSystem::HaloPos()
@@ -168,8 +168,8 @@ void ParticleSystem::SetVortex(Vector3 pos)
     //quad->SetParent(parent);
     //quad->Pos() = { pos.x + 10, pos.y, pos.z + 10 };
     quad->Rot().x = XM_PIDIV2;
-    quad->Rot().y += 10 * DELTA;
-    quad->Rot().z = XM_PIDIV2;
+    quad->Rot().z += 10 * DELTA;
+    quad->Rot().y = XM_PIDIV2;
     //quad->Pos() = pos;
     //parent->Rot().y += 1.01f * DELTA;
 

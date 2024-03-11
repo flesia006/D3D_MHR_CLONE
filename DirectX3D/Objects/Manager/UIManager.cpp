@@ -372,6 +372,23 @@ UIManager::UIManager()
 	whetstoneIcon_Q->Pos() = { quickSlot_Back->Pos().x + 127.5f, quickSlot_Back->Pos().y + 2.5f, 0 };
 	whetstoneIcon_Q->Scale() *= 0.95;
 	// 아이템 아이콘 추가 (드래그 슬롯 쪽)
+	//FOR(2)
+	//{
+	//	if (i == 0)
+	//	{
+	//		Quad* quad = new Quad(L"Textures/UI/ItemSlot.png");
+	//		quad->Pos() = { itemSlot->Pos().x + 81,itemSlot->Pos().y + 4,0 };
+	//		quad->Scale() *= 1.25f;
+	//		inItDragItem_D.push_back(quad);
+	//	}
+	//	if (i == 1)
+	//	{
+	//		Quad* quad = new Quad(L"Textures/UI/Whetstone-icon.png");
+	//		quad->Pos() = { itemSlot->Pos().x + 81,itemSlot->Pos().y + 4,0 };
+	//		quad->Scale() *= 1.25f;
+	//		inItDragItem_D.push_back(quad);
+	//	}
+	//}
 	potionIcon_D = new Quad(L"Textures/UI/Potion.png");
 	potionIcon_D->Pos() = { itemSlot->Pos().x -83,itemSlot->Pos().y + 2,0 };
 	potionIcon_D->Scale() *= 1.2;
@@ -492,6 +509,8 @@ UIManager::UIManager()
 	//코팅 UI
 	lsCoting->Pos() = { 510,900,0 };
 	lsCoting->Scale() *= 1.5f;
+
+	ItemManager::Get();
 }
 
 UIManager::~UIManager()
@@ -563,6 +582,10 @@ UIManager::~UIManager()
 	delete potionIcon_Q;
 	delete greatepotionIcon_Q;
 	delete whetstoneIcon_Q;
+	//FOR(inItDragItem_D.size())
+	//{
+	//	delete inItDragItem_D[i];
+	//}
 	delete potionIcon_D;
 	delete greatepotionIcon_D;
 	delete whetstoneIcon_D;
@@ -591,6 +614,8 @@ UIManager::~UIManager()
 
 void UIManager::Update()
 {
+	ItemManager::Get()->Update();
+	DragInvenItem();
 	NumberSlotBar();
 	DragSlotBar();
 	QuickSlotBar();
@@ -635,6 +660,10 @@ void UIManager::Update()
 	potionIcon_Q->UpdateWorld();
 	greatepotionIcon_Q->UpdateWorld();
 	whetstoneIcon_Q->UpdateWorld();
+	//FOR(inItDragItem_D.size())
+	//{
+	//	inItDragItem_D[i]->UpdateWorld();
+	//}
 	potionIcon_D->UpdateWorld();
 	greatepotionIcon_D->UpdateWorld();
 	whetstoneIcon_D->UpdateWorld();
@@ -1005,6 +1034,12 @@ void UIManager::PostRender()
 		Font::Get()->RenderText("영묘한 광채의 발파루크", { valphalkStateIcon2->Pos().x + 108, valphalkStateIcon2->Pos().y + 18 });
 		Font::Get()->RenderText("습격", { valphalkStateIcon2->Pos().x - 68, valphalkStateIcon2->Pos().y - 15 });
 	}
+
+	ItemManager::Get()->PostRender();
+	//FOR(inItDragItem_D.size())
+	//{
+	//	inItDragItem_D[i]->Render();
+	//}
 }
 
 void UIManager::GUIRender()
@@ -1028,10 +1063,6 @@ void UIManager::GUIRender()
 	//ImGui::Text("CAM_Rot_Y: %f", CAM->Rot().y);
 	//ImGui::Text("CamRot_Y: %f", CamRot.y);
 
-	ImGui::Text("IconColorX : %f", valphalkStateIcon1->GetMaterial()->GetData().diffuse.x);
-	ImGui::Text("IconColorY : %f", valphalkStateIcon1->GetMaterial()->GetData().diffuse.y);
-	ImGui::Text("IconColorZ : %f", valphalkStateIcon1->GetMaterial()->GetData().diffuse.z);
-	ImGui::Text("IconColorW : %f", valphalkStateIcon1->GetMaterial()->GetData().diffuse.w);
 }
 
 void UIManager::Hit(float damage)
@@ -1318,6 +1349,28 @@ void UIManager::QuickSlotBar()
 	}
 }
 
+void UIManager::DragInvenItem()
+{
+	// 오류 나서 일단 주석
+	//if (ItemManager::Get()->invenSize > 0)
+	//{
+	//	FOR(ItemManager::Get()->invenSize)
+	//	{
+	//		if (ItemManager::Get()->itemList[i]->IsOnMouseCursor() && KEY_DOWN(VK_LBUTTON))
+	//		{
+	//			Quad* quad = new Quad(ItemManager::Get()->inventoryList[i]->GetMaterial()->GetDiffuseMap()->GetFile());
+	//			if (ItemManager::Get()->InvenCheck(quad, inItDragItem_D)->GetMaterial()->GetDiffuseMap()->GetFile() !=
+	//				quad->GetMaterial()->GetDiffuseMap()->GetFile())
+	//			{
+	//				quad->Pos() = { CENTER_X, CENTER_Y + 10 * i };
+	//				inItDragItem_D.push_back(quad);
+	//			}
+	//		}
+	//		
+	//	}
+	//}
+}
+
 void UIManager::DragSlot()
 {
 	dragSlot_ButtonWheel->Render();
@@ -1328,6 +1381,7 @@ void UIManager::DragSlot()
 		dragSlot_KeyButton->SetActive(false);
 		dragSlotBox->Render();
 		itemSlot->Render();
+
 		if (DragCout == 0) // 그레이트 포션 중앙
 		{
 			potionIcon_D->Pos() = { itemSlot->Pos().x - 83,itemSlot->Pos().y + 2,0 };
@@ -1659,16 +1713,10 @@ void UIManager::StateIcon()
 {
 	if (partDestruct || specialMove)
 	{
-		//Float4 color = valphalkStateIcon1->GetMaterial()->GetData().diffuse;
 		stateIconTimer += DELTA;
 		if (stateIconTimer > 5.0f)
 		{
 			valphalkStateIcon1->Pos().y += 15.0f * DELTA;
-			//color.x -= stateIconTimer * 0.001f;
-			//color.y -= stateIconTimer * 0.001f;
-			//color.z -= stateIconTimer * 0.001f;
-			//color.w -= stateIconTimer * 0.001f;
-			//valphalkStateIcon1->GetMaterial()->GetData().diffuse = color;
 			if (stateIconTimer > 6.5f)
 			{
 				partDestruct = false;
@@ -1694,8 +1742,6 @@ void UIManager::StateIcon()
 			}
 		}
 	}
-
-	
 }
 
 bool UIManager::IsAbleBugSkill()

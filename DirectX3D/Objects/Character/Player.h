@@ -4,6 +4,7 @@ class Particle;
 class Trail;
 class Sample;
 class Valphalk;
+class DummyValphalk;
 class WireBug;
 class PlayerWireBug;
 class Player : public ModelAnimator
@@ -77,6 +78,7 @@ public:
 	Transform* GetRealPos() { return realPos; }
 
 	void SetValphalk(Valphalk* val) { this->val = val; }
+	void SetValphalk(DummyValphalk* val) { this->dumVal = val; }
 	void SetWireBug(WireBug* wireBug) { this->wireBug = wireBug; }
 
 private:
@@ -103,8 +105,6 @@ private:
 	void HurtCheck();
 	void EvadeCheck();
 
-	bool CollisionCheck();
-	void SetAnimation();
 	void Roll();
 	void TermAttackUpdate();
 
@@ -289,6 +289,8 @@ private:
 
 	Sample* dog = nullptr;
 	TerrainEditor* terrain = nullptr;
+	Valphalk* val = nullptr;
+	DummyValphalk* dumVal = nullptr;
 
 	Model* longSword = nullptr;
 	Model* kalzip = nullptr;
@@ -382,6 +384,7 @@ private:
 	bool callGaruk = false;
 	bool rideCAM = false;
 	bool isJump = false;
+	bool isInitVoice = false;
 
 	Valphalk* val = nullptr;
 	
@@ -404,9 +407,10 @@ private:
 	PotionParticle* potionParticle;
 	SpiritFlame* spiritParticle;
 	Wire_Bug* wireBugParticle;
-
+	Sutdol* sutdol;
 	Transform* haloTransform = nullptr;
 	CapsuleCollider* haloCollider = nullptr;
-
+	Suwol* suwol = nullptr;
+	TuguEft* tugu = nullptr;
 };
 

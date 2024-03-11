@@ -43,8 +43,14 @@ Player::Player() : ModelAnimator("Player")
 	haloTransform = new Transform();
 	haloCollider = new CapsuleCollider();
 	wireBugParticle = new Wire_Bug();
-	
+	sutdol = new Sutdol();
+
 	haloCollider->SetParent(swordStart);
+
+	suwol = new Suwol();
+	suwol->SetParent(realPos);
+
+	tugu = new TuguEft();
 	/////////////////////////////////////////////////////////////
 	longSword = new Model("kal");
 	longSword->SetParent(mainHand);
@@ -87,6 +93,7 @@ Player::Player() : ModelAnimator("Player")
 
 Player::~Player()
 {
+	delete sutdol;
 	delete evadeCheckCollider;
 	delete bodyCollider;
 	delete tmpCollider3;
@@ -135,6 +142,7 @@ void Player::Update()
 	//µð¹ö±ëÀ» À§ÇØ¼­ DeathCheck() ¹ÛÀ¸·Î »©µÐ°Í.
 	if (callGaruk)
 		ReadyRide();
+
 	TermAttackUpdate();
 	HurtCheck();
 	Potion();
@@ -143,6 +151,7 @@ void Player::Update()
 	////////////////////////////////////
 	Control();
 	ResetPlayTime();
+
 
 	UpdateWorlds();
 	EffectUpdates();
@@ -165,6 +174,7 @@ void Player::PreRender()
 		wireBugTrail->Render();
 	////////////////////////////////////////////
 	// Particles
+	sutdol->Render();
 	hitBoomParticle->Render();
 	criticalParticle->Render();
 	haloCollider->Render();
@@ -186,6 +196,8 @@ void Player::Render()
 		//swordCollider->Render();
 	longSword->Render();
 	kalzip->Render();
+	//suwol->Render();
+	tugu->Render();
 
 	if(playerWireBug->Active())
 		playerWireBug->Render();
@@ -254,6 +266,18 @@ void Player::UpdateWorlds()
 			}
 		}
 		Rot().y = garuk->Rot().y;
+		if (curState == R_600 || curState == R_601 || curState == R_602)
+		{
+			mainHand->SetWorld(GetTransformByNode(lefeHandNode));
+			longSword->Pos() = {};
+			longSword->Rot() = {};
+		}
+		else
+		{
+			mainHand->SetWorld(GetTransformByNode(backSwdNode));
+			longSword->Pos() = { -32,32,23 };
+			longSword->Rot() = { -0.86f,-1.2f,+1.46f };
+		}
 	}
 
 	Vector3 camRot = CAM->Rot();
@@ -334,7 +358,7 @@ void Player::Potion()
 		|| UI->useDragSlot1 && KEY_DOWN('E')
 		|| UI->useNumberBar && KEY_DOWN('2'))
 	{
-		
+
 		UI->haveGPotion--;
 		Lcure = true;
 		time = 0;
@@ -397,30 +421,30 @@ void Player::Potion()
 void Player::SharpeningStone()
 {
 	if (UI->useQuickSlot3 && !cure && !Lcure
-		|| UI->useDragSlot2 &&  KEY_DOWN('E') && !cure && !Lcure
-		|| UI->useNumberBar &&  KEY_DOWN('3') && !Lcure && !cure)
+		|| UI->useDragSlot2 && KEY_DOWN('E') && !cure && !Lcure
+		|| UI->useNumberBar && KEY_DOWN('3') && !Lcure && !cure)
 	{
-		UI->SharpeningStone();
+		//UI->SharpeningStone();
 	}
 }
 
 
 void Player::GUIRender()
 {
-	ModelAnimator::GUIRender();
-	//	trail->GetMaterial()->GUIRender();
-	//	hitParticle->GUIRender();
+	//	ModelAnimator::GUIRender();
+		//	trail->GetMaterial()->GUIRender();
+		//	hitParticle->GUIRender();
 
-		//particle->GetMaterial()->GUIRender();
+			//particle->GetMaterial()->GUIRender();
 
-	//	Vector3 Forward = root->Forward();
-	//	float t = atan2(Forward.x, Forward.z);
-	//	float t = root->Rot().y;
-	//	ImGui::DragFloat("Player.y", &t); 
-	//
-	//	Vector3 CAMForward = CAM->Forward();	
-	//	float y = atan2(CAMForward.x, CAMForward.z);
-	//	ImGui::DragFloat("CAM.y", &y);
+		//	Vector3 Forward = root->Forward();
+		//	float t = atan2(Forward.x, Forward.z);
+		//	float t = root->Rot().y;
+		//	ImGui::DragFloat("Player.y", &t); 
+		//
+		//	Vector3 CAMForward = CAM->Forward();	
+		//	float y = atan2(CAMForward.x, CAMForward.z);
+		//	ImGui::DragFloat("CAM.y", &y);
 
 	Vector3 realpos = realPos->Pos();
 	ImGui::DragFloat3("Pos", (float*)&Pos());
@@ -449,7 +473,8 @@ void Player::GUIRender()
 
 	ImGui::DragFloat("Speed", &temp4);
 
-	//
+	suwol->GUIRender();
+
 	//int U = Keyboard::Get()->ReturnFirst();
 	//ImGui::SliderInt("keyboard", &U, 0, 200);
 	//
@@ -902,6 +927,10 @@ void Player::EffectUpdates()
 	spSuccessParticle->SetPos({ realPos->Pos().x,realPos->Pos().y + 100,realPos->Pos().z });
 	//spiritParticle->SetPos({ realPos->Pos().x,realPos->Pos().y + 100,realPos->Pos().z });
 	spiritParticle->Update();
+	sutdol->Update();
+
+	suwol->Update();
+	tugu->Update();
 }
 
 void Player::Rotate(float rotateSpeed)
@@ -916,7 +945,7 @@ void Player::Rotate(float rotateSpeed)
 
 		if (keyboardRot > Rot().y + unitRad)
 			RealRotate(rotateSpeed * DELTA);
-		else if(keyboardRot < Rot().y - unitRad)
+		else if (keyboardRot < Rot().y - unitRad)
 			RealRotate(-rotateSpeed * DELTA);
 	}
 
@@ -956,15 +985,10 @@ bool Player::Attack(float power, bool push, UINT useOtherCollider) // Ãæµ¹ÆÇÁ¤ Ç
 {
 	renderEffect = true;
 
-	if (SceneManager::Get()->Add("ShadowScene") == nullptr && SceneManager::Get()->Add("PlayerTestScene") != nullptr)
+	if (val == nullptr && dumVal != nullptr)
 		return AttackDummy(power, push, useOtherCollider);
-
-	Valphalk* val = nullptr;
-	if (SceneManager::Get()->Add("ShadowScene") == nullptr && SceneManager::Get()->Add("FightTestScene") != nullptr)
-		val = dynamic_cast<FightTestScene*>(SceneManager::Get()->Add("FightTestScene"))->GetValphalk();
-	else
-		val = dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetValphalk();
-
+	else if (val == nullptr && dumVal == nullptr)
+		return false;
 
 	Contact contact;
 
@@ -988,7 +1012,7 @@ bool Player::Attack(float power, bool push, UINT useOtherCollider) // Ãæµ¹ÆÇÁ¤ Ç
 	for (auto collider : colliders)
 	{
 		if (playerCollider->IsCapsuleCollision(collider, &contact) && !attackOnlyOncePerMotion)
-		{			
+		{
 			if (!collider->Active())
 				return false;
 
@@ -1025,27 +1049,27 @@ bool Player::Attack(float power, bool push, UINT useOtherCollider) // Ãæµ¹ÆÇÁ¤ Ç
 			float hardness = 1.0f;
 			switch (collider->part)
 			{
-				case Valphalk::HEAD			: hardness = 55; break;
-				case Valphalk::NECK			: hardness = 55; break;
-				case Valphalk::CHEST		: hardness = 30; break;
-				case Valphalk::BODY			: hardness = 30; break;
-				case Valphalk::LWING		: hardness = 22; break;
-				case Valphalk::LWING_RADIUS : hardness = 22; break;
-				case Valphalk::RWING		: hardness = 22; break;
-				case Valphalk::RWING_RADIUS	: hardness = 22; break;
-				case Valphalk::LLEG1		: hardness = 25; break;
-				case Valphalk::LLEG1_FOOT	: hardness = 25; break;
-				case Valphalk::LLEG2		: hardness = 25; break;
-				case Valphalk::LLEG2_FOOT	: hardness = 25; break;
-				case Valphalk::RLEG1		: hardness = 25; break;
-				case Valphalk::RLEG1_FOOT	: hardness = 25; break;
-				case Valphalk::RLEG2		: hardness = 25; break;
-				case Valphalk::RLEG2_FOOT	: hardness = 25; break;
-				case Valphalk::TAIL_START	: hardness = 45; break;
-				case Valphalk::TAIL_1		: hardness = 45; break;
-				case Valphalk::TAIL_2		: hardness = 45; break;
-				case Valphalk::TAIL			: hardness = 45; break;
-				default						: hardness = 1 ; break;
+			case Valphalk::HEAD: hardness = 55; break;
+			case Valphalk::NECK: hardness = 55; break;
+			case Valphalk::CHEST: hardness = 30; break;
+			case Valphalk::BODY: hardness = 30; break;
+			case Valphalk::LWING: hardness = 22; break;
+			case Valphalk::LWING_RADIUS: hardness = 22; break;
+			case Valphalk::RWING: hardness = 22; break;
+			case Valphalk::RWING_RADIUS: hardness = 22; break;
+			case Valphalk::LLEG1: hardness = 25; break;
+			case Valphalk::LLEG1_FOOT: hardness = 25; break;
+			case Valphalk::LLEG2: hardness = 25; break;
+			case Valphalk::LLEG2_FOOT: hardness = 25; break;
+			case Valphalk::RLEG1: hardness = 25; break;
+			case Valphalk::RLEG1_FOOT: hardness = 25; break;
+			case Valphalk::RLEG2: hardness = 25; break;
+			case Valphalk::RLEG2_FOOT: hardness = 25; break;
+			case Valphalk::TAIL_START: hardness = 45; break;
+			case Valphalk::TAIL_1: hardness = 45; break;
+			case Valphalk::TAIL_2: hardness = 45; break;
+			case Valphalk::TAIL: hardness = 45; break;
+			default: hardness = 1; break;
 			}
 			UIManager::Get()->MinusDurability();
 
@@ -1101,10 +1125,7 @@ bool Player::Attack(float power, bool push, UINT useOtherCollider) // Ãæµ¹ÆÇÁ¤ Ç
 bool Player::AttackDummy(float power, bool push, UINT useOtherCollider)
 {
 
-	DummyValphalk* val = nullptr;
-
-	if (SceneManager::Get()->Add("PlayerTestScene"))
-		val = dynamic_cast<PlayerTestScene*>(SceneManager::Get()->Add("PlayerTestScene"))->GetValphalk();
+	DummyValphalk* val = dumVal;
 
 	Contact contact;
 
@@ -1193,15 +1214,14 @@ bool Player::AttackDummy(float power, bool push, UINT useOtherCollider)
 
 void Player::AttackWOCollision(float power)
 {
-	if (SceneManager::Get()->Add("ShadowScene") == nullptr)
+	vector<CapsuleCollider*> colliders;
+
+	if (val != nullptr)
+		colliders = val->GetCollider();
+	else if (dumVal != nullptr)
+		colliders = dumVal->GetCollider();
+	else
 		return;
-
-	Valphalk* val =
-		dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetValphalk();
-	//Valphalk* val =
-	//	dynamic_cast<ValphalkTestScene*>(SceneManager::Get()->Add("ValphalkTestScene"))->GetValphalk();
-
-	auto colliders = val->GetCollider();
 
 	int hitPart = lastHitPart;
 
@@ -1224,15 +1244,26 @@ void Player::AttackWOCollision(float power)
 	float hardness = 1.0f;
 	switch (lastHitPart)
 	{
-	case Valphalk::HEAD: hardness = 55; break;
-	case Valphalk::BODY: hardness = 30; break;
-	case Valphalk::LWING: hardness = 22; break;
-	case Valphalk::RWING: hardness = 22; break;
-	case Valphalk::LLEG1: hardness = 25; break;
-	case Valphalk::LLEG2: hardness = 25; break;
-	case Valphalk::RLEG1: hardness = 25; break;
-	case Valphalk::RLEG2: hardness = 25; break;
-	case Valphalk::TAIL: hardness = 45; break;
+	case Valphalk::HEAD:			hardness = 55; break;
+	case Valphalk::NECK:			hardness = 55; break;
+	case Valphalk::CHEST:			 hardness = 30; break;
+	case Valphalk::BODY:			hardness = 30; break;
+	case Valphalk::LWING:			 hardness = 22; break;
+	case Valphalk::LWING_RADIUS:	hardness = 22; break;
+	case Valphalk::RWING:			hardness = 22; break;
+	case Valphalk::RWING_RADIUS:	hardness = 22; break;
+	case Valphalk::LLEG1:			hardness = 25; break;
+	case Valphalk::LLEG1_FOOT:		hardness = 25; break;
+	case Valphalk::LLEG2:			hardness = 25; break;
+	case Valphalk::LLEG2_FOOT:		hardness = 25; break;
+	case Valphalk::RLEG1:			hardness = 25; break;
+	case Valphalk::RLEG1_FOOT:		hardness = 25; break;
+	case Valphalk::RLEG2:			hardness = 25; break;
+	case Valphalk::RLEG2_FOOT:		hardness = 25; break;
+	case Valphalk::TAIL_START:		hardness = 45; break;
+	case Valphalk::TAIL_1:			hardness = 45; break;
+	case Valphalk::TAIL_2:			hardness = 45; break;
+	case Valphalk::TAIL:			hardness = 45; break;
 	default: hardness = 1; break;
 	}
 
@@ -1252,15 +1283,7 @@ void Player::AttackWOCollision(float power)
 
 void Player::HurtCheck()
 {
-	if (!bodyCollider->Active())
-		return;
-
-	Valphalk* val = nullptr;
-	if (SceneManager::Get()->Add("ShadowScene") == nullptr && SceneManager::Get()->Add("FightTestScene") != nullptr)
-		val = dynamic_cast<FightTestScene*>(SceneManager::Get()->Add("FightTestScene"))->GetValphalk();
-	else if (SceneManager::Get()->Add("ShadowScene") != nullptr)
-		val = dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetValphalk();
-	else
+	if (!bodyCollider->Active() || val == nullptr)
 		return;
 
 	auto colliders = val->GetCollider();
@@ -1426,13 +1449,7 @@ void Player::HurtCheck()
 
 void Player::EvadeCheck()
 {
-	Valphalk* val = nullptr;
-	if (SceneManager::Get()->Add("ShadowScene") == nullptr && SceneManager::Get()->Add("FightTestScene") != nullptr)
-		val = dynamic_cast<FightTestScene*>(SceneManager::Get()->Add("FightTestScene"))->GetValphalk();
-	else if (SceneManager::Get()->Add("ShadowScene") != nullptr)
-		val = dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetValphalk();
-	else
-		return;
+	if (val == nullptr) return;
 
 	auto colliders = val->GetCollider();
 
@@ -1451,27 +1468,9 @@ void Player::EvadeCheck()
 	}
 }
 
-bool Player::CollisionCheck()
-{
-	Valphalk* val =
-		dynamic_cast<ShadowScene*>(SceneManager::Get()->Add("ShadowScene"))->GetValphalk();
-	//Valphalk* val =
-	//	dynamic_cast<ValphalkTestScene*>(SceneManager::Get()->Add("ValphalkTestScene"))->GetValphalk();
-	auto colliders = val->GetCollider();
-
-	for (auto collider : colliders)
-		if (tmpCollider3->IsCapsuleCollision(collider))
-			return true;;
-
-	return false;
-}
-
-void Player::SetAnimation()
-{
-}
 
 void Player::Roll()
-{	
+{
 	if (UIManager::Get()->curStamina < 20) // ½ºÅÂ¹Ì³ª ÀÏÁ¤¼öÄ¡ ¹Ì¸¸¿¡¼­´Â ±¸¸£±â ¸·±â
 		return;
 	UIManager::Get()->Roll();
@@ -1881,7 +1880,7 @@ void Player::S005() // ´ë±âÁß ´Þ¸®±â ½ÃÀÛ
 	else if (KEY_DP(VK_SPACE))	Roll();
 	else if (KEY_DP('F'))  callGaruk = true;
 
-	if (RATIO > 0.97 )
+	if (RATIO > 0.97)
 	{
 		SetState(S_011);
 	}
@@ -1936,7 +1935,7 @@ void Player::S011() // ´Þ¸®±â ·çÇÁ
 	}
 
 	// 101 ³»µðµ® º£±â
-	if		(K_LMB)		SetState(L_101);
+	if (K_LMB)		SetState(L_101);
 	else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106);
 	else if (K_SPACE)	Roll();
 	else if (KEY_DP('F'))  callGaruk = true;
@@ -2335,7 +2334,7 @@ void Player::L014() // ¹ßµµ»óÅÂ ±¸¸£±â ÈÄ ÀÌµ¿Å° À¯Áö½Ã
 		SetState(L_008);
 
 
-	if (RATIO > 0.48 )
+	if (RATIO > 0.28)
 	{
 		if (KEY_PRESS(VK_LSHIFT))		SetState(L_009); // ³³µµ	
 		else if (K_LMB)		SetState(L_101);	// 101 ³»µðµ® º£±â	
@@ -2366,7 +2365,7 @@ void Player::L101() // ³»µðµ®º£±â
 	}
 	if (RATIO > 0.3 && RATIO < 0.35)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
-	if (RATIO > 0.34 && RATIO < 0.35)	
+	if (RATIO > 0.34 && RATIO < 0.35)
 		RandVoice();
 
 	if (RATIO < 0.3)
@@ -2481,7 +2480,7 @@ void Player::L103() // º£¾î³»¸®±â
 
 	if (RATIO > 0.87)
 	{
-		if		(K_RMB)				SetState(L_104);	// Âî¸£±â
+		if (K_RMB)				SetState(L_104);	// Âî¸£±â
 		else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_110);	// ±âÀÎ³»µðµ®º£±â		
 		else if (K_CTRLRMB)			SetState(L_147);	// °£ÆÄ º£±â
 		else if (K_CTRLSPACE)		SetState(L_151);	// Æ¯¼ö ³³µµ
@@ -2578,7 +2577,7 @@ void Player::L106() // ±âÀÎ º£±â 1
 {
 	if (INIT)
 	{
-		spiritParticle->Play({ realPos->Pos().x, realPos->Pos().y + 100, realPos->Pos().z },0);
+		spiritParticle->Play({ realPos->Pos().x, realPos->Pos().y + 100, realPos->Pos().z }, 0);
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_25", .5f);
 		PlayClip(curState);
 		initForward = Forward();
@@ -2623,11 +2622,11 @@ void Player::L107() // ±âÀÎº£±â 2
 	PLAY;
 	if (INIT)
 	{
-		spiritParticle->Play({ realPos->Pos().x, realPos->Pos().y + 100, realPos->Pos().z },0);
+		spiritParticle->Play({ realPos->Pos().x, realPos->Pos().y + 100, realPos->Pos().z }, 0);
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_25", .5f);
 		UIManager::Get()->MinusSpiritGauge(); // ±âÀÎ°ÔÀÌÁö ¼Ò¸ðÇÏ±â( ´Ü 1¹ø )
 	}
-	
+
 	if (RATIO > 0.25 && RATIO < 0.26)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
 
@@ -2669,12 +2668,12 @@ void Player::L108() // ±âÀÎº£±â 3
 {
 	if (INIT)
 	{
-		spiritParticle->Play({ realPos->Pos().x, realPos->Pos().y + 100, realPos->Pos().z },0);
-		PlayClip(curState);		
+		spiritParticle->Play({ realPos->Pos().x, realPos->Pos().y + 100, realPos->Pos().z }, 0);
+		PlayClip(curState);
 		initForward = Forward();
 		UIManager::Get()->MinusSpiritGauge(); // ±âÀÎ°ÔÀÌÁö ¼Ò¸ðÇÏ±â( ´Ü 1¹ø )
 	}
-	
+
 	if (RATIO > 0.1 && RATIO < 0.11)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
 	if (RATIO > 0.2 && RATIO < 0.21)
@@ -2738,7 +2737,7 @@ void Player::L109() // ±âÀÎ Å«È¸Àüº£±â
 	if (INIT)
 	{
 		spSuccessParticle->Play(Pos(), 0);
-		spiritParticle->Play({ realPos->Pos().x, realPos->Pos().y + 100, realPos->Pos().z }, 0);	
+		spiritParticle->Play({ realPos->Pos().x, realPos->Pos().y + 100, realPos->Pos().z }, 0);
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_25", .5f);
 		UIManager::Get()->MinusSpiritGauge(); // ±âÀÎ°ÔÀÌÁö ¼Ò¸ðÇÏ±â( ´Ü 1¹ø )
 		isEvaded = false;
@@ -2796,11 +2795,11 @@ void Player::L110() // ±âÀÎ ³»µðµ®º£±â
 	PLAY;
 	if (INIT)
 	{
-		spiritParticle->Play({ realPos->Pos().x, realPos->Pos().y + 100, realPos->Pos().z },0);
+		spiritParticle->Play({ realPos->Pos().x, realPos->Pos().y + 100, realPos->Pos().z }, 0);
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_25", .5f);
 		UIManager::Get()->MinusSpiritGauge(); // ±âÀÎ°ÔÀÌÁö ¼Ò¸ðÇÏ±â( ´Ü 1¹ø )
 	}
-	
+
 	if (RATIO > 0.3 && RATIO < 0.31)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
 	if (RATIO > 0.2 && RATIO < 0.3)
@@ -3046,13 +3045,15 @@ void Player::L133()	// Åõ±¸±ú±â
 {
 	PLAY;
 	if (INIT)
-		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_25", .5f);
-
-	if (RATIO > 0.2 && RATIO < 0.3 && !playOncePerMotion)
 	{
-		RandSpecialVoice();
-		playOncePerMotion = true;
+		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_25", .5f);
+		if (isInitVoice == false)
+		{
+			RandSpecialVoice();
+			isInitVoice = true;
+		}
 	}
+	
 	if (RATIO > 0.4 && RATIO < 0.44)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
 
@@ -3062,20 +3063,26 @@ void Player::L133()	// Åõ±¸±ú±â
 	// Ã¼°øÁß
 	{
 		if (RATIO < 0.38) // ÁÜ¾Æ¿ô
-			CAM->Zoom(650, 5);
+			CAM->Zoom(750, 5);
 
 		// °ø°ÝÆÇÁ¤ Å¸ÀÌ¹Ö
 		if (RATIO > 0.38)
 		{
 			if (Attack(40))
+			{
 				isHitL133 = true;
-			CAM->Zoom(400, 5);
+				if (val != nullptr)
+					tugu->Pos() = val->GetCollider()[lastHitPart]->GetHitPointPos();
+				else if (dumVal != nullptr)
+					tugu->Pos() = dumVal->GetCollider()[lastHitPart]->GetHitPointPos();
+			}
 		}
 
 
 		if (RATIO > 0.38 && realPos->Pos().y < height)
 		{
 			Pos().y = height;
+			tugu->active = true;
 			jumpVelocity = originJumpVelocity;
 			playOncePerMotion = false;
 			isJump = false;
@@ -3092,6 +3099,7 @@ void Player::L134()	// Åõ±¸±ú±â ·çÇÁ
 void Player::L135()	// Åõ±¸±ú±â ³¡
 {
 	PLAY;
+	isInitVoice = false;
 	EndEffect();
 	CAM->Zoom(400, 5);
 	{
@@ -3117,7 +3125,7 @@ void Player::L136() // ³«ÇÏÂî¸£±â
 
 	if (RATIO > 0.2 && RATIO < 0.3)
 		RandVoice();
-	if(RATIO>0.5&&RATIO<0.54)
+	if (RATIO > 0.5 && RATIO < 0.54)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
 
 	// Ã¼°øÁß
@@ -3169,7 +3177,7 @@ void Player::L147() // °£ÆÄº£±â
 	}
 	if (RATIO < 0.1)
 		spStartParticle->Play(Pos(), 0);
-	if (RATIO > 0.2 && RATIO < 0.3)	
+	if (RATIO > 0.2 && RATIO < 0.3)
 		RandVoice();
 	UIManager::Get()->staminaActive = false;
 	// ÁÜ¾Æ¿ô && È¸ÇÇ ÆÇÁ¤ ÇÁ·¹ÀÓ
@@ -3372,7 +3380,7 @@ void Player::L155() // ¾É¾Æ¹ßµµ ±âÀÎº£±â
 		if (RATIO > 0.1 && RATIO < 0.18)
 			CAM->Zoom(450);
 	}
-	
+
 	if (RATIO < 0.1)
 	{
 		spStartParticle->Play(Pos(), 0);
@@ -3398,7 +3406,7 @@ void Player::L155() // ¾É¾Æ¹ßµµ ±âÀÎº£±â
 		if (isEvaded && isHit && (RATIO > 0.385 && RATIO < 0.39))
 		{
 			spSuccessParticle->Play(Pos(), 0);
-			if(isHitL155==false)
+			if (isHitL155 == false)
 				UIManager::Get()->PlusCotingLevel();
 
 			isHitL155 = true;
@@ -3460,9 +3468,9 @@ void Player::R013() // ½¬ÇÁÆ® ¾È´©¸£°í ¶Ù±â ·çÇÁ, ±Ùµ¥ Æ÷Áö¼ÇÀÌ¶û ·ÎÅ×ÀÌ¼Ç ´Ù °¡
 
 	if (!K_MOVE)		SetState(R_024);
 	if (K_SPACE)		SetState(R_104);
-	if (KEY_DOWN('E'))		
+	if (KEY_DOWN('E'))
 	{
-		if(UI->useDragSlot2)	SetState(R_600); // ¼ýµ¹
+		if (UI->useDragSlot2)	SetState(R_600); // ¼ýµ¹
 		else					SetState(R_400); // ¹°¾à
 	}
 }
@@ -3483,7 +3491,7 @@ void Player::R024() // ¶Ù´Ù°¡ ¸ØÃã
 void Player::R031() // Å¾½Â
 {
 	PLAY;
-	if(INIT)
+	if (INIT)
 	{
 		switch (randVoice)
 		{
@@ -3492,7 +3500,7 @@ void Player::R031() // Å¾½Â
 		case 2: Sounds::Get()->Play("riding1", 2.5f); break;
 		case 3: Sounds::Get()->Play("riding2", 2.5f); break;
 		case 4: Sounds::Get()->Play("riding1", 2.5f); break;
-			default: break;
+		default: break;
 		}
 	}
 	if (RATIO > 0.43)
@@ -3568,8 +3576,9 @@ void Player::R402() // ¹°¾à ´Ù¸ÔÀº
 	if (RATIO < 0.1f)
 	{
 		Sounds::Get()->Play("health_potion", 0.3f);
-		potionParticle->Play(Pos() + Back()* 10, { 0,0,0 });
+		potionParticle->Play(Pos() + Back() * 10, { 0,0,0 });
 	}
+	
 	if (RATIO > 0.96)
 	{
 		if (K_MOVE)
@@ -3583,9 +3592,15 @@ void Player::R402() // ¹°¾à ´Ù¸ÔÀº
 void Player::R600() // ¼ýµ¹Áú
 {
 	PLAY;
+	Vector3 r = GetTranslationByNode(rightHandNode) - GetTranslationByNode(145);
+	r.GetNormalized();
+	sutdol->SetPos(GetTranslationByNode(rightHandNode));
 
-	if (RATIO > 0.6 && RATIO < 0.7)
+	if (RATIO < 0.8 && RATIO > 0.79)
+	{
+		sutdol->Play(GetTranslationByNode(rightHandNode), r);
 		Sounds::Get()->Play("wheatstone1", 0.3f);
+	}
 
 	if (RATIO > 0.96)
 		SetState(R_601);
@@ -3594,9 +3609,16 @@ void Player::R600() // ¼ýµ¹Áú
 void Player::R601() // ¼ýµ¹Áú
 {
 	PLAY;
+	Vector3 r = GetTranslationByNode(rightHandNode) - GetTranslationByNode(145);
+	r.GetNormalized();
+	sutdol->SetPos(GetTranslationByNode(rightHandNode));
 
-	if (RATIO > 0.3 && RATIO < 0.4)
+	if (RATIO < 0.35 && RATIO > 0.31)
+	{
+		sutdol->Play(GetTranslationByNode(rightHandNode), r);
 		Sounds::Get()->Play("wheatstone1", 0.3f);
+	}
+	
 
 	if (RATIO > 0.96)
 		SetState(R_602);
@@ -3605,13 +3627,23 @@ void Player::R601() // ¼ýµ¹Áú
 void Player::R602() // ¼ýµ¹ ¸¶¹«¸®
 {
 	PLAY;
+	Vector3 r = GetTranslationByNode(rightHandNode) - GetTranslationByNode(145);
+	r.GetNormalized();
+	sutdol->SetPos(GetTranslationByNode(rightHandNode));
 
-	if (RATIO > 0.2 && RATIO < 0.3)
+	if (RATIO < 0.1 && RATIO > 0.09)
+	{
+		sutdol->Play(GetTranslationByNode(rightHandNode), r);
 		Sounds::Get()->Play("wheatstone1", 0.3f);
-
-	if (RATIO > 0.5 && RATIO < 0.6)
+	}
+	if(RATIO>0.59)
+		sutdol->SetPos(longSword->GlobalPos() + longSword->Back() * 120.0f);
+	if (RATIO < 0.6 && RATIO>0.59)
+	{
+		sutdol->PlayHalo(longSword->GlobalPos() + longSword->Back() * 120.0f);
 		Sounds::Get()->Play("wheatstone2", 0.3f);
-
+		UI->SharpeningStone();
+	}
 	if (RATIO > 0.96)
 	{
 		if (K_MOVE)
@@ -3627,7 +3659,7 @@ void Player::L400()
 	PLAY;
 	//if (INIT)
 	//	RandHurtVoice();
-	
+
 	if (RATIO > 0.96)
 	{
 		ReturnIdle();
@@ -4041,13 +4073,13 @@ bool Player::Jump(float moveSpeed, float jumpSpeed)
 	Pos() -= Forward() * moveSpeed * DELTA;
 	Pos().y += jumpVelocity;
 
-	if (realPos->Pos().y >= height -100)
+	if (realPos->Pos().y >= height - 100)
 	{
 		isJump = true;
 		return true;
 	}
 
-	else 
+	else
 	{
 		isJump = false;
 		Pos().y = height;
@@ -4070,7 +4102,7 @@ void Player::GroundCheck()
 	terrain->ComputePicking(pos, realPos->Pos() + Vector3::Up() * 400, Vector3::Down());
 	height = pos.y;
 
-	if(!isJump)		Pos().y = height;
+	if (!isJump)		Pos().y = height;
 }
 
 void Player::RandVoice()
@@ -4092,10 +4124,10 @@ void Player::RandSpecialVoice()
 	randVoice = rand() % 4;
 	switch (randVoice)
 	{
-	case 0:		Sounds::Get()->Play("special1", 2.5f);		break;
-	case 1:		Sounds::Get()->Play("special2", 2.5f);		break;
-	case 2:		Sounds::Get()->Play("special3", 2.5f);		break;
-	case 3:		Sounds::Get()->Play("special4", 2.5f);		break;
+	case 0:		Sounds::Get()->Play("special1", 2.1f);		break;
+	case 1:		Sounds::Get()->Play("special2", 2.1f);		break;
+	case 2:		Sounds::Get()->Play("special3", 2.1f);		break;
+	case 3:		Sounds::Get()->Play("special4", 2.1f);		break;
 	default:
 		break;
 	}
@@ -4104,7 +4136,7 @@ void Player::RandSpecialVoice()
 void Player::RandHurtVoice()
 {
 	// ÇöÀç »óÅÂ°¡ ´ë°æÁ÷ÀÌ ¾Æ´Ï¶ó¸é
-		randVoice = rand() % 4;
+	randVoice = rand() % 4;
 	if (curState != L_451 && curState != L_453 && curState != D_015 && curState != D_016 && curState != D_021 &&
 		curState != D_022 && curState != D_026 && curState != D_029 && curState != D_031 && curState != D_032)
 	{
@@ -4161,7 +4193,7 @@ void Player::GetWireBug()
 
 	Vector3 playerPos = realPos->Pos();
 	playerPos.y = 0;
-	
+
 	Vector3 wireBugPos = wireBug->Pos();
 	wireBugPos.y = 0;
 

@@ -14,6 +14,7 @@ PlayerTestScene::PlayerTestScene()
 	garuk->SetTerrain(terrain);
 
 	player->SetGaruk(garuk->GetRealPos());
+	player->SetValphalk(valphalk);
 	player->SetDog(garuk);
 	player->SetTerrain(terrain);
 	UI;

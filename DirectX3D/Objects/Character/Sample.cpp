@@ -27,6 +27,8 @@ Sample::Sample() : ModelAnimator("Sample")
 	bowGun = new Model("bowGun");
 	arrow = new Model("arrow");
 	bowGun->SetParent(waist);
+
+	fireParticle = new Garuk_Fire();	
 }
 
 Sample::~Sample()
@@ -34,6 +36,7 @@ Sample::~Sample()
 	delete realPos;
 	delete waist;
 	delete bowGun;
+	delete fireParticle;
 }
 
 void Sample::Update()
@@ -52,6 +55,7 @@ void Sample::Update()
 	ModelAnimator::Update();
 	ResetPlayTime();
 	GroundCheck();
+	fireParticle->Update();
 }
 
 void Sample::Render()
@@ -78,6 +82,8 @@ void Sample::Render()
 		isLoop = false;
 
 	}
+
+	fireParticle->Render();
 }
 
 void Sample::GUIRender()
@@ -442,6 +448,7 @@ void Sample::Fire_B()
 	if (RATIO < 0.25)
 	{
 		LimitRotateToEnemy(0, 0.3, 45);
+		fireParticle->Play({ Pos().x,Pos().y + 150,Pos().z }, Back() * 300);
 	}
 
 	if (RATIO > 0.291f)
