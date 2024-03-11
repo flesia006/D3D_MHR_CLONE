@@ -219,6 +219,8 @@ using namespace GameMath;
 #include "Objects/Particle/Wind.h"
 #include "Objects/Particle/PotionParticle.h"
 #include "Objects/Particle/ValZet.h"
+#include "Objects/Particle/Suwol.h"
+#include "Objects/Particle/TuguEft.h"
 #include "Objects/Particle/Explosion.h"
 #include "Objects/Particle/Garuk_Fire.h"
 #include "Objects/Particle/Sutdol.h"
@@ -245,6 +247,7 @@ using namespace GameMath;
 #include "Objects/Manager/KunaiManager.h"
 #include "Objects/Manager/RobotManager.h"
 #include "Objects/Manager/UIManager.h"
+#include "Objects/Manager/ItemManager.h"
 
 #include "Objects/Test/TestLight.h"
 

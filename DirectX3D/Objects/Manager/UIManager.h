@@ -77,6 +77,7 @@ private:
     //=====================
     void QuickSlot(); // 퀵 슬롯 어떤 식으로 랜더 할지 내용
     void QuickSlotBar(); // 퀵 슬롯 에서 가리키는 내용 함수
+    void DragInvenItem();
     void DragSlot(); // 드래그 슬롯 내용
     void DragSlotBar(); // 드래그 슬롯 내용
     void NumberSlot(); // 넘버 슬롯 내용
@@ -145,6 +146,7 @@ private:
     Quad* potionIcon_D;
     Quad* greatepotionIcon_D;
     Quad* whetstoneIcon_D;
+    vector<Quad*>inItDragItem_D;
     //===================
     Quad* potionIcon_N;
     Quad* greatepotionIcon_N;
@@ -230,8 +232,8 @@ public:
     bool useSelectBar = false;
     Vector3 MousePos;
 
-    int havePotion = 20;
-    int haveGPotion = 10;
+    int havePotion = 10; // 애는 20이 10개
+    int haveGPotion = 0; // 애는 10이 10개
 
     // 드래그 슬롯 실행 할때 유무 확인 하기
     bool useDragBar = false;

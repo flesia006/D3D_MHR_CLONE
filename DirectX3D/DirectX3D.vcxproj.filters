@@ -174,6 +174,8 @@
     <ClCompile Include="Objects\Particle\Sp_atk_success.cpp" />
     <ClCompile Include="Objects\Particle\SpiritFlame.cpp" />
     <ClCompile Include="Objects\Character\Sample.cpp" />
+    <ClCompile Include="Objects\Particle\Suwol.cpp" />
+    <ClCompile Include="Objects\Particle\TuguEft.cpp" />
     <ClCompile Include="Objects\Particle\Wire_Bug.cpp" />
     <ClCompile Include="Objects\Particle\Explosion.cpp" />
     <ClCompile Include="Objects\Particle\Garuk_Fire.cpp" />
@@ -332,6 +334,8 @@
     <ClInclude Include="Objects\Particle\Sp_atk_start.h" />
     <ClInclude Include="Objects\Particle\SpiritFlame.h" />
     <ClInclude Include="Objects\Character\Sample.h" />
+    <ClInclude Include="Objects\Particle\Suwol.h" />
+    <ClInclude Include="Objects\Particle\TuguEft.h" />
     <ClInclude Include="Objects\Particle\Wire_Bug.h" />
     <ClInclude Include="Objects\Particle\Explosion.h" />
     <ClInclude Include="Objects\Particle\Garuk_Fire.h" />

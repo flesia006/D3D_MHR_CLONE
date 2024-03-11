@@ -46,6 +46,7 @@ public:
 
     void SetShader(wstring shaderFile);
     void SetDiffuseMap(wstring textureFile);
+    void SetDiffuseMapColor(Float4 color) { buffer->Get().diffuse = color; }
     void SetSpecularMap(wstring textureFile);
     void SetNormalMap(wstring textureFile); 
     void SetEmissiveMap(wstring textureFile);

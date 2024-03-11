@@ -3,7 +3,7 @@
 
 CriticalParticle::CriticalParticle()
 {
-	hit = new ParticleSystem("TextData/Particles/Critical_fix.fx");	
+	hit = new ParticleSystem("TextData/Particles/critical_fix2.fx");	
 }
 
 CriticalParticle::~CriticalParticle()

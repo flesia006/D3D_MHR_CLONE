@@ -20,7 +20,6 @@ Quad::Quad(wstring file)
     mesh->CreateMesh();
 }
 
-
 Quad::~Quad()
 {    
     delete mesh;
@@ -53,6 +52,23 @@ void Quad::SetTexture(wstring file)
     mesh->CreateMesh();
 }
 
+void Quad::InItPos(Vector3 Pos)
+{
+    LT = { LT.x + Pos.x , LT.y + Pos.y };
+    RB = { RB.x + Pos.x , RB.y + Pos.y };
+}
+
+bool Quad::IsOnMouseCursor()
+{
+    Vector3 pos = mousePos;
+
+    if (LT.x < pos.x && LT.y > pos.y &&
+        RB.x > pos.x && RB.y < pos.y)
+        return true;
+
+    return false;
+}
+
 void Quad::MakeMesh()
 {
     float left = -size.x * 0.5f;
@@ -69,4 +85,7 @@ void Quad::MakeMesh()
 
     vector<UINT>& indices = mesh->GetIndices();
     indices = { 0, 1, 2, 2, 1, 3 };
+
+    LT = { left, top };
+    RB = { right, bottom };
 }
