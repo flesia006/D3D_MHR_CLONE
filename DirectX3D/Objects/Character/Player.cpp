@@ -16,6 +16,8 @@ Player::Player() : ModelAnimator("Player")
 	swordEnd = new Transform();
 	mainHand = new Transform();
 	backSwd = new Transform();
+	playerWireBugHead = new Transform();
+	playerWireBugTail = new Transform();
 
 	swordCollider = new CapsuleCollider(2.0f, 100.0f);
 	swordCollider->Rot().x += XM_PIDIV2;
@@ -24,6 +26,7 @@ Player::Player() : ModelAnimator("Player")
 	swordCollider->Scale() *= 3.0f;
 
 	trail = new Trail(L"Textures/Effect/Snow.png", swordStart, swordEnd, 20, 85);
+	wireBugTrail = new Trail(L"Textures/Effect/bluelight.png", playerWireBugHead, playerWireBugTail, 40, 60);
 
 	/////////////////////////////////////////////////////////////
 	// Particles
@@ -74,6 +77,9 @@ Player::Player() : ModelAnimator("Player")
 	//	tmpCollider->SetParent(head);
 	//	tmpCollider->SetParent(back);
 
+	playerWireBug = new PlayerWireBug();
+	playerWireBug->SetActive(false);
+
 	ReadClips();
 
 	CAM->SetTarget(head);
@@ -107,6 +113,10 @@ Player::~Player()
 	delete backPos;
 	delete realPos;
 	delete head;
+	delete playerWireBug;
+	delete wireBugTrail;
+	delete playerWireBugHead;
+	delete playerWireBugTail;
 }
 
 void Player::Update()
@@ -139,14 +149,20 @@ void Player::Update()
 
 	ModelAnimator::Update();
 	GroundCheck();
+
+	///////////////////////////////
+	//디버그용
+	if (KEY_DOWN('5'))
+		UI->PlusCotingLevel();
+	///////////////////////////////
 }
 
 void Player::PreRender()
 {
 	if (renderEffect)
-	{
 		trail->Render();
-	}
+	if(playerWireBug->GetisMoving())
+		wireBugTrail->Render();
 	////////////////////////////////////////////
 	// Particles
 	hitBoomParticle->Render();
@@ -171,7 +187,8 @@ void Player::Render()
 	longSword->Render();
 	kalzip->Render();
 
-		
+	if(playerWireBug->Active())
+		playerWireBug->Render();
 
 	if (isSetState)
 	{
@@ -204,7 +221,7 @@ void Player::UpdateWorlds()
 
 	if (holdingSword)
 	{
-		backSwd->SetWorld(GetTransformByNode(lefeHandNode));
+		backSwd->SetWorld(GetTransformByNode(leftHandNode));
 		kalzip->Pos() = { };
 		kalzip->Rot() = { };
 	}
@@ -263,7 +280,6 @@ void Player::UpdateWorlds()
 	backPos->Pos() = GetTranslationByNode(1) + Forward() * 100;
 	forwardPos->Pos() = GetTranslationByNode(1) + Back() * 50 + Vector3::Up() * 80;
 
-
 	head->Pos().x = realPos->Pos().x;
 	if (isRiding && curState != R_031)
 		head->Pos().y = realPos->Pos().y + 100;
@@ -278,6 +294,15 @@ void Player::UpdateWorlds()
 
 	swordStart->UpdateWorld();
 	swordEnd->UpdateWorld();
+
+	playerWireBugHead->Pos() = playerWireBug->GlobalPos() + playerWireBug->Forward() * 30.0f;
+	playerWireBugTail->Pos() = playerWireBug->GlobalPos() + playerWireBug->Back() * 30.0f;
+
+	playerWireBugHead->UpdateWorld();
+	playerWireBugTail->UpdateWorld();
+
+	if(!playerWireBug->GetisMoving())
+		playerWireBug->Pos() = GetTranslationByNode(leftHandNode);
 
 	swordSwingDir = lastSwordEnd - swordStart->GlobalPos();
 	tmpCollider->Pos() = GetTranslationByNode(node);
@@ -294,6 +319,9 @@ void Player::UpdateWorlds()
 	tmpCollider3->UpdateWorld();
 	bodyCollider->Update();
 	swordCollider->Update();
+
+	playerWireBug->Rot() = Rot();
+	playerWireBug->Update();
 
 	haloTransform->Pos() = longSword->GlobalPos() + longSword->Back() * 55.f;
 	haloCollider->Pos() = haloTransform->Pos();
@@ -451,6 +479,7 @@ void Player::GUIRender()
 	//temp = "Real_GlobalPos";
 	//Vector3 Pos = root->GlobalPos();
 	//ImGui::DragFloat3(temp.c_str(), (float*)&Pos, 0.1f);
+	ImGui::DragFloat3("playerWireBug Pos", (float*)&playerWireBug->Pos());
 }
 
 void Player::PostRender()
@@ -859,6 +888,7 @@ void Player::ResetPlayTime()
 void Player::EffectUpdates()
 {
 	trail->Update();
+	wireBugTrail->Update();
 	FOR(hitParticle.size())		hitParticle[i]->Update();
 	hitBoomParticle->Update();
 	criticalParticle->Update();
@@ -2888,22 +2918,30 @@ void Player::L122() // 날라차기 착지
 void Player::L128()	// 날라차기 시작
 {
 	PLAY;	
-	Vector3 a = GetTranslationByNode(131);
-	Vector3 b = GetTranslationByNode(133);
-	Vector3 c = b - a;
-	c.GetNormalized();
+	//Vector3 a = GetTranslationByNode(131);
+	//Vector3 b = GetTranslationByNode(133);
+	//Vector3 c = b - a;
+	//c.GetNormalized();
 	
 	wireBugParticle->Play(GetTranslationByNode(108), GetRotationByNode(129));
 	if (!playOncePerMotion)
 	{
 		UI->UseBugSkill();
-		Sounds::Get()->Play("wirebug", 2.0f);
-		playOncePerMotion = true;
+		Sounds::Get()->Play("wirebug", 3.5f);
 		isEvaded = false;
+		playerWireBug->SetActive(true);
+		playOncePerMotion = true;
 	}
 
 	if (RATIO < 0.2)
 		LimitRotate(180, 150);
+
+	if (RATIO > 0.5 && !playOncePerMotion2)
+	{
+		Vector3 pos = GetTranslationByNode(leftHandNode);
+		playerWireBug->SetMove(pos, true, Back() * 1000 + Up() * 200);
+		playOncePerMotion2 = true;
+	}
 
 
 	// 줌 정상화 (앉아 기인 회전 베기에서 넘어온 경우)
@@ -2915,8 +2953,9 @@ void Player::L128()	// 날라차기 시작
 
 	if (RATIO > 0.96)
 	{
-		SetState(L_130);
 		playOncePerMotion = false;
+		playOncePerMotion2 = false;
+		SetState(L_130);
 	}
 }
 
@@ -2936,10 +2975,16 @@ void Player::L130()	// 날라차기 체공중
 					if (K_CTRL && UI->GetCotingLevel() > 0)
 					{
 						UI->MinusCotingLevel();
+						playerWireBug->SetActive(false);
+						playerWireBug->SetMove(Vector3::Zero(), false, Vector3::Zero());
 						SetState(L_133);  // 투구깨기
 					}
 					else
+					{
+						playerWireBug->SetActive(false);
+						playerWireBug->SetMove(Vector3::Zero(), false, Vector3::Zero());
 						SetState(L_136);  // 낙하찌르기
+					}
 				}
 
 				if (RATIO > 0.96)
@@ -2953,6 +2998,14 @@ void Player::L130()	// 날라차기 체공중
 			}
 		}
 
+	}
+	//if (RATIO > 0.1) TODO
+	//	playerWireBug->SetisMoving(false);
+
+	if (RATIO > 0.5)
+	{
+		playerWireBug->SetActive(false);
+		playerWireBug->SetMove(Vector3::Zero(), false, Vector3::Zero());
 	}
 }
 
@@ -2995,8 +3048,11 @@ void Player::L133()	// 투구깨기
 	if (INIT)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_25", .5f);
 
-	if (RATIO > 0.2 && RATIO < 0.3)
+	if (RATIO > 0.2 && RATIO < 0.3 && !playOncePerMotion)
+	{
 		RandSpecialVoice();
+		playOncePerMotion = true;
+	}
 	if (RATIO > 0.4 && RATIO < 0.44)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
 
@@ -3017,10 +3073,12 @@ void Player::L133()	// 투구깨기
 		}
 
 
-		if (realPos->Pos().y < 0)
+		if (RATIO > 0.38 && realPos->Pos().y < height)
 		{
-			Pos().y = 0.0f;
+			Pos().y = height;
 			jumpVelocity = originJumpVelocity;
+			playOncePerMotion = false;
+			isJump = false;
 			SetState(L_135);
 		}
 	}
@@ -3070,11 +3128,12 @@ void Player::L136() // 낙하찌르기
 				isHitL136 = true;
 		}
 
-		if (realPos->Pos().y < 0)
+		if (realPos->Pos().y < height)
 		{
 			EndEffect();
-			Pos().y = 0.0f;
+			Pos().y = height;
 			jumpVelocity = originJumpVelocity;
+			isJump = false;
 			SetState(L_138);
 		}
 	}
@@ -3524,6 +3583,10 @@ void Player::R402() // 물약 다먹은
 void Player::R600() // 숫돌질
 {
 	PLAY;
+
+	if (RATIO > 0.6 && RATIO < 0.7)
+		Sounds::Get()->Play("wheatstone1", 0.3f);
+
 	if (RATIO > 0.96)
 		SetState(R_601);
 }
@@ -3543,7 +3606,10 @@ void Player::R602() // 숫돌 마무리
 {
 	PLAY;
 
-	if (RATIO > 0.3 && RATIO < 0.4)
+	if (RATIO > 0.2 && RATIO < 0.3)
+		Sounds::Get()->Play("wheatstone1", 0.3f);
+
+	if (RATIO > 0.5 && RATIO < 0.6)
 		Sounds::Get()->Play("wheatstone2", 0.3f);
 
 	if (RATIO > 0.96)

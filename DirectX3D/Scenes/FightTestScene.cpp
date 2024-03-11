@@ -17,13 +17,17 @@ FightTestScene::FightTestScene()
 	rasterizer = new RasterizerState();
 	rasterizer->CullMode(D3D11_CULL_NONE);
 
+	garuk->SetEnemy(valphalk);
 	UIManager::Get();
+
+	ARROW;
 }
 
 FightTestScene::~FightTestScene()
 {
 	delete valphalk;
 	delete player;
+	delete garuk;
 }
 
 void FightTestScene::Update()
@@ -33,6 +37,7 @@ void FightTestScene::Update()
 	garuk->Update();
 	player->Update();
 	UIManager::Get()->Update();
+	ARROW->Update();
 }
 
 void FightTestScene::PreRender()
@@ -45,12 +50,14 @@ void FightTestScene::Render()
 	valphalk->Render();
 	garuk->Render();
 	player->Render();
+	ARROW->Render();
 }
 
 void FightTestScene::PostRender()
 {
 	UIManager::Get()->PostRender();
 	player->PostRender();
+	ARROW->PostRender();
 }
 
 void FightTestScene::GUIRender()

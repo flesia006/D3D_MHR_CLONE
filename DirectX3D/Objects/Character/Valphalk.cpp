@@ -1142,7 +1142,10 @@ void Valphalk::Patrol()
 
 		// 플레이어가 근처에 있는지 체크해
 		if ((target->GlobalPos() - realPos->Pos()).Length() < 4000)
+		{
+			Sounds::Get()->Play("Valphalk_Thema", 0.03f);
 			sequence++; // 있으면 포효로
+		}
 		else
 			sequence = 0; // 없으면 루프해
 
@@ -4935,7 +4938,7 @@ void Valphalk::E3001() // 작은 데미지 피격
 	PLAY;
 
 	if (RATIO > 0.10 && RATIO < 0.20)
-		Sounds::Get()->Play("em086_05_vo_media_29", 0.3f);
+		Sounds::Get()->Play("em086_05_vo_media_29", 3.0f);
 
 	if (RATIO > 0.96)
 		sequence++;
@@ -4952,7 +4955,7 @@ void Valphalk::E3015()
 	PLAY;
 
 	if (RATIO > 0.10 && RATIO < 0.20)
-		Sounds::Get()->Play("em086_05_vo_media_25", 0.9f);
+		Sounds::Get()->Play("em086_05_vo_media_25", 4.5f);
 
 	if (RATIO > 0.96)
 		sequence++;
@@ -4963,7 +4966,7 @@ void Valphalk::E3016()
 	PLAY;
 
 	if (RATIO > 0.10 && RATIO < 0.20)
-		Sounds::Get()->Play("em086_05_vo_media_25", 0.9f);
+		Sounds::Get()->Play("em086_05_vo_media_25", 4.5f);
 
 	if (RATIO > 0.96)
 		sequence++;
@@ -4985,7 +4988,7 @@ void Valphalk::E3023() // 사망
 	PLAY;
 
 	if (RATIO > 0.40 && RATIO < 0.50)
-		Sounds::Get()->Play("em086_05_vo_media_30", 0.3f);
+		Sounds::Get()->Play("em086_05_vo_media_30", 3.0f);
 
 	if (RATIO > 0.96)
 		isPlay = false;
@@ -4996,7 +4999,7 @@ void Valphalk::E3101()
 	PLAY;
 
 	if (RATIO > 0.10 && RATIO < 0.20)
-		Sounds::Get()->Play("em086_05_vo_media_29", 0.3f);
+		Sounds::Get()->Play("em086_05_vo_media_29", 3.0f);
 
 	if (RATIO > 0.96)
 		sequence++;
@@ -5013,7 +5016,7 @@ void Valphalk::E3114()
 	PLAY;
 
 	if (RATIO > 0.10 && RATIO < 0.20)
-		Sounds::Get()->Play("em086_05_vo_media_25", 0.9f);
+		Sounds::Get()->Play("em086_05_vo_media_25", 4.5f);
 
 	if (RATIO > 0.96)
 	{
@@ -5027,7 +5030,7 @@ void Valphalk::E3118()
 	PLAY;
 
 	if (RATIO > 0.40 && RATIO < 0.50)
-		Sounds::Get()->Play("em086_05_vo_media_30", 0.3f);
+		Sounds::Get()->Play("em086_05_vo_media_30", 3.0f);
 
 	if (RATIO > 0.96)
 		isPlay = false;

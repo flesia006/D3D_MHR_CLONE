@@ -59,11 +59,11 @@ GameManager::GameManager()
 //    SceneManager::Get()->Add("ParticleConfig");
 
 
-    SceneManager::Get()->Create("ValphalkTestScene", new ValphalkTestScene());
-    SceneManager::Get()->Add("ValphalkTestScene");
+//    SceneManager::Get()->Create("ValphalkTestScene", new ValphalkTestScene());
+//    SceneManager::Get()->Add("ValphalkTestScene");
 
-//    SceneManager::Get()->Create("PlayerTestScene", new PlayerTestScene());
-//    SceneManager::Get()->Add("PlayerTestScene");
+    SceneManager::Get()->Create("PlayerTestScene", new PlayerTestScene());
+    SceneManager::Get()->Add("PlayerTestScene");
 
 //   SceneManager::Get()->Create("FightTestScene", new FightTestScene());
 //   SceneManager::Get()->Add("FightTestScene");
@@ -173,7 +173,6 @@ void GameManager::Create()
     sound->AddSound("Valphalk_Thema", SoundPath + L"Valphalk_Thema.mp3", true);
     sound->AddSound("env_114", SoundPath + L"env_114.mp3", true);
 
-    //sound->Play("Valphalk_Thema", 0.03f);
     sound->Play("env_114", .5f);
     /////////////////////////////////////////////////////////////
     // Player

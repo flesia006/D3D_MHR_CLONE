@@ -5,6 +5,7 @@ class Trail;
 class Sample;
 class Valphalk;
 class WireBug;
+class PlayerWireBug;
 class Player : public ModelAnimator
 {
 private:
@@ -272,6 +273,9 @@ private:
 
 	Transform* garuk;
 
+	Transform* playerWireBugHead = nullptr;
+	Transform* playerWireBugTail = nullptr;
+
 	Vector3 lastSwordEnd = { 0, 0, 0 };
 	Vector3 swordSwingDir;
 
@@ -292,6 +296,7 @@ private:
 	Shadow* shadow;
 	LightBuffer::Light* light;
 	Trail* trail;
+	Trail* wireBugTrail;
 	UINT lastParticleIndex = 0;
 	UINT lastHitPart = 0;
 	Vector3 lastSwordDir;
@@ -327,7 +332,7 @@ private:
 	int kunaiIndex = 0;
 	int node = 197;
 
-	const int lefeHandNode = 108;
+	const int leftHandNode = 108;
 	const int rightHandNode = 150;
 	const int backSwdNode = 190;
 
@@ -356,6 +361,7 @@ private:
 	bool attackOnlyOncePerMotion = false;
 	bool isDoubleStrikeMotion = false;
 	bool playOncePerMotion = false;
+	bool playOncePerMotion2 = false;
 	bool playOncePerTerm = false;
 	bool playOncePerTerm2 = false;
 
@@ -379,10 +385,14 @@ private:
 
 	Valphalk* val = nullptr;
 	
-	WireBug* wireBug = nullptr;
+	WireBug* wireBug = nullptr; // ÇÊµå¿¡¼­ ÁÖ¿ï ¹åÁÙ¹ú·¹
+	PlayerWireBug* playerWireBug; // ¹åÁÙ¹ú·¹ ±â¼ú »ç¿ë½Ã ³ª¿À´Â ¹ú·¹
 	
 	int randVoice = 0;
 	float breathCount = 0;
+
+	Vector3 wireBugDir = Vector3::Zero();
+
 	///////////////////////////////////////////
 	// Particle
 	vector<HitParticle*> hitParticle;

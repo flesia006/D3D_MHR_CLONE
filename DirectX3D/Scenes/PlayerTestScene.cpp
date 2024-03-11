@@ -4,13 +4,13 @@
 PlayerTestScene::PlayerTestScene()
 {
 	valphalk = new DummyValphalk();
-	valphalk->Pos().z = -1500.0f;
+	valphalk->Pos().x = +1500.0f;
+	valphalk->Pos().z = +1500.0f;
 
 	garuk = new Sample();
 	player = new Player();
 	terrain = new TerrainEditor();
 	garuk->SetTarget(player->GetRealPos());
-	garuk->SetEnemy(player->GetRealPos());
 	garuk->SetTerrain(terrain);
 
 	player->SetGaruk(garuk->GetRealPos());

@@ -804,6 +804,10 @@ void UIManager::Update()
 		slingerBug2->Pos() = { 922.5,120,0 };
 
 		slingerBug3->SetActive(false);
+		blackCircle3->SetActive(false);
+		blackHalfCircle3->SetActive(false);
+		orangeLeftHalfCircle3->SetActive(false);
+		orangeRightHalfCircle3->SetActive(false);
 	}
 	else if (bugCount == 3)
 	{
@@ -859,7 +863,7 @@ void UIManager::Update()
 		orangeRightHalfCircle2->SetActive(true);
 	}
 
-	if (isCoolTime3)
+	if (bugCount == 3 && isCoolTime3)
 	{
 		slingerBug3->SetActive(false);
 		blackCircle3->SetActive(true);
@@ -876,11 +880,9 @@ void UIManager::Update()
 	if (orangeLeftHalfCircle2->Active())
 		orangeLeftHalfCircle2->Rot().z += XM_PIDIV2 * 1 / 360; // 쿨타임 회복속도 부분
 
-	if (orangeLeftHalfCircle3->Active())
+	if (orangeLeftHalfCircle3->Active() || bugCount == 2)
 		orangeLeftHalfCircle3->Rot().z += XM_PIDIV2 * 1 / 360; // 쿨타임 회복속도 부분
 
-	if (KEY_DOWN(VK_RBUTTON))
-		GetWildBug();
 	/////////////////////////
 
 	if (orangeLeftHalfCircle->Rot().z > XM_2PI)
@@ -1698,9 +1700,9 @@ void UIManager::StateIcon()
 
 bool UIManager::IsAbleBugSkill()
 {
-	if (isCoolTime1 && isCoolTime2)
+	if (bugCount == 2 && isCoolTime1 && isCoolTime2)
 		return false;
-	else if (bugCount == 3 && isCoolTime3)
+	else if (bugCount == 3 && isCoolTime1 && isCoolTime2 && isCoolTime3)
 		return false;
 	else
 		return true;

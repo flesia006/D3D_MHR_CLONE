@@ -150,6 +150,7 @@
     <ClInclude Include="Objects\Particle\Sp_atk_start.h" />
     <ClInclude Include="Objects\Particle\Sp_atk_success.h" />
     <ClInclude Include="Objects\Particle\Val_fire.h" />
+    <ClInclude Include="Objects\Character\PlayerWireBug.h" />
     <ClInclude Include="Scenes\FightTestScene.h" />
     <ClInclude Include="Objects\Character\DummyValphalk.h" />
     <ClInclude Include="Objects\Particle\CriticalParticle.h" />
@@ -306,6 +307,7 @@
     <ClCompile Include="Objects\Particle\Sp_atk_start.cpp" />
     <ClCompile Include="Objects\Particle\Sp_atk_success.cpp" />
     <ClCompile Include="Objects\Particle\Val_fire.cpp" />
+    <ClCompile Include="Objects\Character\PlayerWireBug.cpp" />
     <ClCompile Include="Scenes\FightTestScene.cpp" />
     <ClCompile Include="Objects\Character\DummyValphalk.cpp" />
     <ClCompile Include="Objects\Particle\CriticalParticle.cpp" />
