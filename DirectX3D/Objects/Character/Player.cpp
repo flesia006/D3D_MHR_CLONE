@@ -40,7 +40,8 @@ Player::Player() : ModelAnimator("Player")
 	haloTransform = new Transform();
 	haloCollider = new CapsuleCollider();
 	wireBugParticle = new Wire_Bug();
-	
+	sutdol = new Sutdol();
+
 	haloCollider->SetParent(swordStart);
 	/////////////////////////////////////////////////////////////
 	longSword = new Model("kal");
@@ -81,6 +82,7 @@ Player::Player() : ModelAnimator("Player")
 
 Player::~Player()
 {
+	delete sutdol;
 	delete evadeCheckCollider;
 	delete bodyCollider;
 	delete tmpCollider3;
@@ -149,6 +151,7 @@ void Player::PreRender()
 	}
 	////////////////////////////////////////////
 	// Particles
+	sutdol->Render();
 	hitBoomParticle->Render();
 	criticalParticle->Render();
 	haloCollider->Render();
@@ -237,6 +240,18 @@ void Player::UpdateWorlds()
 			}
 		}
 		Rot().y = garuk->Rot().y;
+		if (curState == R_600 || curState == R_601 || curState == R_602)
+		{
+			mainHand->SetWorld(GetTransformByNode(lefeHandNode));
+			longSword->Pos() = {};
+			longSword->Rot() = {};
+		}
+		else
+		{
+			mainHand->SetWorld(GetTransformByNode(backSwdNode));
+			longSword->Pos() = { -32,32,23 };
+			longSword->Rot() = { -0.86f,-1.2f,+1.46f };
+		}
 	}
 
 	Vector3 camRot = CAM->Rot();
@@ -872,6 +887,7 @@ void Player::EffectUpdates()
 	spSuccessParticle->SetPos({ realPos->Pos().x,realPos->Pos().y + 100,realPos->Pos().z });
 	//spiritParticle->SetPos({ realPos->Pos().x,realPos->Pos().y + 100,realPos->Pos().z });
 	spiritParticle->Update();
+	sutdol->Update();
 }
 
 void Player::Rotate(float rotateSpeed)
@@ -3510,6 +3526,7 @@ void Player::R402() // 물약 다먹은
 		Sounds::Get()->Play("health_potion", 0.3f);
 		potionParticle->Play(Pos() + Back()* 10, { 0,0,0 });
 	}
+	
 	if (RATIO > 0.96)
 	{
 		if (K_MOVE)
@@ -3523,6 +3540,13 @@ void Player::R402() // 물약 다먹은
 void Player::R600() // 숫돌질
 {
 	PLAY;
+	Vector3 r = GetTranslationByNode(rightHandNode) - GetTranslationByNode(145);
+	r.GetNormalized();
+	sutdol->SetPos(GetTranslationByNode(rightHandNode));
+
+	if (RATIO < 0.8 && RATIO > 0.79)
+		sutdol->Play(GetTranslationByNode(rightHandNode), r);
+
 	if (RATIO > 0.96)
 		SetState(R_601);
 }
@@ -3530,6 +3554,13 @@ void Player::R600() // 숫돌질
 void Player::R601() // 숫돌질
 {
 	PLAY;
+	Vector3 r = GetTranslationByNode(rightHandNode) - GetTranslationByNode(145);
+	r.GetNormalized();
+	sutdol->SetPos(GetTranslationByNode(rightHandNode));
+
+	if (RATIO < 0.35 && RATIO > 0.31)
+		sutdol->Play(GetTranslationByNode(rightHandNode), r);
+	
 	if (RATIO > 0.96)
 		SetState(R_602);
 }
@@ -3537,6 +3568,16 @@ void Player::R601() // 숫돌질
 void Player::R602() // 숫돌 마무리
 {
 	PLAY;
+	Vector3 r = GetTranslationByNode(rightHandNode) - GetTranslationByNode(145);
+	r.GetNormalized();
+	sutdol->SetPos(GetTranslationByNode(rightHandNode));
+
+	if (RATIO < 0.1 && RATIO > 0.09)
+		sutdol->Play(GetTranslationByNode(rightHandNode), r);
+	if(RATIO>0.59)
+		sutdol->SetPos(longSword->GlobalPos() + longSword->Back() * 120.0f);
+	if (RATIO < 0.6 && RATIO>0.59)
+		sutdol->PlayHalo(longSword->GlobalPos() + longSword->Back() * 120.0f);
 	if (RATIO > 0.96)
 	{
 		if (K_MOVE)

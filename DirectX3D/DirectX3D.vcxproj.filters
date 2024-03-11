@@ -176,6 +176,8 @@
     <ClCompile Include="Objects\Character\Sample.cpp" />
     <ClCompile Include="Objects\Particle\Wire_Bug.cpp" />
     <ClCompile Include="Objects\Particle\Explosion.cpp" />
+    <ClCompile Include="Objects\Particle\Garuk_Fire.cpp" />
+    <ClCompile Include="Objects\Particle\Sutdol.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Objects\Character\DummyValphalk.h" />
@@ -332,6 +334,8 @@
     <ClInclude Include="Objects\Character\Sample.h" />
     <ClInclude Include="Objects\Particle\Wire_Bug.h" />
     <ClInclude Include="Objects\Particle\Explosion.h" />
+    <ClInclude Include="Objects\Particle\Garuk_Fire.h" />
+    <ClInclude Include="Objects\Particle\Sutdol.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DirectX3D.rc" />

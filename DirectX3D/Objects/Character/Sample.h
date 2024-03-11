@@ -135,4 +135,5 @@ private:
 	float radDifference = 0.0f;
 
 	const int waistNode = 3;
+	Garuk_Fire* fireParticle;
 };

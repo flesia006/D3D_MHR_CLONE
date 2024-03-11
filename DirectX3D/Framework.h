@@ -220,6 +220,8 @@ using namespace GameMath;
 #include "Objects/Particle/PotionParticle.h"
 #include "Objects/Particle/ValZet.h"
 #include "Objects/Particle/Explosion.h"
+#include "Objects/Particle/Garuk_Fire.h"
+#include "Objects/Particle/Sutdol.h"
 
 #include "Objects/Algorithm/Node.h"
 #include "Objects/Algorithm/Heap.h"

@@ -394,6 +394,7 @@ private:
 	PotionParticle* potionParticle;
 	SpiritFlame* spiritParticle;
 	Wire_Bug* wireBugParticle;
+	Sutdol* sutdol;
 
 	Transform* haloTransform = nullptr;
 	CapsuleCollider* haloCollider = nullptr;
