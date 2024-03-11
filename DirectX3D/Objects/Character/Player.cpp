@@ -268,7 +268,7 @@ void Player::UpdateWorlds()
 		Rot().y = garuk->Rot().y;
 		if (curState == R_600 || curState == R_601 || curState == R_602)
 		{
-			mainHand->SetWorld(GetTransformByNode(lefeHandNode));
+			mainHand->SetWorld(GetTransformByNode(leftHandNode));
 			longSword->Pos() = {};
 			longSword->Rot() = {};
 		}
