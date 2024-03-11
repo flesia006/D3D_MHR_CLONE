@@ -376,6 +376,7 @@ private:
 	bool callGaruk = false;
 	bool rideCAM = false;
 	bool isJump = false;
+	bool isInitVoice = false;
 
 	Valphalk* val = nullptr;
 	
@@ -395,7 +396,6 @@ private:
 	SpiritFlame* spiritParticle;
 	Wire_Bug* wireBugParticle;
 	Sutdol* sutdol;
-
 	Transform* haloTransform = nullptr;
 	CapsuleCollider* haloCollider = nullptr;
 

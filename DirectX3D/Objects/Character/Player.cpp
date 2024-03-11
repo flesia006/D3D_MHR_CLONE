@@ -387,7 +387,7 @@ void Player::SharpeningStone()
 		|| UI->useDragSlot2 &&  KEY_DOWN('E') && !cure && !Lcure
 		|| UI->useNumberBar &&  KEY_DOWN('3') && !Lcure && !cure)
 	{
-		UI->SharpeningStone();
+		//UI->SharpeningStone();
 	}
 }
 
@@ -3009,10 +3009,15 @@ void Player::L133()	// 투구깨기
 {
 	PLAY;
 	if (INIT)
+	{
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_25", .5f);
-
-	if (RATIO > 0.2 && RATIO < 0.3)
-		RandSpecialVoice();
+		if (isInitVoice == false)
+		{
+			RandSpecialVoice();
+			isInitVoice = true;
+		}
+	}
+	
 	if (RATIO > 0.4 && RATIO < 0.44)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
 
@@ -3050,6 +3055,7 @@ void Player::L134()	// 투구깨기 루프
 void Player::L135()	// 투구깨기 끝
 {
 	PLAY;
+	isInitVoice = false;
 	EndEffect();
 	CAM->Zoom(400, 5);
 	{
@@ -3591,6 +3597,7 @@ void Player::R602() // 숫돌 마무리
 	{
 		sutdol->PlayHalo(longSword->GlobalPos() + longSword->Back() * 120.0f);
 		Sounds::Get()->Play("wheatstone2", 0.3f);
+		UI->SharpeningStone();
 	}
 	if (RATIO > 0.96)
 	{
@@ -4072,10 +4079,10 @@ void Player::RandSpecialVoice()
 	randVoice = rand() % 4;
 	switch (randVoice)
 	{
-	case 0:		Sounds::Get()->Play("special1", 2.5f);		break;
-	case 1:		Sounds::Get()->Play("special2", 2.5f);		break;
-	case 2:		Sounds::Get()->Play("special3", 2.5f);		break;
-	case 3:		Sounds::Get()->Play("special4", 2.5f);		break;
+	case 0:		Sounds::Get()->Play("special1", 2.1f);		break;
+	case 1:		Sounds::Get()->Play("special2", 2.1f);		break;
+	case 2:		Sounds::Get()->Play("special3", 2.1f);		break;
+	case 3:		Sounds::Get()->Play("special4", 2.1f);		break;
 	default:
 		break;
 	}

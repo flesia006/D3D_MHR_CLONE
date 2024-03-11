@@ -4984,9 +4984,13 @@ void Valphalk::E3023() // »ç¸Á
 {
 	PLAY;
 
-	if (RATIO > 0.40 && RATIO < 0.50)
+	if (RATIO > 0.40 && RATIO < 0.44)
+	{
 		Sounds::Get()->Play("em086_05_vo_media_30", 0.3f);
+		Sounds::Get()->Play("questClear", 0.1f);
+	}
 
+	
 	if (RATIO > 0.96)
 		isPlay = false;
 }

@@ -59,11 +59,11 @@ GameManager::GameManager()
 //    SceneManager::Get()->Add("ParticleConfig");
 
 
-//    SceneManager::Get()->Create("ValphalkTestScene", new ValphalkTestScene());
-//    SceneManager::Get()->Add("ValphalkTestScene");
+    SceneManager::Get()->Create("ValphalkTestScene", new ValphalkTestScene());
+    SceneManager::Get()->Add("ValphalkTestScene");
 
-    SceneManager::Get()->Create("PlayerTestScene", new PlayerTestScene());
-    SceneManager::Get()->Add("PlayerTestScene");
+//    SceneManager::Get()->Create("PlayerTestScene", new PlayerTestScene());
+//    SceneManager::Get()->Add("PlayerTestScene");
 
 //   SceneManager::Get()->Create("FightTestScene", new FightTestScene());
 //   SceneManager::Get()->Add("FightTestScene");
@@ -172,6 +172,7 @@ void GameManager::Create()
     // BGM
     sound->AddSound("Valphalk_Thema", SoundPath + L"Valphalk_Thema.mp3", true);
     sound->AddSound("env_114", SoundPath + L"env_114.mp3", true);
+    sound->AddSound("questClear", SoundPath + L"quest_Clear.mp3", false);
 
     //sound->Play("Valphalk_Thema", 0.03f);
     sound->Play("env_114", .5f);
@@ -291,6 +292,8 @@ void GameManager::Create()
     Sounds::Get()->AddSound("wheatstone2", SoundPath + L"wheatstone2.mp3");
 
     Sounds::Get()->AddSound("wirebug", SoundPath + L"Player/wirebug.mp3");
+
+
 }
 
 void GameManager::Delete()
