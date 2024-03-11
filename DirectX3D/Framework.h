@@ -247,6 +247,7 @@ using namespace GameMath;
 #include "Objects/Manager/KunaiManager.h"
 #include "Objects/Manager/RobotManager.h"
 #include "Objects/Manager/UIManager.h"
+#include "Objects/Manager/ItemManager.h"
 
 #include "Objects/Test/TestLight.h"
 
