@@ -3,15 +3,15 @@
 
 ModelExportScene::ModelExportScene()
 {
-    string name = "WireBug";
+    string name = "Player";
     string file = "Models/FBX/" + name + ".fbx";
     ModelExporter* exporter;
     string clipName;
 
-    exporter = new ModelExporter(name, file);
-    exporter->ExportMaterial();
-    exporter->ExportMesh();
-    delete exporter;    
+    //exporter = new ModelExporter(name, file);
+    //exporter->ExportMaterial();
+    //exporter->ExportMesh();
+    //delete exporter;    
 
 
 // Å¬¸³µþ ¶§ ÀÌ°Å ¾²¼À
@@ -20,15 +20,15 @@ ModelExportScene::ModelExportScene()
 //    ExportClip(name, "BackStep");
 //    ExportClip(name, "Fire");
 //    ExportClip(name, "fwdStep");
-    ExportClip(name, "FLY");
-//    ExportClip(name, "S_005");
-//    ExportClip(name, "S_011");
-//    ExportClip(name, "S_014");
-//    ExportClip(name, "S_018");
-//    ExportClip(name, "S_019");
-//    ExportClip(name, "S_020");
-//    ExportClip(name, "S_122");
-//    ExportClip(name, "D_031");
+//    ExportClip(name, "FLY");
+    ExportClip(name, "W_005");
+    ExportClip(name, "W_006");
+    ExportClip(name, "W_007");
+    ExportClip(name, "W_009");
+    ExportClip(name, "W_010");
+    ExportClip(name, "W_020");
+    ExportClip(name, "W_062");
+    ExportClip(name, "W_063");
 //    ExportClip(name, "D_032");
 //    ExportClip(name, "D_033");
 //    ExportClip(name, "D_045");

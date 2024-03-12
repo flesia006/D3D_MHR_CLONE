@@ -44,7 +44,7 @@ void PlayerWireBug::SetMove(Vector3 startPos, bool isMoving, Vector3 moveVec)
 
 void PlayerWireBug::SetAnimation()
 {
-	if (!isMoving)
+	if (moveVec != Vector3::Zero())
 		SetState(IDLE);
 	else
 		SetState(FLY);

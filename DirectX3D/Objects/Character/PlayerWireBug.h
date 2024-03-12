@@ -18,7 +18,7 @@ public:
 
 	void SetMove(Vector3 startPos, bool isMoving, Vector3 moveVec);
 	bool GetisMoving() { return isMoving; }
-	void SetisMoving(bool isMoving) { this->isMoving = isMoving; }
+	void SetStop() { moveVec = Vector3::Zero(); }
 
 private:
 	void SetAnimation();

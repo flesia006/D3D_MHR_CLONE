@@ -180,6 +180,8 @@
     <ClCompile Include="Objects\Particle\Explosion.cpp" />
     <ClCompile Include="Objects\Particle\Garuk_Fire.cpp" />
     <ClCompile Include="Objects\Particle\Sutdol.cpp" />
+    <ClCompile Include="Objects\Manager\ItemManager.cpp" />
+    <ClCompile Include="Objects\Character\PlayerWireBug.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Objects\Character\DummyValphalk.h" />
@@ -340,6 +342,8 @@
     <ClInclude Include="Objects\Particle\Explosion.h" />
     <ClInclude Include="Objects\Particle\Garuk_Fire.h" />
     <ClInclude Include="Objects\Particle\Sutdol.h" />
+    <ClInclude Include="Objects\Manager\ItemManager.h" />
+    <ClInclude Include="Objects\Character\PlayerWireBug.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DirectX3D.rc" />
