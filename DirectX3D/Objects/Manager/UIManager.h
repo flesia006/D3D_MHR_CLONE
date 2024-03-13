@@ -66,11 +66,13 @@ public:
     float curStamina = 100;//임시로 public에 올려둠
     bool staminaActive = false;
 
-    // 발파 상태 아이콘 관령 내용
+    // 발파 상태 아이콘 관련 내용
     bool specialMove = false;
     bool specialMove2 = false;
     bool partDestruct = false;
     bool partDestruct2 = false;
+
+    void SetAllUIOff() { isRender = false; }
 
 private:
     // 퀵 슬롯 관한 내용
@@ -181,6 +183,9 @@ private:
     Quad* valphalkStateIcon1;
     Quad* valphalkStateIcon2;
 
+    // 퀘스트 클리어
+    Quad* questClearUI;
+
 public:
     UINT cotingLevel = 0;
     UINT bugCount = 2;    
@@ -260,5 +265,7 @@ public:
     // 발파 상태 내용
     float stateIconTimer = 0.0f;
     float stateIconTimer2 = 0.0f;
+
+    bool isRender = true;
 };
 

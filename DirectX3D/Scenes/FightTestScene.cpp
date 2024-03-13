@@ -42,6 +42,7 @@ void FightTestScene::Update()
 
 void FightTestScene::PreRender()
 {
+	player->PreRender();
 }
 
 void FightTestScene::Render()

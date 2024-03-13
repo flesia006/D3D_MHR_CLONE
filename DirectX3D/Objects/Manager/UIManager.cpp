@@ -112,6 +112,8 @@ UIManager::UIManager()
 	orangeRightHalfCircle3 = new Quad(L"Textures/UI/orangeHalfCircle2.png");
 	orangeRightHalfCircle3->SetActive(false);
 
+	questClearUI = new Quad(L"Textures/Quest/QuestClear.png");
+
 	// Äü½½·Ô UI Ãß°¡
 	quickSlot_Back = new Quad(L"Textures/UI/QickSlot_Back.png");
 	quickSlot_Back->Pos() = { 1224, 200, 0 };
@@ -510,6 +512,9 @@ UIManager::UIManager()
 	lsCoting->Pos() = { 510,900,0 };
 	lsCoting->Scale() *= 1.5f;
 
+	// Äù½ºÆ® Å¬¸®¾î UI
+	questClearUI->Pos() = { CENTER_X , CENTER_Y, 0 };
+
 	ItemManager::Get();
 }
 
@@ -610,6 +615,7 @@ UIManager::~UIManager()
 	}
 	delete valphalkStateIcon1;
 	delete valphalkStateIcon2;
+	delete questClearUI;
 }
 
 void UIManager::Update()
@@ -655,6 +661,7 @@ void UIManager::Update()
 	dragSlot_ButtonWheel->UpdateWorld();
 	dragSlot_ButtonDown->UpdateWorld();
 	dragSlot_KeyButton->UpdateWorld();
+	questClearUI->UpdateWorld();
 	// Àá½Ã ³ÖÀ½
 	//===================
 	potionIcon_Q->UpdateWorld();
@@ -953,6 +960,12 @@ void UIManager::Update()
 
 void UIManager::PostRender()
 {
+	if (!isRender)
+	{
+		questClearUI->Render();
+		return;
+	}
+
 	recover->Render();
 	hp->Render();
 	stamina->Render();

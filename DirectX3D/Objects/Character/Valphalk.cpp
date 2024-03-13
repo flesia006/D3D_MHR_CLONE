@@ -90,6 +90,7 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 	ReadClip("E_2144");
 	ReadClip("E_2145");
 	ReadClip("E_2146");
+	ReadClip("E_2145a");
 	ReadClip("E_2151");
 	ReadClip("E_2152");
 	ReadClip("E_2153");
@@ -713,12 +714,12 @@ void Valphalk::ForwardBoom()
 		sequence++;
 	}
 	if (sequence == 3) { SetState(E_2144); E2144(); }
-	if (sequence == 4) { SetState(E_2145); E2145(); }
+	if (sequence == 4) { SetState(E_2145a); E2145a(); }
+	//if (sequence == 5)
+	//{
+	//	SetState(E_2146); E2146();
+	//}
 	if (sequence == 5)
-	{
-		SetState(E_2146); E2146();
-	}
-	if (sequence == 6)
 	{
 		isSlashMode = true;
 		ChooseNextPattern();
@@ -1743,7 +1744,7 @@ void Valphalk::RotateToTarget(float ratio1, float ratio2)
 
 void Valphalk::SetColliderAttack(ColliderName name, float ratio, float dmg, UINT atkStrength)
 {
-	static bool ON = false;
+	bool ON = false;
 	if (!ON)
 	{
 		colliders[name]->isAttack = true;
@@ -3487,7 +3488,7 @@ void Valphalk::E2038() // 날개 찌르기
 		SetColliderAttack(RWING, 0.95, 35, 2);
 		if (!playOncePerPattern)
 		{
-			colliders[RWING]->Scale().y *= 2.2f;
+			colliders[RWING]->Scale().y *= 2.5f;
 			playOncePerPattern = true;
 		}
 	}
@@ -3622,7 +3623,7 @@ void Valphalk::E2056() // 찌르고 그 날개 로 한바퀴 돌기
 		SetColliderAttack(RWING, 0.617, 50, 2);
 		if (!playOncePerPattern)
 		{
-			colliders[RWING]->Scale().y *= 2.2f;
+			colliders[RWING]->Scale().y *= 2.5f;
 			playOncePerPattern = true;
 		}
 	}
@@ -3839,6 +3840,35 @@ void Valphalk::E2146() // 전방 폭격 후 날개 접으면서 착지
 		combo = false;
 		sequence++;
 		//SetState(E_0003);
+	}
+}
+
+void Valphalk::E2145a() // 2145, 2146 합친거
+{
+	PLAY;
+	if (RATIO > 0.05f && RATIO < 0.06f)
+	{
+		Sounds::Get()->Play("em086_05_fx_media_32", 0.5f);
+		explosionParticle[0]->PlaySpark({ forwardBoom->GlobalPos().x,forwardBoom->GlobalPos().y + 250,forwardBoom->GlobalPos().z }, 0);
+	}
+	if (RATIO > 0.08f && RATIO < 0.09)
+	{
+		explosionParticle[0]->Play1(forwardBoom->GlobalPos(), 0);
+		Sounds::Get()->Play("em086_05_fx_media_35", 0.5f);
+	}
+	if (RATIO > 0.11f && RATIO < 0.12)
+		explosionParticle[0]->Play2(forwardBoom->GlobalPos(), 0);
+	if (RATIO > 0.13f && RATIO < 0.14)
+		explosionParticle[0]->Play3(forwardBoom->GlobalPos(), 0);
+	if (RATIO < 0.11f && RATIO>0.05f)
+		forwardBoom->SetActive(true);
+	if (RATIO > 0.11f)
+		forwardBoom->SetActive(false);
+
+	if (RATIO > 0.96)
+	{
+		combo = false;
+		sequence++;
 	}
 }
 

@@ -166,6 +166,9 @@ void Player::Update()
 
 	if (KEY_DOWN('6'))
 		SetState(D_015);
+
+	if (KEY_DOWN('7'))
+		UI->SetAllUIOff();
 	///////////////////////////////
 }
 

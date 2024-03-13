@@ -3,7 +3,7 @@
 
 ModelExportScene::ModelExportScene()
 {
-    string name = "Player";
+    string name = "Valphalk";
     string file = "Models/FBX/" + name + ".fbx";
     ModelExporter* exporter;
     string clipName;
@@ -21,14 +21,14 @@ ModelExportScene::ModelExportScene()
 //    ExportClip(name, "Fire");
 //    ExportClip(name, "fwdStep");
 //    ExportClip(name, "FLY");
-    ExportClip(name, "W_005");
-    ExportClip(name, "W_006");
-    ExportClip(name, "W_007");
-    ExportClip(name, "W_009");
-    ExportClip(name, "W_010");
-    ExportClip(name, "W_020");
-    ExportClip(name, "W_062");
-    ExportClip(name, "W_063");
+    ExportClip(name, "E_2145a");
+//    ExportClip(name, "W_006");
+//    ExportClip(name, "W_007");
+//    ExportClip(name, "W_009");
+//    ExportClip(name, "W_010");
+//    ExportClip(name, "W_020");
+//    ExportClip(name, "W_062");
+//    ExportClip(name, "W_063");
 //    ExportClip(name, "D_032");
 //    ExportClip(name, "D_033");
 //    ExportClip(name, "D_045");
