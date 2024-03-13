@@ -4027,7 +4027,21 @@ void Player::W006() // W005에서 이어지는 체공중 동작
 
 	if (Jump(1200, 1.5))
 	{
-		if (RATIO > 0.1 && UI->IsAbleBugSkill() && K_LBUG)		SetState(W_009);
+		if (RATIO > 0.1 && UI->IsAbleBugSkill() && K_LBUG)
+		{
+			Vector3 camRot = CAM->Rot();
+			camRot.y += XM_PI;
+			Rot().y = camRot.y;
+			SetState(W_009);
+		}
+
+		else if (RATIO > 0.1 && UI->IsAbleBugSkill() && K_SPACE)
+		{
+			Vector3 camRot = CAM->Rot();
+			camRot.y += XM_PI;
+			Rot().y = camRot.y;
+			SetState(W_020);
+		}
 
 		if (RATIO > 0.96)
 		{

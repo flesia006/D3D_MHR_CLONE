@@ -207,7 +207,8 @@ void GameManager::Create()
     Sounds::Get()->AddSound("start", SoundPath + L"Player/start.mp3");
     Sounds::Get()->AddSound("igonan1", SoundPath + L"Player/igonan1.mp3");
     Sounds::Get()->AddSound("igonan2", SoundPath + L"Player/igonan2.mp3");
-
+    Sounds::Get()->AddSound("suwolstart", SoundPath + L"Player/suwolstart.mp3");
+    Sounds::Get()->AddSound("suwolattack", SoundPath + L"Player/suwolattack.mp3");
 
 
     /////////////////////////////////////////////////////////////
