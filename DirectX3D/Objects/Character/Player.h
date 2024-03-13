@@ -6,6 +6,7 @@ class Sample;
 class Valphalk;
 class DummyValphalk;
 class WireBug;
+class PlayerWireBug;
 class Player : public ModelAnimator
 {
 private:
@@ -40,7 +41,11 @@ private:
 		D_001, D_004, D_007, D_011, D_015,
 		D_016, D_021, D_022, D_026, D_029,
 		D_030, D_031, D_032, D_033, D_045,
-		D_046, D_066, D_078, D_079, D_080
+		D_046, D_066, D_078, D_079, D_080,
+
+		// ³³µµ ¹åÁÙ¹ú·¹ ¾×¼Ç
+		W_005, W_006, W_007, W_009, W_010,
+		W_020, W_062, W_063, F_072, F_073
 	};
 
 	enum Rotation
@@ -261,6 +266,17 @@ private:
 	void D079();
 	void D080();
 
+	void W005();
+	void W006();
+	void W007();
+	void W009();
+	void W010();
+	void W020();
+	void W062();
+	void W063();
+	void F072();
+	void F073();
+
 private:
 	Transform* mainHand = nullptr;
 	Transform* backSwd = nullptr;
@@ -275,6 +291,9 @@ private:
 	Transform* swordEnd = nullptr;
 
 	Transform* garuk;
+
+	Transform* playerWireBugHead = nullptr;
+	Transform* playerWireBugTail = nullptr;
 
 	Vector3 lastSwordEnd = { 0, 0, 0 };
 	Vector3 swordSwingDir;
@@ -298,6 +317,7 @@ private:
 	Shadow* shadow;
 	LightBuffer::Light* light;
 	Trail* trail;
+	Trail* wireBugTrail;
 	UINT lastParticleIndex = 0;
 	UINT lastHitPart = 0;
 	Vector3 lastSwordDir;
@@ -333,7 +353,7 @@ private:
 	int kunaiIndex = 0;
 	int node = 197;
 
-	const int lefeHandNode = 108;
+	const int leftHandNode = 108;
 	const int rightHandNode = 150;
 	const int backSwdNode = 190;
 
@@ -348,7 +368,7 @@ private:
 	const float temp3 = 14.067f; // ÅØ½ºÆ® ¶ç¿ì±â ¿ë ¼öÄ¡
 	float temp4 = -580.0f;
 
-	float jumpVelocity = 2.0f;
+	float jumpVelocity = 9.0f;
 	const float originJumpVelocity = jumpVelocity;
 	float gravityMult = 0.6f;
 
@@ -362,6 +382,7 @@ private:
 	bool attackOnlyOncePerMotion = false;
 	bool isDoubleStrikeMotion = false;
 	bool playOncePerMotion = false;
+	bool playOncePerMotion2 = false;
 	bool playOncePerTerm = false;
 	bool playOncePerTerm2 = false;
 
@@ -383,12 +404,15 @@ private:
 	bool rideCAM = false;
 	bool isJump = false;
 	bool isInitVoice = false;
-
-
-	WireBug* wireBug = nullptr;
-
+	
+	WireBug* wireBug = nullptr; // ÇÊµå¿¡¼­ ÁÖ¿ï ¹åÁÙ¹ú·¹
+	PlayerWireBug* playerWireBug; // ¹åÁÙ¹ú·¹ ±â¼ú »ç¿ë½Ã ³ª¿À´Â ¹ú·¹
+	
 	int randVoice = 0;
 	float breathCount = 0;
+
+	Vector3 wireBugDir = Vector3::Zero();
+
 	///////////////////////////////////////////
 	// Particle
 	vector<HitParticle*> hitParticle;

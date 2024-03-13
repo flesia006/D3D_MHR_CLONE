@@ -16,6 +16,8 @@ Player::Player() : ModelAnimator("Player")
 	swordEnd = new Transform();
 	mainHand = new Transform();
 	backSwd = new Transform();
+	playerWireBugHead = new Transform();
+	playerWireBugTail = new Transform();
 
 	swordCollider = new CapsuleCollider(2.0f, 100.0f);
 	swordCollider->Rot().x += XM_PIDIV2;
@@ -24,6 +26,7 @@ Player::Player() : ModelAnimator("Player")
 	swordCollider->Scale() *= 3.0f;
 
 	trail = new Trail(L"Textures/Effect/Snow.png", swordStart, swordEnd, 20, 85);
+	wireBugTrail = new Trail(L"Textures/Effect/bluelight.png", playerWireBugHead, playerWireBugTail, 30, 50);
 
 	/////////////////////////////////////////////////////////////
 	// Particles
@@ -94,6 +97,9 @@ Player::Player() : ModelAnimator("Player")
 	//	tmpCollider->SetParent(head);
 	//	tmpCollider->SetParent(back);
 
+	playerWireBug = new PlayerWireBug();
+	playerWireBug->SetActive(false);
+
 	ReadClips();
 
 	CAM->SetTarget(head);
@@ -128,6 +134,10 @@ Player::~Player()
 	delete backPos;
 	delete realPos;
 	delete head;
+	delete playerWireBug;
+	delete wireBugTrail;
+	delete playerWireBugHead;
+	delete playerWireBugTail;
 }
 
 void Player::Update()
@@ -162,14 +172,26 @@ void Player::Update()
 
 	ModelAnimator::Update();
 	GroundCheck();
+
+	///////////////////////////////
+	//디버그용
+	if (KEY_DOWN('5'))
+		UI->PlusCotingLevel();
+
+	if (KEY_DOWN('6'))
+		SetState(D_015);
+
+	if (KEY_DOWN('7'))
+		UI->SetAllUIOff();
+	///////////////////////////////
 }
 
 void Player::PreRender()
 {
 	if (renderEffect)
-	{
 		trail->Render();
-	}
+	if(playerWireBug->GetisMoving())
+		wireBugTrail->Render();
 	////////////////////////////////////////////
 	// Particles
 	sutdol->Render();
@@ -199,6 +221,8 @@ void Player::Render()
 	tugu->Render();
 	FOR(circle.size()) circle[i]->Render();
 
+	if(playerWireBug->Active())
+		playerWireBug->Render();
 
 	if (isSetState)
 	{
@@ -236,7 +260,7 @@ void Player::UpdateWorlds()
 
 	if (holdingSword)
 	{
-		backSwd->SetWorld(GetTransformByNode(lefeHandNode));
+		backSwd->SetWorld(GetTransformByNode(leftHandNode));
 		kalzip->Pos() = { };
 		kalzip->Rot() = { };
 	}
@@ -271,7 +295,7 @@ void Player::UpdateWorlds()
 		Rot().y = garuk->Rot().y;
 		if (curState == R_600 || curState == R_601 || curState == R_602)
 		{
-			mainHand->SetWorld(GetTransformByNode(lefeHandNode));
+			mainHand->SetWorld(GetTransformByNode(leftHandNode));
 			longSword->Pos() = {};
 			longSword->Rot() = {};
 		}
@@ -307,7 +331,6 @@ void Player::UpdateWorlds()
 	backPos->Pos() = GetTranslationByNode(1) + Forward() * 100;
 	forwardPos->Pos() = GetTranslationByNode(1) + Back() * 50 + Vector3::Up() * 80;
 
-
 	head->Pos().x = realPos->Pos().x;
 	if (isRiding && curState != R_031)
 		head->Pos().y = realPos->Pos().y + 100;
@@ -322,6 +345,15 @@ void Player::UpdateWorlds()
 
 	swordStart->UpdateWorld();
 	swordEnd->UpdateWorld();
+
+	playerWireBugHead->Pos() = playerWireBug->GlobalPos() + playerWireBug->Forward() * 50.0f;
+	playerWireBugTail->Pos() = playerWireBug->GlobalPos() + playerWireBug->Back() * 50.0f;
+
+	playerWireBugHead->UpdateWorld();
+	playerWireBugTail->UpdateWorld();
+
+	if(!playerWireBug->GetisMoving())
+		playerWireBug->Pos() = GetTranslationByNode(leftHandNode);
 
 	swordSwingDir = lastSwordEnd - swordStart->GlobalPos();
 	tmpCollider->Pos() = GetTranslationByNode(node);
@@ -339,6 +371,8 @@ void Player::UpdateWorlds()
 	bodyCollider->Update();
 	swordCollider->Update();
 
+	playerWireBug->Rot() = Rot();
+	playerWireBug->Update();
 
 	haloTransform->Pos() = longSword->GlobalPos() + longSword->Back() * 55.f;
 	haloCollider->Pos() = haloTransform->Pos();
@@ -483,20 +517,21 @@ void Player::GUIRender()
 		// t = GetClip(1)->GetRatio();
 		// ImGui::DragFloat("ratio_1", &t);
 
-		//Matrix x = GetTransformByNode(0);
-		//Vector3 S, R, T;
-		//XMMatrixDecompose(S.GetValue(), R.GetValue(), T.GetValue(), x);
-		//
-		//string temp = "_Pos";
-		//ImGui::DragFloat3(temp.c_str(), (float*)&T, 0.1f);
-		//
-		//temp = "_GlobalPos";
-		//Vector3 globalPos = GetTranslationByNode(0);
-		//ImGui::DragFloat3(temp.c_str(), (float*)&globalPos, 0.1f);
-		//
-		//temp = "Real_GlobalPos";
-		//Vector3 Pos = root->GlobalPos();
-		//ImGui::DragFloat3(temp.c_str(), (float*)&Pos, 0.1f);
+	//Matrix x = GetTransformByNode(0);
+	//Vector3 S, R, T;
+	//XMMatrixDecompose(S.GetValue(), R.GetValue(), T.GetValue(), x);
+	//
+	//string temp = "_Pos";
+	//ImGui::DragFloat3(temp.c_str(), (float*)&T, 0.1f);
+	//
+	//temp = "_GlobalPos";
+	//Vector3 globalPos = GetTranslationByNode(0);
+	//ImGui::DragFloat3(temp.c_str(), (float*)&globalPos, 0.1f);
+	//
+	//temp = "Real_GlobalPos";
+	//Vector3 Pos = root->GlobalPos();
+	//ImGui::DragFloat3(temp.c_str(), (float*)&Pos, 0.1f);
+	ImGui::DragFloat3("playerWireBug Pos", (float*)&playerWireBug->Pos());
 }
 
 void Player::PostRender()
@@ -637,6 +672,17 @@ void Player::Control()
 	case Player::D_078:		D078();		break;
 	case Player::D_079:		D079();		break;
 	case Player::D_080:		D080();		break;
+
+	case Player::W_005:		W005();		break;
+	case Player::W_006:		W006();		break;
+	case Player::W_007:		W007();		break;
+	case Player::W_009:		W009();		break;
+	case Player::W_010:		W010();		break;
+	case Player::W_020:		W020();		break;
+	case Player::W_062:		W062();		break;
+	case Player::W_063:		W063();		break;
+	case Player::F_072:		F072();		break;
+	case Player::F_073:		F073();		break;
 	}
 
 	if (KEY_UP('W') || KEY_UP('A') || KEY_UP('S') || KEY_UP('D'))
@@ -909,6 +955,7 @@ void Player::ResetPlayTime()
 void Player::EffectUpdates()
 {
 	trail->Update();
+	wireBugTrail->Update();
 	FOR(hitParticle.size())		hitParticle[i]->Update();
 	hitBoomParticle->Update();
 	criticalParticle->Update();
@@ -1827,6 +1874,17 @@ void Player::ReadClips()
 	ReadClip("D_078");
 	ReadClip("D_079");
 	ReadClip("D_080");
+
+	ReadClip("W_005");
+	ReadClip("W_006");
+	ReadClip("W_007");
+	ReadClip("W_009");
+	ReadClip("W_010");
+	ReadClip("W_020");
+	ReadClip("W_062");
+	ReadClip("W_063");
+	ReadClip("F_072");
+	ReadClip("F_073");
 }
 
 void Player::RecordLastPos()
@@ -1844,6 +1902,7 @@ void Player::S001() // 납도 Idle
 	// 왼 클릭 으로 공격 하는거 추가
 	if (K_LMB)		SetState(L_101);
 	else if (KEY_DP('F'))  callGaruk = true;
+	else if (UI->IsAbleBugSkill() && K_LBUG)	SetState(W_005);	// 사선 밧줄벌레 이동
 	else if (KEY_DP(VK_SPACE))	Roll();
 
 
@@ -1902,6 +1961,7 @@ void Player::S005() // 대기중 달리기 시작
 	if (K_LMB)			SetState(L_101);
 	else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106);
 	else if (KEY_DP(VK_SPACE))	Roll();
+	else if (UI->IsAbleBugSkill() && K_LBUG)	SetState(W_005);	// 사선 밧줄벌레 이동
 	else if (KEY_DP('F'))  callGaruk = true;
 
 	if (RATIO > 0.97)
@@ -1962,6 +2022,7 @@ void Player::S011() // 달리기 루프
 	if (K_LMB)		SetState(L_101);
 	else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106);
 	else if (K_SPACE)	Roll();
+	else if (UI->IsAbleBugSkill() && K_LBUG)	SetState(W_005);	// 사선 밧줄벌레 이동
 	else if (KEY_DP('F'))  callGaruk = true;
 
 	if (RATIO > 0.95)
@@ -2999,23 +3060,26 @@ void Player::L127() // 수월의 자세 카운터
 void Player::L128()	// 날라차기 시작
 {
 	PLAY;
-
-	Vector3 a = GetTranslationByNode(131);
-	Vector3 b = GetTranslationByNode(133);
-	Vector3 c = b - a;
-	c.GetNormalized();
-
+	
 	wireBugParticle->Play(GetTranslationByNode(108), GetRotationByNode(129));
 	if (!playOncePerMotion)
 	{
 		UI->UseBugSkill();
-		Sounds::Get()->Play("wirebug", 2.0f);
-		playOncePerMotion = true;
+		Sounds::Get()->Play("wirebug", 3.5f);
 		isEvaded = false;
+		playerWireBug->SetActive(true);
+		playOncePerMotion = true;
 	}
 
 	if (RATIO < 0.2)
 		LimitRotate(180, 150);
+
+	if (RATIO > 0.5 && !playOncePerMotion2)
+	{
+		Vector3 pos = GetTranslationByNode(leftHandNode);
+		playerWireBug->SetMove(pos, true, Back() * 1000 + Up() * 400);
+		playOncePerMotion2 = true;
+	}
 
 
 	// 줌 정상화 (앉아 기인 회전 베기에서 넘어온 경우)
@@ -3027,8 +3091,9 @@ void Player::L128()	// 날라차기 시작
 
 	if (RATIO > 0.96)
 	{
-		SetState(L_130);
 		playOncePerMotion = false;
+		playOncePerMotion2 = false;
+		SetState(L_130);
 	}
 }
 
@@ -3040,7 +3105,7 @@ void Player::L130()	// 날라차기 체공중
 	{
 		if (RATIO > 0.05)
 		{
-			if (Jump(650, 0.5))
+			if (Jump(900, 2))
 				// 공격판정 프레임
 			{
 				if (Attack(2, true, 3))
@@ -3048,10 +3113,16 @@ void Player::L130()	// 날라차기 체공중
 					if (K_CTRL && UI->GetCotingLevel() > 0)
 					{
 						UI->MinusCotingLevel();
+						playerWireBug->SetActive(false);
+						playerWireBug->SetMove(Vector3::Zero(), false, Vector3::Zero());
 						SetState(L_133);  // 투구깨기
 					}
 					else
+					{
+						playerWireBug->SetActive(false);
+						playerWireBug->SetMove(Vector3::Zero(), false, Vector3::Zero());
 						SetState(L_136);  // 낙하찌르기
+					}
 				}
 
 				if (RATIO > 0.96)
@@ -3066,6 +3137,14 @@ void Player::L130()	// 날라차기 체공중
 		}
 
 	}
+	if (RATIO > 0.25)
+		playerWireBug->SetStop();
+
+	if (RATIO > 0.5)
+	{
+		playerWireBug->SetActive(false);
+		playerWireBug->SetMove(Vector3::Zero(), false, Vector3::Zero());
+	}
 }
 
 void Player::L131() // 체공 루프
@@ -3073,7 +3152,7 @@ void Player::L131() // 체공 루프
 	PLAY;
 	// 체공중
 	{
-		if (Jump(650, 0.5))
+		if (Jump(900, 2))
 			// 공격판정 프레임
 		{
 			if (Attack(2, true, 3))
@@ -3139,11 +3218,13 @@ void Player::L133()	// 투구깨기
 		}
 
 
-		if (realPos->Pos().y < 0)
+		if (RATIO > 0.38 && realPos->Pos().y < height)
 		{
-			Pos().y = 0.0f;
+			Pos().y = height;
 			tugu->active = true;
 			jumpVelocity = originJumpVelocity;
+			playOncePerMotion = false;
+			isJump = false;
 			SetState(L_135);
 		}
 	}
@@ -3194,11 +3275,12 @@ void Player::L136() // 낙하찌르기
 				isHitL136 = true;
 		}
 
-		if (realPos->Pos().y < 0)
+		if (realPos->Pos().y < height)
 		{
 			EndEffect();
-			Pos().y = 0.0f;
+			Pos().y = height;
 			jumpVelocity = originJumpVelocity;
+			isJump = false;
 			SetState(L_138);
 		}
 	}
@@ -3834,14 +3916,31 @@ void Player::D011()  // 7의 반대
 void Player::D015() // 쳐맞고 덤블링 날라가기
 {
 	PLAY;
+
+	if (!playOncePerMotion)
+	{
+		jumpVelocity = 2.0f;
+		playOncePerMotion = true;
+	}
 	//if (INIT)
 	//	RandHurtVoice();
 	if (Jump(300))
 	{
 		Pos() += Back() * temp4 * DELTA;
+
+		if (UI->IsAbleBugSkill() && K_LBUG)
+		{
+			playOncePerMotion = false;
+
+			Vector3 camRot = CAM->Rot();
+			camRot.y += XM_PI;
+			Rot().y = camRot.y;
+			SetState(W_009);
+		}
 	}
 	else
 	{
+		playOncePerMotion = false;
 		SetState(D_016);
 	}
 }
@@ -4004,6 +4103,236 @@ void Player::D080()
 	if (RATIO > 0.96)
 	{
 		ReturnIdle();
+	}
+}
+
+void Player::W005() // 사선으로 쏘는 밧줄벌레 전 동작
+{
+	PLAY;
+
+	if (!playOncePerMotion)
+	{
+		//UI->UseBugSkill();
+		Sounds::Get()->Play("wirebug", 3.5f);
+		playerWireBug->SetActive(true);
+		playOncePerMotion = true;
+	}
+
+	if (RATIO > 0.5 && !playOncePerMotion2)
+	{
+		Vector3 pos = GetTranslationByNode(leftHandNode);
+		playerWireBug->SetMove(pos, true, Back() * 2000 + Up() * 800);
+		playOncePerMotion2 = true;
+	}
+
+	if (RATIO > 0.96)
+	{
+		playerWireBug->SetStop();
+		playOncePerMotion = false;
+		playOncePerMotion2 = false;
+		SetState(W_006);
+	}
+}
+
+void Player::W006() // W005에서 이어지는 체공중 동작
+{
+	PLAY;
+
+	if (RATIO > 0.25)
+	{
+		playerWireBug->SetActive(false);
+		playerWireBug->SetMove(Vector3::Zero(), false, Vector3::Zero());
+	}
+
+	if (Jump(1200, 1.5))
+	{
+		if (RATIO > 0.1 && UI->IsAbleBugSkill() && K_LBUG)
+		{
+			Vector3 camRot = CAM->Rot();
+			camRot.y += XM_PI;
+			Rot().y = camRot.y;
+			SetState(W_009);
+		}
+
+		else if (RATIO > 0.1 && UI->IsAbleBugSkill() && K_SPACE)
+		{
+			Vector3 camRot = CAM->Rot();
+			camRot.y += XM_PI;
+			Rot().y = camRot.y;
+			SetState(W_020);
+		}
+
+		if (RATIO > 0.96)
+		{
+			if (KEY_DP('W'))
+			{
+				SetState(F_073);
+				playerWireBug->SetActive(false);
+				playerWireBug->SetMove(Vector3::Zero(), false, Vector3::Zero());
+			}
+			else
+			{
+				SetState(F_072);
+				playerWireBug->SetActive(false);
+				playerWireBug->SetMove(Vector3::Zero(), false, Vector3::Zero());
+			}
+		}
+	}
+	else
+	{
+		if (KEY_DP('W'))
+		{
+			SetState(F_073);
+			playerWireBug->SetActive(false);
+			playerWireBug->SetMove(Vector3::Zero(), false, Vector3::Zero());
+		}
+		else
+		{
+			SetState(F_072);
+			playerWireBug->SetActive(false);
+			playerWireBug->SetMove(Vector3::Zero(), false, Vector3::Zero());
+		}
+	}
+}
+
+void Player::W007() // 낙하모션 Loop
+{
+	PLAY;
+
+	if (RATIO > 0.96)
+	{
+		ReturnIdle2();
+	}
+}
+
+void Player::W009() // 공중에서 전방으로 밧줄벌레 발사
+{
+	PLAY;
+
+	Pos() -= Forward() * 500 * DELTA;
+
+	if (!playOncePerMotion)
+	{
+		//UI->UseBugSkill();
+		Sounds::Get()->Play("wirebug", 3.5f);
+		playerWireBug->SetActive(true);
+		playOncePerMotion = true;
+	}
+
+	if (!playOncePerMotion2)
+	{
+		Vector3 pos = GetTranslationByNode(leftHandNode);
+		playerWireBug->SetMove(pos, true, Back() * 1300 + Up() * 100);
+		playOncePerMotion2 = true;
+	}
+
+	if (RATIO > 0.96)
+	{
+		playOncePerMotion = false;
+		playOncePerMotion2 = false;
+		playerWireBug->SetStop();
+		SetState(W_020);
+	}
+}
+
+void Player::W010() // 사선 밧줄벌레 발사 착지 후 달리기
+{
+	PLAY;
+
+	if (RATIO > 0.96)
+	{
+		SetState(W_010);
+	}
+}
+
+void Player::W020() // 밧줄벌레 발사 후 공중 체공중 구르기 눌렀을 때
+{
+	PLAY;
+
+	if (!playOncePerMotion)
+	{
+		jumpVelocity = 3.0f;
+		playOncePerMotion = true;
+	}
+
+	if (Jump(1200, 1.5))
+	{
+		if (RATIO > 0.96)
+		{
+			if (KEY_DP('W'))
+			{
+				SetState(F_073);
+				playerWireBug->SetActive(false);
+				playerWireBug->SetMove(Vector3::Zero(), false, Vector3::Zero());
+			}
+			else
+			{
+				SetState(F_072);
+				playerWireBug->SetActive(false);
+				playerWireBug->SetMove(Vector3::Zero(), false, Vector3::Zero());
+			}
+		}
+	}
+	else
+	{
+		if (KEY_DP('W'))
+		{
+			SetState(F_073);
+			playerWireBug->SetActive(false);
+			playerWireBug->SetMove(Vector3::Zero(), false, Vector3::Zero());
+		}
+		else
+		{
+			SetState(F_072);
+			playerWireBug->SetActive(false);
+			playerWireBug->SetMove(Vector3::Zero(), false, Vector3::Zero());
+		}
+	}
+}
+
+void Player::W062() // 공중에서 매달려있기 시작
+{
+	PLAY;
+
+	if (!playOncePerMotion)
+	{
+		playerWireBug->SetActive(true);
+		playOncePerMotion = true;
+	}
+
+	if (RATIO > 0.96)
+	{
+		SetState(W_063);
+	}
+}
+
+void Player::W063() // W062 루프
+{
+	PLAY;
+
+	if (RATIO > 0.96)
+	{
+		SetState(W_007);
+	}
+}
+
+void Player::F072() // 착지 후 제자리
+{
+	PLAY;
+
+	if (RATIO > 0.96)
+	{
+		ReturnIdle2();
+	}
+}
+
+void Player::F073() // 착지 후 앞으로 이동
+{
+	PLAY;
+
+	if (RATIO > 0.96)
+	{
+		SetState(S_011);
 	}
 }
 

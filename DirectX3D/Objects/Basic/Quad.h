@@ -15,11 +15,14 @@ public:
 
     void SetTexture(wstring file);
 
+    void InItPos(Vector3 Pos);
+    bool IsOnMouseCursor();
+
 private:
     void MakeMesh();
 
 private:
+    Vector2 LT, RB;
     Vector2 size;
-
     Mesh<VertexType>* mesh;    
 };

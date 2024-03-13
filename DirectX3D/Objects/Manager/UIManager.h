@@ -66,17 +66,20 @@ public:
     float curStamina = 100;//임시로 public에 올려둠
     bool staminaActive = false;
 
-    // 발파 상태 아이콘 관령 내용
+    // 발파 상태 아이콘 관련 내용
     bool specialMove = false;
     bool specialMove2 = false;
     bool partDestruct = false;
     bool partDestruct2 = false;
+
+    void SetAllUIOff() { isRender = false; }
 
 private:
     // 퀵 슬롯 관한 내용
     //=====================
     void QuickSlot(); // 퀵 슬롯 어떤 식으로 랜더 할지 내용
     void QuickSlotBar(); // 퀵 슬롯 에서 가리키는 내용 함수
+    void DragInvenItem();
     void DragSlot(); // 드래그 슬롯 내용
     void DragSlotBar(); // 드래그 슬롯 내용
     void NumberSlot(); // 넘버 슬롯 내용
@@ -145,6 +148,7 @@ private:
     Quad* potionIcon_D;
     Quad* greatepotionIcon_D;
     Quad* whetstoneIcon_D;
+    vector<Quad*>inItDragItem_D;
     //===================
     Quad* potionIcon_N;
     Quad* greatepotionIcon_N;
@@ -178,6 +182,9 @@ private:
     // 발파 상태 UI
     Quad* valphalkStateIcon1;
     Quad* valphalkStateIcon2;
+
+    // 퀘스트 클리어
+    Quad* questClearUI;
 
 public:
     UINT cotingLevel = 0;
@@ -213,7 +220,7 @@ public:
 
     bool getWildBug = false;
 
-    const float wildBugDurationLimit = 5.0f;
+    const float wildBugDurationLimit = 180.0f;
     float wildBugDuration = 0.0f;
     
     // 퀵 슬롯 실행 할때 유무 확인 하기
@@ -230,8 +237,8 @@ public:
     bool useSelectBar = false;
     Vector3 MousePos;
 
-    int havePotion = 20;
-    int haveGPotion = 10;
+    int havePotion = 10; // 애는 20이 10개
+    int haveGPotion = 0; // 애는 10이 10개
 
     // 드래그 슬롯 실행 할때 유무 확인 하기
     bool useDragBar = false;
@@ -258,5 +265,7 @@ public:
     // 발파 상태 내용
     float stateIconTimer = 0.0f;
     float stateIconTimer2 = 0.0f;
+
+    bool isRender = true;
 };
 

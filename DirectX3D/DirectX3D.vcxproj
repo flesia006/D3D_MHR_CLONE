@@ -148,6 +148,7 @@
     <ClInclude Include="Objects\Character\Sample.h" />
     <ClInclude Include="Objects\Character\WireBug.h" />
     <ClInclude Include="Objects\Particle\Garuk_Fire.h" />
+    <ClInclude Include="Objects\Manager\ItemManager.h" />
     <ClInclude Include="Objects\Particle\HupgiFire.h" />
     <ClInclude Include="Objects\Particle\SpiritFlame.h" />
     <ClInclude Include="Objects\Particle\Sp_atk_start.h" />
@@ -155,6 +156,7 @@
     <ClInclude Include="Objects\Particle\Sutdol.h" />
     <ClInclude Include="Objects\Particle\Val_fire.h" />
     <ClInclude Include="Objects\Basic\Ring.h" />
+    <ClInclude Include="Objects\Character\PlayerWireBug.h" />
     <ClInclude Include="Scenes\FightTestScene.h" />
     <ClInclude Include="Objects\Character\DummyValphalk.h" />
     <ClInclude Include="Objects\Particle\CriticalParticle.h" />
@@ -312,6 +314,7 @@
     <ClCompile Include="Objects\Character\Sample.cpp" />
     <ClCompile Include="Objects\Character\WireBug.cpp" />
     <ClCompile Include="Objects\Particle\Garuk_Fire.cpp" />
+    <ClCompile Include="Objects\Manager\ItemManager.cpp" />
     <ClCompile Include="Objects\Particle\HupgiFire.cpp" />
     <ClCompile Include="Objects\Particle\SpiritFlame.cpp" />
     <ClCompile Include="Objects\Particle\Sp_atk_start.cpp" />
@@ -319,6 +322,7 @@
     <ClCompile Include="Objects\Particle\Sutdol.cpp" />
     <ClCompile Include="Objects\Particle\Val_fire.cpp" />
     <ClCompile Include="Objects\Basic\Ring.cpp" />
+    <ClCompile Include="Objects\Character\PlayerWireBug.cpp" />
     <ClCompile Include="Scenes\FightTestScene.cpp" />
     <ClCompile Include="Objects\Character\DummyValphalk.cpp" />
     <ClCompile Include="Objects\Particle\CriticalParticle.cpp" />

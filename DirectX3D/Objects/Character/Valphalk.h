@@ -20,7 +20,7 @@ public:
 		E_2091, E_2092, E_2093, E_2103, // 날개 휘둘
 		E_2106, E_2107, E_2108, E_2118, E_2121, E_2124,
 		E_2129, E_2130, E_2131, E_2133, E_2134, E_2141,	 // 앞다리 찍으면서 날개 덮기
-		E_2144, E_2145, E_2146,
+		E_2144, E_2145, E_2146, E_2145a,
 		E_2151, E_2152, E_2153, E_2171,
 		E_2173, E_2174, E_2175, E_2185,
 		E_2188, E_2189, E_2190, E_2192, E_2193, E_2200, E_2200fix,
@@ -307,6 +307,7 @@ private:
 	void E2144();
 	void E2145();
 	void E2146();
+	void E2145a();
 
 	void E2171();
 
@@ -463,7 +464,8 @@ private:
 	SphereCollider* effectSphere1;
 	SphereCollider* effectSphere2;
 	Vector3 forwardBoomPosInit = { 0,-300,-1000 };
-
+	Vector3 explosionPos = {};
+	Vector3 explosionPos2 = {};
 	//공격 충돌체 보관용 벡터
 	vector<SphereCollider*> sphereColliders;
 	vector<BoxCollider*> boxColliders;

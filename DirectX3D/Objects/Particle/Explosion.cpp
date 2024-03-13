@@ -96,7 +96,6 @@ void Explosion::Play(Vector3 pos, Vector3 rot)
 
 void Explosion::Play1(Vector3 pos, Vector3 rot)
 {
-	explosionParticle->Play(pos);
 	sprite8->Play(pos);
 	sprite1->Play(pos);	
 	sprite2->Play({ pos.x - 100,pos.y - 100,pos.z });
