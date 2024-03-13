@@ -41,6 +41,20 @@ Player::Player() : ModelAnimator("Player")
 	haloCollider = new CapsuleCollider();
 	wireBugParticle = new Wire_Bug();
 	sutdol = new Sutdol();
+	FOR(4)
+	{
+		CircleEft* cir = new CircleEft();
+		cir->SetParent(realPos);
+		if (i == 1) cir->Rot().z += unitRad * 50;
+		if (i == 2) cir->Rot().z -= unitRad * 50;
+		if (i == 3)
+		{
+			cir->Rot().z += XM_PIDIV2;
+			cir->Scale() *= 0.9f;
+		}
+		cir->Pos().y += 70;
+		circle.push_back(cir);
+	}
 
 	haloCollider->SetParent(swordStart);
 
@@ -167,6 +181,7 @@ void Player::PreRender()
 	spSuccessParticle->Render();
 	spiritParticle->Render();
 	potionParticle->Render();
+	FOR(hitParticle.size()) hitParticle[i]->Render();
 }
 
 void Player::Render()
@@ -180,8 +195,10 @@ void Player::Render()
 		//swordCollider->Render();
 	longSword->Render();
 	kalzip->Render();
-	//suwol->Render();
+	suwol->Render();
 	tugu->Render();
+	FOR(circle.size()) circle[i]->Render();
+
 
 	if (isSetState)
 	{
@@ -190,6 +207,11 @@ void Player::Render()
 
 		if (curState < R_001 || curState > R_602)
 			Pos().y = realPos->Pos().y;
+
+		if (preState == L_155)
+		{
+			Rot().y += XM_PI;
+		}
 
 		isSetState = false;
 	}
@@ -316,6 +338,7 @@ void Player::UpdateWorlds()
 	tmpCollider3->UpdateWorld();
 	bodyCollider->Update();
 	swordCollider->Update();
+
 
 	haloTransform->Pos() = longSword->GlobalPos() + longSword->Back() * 55.f;
 	haloCollider->Pos() = haloTransform->Pos();
@@ -450,30 +473,30 @@ void Player::GUIRender()
 	//
 	//
 	ImGui::SliderInt("node", &node, 1, 210);
-//	ImGui::SliderFloat("temp", &temp, -10, 10);
-//	ImGui::SliderFloat("temp2", &temp2, -10, 10);
-//	ImGui::SliderFloat("temp3", &temp3, 10, 15);
-//		
-//	//longSword->GUIRender();
-//	kalzip->GUIRender();
+	//	ImGui::SliderFloat("temp", &temp, -10, 10);
+	//	ImGui::SliderFloat("temp2", &temp2, -10, 10);
+	//	ImGui::SliderFloat("temp3", &temp3, 10, 15);
+	//		
+	//	//longSword->GUIRender();
+	//	kalzip->GUIRender();
 
-	// t = GetClip(1)->GetRatio();
-	// ImGui::DragFloat("ratio_1", &t);
+		// t = GetClip(1)->GetRatio();
+		// ImGui::DragFloat("ratio_1", &t);
 
-	//Matrix x = GetTransformByNode(0);
-	//Vector3 S, R, T;
-	//XMMatrixDecompose(S.GetValue(), R.GetValue(), T.GetValue(), x);
-	//
-	//string temp = "_Pos";
-	//ImGui::DragFloat3(temp.c_str(), (float*)&T, 0.1f);
-	//
-	//temp = "_GlobalPos";
-	//Vector3 globalPos = GetTranslationByNode(0);
-	//ImGui::DragFloat3(temp.c_str(), (float*)&globalPos, 0.1f);
-	//
-	//temp = "Real_GlobalPos";
-	//Vector3 Pos = root->GlobalPos();
-	//ImGui::DragFloat3(temp.c_str(), (float*)&Pos, 0.1f);
+		//Matrix x = GetTransformByNode(0);
+		//Vector3 S, R, T;
+		//XMMatrixDecompose(S.GetValue(), R.GetValue(), T.GetValue(), x);
+		//
+		//string temp = "_Pos";
+		//ImGui::DragFloat3(temp.c_str(), (float*)&T, 0.1f);
+		//
+		//temp = "_GlobalPos";
+		//Vector3 globalPos = GetTranslationByNode(0);
+		//ImGui::DragFloat3(temp.c_str(), (float*)&globalPos, 0.1f);
+		//
+		//temp = "Real_GlobalPos";
+		//Vector3 Pos = root->GlobalPos();
+		//ImGui::DragFloat3(temp.c_str(), (float*)&Pos, 0.1f);
 }
 
 void Player::PostRender()
@@ -546,6 +569,10 @@ void Player::Control()
 	case Player::L_116:		L116();		break;
 	case Player::L_119:		L119();		break;
 	case Player::L_122:		L122();		break;
+
+	case Player::L_126:		L126();		break;
+	case Player::L_127:		L127();		break;
+
 	case Player::L_128:		L128();		break;
 	case Player::L_130:		L130();		break;
 	case Player::L_131:		L131();		break;
@@ -899,6 +926,25 @@ void Player::EffectUpdates()
 
 	suwol->Update();
 	tugu->Update();
+	FOR(circle.size())
+	{
+		if (curState == L_155)
+			circle[i]->Rot().y = atan2(Forward().x, Forward().z);
+		else if (curState == L_109)
+		{
+			circle[0]->Rot().x = 0;
+			circle[0]->Rot().y += 30 * DELTA;
+			circle[0]->Rot().z = 0;
+		}
+		else if (curState == L_108)
+		{
+			circle[i]->Rot().x += 50 * DELTA;
+			circle[i]->Rot().y = atan2(Back().x, Back().z);
+		}
+		else
+			circle[i]->Rot().y += 50 * DELTA;
+		circle[i]->Update();
+	}
 }
 
 void Player::Rotate(float rotateSpeed)
@@ -1281,6 +1327,12 @@ void Player::HurtCheck()
 					return;
 				}
 
+				if (curState == L_126 && RATIO < 0.8)
+				{
+					isEvaded = true;
+					return;
+				}
+
 				evadeCheckCollider->SetActive(false);
 				evadeCheckCollider->UpdateWorld();
 
@@ -1462,7 +1514,7 @@ void Player::TermAttackUpdate()
 	if (!isHitL155 && !isHitL133 && !isHitL136)
 		return;
 
-	if (isHitL155)
+	if (isHitL155) // 앉아 발도 기인베기
 	{
 		TermAttackTimer += DELTA;
 
@@ -1471,6 +1523,7 @@ void Player::TermAttackUpdate()
 			if (!playOncePerTerm)
 			{
 				AttackWOCollision(17);
+				circle[0]->active = true;
 				playOncePerTerm = true;
 			}
 		}
@@ -1479,6 +1532,7 @@ void Player::TermAttackUpdate()
 			if (playOncePerTerm)
 			{
 				AttackWOCollision(17);
+				circle[1]->active = true;
 				playOncePerTerm = false;
 			}
 		}
@@ -1487,12 +1541,14 @@ void Player::TermAttackUpdate()
 			if (!playOncePerTerm)
 			{
 				AttackWOCollision(17);
+				circle[2]->active = true;
 				playOncePerTerm = true;
 			}
 		}
 		else if (TermAttackTimer > 0.8f)
 		{
 			isHitL155 = false;
+			FOR(3) circle[i]->active = false;
 			playOncePerTerm = false;
 			TermAttackTimer = 0.0;
 		}
@@ -1621,11 +1677,7 @@ void Player::SetState(State state)
 	if (curState <R_001 || curState >R_602) // 가루크 탑승때는 필요없음
 		isSetState = true;
 
-	if (curState == L_155)
-	{
-		Vector3 realForward = forwardPos->GlobalPos() - backPos->GlobalPos();
-		Rot().y = atan2(realForward.x, realForward.z);
-	}
+
 	sumRot = 0.0f;
 	preState = curState;
 	curState = state;
@@ -1691,6 +1743,10 @@ void Player::ReadClips()
 	ReadClip("L_116");
 	ReadClip("L_119");
 	ReadClip("L_122");
+
+	ReadClip("L_126");
+	ReadClip("L_127");
+
 	ReadClip("L_128");
 	ReadClip("L_130");
 	ReadClip("L_131");
@@ -2128,6 +2184,7 @@ void Player::L001() // 발도상태 대기
 	else if (K_LMBRMB)	SetState(L_103);	// 103 베어내리기
 	else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106);	// 106 기인 베기	
 	else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// 날라차기
+	else if (UI->IsAbleBugSkill() && K_RBUG)		SetState(L_126);	// 수월의자세
 	else if (K_SPACE)	Roll();				// 010 구르기
 
 	UIManager::Get()->staminaActive = false;
@@ -2157,6 +2214,7 @@ void Player::L004() // 발도상태 걷기 중 // 루프
 	else if (K_LMBRMB)	SetState(L_103);	// 103 베어내리기
 	else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106);	// 106 기인 베기	
 	else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// 날라차기
+	else if (UI->IsAbleBugSkill() && K_RBUG)		SetState(L_126);	// 수월의자세
 	else if (K_SPACE)	Roll();				// 010 구르기
 
 	Rotate();
@@ -2179,6 +2237,7 @@ void Player::L005() // 발도상태 걷기 시작 (발돋움)
 	else if (K_LMBRMB)	SetState(L_103);	// 103 베어내리기
 	else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106);	// 106 기인 베기	
 	else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// 날라차기
+	else if (UI->IsAbleBugSkill() && K_RBUG)		SetState(L_126);	// 수월의자세
 	else if (K_SPACE)	Roll();				// 010 구르기
 
 	Rotate();
@@ -2215,6 +2274,7 @@ void Player::L008() // 멈춤
 	else if (K_LMBRMB)	SetState(L_103);	// 103 베어내리기
 	else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106);	// 106 기인 베기	
 	else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// 날라차기
+	else if (UI->IsAbleBugSkill() && K_RBUG)		SetState(L_126);	// 수월의자세
 	else if (K_SPACE)	Roll();				// 010 구르기
 
 	if (RATIO > 0.5 && RATIO <= 0.95)
@@ -2310,6 +2370,7 @@ void Player::L014() // 발도상태 구르기 후 이동키 유지시
 		else if (K_LMBRMB)	SetState(L_103);	// 103 베어내리기
 		else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106);	// 106 기인 베기	
 		else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// 날라차기
+		else if (UI->IsAbleBugSkill() && K_RBUG)		SetState(L_126);	// 수월의자세
 		else if (K_SPACE)	Roll();				// 010 구르기
 	}
 
@@ -2369,6 +2430,7 @@ void Player::L101() // 내디뎌베기
 		else if (K_CTRLRMB)			SetState(L_147);	// 간파 베기
 		else if (K_CTRLSPACE)		SetState(L_151);	// 특수 납도
 		else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// 날라차기
+		else if (UI->IsAbleBugSkill() && K_RBUG)		SetState(L_126);	// 수월의자세
 		else if (K_SPACE)			Roll();
 	}
 
@@ -2413,6 +2475,7 @@ void Player::L102() // 세로베기
 		else if (K_CTRLRMB)			SetState(L_147);	// 간파 베기
 		else if (K_CTRLSPACE)		SetState(L_151);	// 특수 납도
 		else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// 날라차기
+		else if (UI->IsAbleBugSkill() && K_RBUG)		SetState(L_126);	// 수월의자세
 		else if (K_SPACE)			Roll();
 	}
 
@@ -2453,6 +2516,7 @@ void Player::L103() // 베어내리기
 		else if (K_CTRLRMB)			SetState(L_147);	// 간파 베기
 		else if (K_CTRLSPACE)		SetState(L_151);	// 특수 납도
 		else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// 날라차기
+		else if (UI->IsAbleBugSkill() && K_RBUG)		SetState(L_126);	// 수월의자세
 		else if (K_SPACE)			Roll();
 	}
 
@@ -2495,6 +2559,7 @@ void Player::L104() // 찌르기
 		else if (K_CTRLRMB)			SetState(L_147);	// 간파 베기
 		else if (K_CTRLSPACE)		SetState(L_151);	// 특수 납도
 		else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// 날라차기
+		else if (UI->IsAbleBugSkill() && K_RBUG)		SetState(L_126);	// 수월의자세
 		else if (K_SPACE)			Roll();
 
 	}
@@ -2534,6 +2599,7 @@ void Player::L105() // 베어 올리기
 		else if (K_CTRLRMB)		SetState(L_147);	// 간파 베기
 		else if (K_CTRLSPACE)	SetState(L_151);	// 특수 납도
 		else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// 날라차기
+		else if (UI->IsAbleBugSkill() && K_RBUG)		SetState(L_126);	// 수월의자세
 		else if (K_SPACE)		Roll();
 	}
 
@@ -2578,6 +2644,7 @@ void Player::L106() // 기인 베기 1
 		else if (K_CTRLRMB)		SetState(L_147);	// 간파 베기		
 		else if (K_CTRLSPACE)	SetState(L_151);	// 특수 납도		
 		else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// 날라차기
+		else if (UI->IsAbleBugSkill() && K_RBUG)		SetState(L_126);	// 수월의자세
 		else if (K_SPACE)		Roll();				// 구르기
 	}
 
@@ -2623,6 +2690,7 @@ void Player::L107() // 기인베기 2
 			else if (K_CTRLRMB)			SetState(L_147);	// 간파 베기
 			else if (K_CTRLSPACE)		SetState(L_151);	// 특수 납도		
 			else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// 날라차기
+			else if (UI->IsAbleBugSkill() && K_RBUG)		SetState(L_126);	// 수월의자세
 			else if (K_SPACE)			Roll();				// 구르기		
 		}
 	}
@@ -2674,6 +2742,7 @@ void Player::L108() // 기인베기 3
 			{
 				attackOnlyOncePerMotion = false;
 				isDoubleStrikeMotion = false;
+				circle[3]->active = true;
 			}
 			Attack(37);
 		}
@@ -2692,7 +2761,9 @@ void Player::L108() // 기인베기 3
 		else if (K_CTRLRMB)			SetState(L_147);  // 간파 베기
 		else if (K_CTRLSPACE)		SetState(L_151);  // 특수 납도		
 		else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// 날라차기
+		else if (UI->IsAbleBugSkill() && K_RBUG)		SetState(L_126);	// 수월의자세
 		else if (K_SPACE)			Roll();			  // 구르기		
+		circle[3]->active = false;
 	}
 
 	if (RATIO > 0.96)
@@ -2736,22 +2807,23 @@ void Player::L109() // 기인 큰회전베기
 			Attack(42);
 			// 줌아웃
 			CAM->Zoom(650);
+			circle[0]->active = true;
 		}
 		else
 			EndEffect();
+	}
+
+	if (RATIO > 0.30) // 특납 연계 가능 타이밍 언제?
+	{
+		circle[0]->active = false;
+		if (K_CTRLSPACE)	SetState(L_151);	// 특수 납도
+		else if (KEY_DOWN(VK_XBUTTON1)) SetState(L_101);
 	}
 
 	// 줌 정상화
 	{
 		if (RATIO > 0.47 && RATIO < 0.84)
 			CAM->Zoom(400, 5);
-	}
-
-
-	if (RATIO > 0.30) // 특납 연계 가능 타이밍 언제?
-	{
-		if (K_CTRLSPACE)	SetState(L_151);	// 특수 납도
-		else if (KEY_DOWN(VK_XBUTTON1)) SetState(L_101);
 	}
 
 	if (RATIO > 0.96)
@@ -2793,6 +2865,7 @@ void Player::L110() // 기인 내디뎌베기
 		else if (K_CTRLSPACE)						SetState(L_151);	// 특수 납도
 		else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_108);	// 기인베기3
 		else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// 날라차기
+		else if (UI->IsAbleBugSkill() && K_RBUG)		SetState(L_126);	// 수월의자세
 		else if (K_SPACE)							Roll();				// 구르기
 	}
 
@@ -2882,14 +2955,56 @@ void Player::L122() // 날라차기 착지
 	}
 }
 
+void Player::L126() // 수월의 자세
+{
+	PLAY;
+
+	if (RATIO < 0.2)
+		LimitRotate(180, 50);
+
+	if (RATIO > 0.01 && RATIO < 0.8)
+	{
+		suwol->Update();
+		suwol->EffectOn();
+		CAM->Zoom(250, 3);
+		if (isEvaded)
+		{
+			SetState(L_127);
+			isEvaded = false;
+		}
+
+	}
+
+	if (RATIO > 0.8 && suwol->active)
+	{
+		CAM->Zoom(400, 3);
+		suwol->EffectOff();
+	}
+
+	if (RATIO > 0.96)
+		ReturnIdle();
+}
+
+void Player::L127() // 수월의 자세 카운터
+{
+	PLAY;
+
+	if (RATIO > 0.3)
+		suwol->EffectOff();
+
+	if (RATIO > 0.96)
+		ReturnIdle();
+}
+
 void Player::L128()	// 날라차기 시작
 {
-	PLAY;	
+	PLAY;
+
 	Vector3 a = GetTranslationByNode(131);
 	Vector3 b = GetTranslationByNode(133);
 	Vector3 c = b - a;
 	c.GetNormalized();
-	
+
 	wireBugParticle->Play(GetTranslationByNode(108), GetRotationByNode(129));
 	if (!playOncePerMotion)
 	{
@@ -2998,7 +3113,7 @@ void Player::L133()	// 투구깨기
 			isInitVoice = true;
 		}
 	}
-	
+
 	if (RATIO > 0.4 && RATIO < 0.44)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
 
@@ -3167,6 +3282,7 @@ void Player::L147() // 간파베기
 		else if (K_CTRLSPACE)	SetState(L_151);	// 특수 납도
 		else if (K_CTRL && isEvaded)	SetState(L_109);	// 기인큰회전베기
 		else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// 날라차기
+		else if (UI->IsAbleBugSkill() && K_RBUG)		SetState(L_126);	// 수월의자세
 		else if (K_SPACE)		Roll();				// 구르기
 	}
 
@@ -3297,6 +3413,7 @@ void Player::L154() // 앉아발도 베기
 			else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106); // 기인 베기 1		
 			else if (K_CTRLRMB)		SetState(L_147); // 간파 베기
 			else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// 날라차기
+			else if (UI->IsAbleBugSkill() && K_RBUG)		SetState(L_126);	// 수월의자세
 			else if (K_SPACE)		Roll();			 // 구르기
 		}
 	}
@@ -3345,11 +3462,12 @@ void Player::L155() // 앉아발도 기인베기
 
 	// 카운터 성공 시 추가 공격 프레임
 	{
-		if (isEvaded && isHit && (RATIO > 0.385 && RATIO < 0.39))
+		if (isHit && (RATIO > 0.385 && RATIO < 0.39))
 		{
 			spSuccessParticle->Play(Pos(), 0);
 			if (isHitL155 == false)
 				UIManager::Get()->PlusCotingLevel();
+
 
 			isHitL155 = true;
 			Sounds::Get()->Play("pl_wp_l_swd_epv_media.bnk.2_8", .5f);
@@ -3367,6 +3485,7 @@ void Player::L155() // 앉아발도 기인베기
 			else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_108); // 기인 베기 3		
 			else if (K_CTRLSPACE)	SetState(L_151); // 특수 납도
 			else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// 날라차기
+			else if (UI->IsAbleBugSkill() && K_RBUG)		SetState(L_126);	// 수월의자세
 			else if (K_SPACE)		Roll();			 // 구르기
 		}
 	}
@@ -3520,7 +3639,7 @@ void Player::R402() // 물약 다먹은
 		Sounds::Get()->Play("health_potion", 0.3f);
 		potionParticle->Play(Pos() + Back() * 10, { 0,0,0 });
 	}
-	
+
 	if (RATIO > 0.96)
 	{
 		if (K_MOVE)
@@ -3560,7 +3679,7 @@ void Player::R601() // 숫돌질
 		sutdol->Play(GetTranslationByNode(rightHandNode), r);
 		Sounds::Get()->Play("wheatstone1", 0.3f);
 	}
-	
+
 
 	if (RATIO > 0.96)
 		SetState(R_602);
@@ -3578,7 +3697,7 @@ void Player::R602() // 숫돌 마무리
 		sutdol->Play(GetTranslationByNode(rightHandNode), r);
 		Sounds::Get()->Play("wheatstone1", 0.3f);
 	}
-	if(RATIO>0.59)
+	if (RATIO > 0.59)
 		sutdol->SetPos(longSword->GlobalPos() + longSword->Back() * 120.0f);
 	if (RATIO < 0.6 && RATIO>0.59)
 	{
@@ -3918,45 +4037,45 @@ void Player::StatusRender()
 {
 	vector<string> strStatus;
 
-	strStatus.push_back("L_001 발도 상태 대기");
-	strStatus.push_back("L_002 발도");
-	strStatus.push_back("L_003 서서납도");
-	strStatus.push_back("L_004 발도상태 걷기");
-	strStatus.push_back("L_005 발도상태 걷기 시작");
-	strStatus.push_back("L_006 발도상태 좌로 걷기 시작");
-	strStatus.push_back("L_007 발도상태 우로 걷기 시작");
-	strStatus.push_back("L_008 멈춤");
-	strStatus.push_back("L_009 걸으면서 납도 ");
-	strStatus.push_back("L_010 앞구르기");
-	strStatus.push_back("L_011 왼쪽구르기");
-	strStatus.push_back("L_012 오른쪽구르기");
-	strStatus.push_back("L_013 뒤구르기");
-	strStatus.push_back("L_014 구른후걷기");
-	strStatus.push_back("L_015 구른후뒤걷기");
-	strStatus.push_back("L_071 낮은높이언덕파쿠르");
-	strStatus.push_back("L_072 중간높이언덕파쿠르");
-	strStatus.push_back("L_073 높은높이언덕파쿠르");
-	strStatus.push_back("L_077 ?");
-	strStatus.push_back("L_078 ?");
-	strStatus.push_back("L_079 ?");
-	strStatus.push_back("L_101 내디뎌베기");
-	strStatus.push_back("L_102 세로베기");
-	strStatus.push_back("L_103 베어내리기");
-	strStatus.push_back("L_104 찌르기");
-	strStatus.push_back("L_105 베어올리기");
-	strStatus.push_back("L_106 기인베기1");
-	strStatus.push_back("L_107 기인베기2");
-	strStatus.push_back("L_108 기인베기3");
-	strStatus.push_back("L_109 기인큰회전베기");
-	strStatus.push_back("L_110 기인내디뎌베기");
-	strStatus.push_back("L_111 일자베기");
-
-	strStatus.push_back("S_003 납도 달리기");
-	strStatus.push_back("S_008 제자리 납도");
-	strStatus.push_back("S_009 걸으면서 납도");
-
-	string fps = "Status : " + strStatus.at((UINT)curState);
-	Font::Get()->RenderText(fps, { 150, WIN_HEIGHT - 30 });
+	//	strStatus.push_back("L_001 발도 상태 대기");
+	//	strStatus.push_back("L_002 발도");
+	//	strStatus.push_back("L_003 서서납도");
+	//	strStatus.push_back("L_004 발도상태 걷기");
+	//	strStatus.push_back("L_005 발도상태 걷기 시작");
+	//	strStatus.push_back("L_006 발도상태 좌로 걷기 시작");
+	//	strStatus.push_back("L_007 발도상태 우로 걷기 시작");
+	//	strStatus.push_back("L_008 멈춤");
+	//	strStatus.push_back("L_009 걸으면서 납도 ");
+	//	strStatus.push_back("L_010 앞구르기");
+	//	strStatus.push_back("L_011 왼쪽구르기");
+	//	strStatus.push_back("L_012 오른쪽구르기");
+	//	strStatus.push_back("L_013 뒤구르기");
+	//	strStatus.push_back("L_014 구른후걷기");
+	//	strStatus.push_back("L_015 구른후뒤걷기");
+	//	strStatus.push_back("L_071 낮은높이언덕파쿠르");
+	//	strStatus.push_back("L_072 중간높이언덕파쿠르");
+	//	strStatus.push_back("L_073 높은높이언덕파쿠르");
+	//	strStatus.push_back("L_077 ?");
+	//	strStatus.push_back("L_078 ?");
+	//	strStatus.push_back("L_079 ?");
+	//	strStatus.push_back("L_101 내디뎌베기");
+	//	strStatus.push_back("L_102 세로베기");
+	//	strStatus.push_back("L_103 베어내리기");
+	//	strStatus.push_back("L_104 찌르기");
+	//	strStatus.push_back("L_105 베어올리기");
+	//	strStatus.push_back("L_106 기인베기1");
+	//	strStatus.push_back("L_107 기인베기2");
+	//	strStatus.push_back("L_108 기인베기3");
+	//	strStatus.push_back("L_109 기인큰회전베기");
+	//	strStatus.push_back("L_110 기인내디뎌베기");
+	//	strStatus.push_back("L_111 일자베기");
+	//
+	//	strStatus.push_back("S_003 납도 달리기");
+	//	strStatus.push_back("S_008 제자리 납도");
+	//	strStatus.push_back("S_009 걸으면서 납도");
+	//
+	//	string fps = "Status : " + strStatus.at((UINT)curState);
+	//	Font::Get()->RenderText(fps, { 150, WIN_HEIGHT - 30 });
 }
 
 void Player::DamageRender()
@@ -4015,7 +4134,7 @@ bool Player::Jump(float moveSpeed, float jumpSpeed)
 	Pos() -= Forward() * moveSpeed * DELTA;
 	Pos().y += jumpVelocity;
 
-	if (realPos->Pos().y >= height - 100)
+	if (realPos->Pos().y >= height)
 	{
 		isJump = true;
 		return true;
@@ -4023,10 +4142,15 @@ bool Player::Jump(float moveSpeed, float jumpSpeed)
 
 	else
 	{
-		isJump = false;
-		Pos().y = height;
-		jumpVelocity = originJumpVelocity;
-		return false;
+		if (jumpVelocity > 0)
+			return true;
+		else
+		{
+			isJump = false;
+			Pos().y = height;
+			jumpVelocity = originJumpVelocity;
+			return false;
+		}
 	}
 }
 

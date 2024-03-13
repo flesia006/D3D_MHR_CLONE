@@ -183,6 +183,8 @@ using namespace GameMath;
 #include "Objects/Basic/Cylinder.h"
 #include "Objects/Basic/HalfSphere.h"
 #include "Objects/Basic/Cylinder2.h"
+#include "Objects/Basic/ModelQuad.h"
+#include "Objects/Basic/Ring.h"
 
 #include "Objects/Actor/ActorUI.h"
 #include "Objects/UI/ProgressBar.h"
@@ -224,6 +226,7 @@ using namespace GameMath;
 #include "Objects/Particle/Explosion.h"
 #include "Objects/Particle/Garuk_Fire.h"
 #include "Objects/Particle/Sutdol.h"
+#include "Objects/Particle/CircleEft.h"
 
 #include "Objects/Algorithm/Node.h"
 #include "Objects/Algorithm/Heap.h"

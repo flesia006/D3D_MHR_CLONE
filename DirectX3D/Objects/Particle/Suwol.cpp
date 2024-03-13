@@ -3,17 +3,21 @@
 
 Suwol::Suwol()
 {
-    FOR(30)
+    FOR(count)
     {
-        suwol[i] = new Quad(L"Textures/Effect/split/headBreakAtk_2.png");
-        suwol[i]->SetParent(this);
-        suwol[i]->Scale() *= 6;
-        suwol[i]->Pos().y = 100;
-        suwol[i]->Pos().x = Random(-100, 100);
-        suwol[i]->Pos().z = Random(-100, 100);
-        suwol[i]->Rot() = Random({ -1, -0.5, -1 }, { 1, 0.5, 1 });
-        suwol[i]->GetMaterial()->SetDiffuseMapColor({ 0.5, 0.5, 1, 1 });
-        suwol[i]->UpdateWorld();
+        Model* eft = new Model("quad");
+        eft->SetParent(this);
+        eft->Scale().x *= 0.1;
+        eft->Scale().y *= 6;
+        eft->Scale().z *= 0.1;
+        eft->Pos().y = Random(60, 130);
+        eft->Pos().x = Random(-80, 80);
+        eft->Pos().z = Random(-80, 80);
+        eft->Rot() = Random({ -1, -1.5, -1 }, { 1, 1.5, 1 });
+        eft->GetMaterials()[0]->SetDiffuseMap(L"Textures/Effect/split/headBreakAtk_2.png");
+        eft->GetMaterials()[0]->SetDiffuseMapColor({ 0.85, 0.95, 0.95, 1 });
+        eft->UpdateWorld();
+        suwol.push_back(eft);
     }
 
     FOR(2) blendState[i] = new BlendState();
@@ -33,29 +37,64 @@ Suwol::~Suwol()
 {
 }
 
+void Suwol::EffectOn()
+{
+    active = true;
+    timer += DELTA;
+    if (timer > 0.03 && num < 18)
+    {
+        for (auto& eft : suwol)
+        {
+            eft->GetMaterials()[0]->SetDiffuseMapColor({ 0.0f + 0.05f * num, 0.15f + 0.05f * num, 0.15f + 0.05f * num, 1 });
+            eft->UpdateWorld();
+        }
+        num++;
+        timer = 0;
+    }
+}
+
+void Suwol::EffectOff()
+{
+    timer += DELTA;
+    if (timer > 0.03 && num >= 0)
+    {
+        for (auto& eft : suwol)
+        {
+            eft->GetMaterials()[0]->SetDiffuseMapColor({ 0.0f + 0.05f * num, 0.15f + 0.05f * num, 0.15f + 0.05f * num, 1 });
+            eft->UpdateWorld();
+        }
+        num--;
+        timer = 0;
+    }
+    if (num == -1)
+        active = false;
+}
+
 void Suwol::Update()
 {
-    FOR(30)
-    {
-        suwol[i]->UpdateWorld();
-    }
-    Transform::UpdateWorld();
+    if (active)
+        Transform::UpdateWorld();
 }
 
 void Suwol::Render()
 {
-    blendState[1]->SetState();
-    depthState[1]->SetState();
-    rasterizerState[1]->SetState();
-
-    FOR(30)
+    if (active)
     {
-        suwol[i]->Render();
+        blendState[1]->SetState();
+        depthState[1]->SetState();
+        rasterizerState[1]->SetState();
+
+        for (auto& eft : suwol)
+        {
+            eft->Render();
+        }
+
+        blendState[0]->SetState();
+        depthState[0]->SetState();
+        rasterizerState[0]->SetState();
+
     }
 
-    blendState[0]->SetState();
-    depthState[0]->SetState();
-    rasterizerState[0]->SetState();
 }
 
 void Suwol::GUIRender()

@@ -19,7 +19,7 @@ private:
 		L_105, L_106, L_107, L_108, L_109,
 		L_110,
 
-		L_113, L_114, L_115, L_116, L_119, L_122,
+		L_113, L_114, L_115, L_116, L_119, L_122, L_126, L_127,
 		L_128, L_130, L_131, L_132, L_133,
 		L_134, L_135, L_136, L_137, L_138,
 
@@ -194,6 +194,10 @@ private:
 	void L116();
 	void L119();
 	void L122();
+
+	void L126();
+	void L127();
+
 	void L128();
 	void L130();
 	void L131();
@@ -401,5 +405,6 @@ private:
 	CapsuleCollider* haloCollider = nullptr;
 	Suwol* suwol = nullptr;
 	TuguEft* tugu = nullptr;
+	vector<CircleEft*> circle;
 };
 

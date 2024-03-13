@@ -1,29 +1,24 @@
 #pragma once
-class Suwol :public Transform
+class CircleEft :public Transform
 {
-	const int count = 50;
-
 public:
-	Suwol();
-	~Suwol();
-
-	void EffectOn();
-	void EffectOff();
+	CircleEft();
+	~CircleEft();
 
 	void Update();
 	void Render();
-	void GUIRender();
 
 	bool active = false;
 private:
-	vector<Model*> suwol;
+	Cylinder2* v_circle;
+	Ring* h_circle;
 
 	BlendState* blendState[2];
 	DepthStencilState* depthState[2];
 	RasterizerState* rasterizerState[2];
 
 	float timer = 0.0f;
+	int count = 0;
 	int num = 1;
 };
-
 

@@ -1,29 +1,30 @@
 #include "Framework.h"
-#include "Cylinder2.h"
+#include "Ring.h"
 
-Cylinder2::Cylinder2(float radius, float height, UINT sliceCount)
+Ring::Ring(float radius, float height, UINT sliceCount)
     : radius(radius), height(height), sliceCount(sliceCount)
 {
-    tag = "Cylinder2";
+    tag = "ring";
 
     mesh = new Mesh<VertexType>();
     MakeMesh();
     mesh->CreateMesh();
 }
 
-Cylinder2::~Cylinder2()
+Ring::~Ring()
 {
     delete mesh;
+
 }
 
-void Cylinder2::Render()
+void Ring::Render()
 {
     SetRender();
 
     mesh->Draw();
 }
 
-void Cylinder2::MakeMesh()
+void Ring::MakeMesh()
 {
     float thetaStep = XM_2PI / sliceCount;
 
@@ -39,19 +40,17 @@ void Cylinder2::MakeMesh()
         float z = sin(theta);
 
         VertexType vertex;
-        vertex.pos = { x * radius, -height * 0.5f, z * radius };
+        vertex.pos = { x * (radius + height * 0.5f), 0.0f, z * (radius + height * 0.5f) };
         vertex.uv = { (float)i / (float)sliceCount, 1.0f };
         vertices.push_back(vertex);
 
-        vertex.pos = { x * radius, +height * 0.5f, z * radius };
+        vertex.pos = { x * (radius - height * 0.5f), 0.0f, z * (radius - height * 0.5f) };
         vertex.uv = { (float)i / (float)sliceCount, 0.0f };
         vertices.push_back(vertex);
     }
 
     //¡§¡° ¿Œµ¶Ω∫
     vector<UINT>& indices = mesh->GetIndices();
-
-    indices.reserve(sliceCount * 6);
 
     UINT sideIndex = 0;
 
@@ -67,10 +66,10 @@ void Cylinder2::MakeMesh()
     }
 }
 
-void Cylinder2::MakeNormal()
+void Ring::MakeNormal()
 {
 }
 
-void Cylinder2::MakeTangent()
+void Ring::MakeTangent()
 {
 }

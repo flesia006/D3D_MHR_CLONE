@@ -6,6 +6,7 @@
 #include "Scenes/GridScene.h"
 #include "Scenes/MapDesignScene.h"
 #include "Scenes/ParticleScene.h"
+#include "Scenes/SimpleTestScene.h"
 
 #include "Scenes/NotUse/CubeScene.h"
 #include "Scenes/NotUse/SphereScene.h"
@@ -67,6 +68,9 @@ GameManager::GameManager()
 
 //   SceneManager::Get()->Create("FightTestScene", new FightTestScene());
 //   SceneManager::Get()->Add("FightTestScene");
+
+//    SceneManager::Get()->Create("SimpleTestScene", new SimpleTestScene());
+//    SceneManager::Get()->Add("SimpleTestScene");
 
 //    SceneManager::Get()->Add("Terrain");
 

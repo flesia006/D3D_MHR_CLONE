@@ -13,8 +13,8 @@ ParticleSystem::ParticleSystem(string file)
     blendState[1]->Alpha(true); //알파 적용 (반투명 설정 있으면 적용)
 
     FOR(2) depthState[i] = new DepthStencilState();
-    depthState[1]->DepthWriteMask(D3D11_DEPTH_WRITE_MASK_ALL); // 가려지는 이펙트
-    //depthState[1]->DepthWriteMask(D3D11_DEPTH_WRITE_MASK_ZERO); // 안 가려지는 이펙트
+    //depthState[1]->DepthWriteMask(D3D11_DEPTH_WRITE_MASK_ALL); // 가려지는 이펙트
+    depthState[1]->DepthWriteMask(D3D11_DEPTH_WRITE_MASK_ZERO); // 안 가려지는 이펙트
 
     quad->SetActive(false); // 일단 터질 때가 아니어서 비활성화    
 

@@ -180,6 +180,10 @@
     <ClCompile Include="Objects\Particle\Explosion.cpp" />
     <ClCompile Include="Objects\Particle\Garuk_Fire.cpp" />
     <ClCompile Include="Objects\Particle\Sutdol.cpp" />
+    <ClCompile Include="Objects\Basic\ModelQuad.cpp" />
+    <ClCompile Include="Scenes\SimpleTestScene.cpp" />
+    <ClCompile Include="Objects\Particle\CircleEft.cpp" />
+    <ClCompile Include="Objects\Basic\Ring.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Objects\Character\DummyValphalk.h" />
@@ -340,6 +344,10 @@
     <ClInclude Include="Objects\Particle\Explosion.h" />
     <ClInclude Include="Objects\Particle\Garuk_Fire.h" />
     <ClInclude Include="Objects\Particle\Sutdol.h" />
+    <ClInclude Include="Objects\Basic\ModelQuad.h" />
+    <ClInclude Include="Scenes\SimpleTestScene.h" />
+    <ClInclude Include="Objects\Particle\CircleEft.h" />
+    <ClInclude Include="Objects\Basic\Ring.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DirectX3D.rc" />
