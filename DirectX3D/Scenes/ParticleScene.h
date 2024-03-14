@@ -15,7 +15,7 @@ private:
     // 테스트용 파티클
     //ParticleSystem* particle; // 범용 파티클
     //Particle* particle;         // 특수 파티클(의 범용 인터페이스)
-    HitParticle* particle;
+    //HitParticle* particle;
 
     //-----------------------------------
     SphereCollider* collider; // 클릭용 표적
@@ -26,6 +26,7 @@ private:
     Sprite* sprite5;
     Sprite* sprite6;
     Wind* wind;
+    ParticleSystem2* particle;
     
     bool on = false;
     float timer = 0;

@@ -199,6 +199,7 @@ using namespace GameMath;
 #include "Objects/Static/Reflector.h"
 
 #include "Objects/Particle/ParticleSystem.h"
+#include "Objects/Particle/ParticleSystem2.h"
 #include "Objects/Particle/Particle.h"
 #include "Objects/Particle/Rain.h"
 #include "Objects/Particle/Snow.h"
@@ -224,6 +225,9 @@ using namespace GameMath;
 #include "Objects/Particle/Explosion.h"
 #include "Objects/Particle/Garuk_Fire.h"
 #include "Objects/Particle/Sutdol.h"
+#include "Objects/Particle/FullBurstParticle.h"
+#include "Objects/Particle/FullBurstParticle2.h"
+
 
 #include "Objects/Algorithm/Node.h"
 #include "Objects/Algorithm/Heap.h"

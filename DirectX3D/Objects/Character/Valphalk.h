@@ -413,6 +413,7 @@ private: // 이벤트 혹은 함수에서 조건이 필요할거 같을때
 	int Count = 0;
 	float timer = 0.0f;
 	int randX[6], randZ[6];
+	bool isStorm = false;
 
 private:
 	vector<Transform*> transforms;
@@ -472,6 +473,7 @@ private:
 	Vector3 fullBurstScale;
 	Vector3 fullBurstPos;
 	Vector3 fullBurstRot;
+	Vector3 fullBurstFireScale;
 
 	float rotSpeed = 5.0f;
 	int ranPatrol = 0;
@@ -490,6 +492,7 @@ private:
 	bool isHupGi = false;
 	bool renderJet = false;
 	bool renderJetRight = false;
+	bool renderFullBurst = false;
 
 	bool  isFindTrgt = false;
 	float roarAfterTimer = 0.0f;  // 인식 포효 이후부터 타이머 시작
@@ -544,8 +547,12 @@ private:
 
 	vector<HupgiFire*> hupgiFire;
 	vector<Explosion*> explosionParticle;
+	ParticleSystem2* hupgiCharge;
+	//StormEffect* stormEffect;
 	//Vector3 jetpos2;
 
 	vector<Transform*> zetPos;
 	vector<ValZet*> valZets;
+	FullBurstParticle* fullburstParticle;
+	FullBurstParticle2* fullburstParticle2;
 };

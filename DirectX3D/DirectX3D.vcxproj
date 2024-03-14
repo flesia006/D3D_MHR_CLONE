@@ -42,13 +42,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -142,12 +142,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Objects\Particle\FullBurstParticle.h" />
     <ClInclude Include="Objects\Particle\Explosion.h" />
     <ClInclude Include="Objects\Character\Sample.h" />
     <ClInclude Include="Objects\Character\WireBug.h" />
+    <ClInclude Include="Objects\Particle\FullBurstParticle2.h" />
     <ClInclude Include="Objects\Particle\Garuk_Fire.h" />
     <ClInclude Include="Objects\Manager\ItemManager.h" />
     <ClInclude Include="Objects\Particle\HupgiFire.h" />
+    <ClInclude Include="Objects\Particle\ParticleSystem2.h" />
     <ClInclude Include="Objects\Particle\SpiritFlame.h" />
     <ClInclude Include="Objects\Particle\Sp_atk_start.h" />
     <ClInclude Include="Objects\Particle\Sp_atk_success.h" />
@@ -303,12 +306,15 @@
     <ClInclude Include="Objects\Particle\TuguEft.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Objects\Particle\FullBurstParticle.cpp" />
     <ClCompile Include="Objects\Particle\Explosion.cpp" />
     <ClCompile Include="Objects\Character\Sample.cpp" />
     <ClCompile Include="Objects\Character\WireBug.cpp" />
+    <ClCompile Include="Objects\Particle\FullBurstParticle2.cpp" />
     <ClCompile Include="Objects\Particle\Garuk_Fire.cpp" />
     <ClCompile Include="Objects\Manager\ItemManager.cpp" />
     <ClCompile Include="Objects\Particle\HupgiFire.cpp" />
+    <ClCompile Include="Objects\Particle\ParticleSystem2.cpp" />
     <ClCompile Include="Objects\Particle\SpiritFlame.cpp" />
     <ClCompile Include="Objects\Particle\Sp_atk_start.cpp" />
     <ClCompile Include="Objects\Particle\Sp_atk_success.cpp" />

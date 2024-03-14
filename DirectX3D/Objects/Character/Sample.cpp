@@ -438,8 +438,9 @@ void Sample::Fire_B()
 	if (RATIO < 0.25)
 	{
 		LimitRotateToEnemy(0, 0.3, 45);
-		fireParticle->Play({ Pos().x,Pos().y + 150,Pos().z }, Back() * 300);
 	}
+	if (RATIO > 0.25 && RATIO < 0.26)
+		fireParticle->Play({ Pos().x,Pos().y + 150,Pos().z }, Back() * 300);
 
 	if (RATIO > 0.291f)
 	{

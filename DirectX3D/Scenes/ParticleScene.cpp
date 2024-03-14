@@ -7,18 +7,18 @@ ParticleScene::ParticleScene()
     //particle = new Rain(); //비 인스턴스 생성 (하고 파티클로 사용)
     //particle = new Sprite(L"Textures/Effect/explosion.png", 30, 30, 5, 3, true);
     //particle = new Sprite(L"Textures/Effect/fire_8x2.png", 5, 30, 8, 2, true);
-    particle = new HitParticle();
+    particle = new ParticleSystem2("TextData/Particles/hupgi_charge.fx");
     particle->Play({ 0, 0, 0 }, {0, 1, 0});
-    sprite = new Sprite(L"Textures/Effect/temp5.png", 500, 500, 5, 4, false);
-    sprite2 = new Sprite(L"Textures/Effect/temp5.png", 500, 500, 5, 4, false);
-    sprite3 = new Sprite(L"Textures/Effect/temp5.png", 500, 500, 5, 4, false);
-    sprite4 = new Sprite(L"Textures/Effect/temp5.png", 500, 500, 5, 4, false);
-    sprite5 = new Sprite(L"Textures/Effect/temp5.png", 500, 500, 5, 4, false);
-    sprite6 = new Sprite(L"Textures/Effect/temp1.png", 500, 500, 8, 6, false);
+    //sprite = new Sprite(L"Textures/Effect/temp5.png", 500, 500, 5, 4, false);
+    //sprite2 = new Sprite(L"Textures/Effect/temp5.png", 500, 500, 5, 4, false);
+    //sprite3 = new Sprite(L"Textures/Effect/temp5.png", 500, 500, 5, 4, false);
+    //sprite4 = new Sprite(L"Textures/Effect/temp5.png", 500, 500, 5, 4, false);
+    //sprite5 = new Sprite(L"Textures/Effect/temp5.png", 500, 500, 5, 4, false);
+    //sprite6 = new Sprite(L"Textures/Effect/temp1.png", 500, 500, 8, 6, false);
     //sprite3 = new Sprite(L"Textures/Effect/explosion_3.png", 500, 500, 4, 8, false);
     //sprite4 = new Sprite(L"Textures/Effect/explosion_4.png",500,500,4,8,false);
     collider = new SphereCollider(30);
-    wind = new Wind(); 
+    //wind = new Wind(); 
     
 }
 
@@ -30,9 +30,9 @@ ParticleScene::~ParticleScene()
 
 void ParticleScene::Update()
 {
-    sprite->SetColor({ 0,0,0,1 });
-    sprite2->SetColor({ 0,0,0,1 });
-    sprite3->SetColor({ 0,0,0,1 });
+    //sprite->SetColor({ 0,0,0,1 });
+    //sprite2->SetColor({ 0,0,0,1 });
+    //sprite3->SetColor({ 0,0,0,1 });
 
     Ray ray;
     Contact contact;
@@ -43,12 +43,12 @@ void ParticleScene::Update()
 
         if (collider->IsRayCollision(ray, &contact))
         {
-            //particle->Play(contact.hitPoint, {1, -1, 0});
+            particle->Play(contact.hitPoint, {0, 0, 0});
             //sprite->Play(contact.hitPoint);
             //sprite3->Play(contact.hitPoint);
-            timer++;
+            //timer++;
         }
-    }
+    }/*
     if (timer >= 1)
     {
         on = true;
@@ -76,17 +76,17 @@ void ParticleScene::Update()
     {
         timer = 0;
         on = false;
-    }
+    }*/
 
 
-    sprite->Update();
-    sprite2->Update();
-    sprite3->Update();
-    sprite4->Update();
-    sprite5->Update();
-    sprite6->Update();
+    //sprite->Update();
+    //sprite2->Update();
+    //sprite3->Update();
+    //sprite4->Update();
+    //sprite5->Update();
+    //sprite6->Update();
     particle->Update();
-    wind->Update();
+    //wind->Update();
 }
 
 void ParticleScene::PreRender()
@@ -95,15 +95,15 @@ void ParticleScene::PreRender()
 
 void ParticleScene::Render()
 {
-    sprite6->Render();
+    //sprite6->Render();
     particle->Render();
     collider->Render();
-    sprite->Render();
-    sprite2->Render();
-    sprite3->Render();
-    sprite4->Render();
-    sprite5->Render();
-    wind->Render();
+    //sprite->Render();
+    //sprite2->Render();
+    //sprite3->Render();
+    //sprite4->Render();
+    //sprite5->Render();
+    //wind->Render();
 }
 
 void ParticleScene::PostRender()
@@ -112,5 +112,5 @@ void ParticleScene::PostRender()
 
 void ParticleScene::GUIRender()
 {
-    sprite->GUIRender();
+    //sprite->GUIRender();
 }
