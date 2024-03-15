@@ -229,6 +229,7 @@ private:
 	void E0007();
 	void E0043();
 	void E0044(float degree);
+	void E0044a(float degree);
 	void E0045(float degree);
 	void E0055();
 	void E0059();
@@ -528,6 +529,7 @@ private:
 
 	bool isReverse = false;
 	bool isStagger = false;
+	bool isStorming = false;
 
 public:
 	float maxHP = 25000;
@@ -556,4 +558,8 @@ private:
 	vector<ValZet*> valZets;
 	FullBurstParticle* fullburstParticle;
 	FullBurstParticle2* fullburstParticle2;
+	ParticleSystem* storm_Start;
+	ParticleSystem* barrier;
+	Vector3 tempScale;
+	Trail* trail;
 };

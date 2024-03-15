@@ -19,7 +19,7 @@ ParticleScene::ParticleScene()
     //sprite4 = new Sprite(L"Textures/Effect/explosion_4.png",500,500,4,8,false);
     collider = new SphereCollider(30);
     //wind = new Wind(); 
-    
+    barrier = new Sprite(L"Textures/Effect/barrier.png", 500, 500, 10, 2, false);
 }
 
 ParticleScene::~ParticleScene()
@@ -48,7 +48,9 @@ void ParticleScene::Update()
             //sprite3->Play(contact.hitPoint);
             //timer++;
         }
-    }/*
+    }
+            barrier->PlayLoop(contact.hitPoint);
+    /*
     if (timer >= 1)
     {
         on = true;
@@ -87,6 +89,7 @@ void ParticleScene::Update()
     //sprite6->Update();
     particle->Update();
     //wind->Update();
+    barrier->Update();
 }
 
 void ParticleScene::PreRender()
@@ -95,6 +98,7 @@ void ParticleScene::PreRender()
 
 void ParticleScene::Render()
 {
+    barrier->Render();
     //sprite6->Render();
     particle->Render();
     collider->Render();

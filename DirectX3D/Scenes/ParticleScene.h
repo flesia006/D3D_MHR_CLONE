@@ -27,7 +27,7 @@ private:
     Sprite* sprite6;
     Wind* wind;
     ParticleSystem2* particle;
-    
+    Sprite* barrier;
     bool on = false;
     float timer = 0;
 };

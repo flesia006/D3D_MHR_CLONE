@@ -25,7 +25,7 @@ Explosion::Explosion()
 	bulletExplosion3 = new Sprite(L"Textures/Effect/Boom.png", 750, 750, 5, 4, false);
 	bulletExplosion4 = new Sprite(L"Textures/Effect/Boom.png",  750, 750, 5, 4, false);	
 
-	stormSprite = new Sprite(L"Textures/Effect/Boom.png", 6000, 6000, 5, 4, false);	
+	stormSprite = new Sprite(L"Textures/Effect/Boom.png", 3000, 3000, 5, 4, false);	
 }
 
 Explosion::~Explosion()

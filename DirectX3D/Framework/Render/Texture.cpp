@@ -9,8 +9,11 @@ Texture::Texture(ID3D11ShaderResourceView* srv, ScratchImage& image, wstring fil
 
 Texture::~Texture()
 {
-    if(!isReferenced)
+    if (!isReferenced)
+    {
+        if (srv == nullptr) return;
         srv->Release();    
+    }
 }
 
 void Texture::PSSet(UINT slot)

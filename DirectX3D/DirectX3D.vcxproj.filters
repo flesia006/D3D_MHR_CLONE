@@ -184,6 +184,10 @@
     <ClCompile Include="Objects\Particle\ParticleSystem2.cpp" />
     <ClCompile Include="Objects\Particle\FullBurstParticle.cpp" />
     <ClCompile Include="Objects\Particle\FullBurstParticle2.cpp" />
+    <ClCompile Include="Objects\Character\PlayerWireBug.cpp" />
+    <ClCompile Include="Objects\Particle\CircleEft.cpp" />
+    <ClCompile Include="Objects\Basic\ModelQuad.cpp" />
+    <ClCompile Include="Objects\Basic\Ring.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Objects\Character\DummyValphalk.h" />
@@ -348,6 +352,10 @@
     <ClInclude Include="Objects\Particle\ParticleSystem2.h" />
     <ClInclude Include="Objects\Particle\FullBurstParticle.h" />
     <ClInclude Include="Objects\Particle\FullBurstParticle2.h" />
+    <ClInclude Include="Objects\Character\PlayerWireBug.h" />
+    <ClInclude Include="Objects\Particle\CircleEft.h" />
+    <ClInclude Include="Objects\Basic\ModelQuad.h" />
+    <ClInclude Include="Objects\Basic\Ring.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DirectX3D.rc" />
