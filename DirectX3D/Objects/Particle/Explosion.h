@@ -17,6 +17,8 @@ public:
 	void PlaySmall(Vector3 pos, Vector3 rot);
 	void Stop();
 
+	void PlayStormParticle(Vector3 pos, Vector3 rot);
+
 	void BulletExpoision(Vector3 pos, Vector3 rot);
 
 	bool IsActive() { return explosionParticle->IsActive(); }
@@ -33,6 +35,7 @@ private:
 	Sprite* sprite8;
 	Sprite* sprite9;
 	Sprite* spark_sprite;
+	Sprite* stormSprite;
 
 	Sprite* bulletExplosion1;
 	Sprite* bulletExplosion2;

@@ -31,9 +31,10 @@ public:
         else if (curDurability <= 20.0f && curDurability >= 0.0f)        return 1.05f;
     }
 
-    float PlusSpritGauge()   { return curSpiritGauge += 15; }   // 기인게이지 늘리는 함수
-    float DoublePlusSpritGauge() { return curSpiritGauge += 25; }
-    float MinusSpiritGauge() { return curSpiritGauge -= 10; }   // 기인게이지 깎는 함수
+    float GetSpritGauge() { return curSpiritGauge; }
+    void PlusSpritGauge();   //{ return curSpiritGauge += 15; }
+    void DoublePlusSpritGauge(); //{ return curSpiritGauge += 25; }
+    void MinusSpiritGauge(); //{ return curSpiritGauge -= 10; }
 
     float GetCotingLevel() { return cotingLevel; }
     float PlusCotingLevel()  {  
@@ -73,6 +74,7 @@ public:
     bool partDestruct2 = false;
 
     void SetAllUIOff() { isRender = false; }
+    void UIAlphaOn();
 
 private:
     // 퀵 슬롯 관한 내용
@@ -267,5 +269,7 @@ public:
     float stateIconTimer2 = 0.0f;
 
     bool isRender = true;
+    float clearUITimer = 0.0f;
+    UINT clearCount = 0;
 };
 

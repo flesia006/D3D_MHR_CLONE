@@ -45,7 +45,10 @@ private:
 
 		// ³³µµ ¹åÁÙ¹ú·¹ ¾×¼Ç
 		W_005, W_006, W_007, W_009, W_010,
-		W_020, W_062, W_063, F_072, F_073
+		W_020, W_062, W_063, F_072, F_073,
+
+		// ¸Ê ÀÔÀå, µµÂø ¹× °¥¹«¸® ¸ð¼Ç
+		T_019, T_020, T_050, T_051, T_052
 	};
 
 	enum Rotation
@@ -134,6 +137,9 @@ private:
 	void RandHurtVoice();
 	void RandBreath();
 	void GetWireBug();
+
+	void Capture();
+	void UpdateCaptureUI();
 
 private:
 	void ReadClips();
@@ -277,6 +283,12 @@ private:
 	void F072();
 	void F073();
 
+	void T019();
+	void T020();
+	void T050();
+	void T051();
+	void T052();
+
 private:
 	Transform* mainHand = nullptr;
 	Transform* backSwd = nullptr;
@@ -412,6 +424,11 @@ private:
 	float breathCount = 0;
 
 	Vector3 wireBugDir = Vector3::Zero();
+
+	Quad* captureUI;
+	Vector3 UIPos;
+	bool isCaptureUIActive = false;
+	bool isCaptured = false;
 
 	///////////////////////////////////////////
 	// Particle

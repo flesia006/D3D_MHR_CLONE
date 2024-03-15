@@ -106,6 +106,9 @@ Player::Player() : ModelAnimator("Player")
 
 	ReadClips();
 
+	captureUI = new Quad(L"Textures/UI/CaptureUI.png");
+	captureUI->Scale() *= 1.5f;
+
 	CAM->SetTarget(head);
 }
 
@@ -142,6 +145,7 @@ Player::~Player()
 	delete wireBugTrail;
 	delete playerWireBugHead;
 	delete playerWireBugTail;
+	delete captureUI;
 }
 
 void Player::Update()
@@ -166,6 +170,7 @@ void Player::Update()
 	Potion();
 	SharpeningStone();
 	GetWireBug();
+	Capture();
 	////////////////////////////////////
 	Control();
 	ResetPlayTime();
@@ -183,7 +188,7 @@ void Player::Update()
 		UI->PlusCotingLevel();
 
 	if (KEY_DOWN('6'))
-		SetState(D_015);
+		SetState(T_050);
 
 	if (KEY_DOWN('7'))
 		UI->SetAllUIOff();
@@ -514,6 +519,8 @@ void Player::GUIRender()
 	//
 	//
 	ImGui::SliderInt("node", &node, 1, 210);
+	float value = UI->GetSpritGauge();
+	ImGui::DragFloat("SpiritGauge", &value);
 	//	ImGui::SliderFloat("temp", &temp, -10, 10);
 	//	ImGui::SliderFloat("temp2", &temp2, -10, 10);
 	//	ImGui::SliderFloat("temp3", &temp3, 10, 15);
@@ -546,6 +553,9 @@ void Player::PostRender()
 	//	StatusRender(); // ¸ð¼Ç Ãß°¡ÁßÀÌ¹Ç·Î ÁÖ¼®
 	DamageRender();
 	tuguAtk->PostRender();
+
+	if (isCaptureUIActive)
+		captureUI->Render();
 }
 
 void Player::Control()
@@ -691,6 +701,12 @@ void Player::Control()
 	case Player::W_063:		W063();		break;
 	case Player::F_072:		F072();		break;
 	case Player::F_073:		F073();		break;
+
+	case Player::T_019:		T019();		break;
+	case Player::T_020:		T020();		break;
+	case Player::T_050:		T050();		break;
+	case Player::T_051:		T051();		break;
+	case Player::T_052:		T052();		break;
 	}
 
 	if (KEY_UP('W') || KEY_UP('A') || KEY_UP('S') || KEY_UP('D'))
@@ -1097,7 +1113,7 @@ bool Player::Attack(float power, bool push, UINT useOtherCollider) // Ãæµ¹ÆÇÁ¤ Ç
 			attackOnlyOncePerMotion = true;
 
 			if (curState == L_101 || curState == L_102 || curState == L_103) // ±âÀÎº£±â ¾Æ´Ï¶ó¸é °ÔÀÌÁö Áõ°¡
-				UIManager::Get()->DoublePlusSpritGauge();
+				UI->DoublePlusSpritGauge();
 
 			if (curState == L_104 || curState == L_105)
 				UI->PlusSpritGauge();
@@ -1228,7 +1244,10 @@ bool Player::AttackDummy(float power, bool push, UINT useOtherCollider)
 
 			attackOnlyOncePerMotion = true;
 
-			if (curState == L_101 || curState == L_102 || curState == L_103 || curState == L_104 || curState == L_105) // ±âÀÎº£±â ¾Æ´Ï¶ó¸é °ÔÀÌÁö Áõ°¡
+			if (curState == L_101 || curState == L_102 || curState == L_103) // ±âÀÎº£±â ¾Æ´Ï¶ó¸é °ÔÀÌÁö Áõ°¡
+				UIManager::Get()->DoublePlusSpritGauge();
+
+			if (curState == L_104 || curState == L_105) // ±âÀÎº£±â ¾Æ´Ï¶ó¸é °ÔÀÌÁö Áõ°¡
 				UIManager::Get()->PlusSpritGauge();
 
 			if (curState == L_109) // ±âÀÎ Å« È¸Àüº£±â ÀûÁß½Ã¿¡¸¸
@@ -1904,6 +1923,12 @@ void Player::ReadClips()
 	ReadClip("W_063");
 	ReadClip("F_072");
 	ReadClip("F_073");
+
+	ReadClip("T_019");
+	ReadClip("T_020");
+	ReadClip("T_050");
+	ReadClip("T_051");
+	ReadClip("T_052");
 }
 
 void Player::RecordLastPos()
@@ -2696,8 +2721,14 @@ void Player::L106() // ±âÀÎ º£±â 1
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_25", .5f);
 		PlayClip(curState);
 		initForward = Forward();
-		UIManager::Get()->MinusSpiritGauge(); // ±âÀÎ°ÔÀÌÁö ¼Ò¸ðÇÏ±â( ´Ü 1¹ø )
 	}
+	
+	if (!playOncePerMotion)
+	{
+		UI->MinusSpiritGauge();
+		playOncePerMotion = true;
+	}
+
 	if (RATIO > 0.3 && RATIO < 0.31)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
 	UIManager::Get()->staminaActive = false;
@@ -2740,7 +2771,12 @@ void Player::L107() // ±âÀÎº£±â 2
 	{
 		spiritParticle->Play({ realPos->Pos().x, realPos->Pos().y + 100, realPos->Pos().z }, 0);
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_25", .5f);
-		UIManager::Get()->MinusSpiritGauge(); // ±âÀÎ°ÔÀÌÁö ¼Ò¸ðÇÏ±â( ´Ü 1¹ø )
+	}
+
+	if (!playOncePerMotion)
+	{
+		UI->MinusSpiritGauge();
+		playOncePerMotion = true;
 	}
 
 	if (RATIO > 0.25 && RATIO < 0.26)
@@ -2788,7 +2824,12 @@ void Player::L108() // ±âÀÎº£±â 3
 		spiritParticle->Play({ realPos->Pos().x, realPos->Pos().y + 100, realPos->Pos().z }, 0);
 		PlayClip(curState);
 		initForward = Forward();
-		UIManager::Get()->MinusSpiritGauge(); // ±âÀÎ°ÔÀÌÁö ¼Ò¸ðÇÏ±â( ´Ü 1¹ø )
+	}
+
+	if (!playOncePerMotion)
+	{
+		UI->MinusSpiritGauge();
+		playOncePerMotion = true;
 	}
 
 	if (RATIO > 0.1 && RATIO < 0.11)
@@ -2859,9 +2900,15 @@ void Player::L109() // ±âÀÎ Å«È¸Àüº£±â
 		spSuccessParticle->Play(Pos(), 0);
 		spiritParticle->Play({ realPos->Pos().x, realPos->Pos().y + 100, realPos->Pos().z }, 0);
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_25", .5f);
-		UIManager::Get()->MinusSpiritGauge(); // ±âÀÎ°ÔÀÌÁö ¼Ò¸ðÇÏ±â( ´Ü 1¹ø )
 		isEvaded = false;
 	}
+
+	if (!playOncePerMotion)
+	{
+		UI->MinusSpiritGauge();
+		playOncePerMotion = true;
+	}
+
 	if (RATIO > 0.2 && RATIO < 0.21)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
 	if (RATIO > 0.1 && RATIO < 0.15)
@@ -2918,7 +2965,12 @@ void Player::L110() // ±âÀÎ ³»µðµ®º£±â
 	{
 		spiritParticle->Play({ realPos->Pos().x, realPos->Pos().y + 100, realPos->Pos().z }, 0);
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_25", .5f);
-		UIManager::Get()->MinusSpiritGauge(); // ±âÀÎ°ÔÀÌÁö ¼Ò¸ðÇÏ±â( ´Ü 1¹ø )
+	}
+
+	if (!playOncePerMotion)
+	{
+		UI->MinusSpiritGauge();
+		playOncePerMotion = true;
 	}
 
 	if (RATIO > 0.3 && RATIO < 0.31)
@@ -4383,6 +4435,78 @@ void Player::F073() // ÂøÁö ÈÄ ¾ÕÀ¸·Î ÀÌµ¿
 	}
 }
 
+void Player::T019() // ¸Ê ÀÔÀå
+{
+	PLAY;
+
+	if (RATIO > 0.96)
+	{
+		ReturnIdle2();
+	}
+}
+
+void Player::T020() // ¸Ê µµÂø
+{
+	PLAY;
+
+	if (RATIO > 0.96)
+	{
+		ReturnIdle2();
+	}
+}
+
+void Player::T050() // °¥¹«¸® ½ÃÀÛ
+{
+	PLAY;
+
+	if (RATIO > 0.083 && RATIO < 0.183)
+		Sounds::Get()->Play("capturing", 0.2f);
+
+	if (RATIO > 0.226 && RATIO < 0.326)
+		Sounds::Get()->Play("capturing2", 3.0f);
+
+
+	if (RATIO > 0.96)
+	{
+		SetState(T_051);
+	}
+}
+
+void Player::T051() // °¥¹«¸® Áß°£
+{
+	PLAY;
+
+	if (RATIO > 0.043 && RATIO < 0.143)
+		Sounds::Get()->Play("capturing", 0.2f);
+
+	if (RATIO > 0.191 && RATIO < 0.291)
+		Sounds::Get()->Play("capturing2", 3.0f);
+
+	if (RATIO > 0.96)
+	{
+		SetState(T_052);
+	}
+}
+
+void Player::T052() // °¥¹«¸® ³¡
+{
+	PLAY;
+
+	if (RATIO > 0.001 && RATIO < 0.101)
+		Sounds::Get()->Play("capturing", 0.2f);
+
+	if (RATIO > 0.139 && RATIO < 0.239)
+		Sounds::Get()->Play("capturing2", 3.0f);
+
+
+	if (RATIO > 0.96)
+	{
+		isCaptured = true;
+		isCaptureUIActive = false;
+		ReturnIdle2();
+	}
+}
+
 
 void Player::MotionRotate(float degree)
 {
@@ -4656,3 +4780,52 @@ void Player::GetWireBug()
 		wireBug->SetWireBugPickUpUIActive(false);
 }
 
+void Player::Capture()
+{
+	if (val == nullptr || !(val->GetIsDead()) || isCaptured)
+		return;
+
+	UpdateCaptureUI();
+
+	Contact contact;
+
+	auto colliders = val->GetCollider();
+	UINT count = 0;
+
+	for (auto collider : colliders)
+	{
+		if (collider == colliders[Valphalk::ROAR])
+			continue;
+
+		if (tmpCollider->IsCapsuleCollision(collider, &contact))
+			count++;
+	}
+
+	if (count > 0)
+	{
+		isCaptureUIActive = true;
+
+		if (KEY_PRESS('G')) // Å° º¯°æ °¡´É
+		{
+			Sounds::Get()->Play("capturing", 1.0f);
+			SetState(T_050);
+		}
+	}
+	else
+		isCaptureUIActive = false;
+}
+
+void Player::UpdateCaptureUI()
+{
+	UIPos = realPos->Pos() + Vector3::Up() * 200;
+
+	if (!CAM->ContainPoint(UIPos))
+	{
+		isCaptureUIActive = false;
+		return;
+	}
+
+	captureUI->Pos() = CAM->WorldToScreen(UIPos);
+
+	captureUI->UpdateWorld();
+}

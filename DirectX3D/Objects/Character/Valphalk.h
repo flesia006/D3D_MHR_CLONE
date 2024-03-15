@@ -156,6 +156,7 @@ public:
 	void minusRLegHP(int damage) { colliders[RLEG1]->partHp -= damage; }
 	void minusTailHP(int damage) { colliders[TAIL]->partHp -= damage; }
 	bool GetIsHupgi() { return isHupGi; }
+	bool GetIsDead() { return isDead; }
 
 	//ColliderName GetName() { return colliderName; }
 	float damage = 0.1f;
@@ -227,12 +228,15 @@ private:
 
 	void FlameOn();
 	void FlameOff();
+
+	void QuestClearCount();
 	// 모션 함수
 
 	void E0003();
 	void E0007();
 	void E0043();
 	void E0044(float degree);
+	void E0044a(float degree);
 	void E0045(float degree);
 	void E0055();
 	void E0059();
@@ -418,6 +422,7 @@ private: // 이벤트 혹은 함수에서 조건이 필요할거 같을때
 	int Count = 0;
 	float timer = 0.0f;
 	int randX[6], randZ[6];
+	bool isStorm = false;
 
 private:
 	vector<Transform*> transforms;
@@ -478,6 +483,7 @@ private:
 	Vector3 fullBurstScale;
 	Vector3 fullBurstPos;
 	Vector3 fullBurstRot;
+	Vector3 fullBurstFireScale;
 
 	float rotSpeed = 5.0f;
 	int ranPatrol = 0;
@@ -496,6 +502,7 @@ private:
 	bool isHupGi = false;
 	bool renderJet = false;
 	bool renderJetRight = false;
+	bool renderFullBurst = false;
 
 	bool  isFindTrgt = false;
 	float roarAfterTimer = 0.0f;  // 인식 포효 이후부터 타이머 시작
@@ -533,6 +540,11 @@ private:
 
 	bool isReverse = false;
 	bool isStagger = false;
+	bool isDead = false;
+
+	float questClearCountDown = 0.0f;
+	const float questClearCountLimit = 10.0f; /////////// 필요에 의하면 수정 가능
+	bool isStorming = false;
 
 public:
 	float maxHP = 25000;
@@ -553,8 +565,16 @@ private:
 
 	vector<HupgiFire*> hupgiFire;
 	vector<Explosion*> explosionParticle;
+	ParticleSystem2* hupgiCharge;
+	//StormEffect* stormEffect;
 	//Vector3 jetpos2;
 
 	vector<Transform*> zetPos;
 	vector<ValZet*> valZets;
+	FullBurstParticle* fullburstParticle;
+	FullBurstParticle2* fullburstParticle2;
+	ParticleSystem* storm_Start;
+	ParticleSystem* barrier;
+	Vector3 tempScale;
+	Trail* trail;
 };

@@ -42,13 +42,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -148,19 +148,23 @@
     <ClInclude Include="Objects\Algorithm\Node.h" />
     <ClInclude Include="Objects\Particle\CircleEft.h" />
     <ClInclude Include="Objects\Basic\ModelQuad.h" />
+    <ClInclude Include="Objects\Basic\Ring.h" />
+    <ClInclude Include="Objects\Character\PlayerWireBug.h" />
+    <ClInclude Include="Objects\Particle\CircleEft.h" />
+    <ClInclude Include="Objects\Particle\FullBurstParticle.h" />
     <ClInclude Include="Objects\Particle\Explosion.h" />
     <ClInclude Include="Objects\Character\Sample.h" />
     <ClInclude Include="Objects\Character\WireBug.h" />
+    <ClInclude Include="Objects\Particle\FullBurstParticle2.h" />
     <ClInclude Include="Objects\Particle\Garuk_Fire.h" />
     <ClInclude Include="Objects\Manager\ItemManager.h" />
     <ClInclude Include="Objects\Particle\HupgiFire.h" />
+    <ClInclude Include="Objects\Particle\ParticleSystem2.h" />
     <ClInclude Include="Objects\Particle\SpiritFlame.h" />
     <ClInclude Include="Objects\Particle\Sp_atk_start.h" />
     <ClInclude Include="Objects\Particle\Sp_atk_success.h" />
     <ClInclude Include="Objects\Particle\Sutdol.h" />
     <ClInclude Include="Objects\Particle\Val_fire.h" />
-    <ClInclude Include="Objects\Basic\Ring.h" />
-    <ClInclude Include="Objects\Character\PlayerWireBug.h" />
     <ClInclude Include="Scenes\FightTestScene.h" />
     <ClInclude Include="Objects\Character\DummyValphalk.h" />
     <ClInclude Include="Objects\Particle\CriticalParticle.h" />
@@ -314,21 +318,24 @@
     <ClCompile Include="Objects\Algorithm\AStar.cpp" />
     <ClCompile Include="Objects\Algorithm\Heap.cpp" />
     <ClCompile Include="Objects\Algorithm\Node.cpp" />
-    <ClCompile Include="Objects\Particle\CircleEft.cpp" />
     <ClCompile Include="Objects\Basic\ModelQuad.cpp" />
+    <ClCompile Include="Objects\Basic\Ring.cpp" />
+    <ClCompile Include="Objects\Character\PlayerWireBug.cpp" />
+    <ClCompile Include="Objects\Particle\CircleEft.cpp" />
+    <ClCompile Include="Objects\Particle\FullBurstParticle.cpp" />
     <ClCompile Include="Objects\Particle\Explosion.cpp" />
     <ClCompile Include="Objects\Character\Sample.cpp" />
     <ClCompile Include="Objects\Character\WireBug.cpp" />
+    <ClCompile Include="Objects\Particle\FullBurstParticle2.cpp" />
     <ClCompile Include="Objects\Particle\Garuk_Fire.cpp" />
     <ClCompile Include="Objects\Manager\ItemManager.cpp" />
     <ClCompile Include="Objects\Particle\HupgiFire.cpp" />
+    <ClCompile Include="Objects\Particle\ParticleSystem2.cpp" />
     <ClCompile Include="Objects\Particle\SpiritFlame.cpp" />
     <ClCompile Include="Objects\Particle\Sp_atk_start.cpp" />
     <ClCompile Include="Objects\Particle\Sp_atk_success.cpp" />
     <ClCompile Include="Objects\Particle\Sutdol.cpp" />
     <ClCompile Include="Objects\Particle\Val_fire.cpp" />
-    <ClCompile Include="Objects\Basic\Ring.cpp" />
-    <ClCompile Include="Objects\Character\PlayerWireBug.cpp" />
     <ClCompile Include="Scenes\FightTestScene.cpp" />
     <ClCompile Include="Objects\Character\DummyValphalk.cpp" />
     <ClCompile Include="Objects\Particle\CriticalParticle.cpp" />

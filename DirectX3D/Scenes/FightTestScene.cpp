@@ -11,6 +11,7 @@ FightTestScene::FightTestScene()
 
 	valphalk->SetTarget(player->GetRealPos());
 	garuk->SetTarget(player->GetRealPos());
+	player->SetValphalk(valphalk);
 	player->SetGaruk(garuk->GetRealPos());
 	player->SetDog(garuk);
 

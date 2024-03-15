@@ -112,7 +112,7 @@ UIManager::UIManager()
 	orangeRightHalfCircle3 = new Quad(L"Textures/UI/orangeHalfCircle2.png");
 	orangeRightHalfCircle3->SetActive(false);
 
-	questClearUI = new Quad(L"Textures/Quest/QuestClear.png");
+	questClearUI = new Quad(L"Textures/Quest/0.png");
 
 	// Äü½½·Ô UI Ãß°¡
 	quickSlot_Back = new Quad(L"Textures/UI/QickSlot_Back.png");
@@ -626,6 +626,8 @@ void UIManager::Update()
 	DragSlotBar();
 	QuickSlotBar();
 	StateIcon();
+
+	UIAlphaOn();
 
 	stamina->UpdateWorld();
 	recover->UpdateWorld();
@@ -1143,6 +1145,42 @@ void UIManager::GetWildBug()
 	bugCount++;
 
 	getWildBug = true;
+}
+
+void UIManager::PlusSpritGauge()
+{
+	curSpiritGauge += 15.0f;
+	if (curSpiritGauge > maxSpiritGauge)
+		curSpiritGauge = maxSpiritGauge;
+}
+
+void UIManager::DoublePlusSpritGauge()
+{
+	curSpiritGauge += 25.0f;
+	if (curSpiritGauge > maxSpiritGauge)
+		curSpiritGauge = maxSpiritGauge;
+}
+
+void UIManager::MinusSpiritGauge()
+{
+	curSpiritGauge -= 20.0f;
+	if (curSpiritGauge < 0)
+		curSpiritGauge = 0;
+}
+
+void UIManager::UIAlphaOn()
+{
+	if (isRender)
+		return;
+
+	clearUITimer += DELTA;
+
+	if (clearUITimer > 0.01f && clearCount < 11)
+	{
+		questClearUI->SetTexture(L"Textures/Quest/" + to_wstring(clearCount) + L".png");
+		clearCount++;
+		clearUITimer = 0.0f;
+	}
 }
 
 void UIManager::QuickSlot()

@@ -8,7 +8,7 @@ Explosion::Explosion()
 	sprite2 = new Sprite(L"Textures/Effect/Boom.png",  1500, 1500, 5, 4, false);
 	sprite3 = new Sprite(L"Textures/Effect/Boom.png",  1500, 1500, 5, 4, false);
 	sprite4 = new Sprite(L"Textures/Effect/Boom.png",  1500, 1500, 5, 4, false);
-	sprite5 = new Sprite(L"Textures/Effect/Boom.png",  1500, 1500, 5, 4, false);
+	sprite5 = new Sprite(L"Textures/Effect/Boom.png",  1500, 1500, 5, 4, false);	
 	sprite6 = new Sprite(L"Textures/Effect/Boom.png",  1500, 1500, 5, 4, false);
 													   
 	sprite7 = new Sprite(L"Textures/Effect/Boom.png",  1000, 1000, 5, 4, false);
@@ -24,6 +24,8 @@ Explosion::Explosion()
 	bulletExplosion2 = new Sprite(L"Textures/Effect/Boom.png",  750, 750, 5, 4, false);
 	bulletExplosion3 = new Sprite(L"Textures/Effect/Boom.png", 750, 750, 5, 4, false);
 	bulletExplosion4 = new Sprite(L"Textures/Effect/Boom.png",  750, 750, 5, 4, false);	
+
+	stormSprite = new Sprite(L"Textures/Effect/Boom.png", 3000, 3000, 5, 4, false);	
 }
 
 Explosion::~Explosion()
@@ -62,6 +64,7 @@ void Explosion::Update()
 	bulletExplosion3->Update();
 	bulletExplosion4->Update();
 	spark_sprite->Update();
+	stormSprite->Update();
 }
 
 void Explosion::Render()
@@ -81,6 +84,7 @@ void Explosion::Render()
 	sprite2->Render();
 	sprite1->Render();
 	spark_sprite->Render();
+	stormSprite->Render();
 }
 
 void Explosion::GUIRender()
@@ -138,7 +142,14 @@ void Explosion::Stop()
 	sprite6->Stop();
 	sprite7->Stop();
 	sprite8->Stop();
+	stormSprite->Stop();
 }
+
+void Explosion::PlayStormParticle(Vector3 pos, Vector3 rot)
+{
+	stormSprite->Play(pos);
+}
+
 
 void Explosion::BulletExpoision(Vector3 pos, Vector3 rot)
 {
