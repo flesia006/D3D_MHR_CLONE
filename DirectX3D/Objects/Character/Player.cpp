@@ -102,6 +102,9 @@ Player::Player() : ModelAnimator("Player")
 
 	ReadClips();
 
+	captureUI = new Quad(L"Textures/UI/CaptureUI.png");
+	captureUI->Scale() *= 1.5f;
+
 	CAM->SetTarget(head);
 }
 
@@ -138,6 +141,7 @@ Player::~Player()
 	delete wireBugTrail;
 	delete playerWireBugHead;
 	delete playerWireBugTail;
+	delete captureUI;
 }
 
 void Player::Update()
@@ -162,6 +166,7 @@ void Player::Update()
 	Potion();
 	SharpeningStone();
 	GetWireBug();
+	Capture();
 	////////////////////////////////////
 	Control();
 	ResetPlayTime();
@@ -179,16 +184,10 @@ void Player::Update()
 		UI->PlusCotingLevel();
 
 	if (KEY_DOWN('6'))
-		SetState(D_015);
+		SetState(T_050);
 
 	if (KEY_DOWN('7'))
 		UI->SetAllUIOff();
-
-	if (KEY_DOWN('8'))
-		SetState(T_050);
-
-	if (KEY_DOWN('9'))
-		SetState(T_020);
 	///////////////////////////////
 }
 
@@ -546,6 +545,9 @@ void Player::PostRender()
 {
 	//	StatusRender(); // 모션 추가중이므로 주석
 	DamageRender();
+
+	if (isCaptureUIActive)
+		captureUI->Render();
 }
 
 void Player::Control()
@@ -4410,6 +4412,13 @@ void Player::T050() // 갈무리 시작
 {
 	PLAY;
 
+	if (RATIO > 0.083 && RATIO < 0.183)
+		Sounds::Get()->Play("capturing", 0.2f);
+
+	if (RATIO > 0.226 && RATIO < 0.326)
+		Sounds::Get()->Play("capturing2", 3.0f);
+
+
 	if (RATIO > 0.96)
 	{
 		SetState(T_051);
@@ -4419,6 +4428,12 @@ void Player::T050() // 갈무리 시작
 void Player::T051() // 갈무리 중간
 {
 	PLAY;
+
+	if (RATIO > 0.043 && RATIO < 0.143)
+		Sounds::Get()->Play("capturing", 0.2f);
+
+	if (RATIO > 0.191 && RATIO < 0.291)
+		Sounds::Get()->Play("capturing2", 3.0f);
 
 	if (RATIO > 0.96)
 	{
@@ -4430,8 +4445,17 @@ void Player::T052() // 갈무리 끝
 {
 	PLAY;
 
+	if (RATIO > 0.001 && RATIO < 0.101)
+		Sounds::Get()->Play("capturing", 0.2f);
+
+	if (RATIO > 0.139 && RATIO < 0.239)
+		Sounds::Get()->Play("capturing2", 3.0f);
+
+
 	if (RATIO > 0.96)
 	{
+		isCaptured = true;
+		isCaptureUIActive = false;
 		ReturnIdle2();
 	}
 }
@@ -4710,4 +4734,54 @@ void Player::GetWireBug()
 	}
 	else
 		wireBug->SetWireBugPickUpUIActive(false);
+}
+
+void Player::Capture()
+{
+	if (val == nullptr || !(val->GetIsDead()) || isCaptured)
+		return;
+
+	UpdateCaptureUI();
+
+	Contact contact;
+
+	auto colliders = val->GetCollider();
+	UINT count = 0;
+
+	for (auto collider : colliders)
+	{
+		if (collider == colliders[Valphalk::ROAR])
+			continue;
+
+		if (tmpCollider->IsCapsuleCollision(collider, &contact))
+			count++;
+	}
+
+	if (count > 0)
+	{
+		isCaptureUIActive = true;
+
+		if (KEY_PRESS('G')) // 키 변경 가능
+		{
+			Sounds::Get()->Play("capturing", 1.0f);
+			SetState(T_050);
+		}
+	}
+	else
+		isCaptureUIActive = false;
+}
+
+void Player::UpdateCaptureUI()
+{
+	UIPos = realPos->Pos() + Vector3::Up() * 200;
+
+	if (!CAM->ContainPoint(UIPos))
+	{
+		isCaptureUIActive = false;
+		return;
+	}
+
+	captureUI->Pos() = CAM->WorldToScreen(UIPos);
+
+	captureUI->UpdateWorld();
 }

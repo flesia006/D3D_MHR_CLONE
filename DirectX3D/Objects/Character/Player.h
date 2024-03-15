@@ -138,6 +138,9 @@ private:
 	void RandBreath();
 	void GetWireBug();
 
+	void Capture();
+	void UpdateCaptureUI();
+
 private:
 	void ReadClips();
 	void RecordLastPos();
@@ -421,6 +424,11 @@ private:
 	float breathCount = 0;
 
 	Vector3 wireBugDir = Vector3::Zero();
+
+	Quad* captureUI;
+	Vector3 UIPos;
+	bool isCaptureUIActive = false;
+	bool isCaptured = false;
 
 	///////////////////////////////////////////
 	// Particle

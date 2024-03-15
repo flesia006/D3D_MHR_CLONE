@@ -121,7 +121,7 @@ void WireBug::UpdateUI()
 
 	if (!CAM->ContainPoint(UIPos))
 	{
-		SetWireBugPickUpUIActive(false);
+		isWireBugPickUpUIActive = false;
 		return;
 	}
 

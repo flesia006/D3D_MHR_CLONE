@@ -66,8 +66,8 @@ GameManager::GameManager()
 //    SceneManager::Get()->Create("PlayerTestScene", new PlayerTestScene());
 //    SceneManager::Get()->Add("PlayerTestScene");
 
-//   SceneManager::Get()->Create("FightTestScene", new FightTestScene());
-//   SceneManager::Get()->Add("FightTestScene");
+   SceneManager::Get()->Create("FightTestScene", new FightTestScene());
+   SceneManager::Get()->Add("FightTestScene");
 
 //    SceneManager::Get()->Create("SimpleTestScene", new SimpleTestScene());
 //    SceneManager::Get()->Add("SimpleTestScene");
@@ -310,7 +310,8 @@ void GameManager::Create()
 
     Sounds::Get()->AddSound("wirebug", SoundPath + L"Player/wirebug.mp3");
 
-
+    Sounds::Get()->AddSound("capturing", SoundPath + L"pl_prop_media.bnk.2_81.mp3");
+    Sounds::Get()->AddSound("capturing2", SoundPath + L"pl_prop_media.bnk.2_112.mp3");
 }
 
 void GameManager::Delete()
