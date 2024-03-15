@@ -22,7 +22,6 @@ ValphalkTestScene::ValphalkTestScene()
 	rasterizer = new RasterizerState();
 	rasterizer->CullMode(D3D11_CULL_NONE);
 
-	UIManager::Get();
 
 }
 
@@ -35,7 +34,6 @@ void ValphalkTestScene::Update()
 {
 	valphalk->Update();
 	garuk->Update();
-	UIManager::Get()->Update();
 }
 
 void ValphalkTestScene::PreRender()

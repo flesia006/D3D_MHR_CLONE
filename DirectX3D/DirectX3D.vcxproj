@@ -150,7 +150,6 @@
     <ClInclude Include="Objects\Basic\ModelQuad.h" />
     <ClInclude Include="Objects\Basic\Ring.h" />
     <ClInclude Include="Objects\Character\PlayerWireBug.h" />
-    <ClInclude Include="Objects\Particle\CircleEft.h" />
     <ClInclude Include="Objects\Particle\FullBurstParticle.h" />
     <ClInclude Include="Objects\Particle\Explosion.h" />
     <ClInclude Include="Objects\Character\Sample.h" />

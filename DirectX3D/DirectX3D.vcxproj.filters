@@ -182,7 +182,6 @@
     <ClCompile Include="Objects\Particle\FullBurstParticle.cpp" />
     <ClCompile Include="Objects\Particle\FullBurstParticle2.cpp" />
     <ClCompile Include="Objects\Character\PlayerWireBug.cpp" />
-    <ClCompile Include="Objects\Particle\CircleEft.cpp" />
     <ClCompile Include="Objects\Basic\ModelQuad.cpp" />
     <ClCompile Include="Objects\Basic\Ring.cpp" />
     <ClCompile Include="Objects\Particle\SliceEft.cpp" />
