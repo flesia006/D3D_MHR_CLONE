@@ -227,6 +227,8 @@ using namespace GameMath;
 #include "Objects/Particle/Garuk_Fire.h"
 #include "Objects/Particle/Sutdol.h"
 #include "Objects/Particle/CircleEft.h"
+#include "Objects/Particle/SliceEft.h"
+#include "Objects/Particle/headBreakAtk.h"
 
 #include "Objects/Algorithm/Node.h"
 #include "Objects/Algorithm/Heap.h"

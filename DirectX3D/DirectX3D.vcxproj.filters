@@ -50,7 +50,6 @@
     <ClCompile Include="Objects\Particle\HitParticle.cpp" />
     <ClCompile Include="Objects\Character\Player.cpp" />
     <ClCompile Include="Scenes\NotUse\MirrorScene.cpp" />
-    <ClCompile Include="Objects\Algorithm\AStar.cpp" />
     <ClCompile Include="Objects\Particle\ParticleSystem.cpp" />
     <ClCompile Include="Objects\Particle\Particle.cpp" />
     <ClCompile Include="Objects\Particle\Rain.cpp" />
@@ -109,10 +108,8 @@
     <ClCompile Include="Framework\Utilities\Timer.cpp" />
     <ClCompile Include="Framework\Utilities\tinyxml2.cpp" />
     <ClCompile Include="Framework\Utilities\Utility.cpp" />
-    <ClCompile Include="Objects\Algorithm\Heap.cpp" />
     <ClCompile Include="Manager\GameManager.cpp" />
     <ClCompile Include="Manager\SceneManager.cpp" />
-    <ClCompile Include="Objects\Algorithm\Node.cpp" />
     <ClCompile Include="Objects\Actor\ActorUI.cpp" />
     <ClCompile Include="Objects\Basic\Cube.cpp" />
     <ClCompile Include="Objects\Basic\Cylinder.cpp" />
@@ -186,6 +183,11 @@
     <ClCompile Include="Scenes\SimpleTestScene.cpp" />
     <ClCompile Include="Objects\Particle\CircleEft.cpp" />
     <ClCompile Include="Objects\Basic\Ring.cpp" />
+    <ClCompile Include="Objects\Particle\SliceEft.cpp" />
+    <ClCompile Include="Objects\Algorithm\AStar.cpp" />
+    <ClCompile Include="Objects\Algorithm\Heap.cpp" />
+    <ClCompile Include="Objects\Algorithm\Node.cpp" />
+    <ClCompile Include="Objects\Particle\headBreakAtk.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Objects\Character\DummyValphalk.h" />
@@ -206,7 +208,6 @@
     <ClInclude Include="Objects\Particle\HitParticle.h" />
     <ClInclude Include="Objects\Character\Player.h" />
     <ClInclude Include="Scenes\NotUse\MirrorScene.h" />
-    <ClInclude Include="Objects\Algorithm\AStar.h" />
     <ClInclude Include="Objects\Particle\ParticleSystem.h" />
     <ClInclude Include="Objects\Particle\Particle.h" />
     <ClInclude Include="Objects\Particle\Rain.h" />
@@ -272,10 +273,8 @@
     <ClInclude Include="Framework\Utilities\Timer.h" />
     <ClInclude Include="Framework\Utilities\tinyxml2.h" />
     <ClInclude Include="Framework\Utilities\Utility.h" />
-    <ClInclude Include="Objects\Algorithm\Heap.h" />
     <ClInclude Include="Manager\GameManager.h" />
     <ClInclude Include="Manager\SceneManager.h" />
-    <ClInclude Include="Objects\Algorithm\Node.h" />
     <ClInclude Include="Objects\Actor\ActorUI.h" />
     <ClInclude Include="Objects\Basic\Cube.h" />
     <ClInclude Include="Objects\Basic\Cylinder.h" />
@@ -352,6 +351,11 @@
     <ClInclude Include="Objects\Basic\Ring.h" />
     <ClInclude Include="Objects\Manager\ItemManager.h" />
     <ClInclude Include="Objects\Character\PlayerWireBug.h" />
+    <ClInclude Include="Objects\Particle\SliceEft.h" />
+    <ClInclude Include="Objects\Algorithm\AStar.h" />
+    <ClInclude Include="Objects\Algorithm\Heap.h" />
+    <ClInclude Include="Objects\Algorithm\Node.h" />
+    <ClInclude Include="Objects\Particle\headBreakAtk.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DirectX3D.rc" />

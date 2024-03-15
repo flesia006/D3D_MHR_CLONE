@@ -141,6 +141,7 @@ public:
 	void Hit(); // 맞았을때 나오는 모션들
 	void Spawn(Vector3 pos); // 스폰위치
 	void SetTarget(Transform* target) { this->target = target; } // 타겟 설정
+	void SetTerrain(TerrainEditor* terrain) { this->terrain = terrain; }
 
 	Transform* GetTransform(int index) { return transforms[index]; }
 	vector<CapsuleCollider*> GetCollider() { return colliders; }
@@ -220,6 +221,9 @@ private:
 	void SetColliderAttack(ColliderName name, float ratio, float dmg = 10.0f, UINT atkStrength = 2);
 	int  SetRadAndMirror(bool needMirror);
 	void Loop() { GetClip(curState)->ResetPlayTime(); Pos() = realPos->Pos(); }
+
+	void GroundCheck();
+
 
 	void FlameOn();
 	void FlameOff();
@@ -394,7 +398,7 @@ private:
 	void E3114();
 	void E3118();
 
-	
+
 	void E4001();
 	void E4013();
 	void E4071();
@@ -433,6 +437,7 @@ private:
 	CapsuleCollider* realPos = nullptr;
 	Transform* realPosition = nullptr;
 	CapsuleCollider* tempCollider = nullptr;
+	TerrainEditor* terrain = nullptr;
 
 	// 샘플 무조건 바뀜
 	//float speed = 50; //속력 : 기본 스탯
@@ -442,7 +447,7 @@ private:
 	Vector3 velocity; //속력 : 실제 움직임
 
 	Pattern curPattern = PATROL;
-	State curState = E_0003; //= 기본 스테이트;
+	State curState = E_0043; //= 기본 스테이트;
 	State preState = curState;
 
 	UINT sequence = 0;
@@ -509,11 +514,14 @@ private:
 	bool ult50Threshold = false;
 
 	bool playOncePerPattern = false;
+	bool isSetState = false;
 
 	float radBtwTarget = 0.0f;
 	float initialRad = 0.0f;
 	float initRotY = 0.0f;
+	float height = 0.0f;
 
+	bool isJump = false;
 
 	const float rot135 = 2.36f;
 	const float rot45 = 0.785f;

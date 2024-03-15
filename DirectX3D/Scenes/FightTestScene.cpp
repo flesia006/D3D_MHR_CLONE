@@ -19,8 +19,6 @@ FightTestScene::FightTestScene()
 
 	garuk->SetEnemy(valphalk);
 	UIManager::Get();
-
-	ARROW;
 }
 
 FightTestScene::~FightTestScene()
@@ -37,7 +35,6 @@ void FightTestScene::Update()
 	garuk->Update();
 	player->Update();
 	UIManager::Get()->Update();
-	ARROW->Update();
 }
 
 void FightTestScene::PreRender()
@@ -51,14 +48,13 @@ void FightTestScene::Render()
 	valphalk->Render();
 	garuk->Render();
 	player->Render();
-	ARROW->Render();
 }
 
 void FightTestScene::PostRender()
 {
 	UIManager::Get()->PostRender();
 	player->PostRender();
-	ARROW->PostRender();
+	garuk->PostRender();
 }
 
 void FightTestScene::GUIRender()

@@ -12,7 +12,6 @@ public:
     virtual void PostRender() override;
     virtual void GUIRender()  override;
 
-    void CapsuleMove();
     RasterizerState* rasterizer;
     Valphalk* GetValphalk() { return valphalk; }
 
@@ -20,6 +19,8 @@ private:
     Player* player;
     Valphalk* valphalk;
     Sample* garuk;
-    CapsuleCollider* capsule;
+    TerrainEditor* terrain;
+    M41Objects* objects;
+
 };
 

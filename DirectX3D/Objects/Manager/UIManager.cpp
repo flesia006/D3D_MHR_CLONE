@@ -1048,7 +1048,8 @@ void UIManager::PostRender()
 		Font::Get()->RenderText("½À°İ", { valphalkStateIcon2->Pos().x - 68, valphalkStateIcon2->Pos().y - 15 });
 	}
 
-	ItemManager::Get()->PostRender();
+	//ItemManager::Get()->PostRender();
+
 	//FOR(inItDragItem_D.size())
 	//{
 	//	inItDragItem_D[i]->Render();

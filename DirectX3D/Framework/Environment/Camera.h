@@ -1,5 +1,5 @@
 #pragma once
-
+class TerrainEditor;
 class Camera : public Transform
 {
 public:
@@ -11,7 +11,9 @@ public:
 
     void SetView();
 
-    void SetTarget(Transform* target) { this->target = target; }    
+    void SetTarget(Transform* target) { this->target = target; }
+    void SetLockOnTarget(Vector3 target) { this->lockOnTarget = target; }
+    void SetTerrain(TerrainEditor* terrain) { this->terrain = terrain; }
 
     Vector3 ScreenToWorld(Vector3 screenPos);
     Vector3 WorldToScreen(Vector3 worldPos);
@@ -28,7 +30,7 @@ public:
 
     ViewBuffer* GetViewBuffer() { return viewBuffer; }
 
-    void Zoom(float dist , float damping = 15.0f) 
+    void Zoom(float dist, float damping = 15.0f)
         // 카메라 거리랑 줌인 줌아웃 되는 속도를 인자로. 속도 너무 느리게 넣으면 
         // 목표 거리까리 도달하지 않으니 주의
     {
@@ -37,7 +39,7 @@ public:
 
 private:
     void FreeMode();
-    void FollowMode();    
+    void FollowMode();
 
     void ThirdPresonViewMode();
 
@@ -56,7 +58,8 @@ private:
 
     Vector3 prevMousePos;
 
-    Transform* target = nullptr;    
+    Transform* target = nullptr;
+    Vector3 lockOnTarget;
 
     float distance = 300.0f;
     float height = 100.0f;
@@ -82,6 +85,7 @@ private:
     BoxCollider* ground = nullptr;
     Ray sight;
     Transform* sightRot;
+    TerrainEditor* terrain = nullptr;
 
     bool freeCam = false;
 };

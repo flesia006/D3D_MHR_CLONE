@@ -1,32 +1,24 @@
 #pragma once
-class Suwol :public Transform
+class SliceEft :public Transform
 {
-	const int count = 50;
-
 public:
-	Suwol();
-	~Suwol();
-
-	void EffectOn();
-	void EffectOff();
+	SliceEft();
+	~SliceEft();
 
 	void Update();
 	void Render();
-	void GUIRender();
 
-	bool effect = false;
 	bool active = false;
 private:
-	vector<Model*> suwol;
-	vector<Vector3> originPos;
-
+	Cylinder2* v_circle;
+	Ring* h_circle;
 
 	BlendState* blendState[2];
 	DepthStencilState* depthState[2];
 	RasterizerState* rasterizerState[2];
 
 	float timer = 0.0f;
+	int count = 0;
 	int num = 1;
 };
-
 

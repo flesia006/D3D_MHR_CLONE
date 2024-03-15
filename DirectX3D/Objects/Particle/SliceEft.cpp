@@ -1,21 +1,25 @@
 #include "Framework.h"
-#include "CircleEft.h"
+#include "SliceEft.h"
 
-CircleEft::CircleEft()
+SliceEft::SliceEft()
 {
     v_circle = new Cylinder2(400, 100, 32);
-    v_circle->Rot().y += 1.308f;
     v_circle->SetParent(this);
-    v_circle->GetMaterial()->SetDiffuseMap(L"Textures/Effect/split/Atk_1");
+    v_circle->GetMaterial()->SetDiffuseMap(L"Textures/Effect/bluelight.png");
     v_circle->GetMaterial()->SetShader(L"Basic/Texture.hlsl");
     v_circle->UpdateWorld();
 
     h_circle = new Ring(405, 150, 32);
-    h_circle->Rot().y += 1.308f;
     h_circle->SetParent(this);
-    h_circle->GetMaterial()->SetDiffuseMap(L"Textures/Effect/split/Atk_1");
+    h_circle->GetMaterial()->SetDiffuseMap(L"Textures/Effect/bluelight.png");
     h_circle->GetMaterial()->SetShader(L"Basic/Texture.hlsl");
     h_circle->UpdateWorld();
+
+    v_circle->Rot().y = XM_PI;
+    h_circle->Rot().y = XM_PI;
+    
+    Pos().x += 30;
+    Rot().z -= XM_PIDIV4;
 
     FOR(2) blendState[i] = new BlendState();
     FOR(2) depthState[i] = new DepthStencilState();
@@ -30,37 +34,35 @@ CircleEft::CircleEft()
     rasterizerState[1]->CullMode(D3D11_CULL_NONE);
 }
 
-CircleEft::~CircleEft()
+SliceEft::~SliceEft()
 {
 }
 
-void CircleEft::Update()
+void SliceEft::Update()
 {
-    if (!active)
-        return;
+    if (!active) return;
+
     timer += DELTA;
-
-    if (timer >= 0.04f)
+    if (timer < 0.2f)
     {
-        wstring path = L"Textures/Effect/split/Atk_" + to_wstring(num) + L".png";
-        v_circle->GetMaterial()->SetDiffuseMap(path);
-        h_circle->GetMaterial()->SetDiffuseMap(path);
-
-        timer = 0.0f;
-        num++;
-        if (num > 4)
-        {
-            num = 1;
-        }
+        v_circle->Rot().y -= 30 * DELTA;
+        h_circle->Rot().y -= 30 * DELTA;
     }
-    v_circle->Rot().y += 50 * DELTA;
-    h_circle->Rot().y += 50 * DELTA;
+    else
+    {
+        timer = 0.0f;
+        v_circle->Rot().y = XM_PI;
+        h_circle->Rot().y = XM_PI;
+        active = false;
+    }
+
+
     v_circle->UpdateWorld();
     h_circle->UpdateWorld();
     Transform::UpdateWorld();
 }
 
-void CircleEft::Render()
+void SliceEft::Render()
 {
     if (active)
     {

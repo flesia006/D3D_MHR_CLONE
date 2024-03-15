@@ -39,13 +39,13 @@ void Camera::Update()
 
     if (target)
         ThirdPresonViewMode();
-        //FreeMode();
+    //FreeMode();
 
-        //FollowMode();
+    //FollowMode();
     else
         FreeMode();
 
-    UpdateWorld();    
+    UpdateWorld();
 
     if (KEY_DOWN(VK_F4))
         freeCam = true;
@@ -75,10 +75,10 @@ void Camera::GUIRender()
 
             ImGui::Checkbox("LookAtTargetX", &isLookAtTargetX);
             ImGui::Checkbox("LookAtTargetY", &isLookAtTargetY);
-            
+
             ImGui::InputText("File", file, 128);
 
-            if(ImGui::Button("Save"))
+            if (ImGui::Button("Save"))
                 TargetOptionSave(file);
             ImGui::SameLine();
             if (ImGui::Button("Load"))
@@ -94,7 +94,7 @@ void Camera::GUIRender()
 }
 
 void Camera::SetView()
-{  
+{
     view = XMMatrixInverse(nullptr, world);
     viewBuffer->Set(view, world);
 
@@ -131,7 +131,7 @@ Ray Camera::ScreenPointToRay(Vector3 screenPoint)
 
     Vector2 point;
     point.x = (screenPoint.x / screenSize.x) * 2.0f - 1.0f;
-    point.y = (screenPoint.y / screenSize.y) * 2.0f - 1.0f;    
+    point.y = (screenPoint.y / screenSize.y) * 2.0f - 1.0f;
 
     Float4x4 temp;
     XMStoreFloat4x4(&temp, projection);
@@ -150,13 +150,13 @@ Ray Camera::ScreenPointToRay(Vector3 screenPoint)
 }
 
 void Camera::LookAtTarget()
-{    
+{
     rotMatrix = XMMatrixRotationY(target->Rot().y + rotY);
 
     Vector3 forward = XMVector3TransformNormal(Vector3::Forward(), rotMatrix);
 
     Pos() = target->GlobalPos() + forward * -distance;
-    Pos().y += height;    
+    Pos().y += height;
 
     Vector3 offset = XMVector3TransformCoord(focusOffset, rotMatrix);
     Vector3 targetPos = target->GlobalPos() + offset;
@@ -198,8 +198,8 @@ void Camera::FreeMode()
 }
 
 void Camera::FollowMode()
-{   
-    destRot = Lerp(destRot, target->Rot().y, rotDamping * DELTA);    
+{
+    destRot = Lerp(destRot, target->Rot().y, rotDamping * DELTA);
     rotMatrix = XMMatrixRotationY(destRot + rotY);
 
     Vector3 forward = XMVector3TransformNormal(Vector3::Forward(), rotMatrix);
@@ -207,7 +207,7 @@ void Camera::FollowMode()
     destPos = target->GlobalPos() + forward * -distance;
     destPos.y += height;
 
-    Pos() = Lerp(Pos(), destPos, moveDamping * DELTA);    
+    Pos() = Lerp(Pos(), destPos, moveDamping * DELTA);
 
     Vector3 offset = XMVector3TransformCoord(focusOffset, rotMatrix);
     Vector3 targetPos = target->GlobalPos() + offset;
@@ -217,8 +217,8 @@ void Camera::FollowMode()
 
     if (isLookAtTargetX)
     {
-        Rot().x = acos(Dot(forward, dir));        
-    }    
+        Rot().x = acos(Dot(forward, dir));
+    }
     if (isLookAtTargetY)
     {
         Rot().y = atan2(dir.x, dir.z);
@@ -234,9 +234,7 @@ void Camera::ThirdPresonViewMode()
     }
     if (freeCam == false)
     {
-        //Vector3 delta = mousePos - prevMousePos;
-        //prevMousePos = mousePos;
-        if (!KEY_PRESS('X'))
+        if (lockOnTarget == Vector3(0, 0, 0))
         {
             Vector3 delta = mousePos - prevMousePos;
             prevMousePos = mousePos;
@@ -247,10 +245,26 @@ void Camera::ThirdPresonViewMode()
             sightRot->UpdateWorld();
 
             CAM->Rot() = sightRot->Rot();
+            CAM->Pos() = target->GlobalPos() + sightRot->Back() * distance * 1.6;
         }
-        CAM->Pos() = target->GlobalPos() + sightRot->Back() * distance * 1.6;
+        else
+        {
+            Vector3 trgtToTrgt;
+            trgtToTrgt.x = (lockOnTarget.x - target->GlobalPos().x);
+            trgtToTrgt.y = 0;
+            trgtToTrgt.z = (lockOnTarget.z - target->GlobalPos().z);
+            trgtToTrgt = trgtToTrgt.GetNormalized();
+
+            sightRot->Rot().x = -0.1f;
+            //sightRot->Rot().x = Clamp(-XM_PIDIV2 + 0.5f, XM_PIDIV2 - 0.01f, sightRot->Rot().x);
+            sightRot->Rot().y = atan2(trgtToTrgt.x, trgtToTrgt.z);
+            sightRot->UpdateWorld();
+
+            CAM->Rot() = Lerp(Rot(), sightRot->Rot(), 10 * DELTA);
+            CAM->Pos() = target->GlobalPos() + Back() * distance * 1.6;
+        }
     }
-    
+
     // 만약 카메라가 지면을 파고든다? (TODO : Terrain 만들면 그에 맞게 수정)
 
     // 1. 광선(뒤통수의 시선) 만들기
@@ -258,17 +272,25 @@ void Camera::ThirdPresonViewMode()
     sight.pos = target->GlobalPos();
 
     // 2. 땅과 contact 받아오기
-    Contact contact;
-    bool hitGround = ground->IsRayCollision(sight, &contact);
+    Vector3 pos = {};
+    bool hitGround = false;
+    if (terrain != nullptr)
+    {
+        hitGround = terrain->ComputePicking(pos, sight.pos, sight.dir);
+        if ((target->GlobalPos() - pos).Length() > distance || !hitGround)
+            return;
+        CAM->Pos() = pos - sight.dir.Back() * 20;
+    }
+    else
+    {
+        Contact contact;
+        hitGround = ground->IsRayCollision(sight, &contact);
 
-    // 3. 광선이 지면에 닿지 않았거나 camSphere 의 반지름보다 먼 거리에서 hit 되었다면 그냥 리턴
-    if ((target->GlobalPos() - contact.hitPoint).Length() > distance || !hitGround)
-        return;
+        if ((target->GlobalPos() - contact.hitPoint).Length() > distance || !hitGround)
+            return;
 
-    // 4. Cam 위치를 광선과 땅이 만난 지점으로, 
-    //    대신 카메라가 너무 땅에 딱붙어 있으면 어색하니까 살짝 보정 
-
-    CAM->Pos() = contact.hitPoint - sight.dir.Back() * 5;
+        CAM->Pos() = contact.hitPoint - sight.dir.Back() * 5;
+    }
 
 }
 
