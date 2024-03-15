@@ -11,14 +11,13 @@ ValphalkTestScene::ValphalkTestScene()
 	capsule = new CapsuleCollider(10, 50);
 	capsule->Pos().y += 150;
 	valphalk->SetTarget(garuk);
-	garuk->SetEnemy(valphalk->GetRealPos());
+	garuk->SetEnemy(valphalk);
 	garuk->SetTarget(capsule);
 
 	rasterizer = new RasterizerState();
 	rasterizer->CullMode(D3D11_CULL_NONE);
 
 	UIManager::Get();
-	ARROW->SetEnemy(valphalk);
 
 }
 

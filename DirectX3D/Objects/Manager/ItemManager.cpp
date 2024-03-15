@@ -20,7 +20,7 @@ ItemManager::ItemManager()
 			quad->Pos() = { (itemBoxList->Pos().x - 183) + (60 * (i - 7)) , itemBoxList->Pos().y + 235 };
 		else if (i >= 14 && i < 21)
 			quad->Pos() = { (itemBoxList->Pos().x - 183) + (60 * (i - 14)) , itemBoxList->Pos().y + 170 };
-		quad->InItPos(quad->Pos());
+		quad->InItPos(quad->Pos()); // <= 이것으로 마우스 온 위치 잡아줌
 		itemBoxBack.push_back(quad);
 
 		quad = new Quad(L"Textures/UI/ItemBoxFrame.png");

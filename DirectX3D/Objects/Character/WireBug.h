@@ -32,7 +32,7 @@ private:
 	State curState = IDLE;
 
 	float respawnDuration = 0.0f;
-	const float respawnDurationLimit = 5.0f;
+	const float respawnDurationLimit = 180.0f;
 	ParticleSystem* bugParticle;
 	ParticleSystem* bugLightParticle;
 	ParticleSystem* bugLightParticle2;

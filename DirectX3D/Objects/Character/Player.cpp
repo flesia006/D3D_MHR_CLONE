@@ -16,6 +16,8 @@ Player::Player() : ModelAnimator("Player")
 	swordEnd = new Transform();
 	mainHand = new Transform();
 	backSwd = new Transform();
+	playerWireBugHead = new Transform();
+	playerWireBugTail = new Transform();
 
 	swordCollider = new CapsuleCollider(2.0f, 100.0f);
 	swordCollider->Rot().x += XM_PIDIV2;
@@ -24,6 +26,7 @@ Player::Player() : ModelAnimator("Player")
 	swordCollider->Scale() *= 3.0f;
 
 	trail = new Trail(L"Textures/Effect/Snow.png", swordStart, swordEnd, 20, 85);
+	wireBugTrail = new Trail(L"Textures/Effect/bluelight.png", playerWireBugHead, playerWireBugTail, 30, 50);
 
 	/////////////////////////////////////////////////////////////
 	// Particles
@@ -41,6 +44,20 @@ Player::Player() : ModelAnimator("Player")
 	haloCollider = new CapsuleCollider();
 	wireBugParticle = new Wire_Bug();
 	sutdol = new Sutdol();
+	FOR(4)
+	{
+		CircleEft* cir = new CircleEft();
+		cir->SetParent(realPos);
+		if (i == 1) cir->Rot().z += unitRad * 50;
+		if (i == 2) cir->Rot().z -= unitRad * 50;
+		if (i == 3)
+		{
+			cir->Rot().z += XM_PIDIV2;
+			cir->Scale() *= 0.9f;
+		}
+		cir->Pos().y += 70;
+		circle.push_back(cir);
+	}
 
 	haloCollider->SetParent(swordStart);
 
@@ -80,6 +97,9 @@ Player::Player() : ModelAnimator("Player")
 	//	tmpCollider->SetParent(head);
 	//	tmpCollider->SetParent(back);
 
+	playerWireBug = new PlayerWireBug();
+	playerWireBug->SetActive(false);
+
 	ReadClips();
 
 	CAM->SetTarget(head);
@@ -114,6 +134,10 @@ Player::~Player()
 	delete backPos;
 	delete realPos;
 	delete head;
+	delete playerWireBug;
+	delete wireBugTrail;
+	delete playerWireBugHead;
+	delete playerWireBugTail;
 }
 
 void Player::Update()
@@ -148,14 +172,32 @@ void Player::Update()
 
 	ModelAnimator::Update();
 	GroundCheck();
+
+	///////////////////////////////
+	//µð¹ö±×¿ë
+	if (KEY_DOWN('5'))
+		UI->PlusCotingLevel();
+
+	if (KEY_DOWN('6'))
+		SetState(D_015);
+
+	if (KEY_DOWN('7'))
+		UI->SetAllUIOff();
+
+	if (KEY_DOWN('8'))
+		SetState(T_050);
+
+	if (KEY_DOWN('9'))
+		SetState(T_020);
+	///////////////////////////////
 }
 
 void Player::PreRender()
 {
 	if (renderEffect)
-	{
 		trail->Render();
-	}
+	if(playerWireBug->GetisMoving())
+		wireBugTrail->Render();
 	////////////////////////////////////////////
 	// Particles
 	sutdol->Render();
@@ -167,6 +209,7 @@ void Player::PreRender()
 	spSuccessParticle->Render();
 	spiritParticle->Render();
 	potionParticle->Render();
+	FOR(hitParticle.size()) hitParticle[i]->Render();
 }
 
 void Player::Render()
@@ -180,8 +223,12 @@ void Player::Render()
 		//swordCollider->Render();
 	longSword->Render();
 	kalzip->Render();
-	//suwol->Render();
+	suwol->Render();
 	tugu->Render();
+	FOR(circle.size()) circle[i]->Render();
+
+	if(playerWireBug->Active())
+		playerWireBug->Render();
 
 	if (isSetState)
 	{
@@ -190,6 +237,11 @@ void Player::Render()
 
 		if (curState < R_001 || curState > R_602)
 			Pos().y = realPos->Pos().y;
+
+		if (preState == L_155)
+		{
+			Rot().y += XM_PI;
+		}
 
 		isSetState = false;
 	}
@@ -214,7 +266,7 @@ void Player::UpdateWorlds()
 
 	if (holdingSword)
 	{
-		backSwd->SetWorld(GetTransformByNode(lefeHandNode));
+		backSwd->SetWorld(GetTransformByNode(leftHandNode));
 		kalzip->Pos() = { };
 		kalzip->Rot() = { };
 	}
@@ -249,7 +301,7 @@ void Player::UpdateWorlds()
 		Rot().y = garuk->Rot().y;
 		if (curState == R_600 || curState == R_601 || curState == R_602)
 		{
-			mainHand->SetWorld(GetTransformByNode(lefeHandNode));
+			mainHand->SetWorld(GetTransformByNode(leftHandNode));
 			longSword->Pos() = {};
 			longSword->Rot() = {};
 		}
@@ -285,7 +337,6 @@ void Player::UpdateWorlds()
 	backPos->Pos() = GetTranslationByNode(1) + Forward() * 100;
 	forwardPos->Pos() = GetTranslationByNode(1) + Back() * 50 + Vector3::Up() * 80;
 
-
 	head->Pos().x = realPos->Pos().x;
 	if (isRiding && curState != R_031)
 		head->Pos().y = realPos->Pos().y + 100;
@@ -300,6 +351,15 @@ void Player::UpdateWorlds()
 
 	swordStart->UpdateWorld();
 	swordEnd->UpdateWorld();
+
+	playerWireBugHead->Pos() = playerWireBug->GlobalPos() + playerWireBug->Forward() * 50.0f;
+	playerWireBugTail->Pos() = playerWireBug->GlobalPos() + playerWireBug->Back() * 50.0f;
+
+	playerWireBugHead->UpdateWorld();
+	playerWireBugTail->UpdateWorld();
+
+	if(!playerWireBug->GetisMoving())
+		playerWireBug->Pos() = GetTranslationByNode(leftHandNode);
 
 	swordSwingDir = lastSwordEnd - swordStart->GlobalPos();
 	tmpCollider->Pos() = GetTranslationByNode(node);
@@ -316,6 +376,9 @@ void Player::UpdateWorlds()
 	tmpCollider3->UpdateWorld();
 	bodyCollider->Update();
 	swordCollider->Update();
+
+	playerWireBug->Rot() = Rot();
+	playerWireBug->Update();
 
 	haloTransform->Pos() = longSword->GlobalPos() + longSword->Back() * 55.f;
 	haloCollider->Pos() = haloTransform->Pos();
@@ -450,15 +513,17 @@ void Player::GUIRender()
 	//
 	//
 	ImGui::SliderInt("node", &node, 1, 210);
-//	ImGui::SliderFloat("temp", &temp, -10, 10);
-//	ImGui::SliderFloat("temp2", &temp2, -10, 10);
-//	ImGui::SliderFloat("temp3", &temp3, 10, 15);
-//		
-//	//longSword->GUIRender();
-//	kalzip->GUIRender();
+	float value = UI->GetSpritGauge();
+	ImGui::DragFloat("SpiritGauge", &value);
+	//	ImGui::SliderFloat("temp", &temp, -10, 10);
+	//	ImGui::SliderFloat("temp2", &temp2, -10, 10);
+	//	ImGui::SliderFloat("temp3", &temp3, 10, 15);
+	//		
+	//	//longSword->GUIRender();
+	//	kalzip->GUIRender();
 
-	// t = GetClip(1)->GetRatio();
-	// ImGui::DragFloat("ratio_1", &t);
+		// t = GetClip(1)->GetRatio();
+		// ImGui::DragFloat("ratio_1", &t);
 
 	//Matrix x = GetTransformByNode(0);
 	//Vector3 S, R, T;
@@ -474,6 +539,7 @@ void Player::GUIRender()
 	//temp = "Real_GlobalPos";
 	//Vector3 Pos = root->GlobalPos();
 	//ImGui::DragFloat3(temp.c_str(), (float*)&Pos, 0.1f);
+	ImGui::DragFloat3("playerWireBug Pos", (float*)&playerWireBug->Pos());
 }
 
 void Player::PostRender()
@@ -546,6 +612,10 @@ void Player::Control()
 	case Player::L_116:		L116();		break;
 	case Player::L_119:		L119();		break;
 	case Player::L_122:		L122();		break;
+
+	case Player::L_126:		L126();		break;
+	case Player::L_127:		L127();		break;
+
 	case Player::L_128:		L128();		break;
 	case Player::L_130:		L130();		break;
 	case Player::L_131:		L131();		break;
@@ -610,6 +680,23 @@ void Player::Control()
 	case Player::D_078:		D078();		break;
 	case Player::D_079:		D079();		break;
 	case Player::D_080:		D080();		break;
+
+	case Player::W_005:		W005();		break;
+	case Player::W_006:		W006();		break;
+	case Player::W_007:		W007();		break;
+	case Player::W_009:		W009();		break;
+	case Player::W_010:		W010();		break;
+	case Player::W_020:		W020();		break;
+	case Player::W_062:		W062();		break;
+	case Player::W_063:		W063();		break;
+	case Player::F_072:		F072();		break;
+	case Player::F_073:		F073();		break;
+
+	case Player::T_019:		T019();		break;
+	case Player::T_020:		T020();		break;
+	case Player::T_050:		T050();		break;
+	case Player::T_051:		T051();		break;
+	case Player::T_052:		T052();		break;
 	}
 
 	if (KEY_UP('W') || KEY_UP('A') || KEY_UP('S') || KEY_UP('D'))
@@ -882,6 +969,7 @@ void Player::ResetPlayTime()
 void Player::EffectUpdates()
 {
 	trail->Update();
+	wireBugTrail->Update();
 	FOR(hitParticle.size())		hitParticle[i]->Update();
 	hitBoomParticle->Update();
 	criticalParticle->Update();
@@ -899,6 +987,25 @@ void Player::EffectUpdates()
 
 	suwol->Update();
 	tugu->Update();
+	FOR(circle.size())
+	{
+		if (curState == L_155)
+			circle[i]->Rot().y = atan2(Forward().x, Forward().z);
+		else if (curState == L_109)
+		{
+			circle[0]->Rot().x = 0;
+			circle[0]->Rot().y += 30 * DELTA;
+			circle[0]->Rot().z = 0;
+		}
+		else if (curState == L_108)
+		{
+			circle[i]->Rot().x += 50 * DELTA;
+			circle[i]->Rot().y = atan2(Back().x, Back().z);
+		}
+		else
+			circle[i]->Rot().y += 50 * DELTA;
+		circle[i]->Update();
+	}
 }
 
 void Player::Rotate(float rotateSpeed)
@@ -995,7 +1102,7 @@ bool Player::Attack(float power, bool push, UINT useOtherCollider) // Ãæµ¹ÆÇÁ¤ Ç
 			attackOnlyOncePerMotion = true;
 
 			if (curState == L_101 || curState == L_102 || curState == L_103) // ±âÀÎº£±â ¾Æ´Ï¶ó¸é °ÔÀÌÁö Áõ°¡
-				UIManager::Get()->DoublePlusSpritGauge();
+				UI->DoublePlusSpritGauge();
 
 			if (curState == L_104 || curState == L_105)
 				UI->PlusSpritGauge();
@@ -1126,7 +1233,10 @@ bool Player::AttackDummy(float power, bool push, UINT useOtherCollider)
 
 			attackOnlyOncePerMotion = true;
 
-			if (curState == L_101 || curState == L_102 || curState == L_103 || curState == L_104 || curState == L_105) // ±âÀÎº£±â ¾Æ´Ï¶ó¸é °ÔÀÌÁö Áõ°¡
+			if (curState == L_101 || curState == L_102 || curState == L_103) // ±âÀÎº£±â ¾Æ´Ï¶ó¸é °ÔÀÌÁö Áõ°¡
+				UIManager::Get()->DoublePlusSpritGauge();
+
+			if (curState == L_104 || curState == L_105) // ±âÀÎº£±â ¾Æ´Ï¶ó¸é °ÔÀÌÁö Áõ°¡
 				UIManager::Get()->PlusSpritGauge();
 
 			if (curState == L_109) // ±âÀÎ Å« È¸Àüº£±â ÀûÁß½Ã¿¡¸¸
@@ -1276,6 +1386,12 @@ void Player::HurtCheck()
 					return;
 
 				if (curState == L_155 && RATIO < 0.36)
+				{
+					isEvaded = true;
+					return;
+				}
+
+				if (curState == L_126 && RATIO < 0.8)
 				{
 					isEvaded = true;
 					return;
@@ -1462,7 +1578,7 @@ void Player::TermAttackUpdate()
 	if (!isHitL155 && !isHitL133 && !isHitL136)
 		return;
 
-	if (isHitL155)
+	if (isHitL155) // ¾É¾Æ ¹ßµµ ±âÀÎº£±â
 	{
 		TermAttackTimer += DELTA;
 
@@ -1471,6 +1587,7 @@ void Player::TermAttackUpdate()
 			if (!playOncePerTerm)
 			{
 				AttackWOCollision(17);
+				circle[0]->active = true;
 				playOncePerTerm = true;
 			}
 		}
@@ -1479,6 +1596,7 @@ void Player::TermAttackUpdate()
 			if (playOncePerTerm)
 			{
 				AttackWOCollision(17);
+				circle[1]->active = true;
 				playOncePerTerm = false;
 			}
 		}
@@ -1487,12 +1605,14 @@ void Player::TermAttackUpdate()
 			if (!playOncePerTerm)
 			{
 				AttackWOCollision(17);
+				circle[2]->active = true;
 				playOncePerTerm = true;
 			}
 		}
 		else if (TermAttackTimer > 0.8f)
 		{
 			isHitL155 = false;
+			FOR(3) circle[i]->active = false;
 			playOncePerTerm = false;
 			TermAttackTimer = 0.0;
 		}
@@ -1621,11 +1741,7 @@ void Player::SetState(State state)
 	if (curState <R_001 || curState >R_602) // °¡·çÅ© Å¾½Â¶§´Â ÇÊ¿ä¾øÀ½
 		isSetState = true;
 
-	if (curState == L_155)
-	{
-		Vector3 realForward = forwardPos->GlobalPos() - backPos->GlobalPos();
-		Rot().y = atan2(realForward.x, realForward.z);
-	}
+
 	sumRot = 0.0f;
 	preState = curState;
 	curState = state;
@@ -1691,6 +1807,10 @@ void Player::ReadClips()
 	ReadClip("L_116");
 	ReadClip("L_119");
 	ReadClip("L_122");
+
+	ReadClip("L_126");
+	ReadClip("L_127");
+
 	ReadClip("L_128");
 	ReadClip("L_130");
 	ReadClip("L_131");
@@ -1771,6 +1891,23 @@ void Player::ReadClips()
 	ReadClip("D_078");
 	ReadClip("D_079");
 	ReadClip("D_080");
+
+	ReadClip("W_005");
+	ReadClip("W_006");
+	ReadClip("W_007");
+	ReadClip("W_009");
+	ReadClip("W_010");
+	ReadClip("W_020");
+	ReadClip("W_062");
+	ReadClip("W_063");
+	ReadClip("F_072");
+	ReadClip("F_073");
+
+	ReadClip("T_019");
+	ReadClip("T_020");
+	ReadClip("T_050");
+	ReadClip("T_051");
+	ReadClip("T_052");
 }
 
 void Player::RecordLastPos()
@@ -1788,6 +1925,7 @@ void Player::S001() // ³³µµ Idle
 	// ¿Þ Å¬¸¯ À¸·Î °ø°Ý ÇÏ´Â°Å Ãß°¡
 	if (K_LMB)		SetState(L_101);
 	else if (KEY_DP('F'))  callGaruk = true;
+	else if (UI->IsAbleBugSkill() && K_LBUG)	SetState(W_005);	// »ç¼± ¹åÁÙ¹ú·¹ ÀÌµ¿
 	else if (KEY_DP(VK_SPACE))	Roll();
 
 
@@ -1846,6 +1984,7 @@ void Player::S005() // ´ë±âÁß ´Þ¸®±â ½ÃÀÛ
 	if (K_LMB)			SetState(L_101);
 	else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106);
 	else if (KEY_DP(VK_SPACE))	Roll();
+	else if (UI->IsAbleBugSkill() && K_LBUG)	SetState(W_005);	// »ç¼± ¹åÁÙ¹ú·¹ ÀÌµ¿
 	else if (KEY_DP('F'))  callGaruk = true;
 
 	if (RATIO > 0.97)
@@ -1906,6 +2045,7 @@ void Player::S011() // ´Þ¸®±â ·çÇÁ
 	if (K_LMB)		SetState(L_101);
 	else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106);
 	else if (K_SPACE)	Roll();
+	else if (UI->IsAbleBugSkill() && K_LBUG)	SetState(W_005);	// »ç¼± ¹åÁÙ¹ú·¹ ÀÌµ¿
 	else if (KEY_DP('F'))  callGaruk = true;
 
 	if (RATIO > 0.95)
@@ -2128,6 +2268,7 @@ void Player::L001() // ¹ßµµ»óÅÂ ´ë±â
 	else if (K_LMBRMB)	SetState(L_103);	// 103 º£¾î³»¸®±â
 	else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106);	// 106 ±âÀÎ º£±â	
 	else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// ³¯¶óÂ÷±â
+	else if (UI->IsAbleBugSkill() && K_RBUG)		SetState(L_126);	// ¼ö¿ùÀÇÀÚ¼¼
 	else if (K_SPACE)	Roll();				// 010 ±¸¸£±â
 
 	UIManager::Get()->staminaActive = false;
@@ -2157,6 +2298,7 @@ void Player::L004() // ¹ßµµ»óÅÂ °È±â Áß // ·çÇÁ
 	else if (K_LMBRMB)	SetState(L_103);	// 103 º£¾î³»¸®±â
 	else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106);	// 106 ±âÀÎ º£±â	
 	else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// ³¯¶óÂ÷±â
+	else if (UI->IsAbleBugSkill() && K_RBUG)		SetState(L_126);	// ¼ö¿ùÀÇÀÚ¼¼
 	else if (K_SPACE)	Roll();				// 010 ±¸¸£±â
 
 	Rotate();
@@ -2179,6 +2321,7 @@ void Player::L005() // ¹ßµµ»óÅÂ °È±â ½ÃÀÛ (¹ßµ¸¿ò)
 	else if (K_LMBRMB)	SetState(L_103);	// 103 º£¾î³»¸®±â
 	else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106);	// 106 ±âÀÎ º£±â	
 	else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// ³¯¶óÂ÷±â
+	else if (UI->IsAbleBugSkill() && K_RBUG)		SetState(L_126);	// ¼ö¿ùÀÇÀÚ¼¼
 	else if (K_SPACE)	Roll();				// 010 ±¸¸£±â
 
 	Rotate();
@@ -2215,6 +2358,7 @@ void Player::L008() // ¸ØÃã
 	else if (K_LMBRMB)	SetState(L_103);	// 103 º£¾î³»¸®±â
 	else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106);	// 106 ±âÀÎ º£±â	
 	else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// ³¯¶óÂ÷±â
+	else if (UI->IsAbleBugSkill() && K_RBUG)		SetState(L_126);	// ¼ö¿ùÀÇÀÚ¼¼
 	else if (K_SPACE)	Roll();				// 010 ±¸¸£±â
 
 	if (RATIO > 0.5 && RATIO <= 0.95)
@@ -2310,6 +2454,7 @@ void Player::L014() // ¹ßµµ»óÅÂ ±¸¸£±â ÈÄ ÀÌµ¿Å° À¯Áö½Ã
 		else if (K_LMBRMB)	SetState(L_103);	// 103 º£¾î³»¸®±â
 		else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106);	// 106 ±âÀÎ º£±â	
 		else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// ³¯¶óÂ÷±â
+		else if (UI->IsAbleBugSkill() && K_RBUG)		SetState(L_126);	// ¼ö¿ùÀÇÀÚ¼¼
 		else if (K_SPACE)	Roll();				// 010 ±¸¸£±â
 	}
 
@@ -2369,6 +2514,7 @@ void Player::L101() // ³»µðµ®º£±â
 		else if (K_CTRLRMB)			SetState(L_147);	// °£ÆÄ º£±â
 		else if (K_CTRLSPACE)		SetState(L_151);	// Æ¯¼ö ³³µµ
 		else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// ³¯¶óÂ÷±â
+		else if (UI->IsAbleBugSkill() && K_RBUG)		SetState(L_126);	// ¼ö¿ùÀÇÀÚ¼¼
 		else if (K_SPACE)			Roll();
 	}
 
@@ -2413,6 +2559,7 @@ void Player::L102() // ¼¼·Îº£±â
 		else if (K_CTRLRMB)			SetState(L_147);	// °£ÆÄ º£±â
 		else if (K_CTRLSPACE)		SetState(L_151);	// Æ¯¼ö ³³µµ
 		else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// ³¯¶óÂ÷±â
+		else if (UI->IsAbleBugSkill() && K_RBUG)		SetState(L_126);	// ¼ö¿ùÀÇÀÚ¼¼
 		else if (K_SPACE)			Roll();
 	}
 
@@ -2453,6 +2600,7 @@ void Player::L103() // º£¾î³»¸®±â
 		else if (K_CTRLRMB)			SetState(L_147);	// °£ÆÄ º£±â
 		else if (K_CTRLSPACE)		SetState(L_151);	// Æ¯¼ö ³³µµ
 		else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// ³¯¶óÂ÷±â
+		else if (UI->IsAbleBugSkill() && K_RBUG)		SetState(L_126);	// ¼ö¿ùÀÇÀÚ¼¼
 		else if (K_SPACE)			Roll();
 	}
 
@@ -2495,6 +2643,7 @@ void Player::L104() // Âî¸£±â
 		else if (K_CTRLRMB)			SetState(L_147);	// °£ÆÄ º£±â
 		else if (K_CTRLSPACE)		SetState(L_151);	// Æ¯¼ö ³³µµ
 		else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// ³¯¶óÂ÷±â
+		else if (UI->IsAbleBugSkill() && K_RBUG)		SetState(L_126);	// ¼ö¿ùÀÇÀÚ¼¼
 		else if (K_SPACE)			Roll();
 
 	}
@@ -2534,6 +2683,7 @@ void Player::L105() // º£¾î ¿Ã¸®±â
 		else if (K_CTRLRMB)		SetState(L_147);	// °£ÆÄ º£±â
 		else if (K_CTRLSPACE)	SetState(L_151);	// Æ¯¼ö ³³µµ
 		else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// ³¯¶óÂ÷±â
+		else if (UI->IsAbleBugSkill() && K_RBUG)		SetState(L_126);	// ¼ö¿ùÀÇÀÚ¼¼
 		else if (K_SPACE)		Roll();
 	}
 
@@ -2549,8 +2699,14 @@ void Player::L106() // ±âÀÎ º£±â 1
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_25", .5f);
 		PlayClip(curState);
 		initForward = Forward();
-		UIManager::Get()->MinusSpiritGauge(); // ±âÀÎ°ÔÀÌÁö ¼Ò¸ðÇÏ±â( ´Ü 1¹ø )
 	}
+	
+	if (!playOncePerMotion)
+	{
+		UI->MinusSpiritGauge();
+		playOncePerMotion = true;
+	}
+
 	if (RATIO > 0.3 && RATIO < 0.31)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
 	UIManager::Get()->staminaActive = false;
@@ -2578,6 +2734,7 @@ void Player::L106() // ±âÀÎ º£±â 1
 		else if (K_CTRLRMB)		SetState(L_147);	// °£ÆÄ º£±â		
 		else if (K_CTRLSPACE)	SetState(L_151);	// Æ¯¼ö ³³µµ		
 		else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// ³¯¶óÂ÷±â
+		else if (UI->IsAbleBugSkill() && K_RBUG)		SetState(L_126);	// ¼ö¿ùÀÇÀÚ¼¼
 		else if (K_SPACE)		Roll();				// ±¸¸£±â
 	}
 
@@ -2592,7 +2749,12 @@ void Player::L107() // ±âÀÎº£±â 2
 	{
 		spiritParticle->Play({ realPos->Pos().x, realPos->Pos().y + 100, realPos->Pos().z }, 0);
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_25", .5f);
-		UIManager::Get()->MinusSpiritGauge(); // ±âÀÎ°ÔÀÌÁö ¼Ò¸ðÇÏ±â( ´Ü 1¹ø )
+	}
+
+	if (!playOncePerMotion)
+	{
+		UI->MinusSpiritGauge();
+		playOncePerMotion = true;
 	}
 
 	if (RATIO > 0.25 && RATIO < 0.26)
@@ -2623,6 +2785,7 @@ void Player::L107() // ±âÀÎº£±â 2
 			else if (K_CTRLRMB)			SetState(L_147);	// °£ÆÄ º£±â
 			else if (K_CTRLSPACE)		SetState(L_151);	// Æ¯¼ö ³³µµ		
 			else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// ³¯¶óÂ÷±â
+			else if (UI->IsAbleBugSkill() && K_RBUG)		SetState(L_126);	// ¼ö¿ùÀÇÀÚ¼¼
 			else if (K_SPACE)			Roll();				// ±¸¸£±â		
 		}
 	}
@@ -2639,7 +2802,12 @@ void Player::L108() // ±âÀÎº£±â 3
 		spiritParticle->Play({ realPos->Pos().x, realPos->Pos().y + 100, realPos->Pos().z }, 0);
 		PlayClip(curState);
 		initForward = Forward();
-		UIManager::Get()->MinusSpiritGauge(); // ±âÀÎ°ÔÀÌÁö ¼Ò¸ðÇÏ±â( ´Ü 1¹ø )
+	}
+
+	if (!playOncePerMotion)
+	{
+		UI->MinusSpiritGauge();
+		playOncePerMotion = true;
 	}
 
 	if (RATIO > 0.1 && RATIO < 0.11)
@@ -2674,6 +2842,7 @@ void Player::L108() // ±âÀÎº£±â 3
 			{
 				attackOnlyOncePerMotion = false;
 				isDoubleStrikeMotion = false;
+				circle[3]->active = true;
 			}
 			Attack(37);
 		}
@@ -2692,7 +2861,9 @@ void Player::L108() // ±âÀÎº£±â 3
 		else if (K_CTRLRMB)			SetState(L_147);  // °£ÆÄ º£±â
 		else if (K_CTRLSPACE)		SetState(L_151);  // Æ¯¼ö ³³µµ		
 		else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// ³¯¶óÂ÷±â
+		else if (UI->IsAbleBugSkill() && K_RBUG)		SetState(L_126);	// ¼ö¿ùÀÇÀÚ¼¼
 		else if (K_SPACE)			Roll();			  // ±¸¸£±â		
+		circle[3]->active = false;
 	}
 
 	if (RATIO > 0.96)
@@ -2707,9 +2878,15 @@ void Player::L109() // ±âÀÎ Å«È¸Àüº£±â
 		spSuccessParticle->Play(Pos(), 0);
 		spiritParticle->Play({ realPos->Pos().x, realPos->Pos().y + 100, realPos->Pos().z }, 0);
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_25", .5f);
-		UIManager::Get()->MinusSpiritGauge(); // ±âÀÎ°ÔÀÌÁö ¼Ò¸ðÇÏ±â( ´Ü 1¹ø )
 		isEvaded = false;
 	}
+
+	if (!playOncePerMotion)
+	{
+		UI->MinusSpiritGauge();
+		playOncePerMotion = true;
+	}
+
 	if (RATIO > 0.2 && RATIO < 0.21)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
 	if (RATIO > 0.1 && RATIO < 0.15)
@@ -2736,22 +2913,23 @@ void Player::L109() // ±âÀÎ Å«È¸Àüº£±â
 			Attack(42);
 			// ÁÜ¾Æ¿ô
 			CAM->Zoom(650);
+			circle[0]->active = true;
 		}
 		else
 			EndEffect();
+	}
+
+	if (RATIO > 0.30) // Æ¯³³ ¿¬°è °¡´É Å¸ÀÌ¹Ö ¾ðÁ¦?
+	{
+		circle[0]->active = false;
+		if (K_CTRLSPACE)	SetState(L_151);	// Æ¯¼ö ³³µµ
+		else if (KEY_DOWN(VK_XBUTTON1)) SetState(L_101);
 	}
 
 	// ÁÜ Á¤»óÈ­
 	{
 		if (RATIO > 0.47 && RATIO < 0.84)
 			CAM->Zoom(400, 5);
-	}
-
-
-	if (RATIO > 0.30) // Æ¯³³ ¿¬°è °¡´É Å¸ÀÌ¹Ö ¾ðÁ¦?
-	{
-		if (K_CTRLSPACE)	SetState(L_151);	// Æ¯¼ö ³³µµ
-		else if (KEY_DOWN(VK_XBUTTON1)) SetState(L_101);
 	}
 
 	if (RATIO > 0.96)
@@ -2765,7 +2943,12 @@ void Player::L110() // ±âÀÎ ³»µðµ®º£±â
 	{
 		spiritParticle->Play({ realPos->Pos().x, realPos->Pos().y + 100, realPos->Pos().z }, 0);
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_25", .5f);
-		UIManager::Get()->MinusSpiritGauge(); // ±âÀÎ°ÔÀÌÁö ¼Ò¸ðÇÏ±â( ´Ü 1¹ø )
+	}
+
+	if (!playOncePerMotion)
+	{
+		UI->MinusSpiritGauge();
+		playOncePerMotion = true;
 	}
 
 	if (RATIO > 0.3 && RATIO < 0.31)
@@ -2793,6 +2976,7 @@ void Player::L110() // ±âÀÎ ³»µðµ®º£±â
 		else if (K_CTRLSPACE)						SetState(L_151);	// Æ¯¼ö ³³µµ
 		else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_108);	// ±âÀÎº£±â3
 		else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// ³¯¶óÂ÷±â
+		else if (UI->IsAbleBugSkill() && K_RBUG)		SetState(L_126);	// ¼ö¿ùÀÇÀÚ¼¼
 		else if (K_SPACE)							Roll();				// ±¸¸£±â
 	}
 
@@ -2882,25 +3066,70 @@ void Player::L122() // ³¯¶óÂ÷±â ÂøÁö
 	}
 }
 
+void Player::L126() // ¼ö¿ùÀÇ ÀÚ¼¼
+{
+	PLAY;
+
+	if (RATIO < 0.2)
+		LimitRotate(180, 50);
+
+	if (RATIO > 0.01 && RATIO < 0.8)
+	{
+		suwol->Update();
+		suwol->EffectOn();
+		CAM->Zoom(250, 3);
+		if (isEvaded)
+		{
+			SetState(L_127);
+			isEvaded = false;
+		}
+
+	}
+
+	if (RATIO > 0.8 && suwol->active)
+	{
+		CAM->Zoom(400, 3);
+		suwol->EffectOff();
+	}
+
+	if (RATIO > 0.96)
+		ReturnIdle();
+}
+
+void Player::L127() // ¼ö¿ùÀÇ ÀÚ¼¼ Ä«¿îÅÍ
+{
+	PLAY;
+
+	if (RATIO > 0.3)
+		suwol->EffectOff();
+
+	if (RATIO > 0.96)
+		ReturnIdle();
+}
+
 void Player::L128()	// ³¯¶óÂ÷±â ½ÃÀÛ
 {
-	PLAY;	
-	Vector3 a = GetTranslationByNode(131);
-	Vector3 b = GetTranslationByNode(133);
-	Vector3 c = b - a;
-	c.GetNormalized();
+	PLAY;
 	
 	wireBugParticle->Play(GetTranslationByNode(108), GetRotationByNode(129));
 	if (!playOncePerMotion)
 	{
 		UI->UseBugSkill();
-		Sounds::Get()->Play("wirebug", 2.0f);
-		playOncePerMotion = true;
+		Sounds::Get()->Play("wirebug", 3.5f);
 		isEvaded = false;
+		playerWireBug->SetActive(true);
+		playOncePerMotion = true;
 	}
 
 	if (RATIO < 0.2)
 		LimitRotate(180, 150);
+
+	if (RATIO > 0.5 && !playOncePerMotion2)
+	{
+		Vector3 pos = GetTranslationByNode(leftHandNode);
+		playerWireBug->SetMove(pos, true, Back() * 1000 + Up() * 400);
+		playOncePerMotion2 = true;
+	}
 
 
 	// ÁÜ Á¤»óÈ­ (¾É¾Æ ±âÀÎ È¸Àü º£±â¿¡¼­ ³Ñ¾î¿Â °æ¿ì)
@@ -2912,8 +3141,9 @@ void Player::L128()	// ³¯¶óÂ÷±â ½ÃÀÛ
 
 	if (RATIO > 0.96)
 	{
-		SetState(L_130);
 		playOncePerMotion = false;
+		playOncePerMotion2 = false;
+		SetState(L_130);
 	}
 }
 
@@ -2925,7 +3155,7 @@ void Player::L130()	// ³¯¶óÂ÷±â Ã¼°øÁß
 	{
 		if (RATIO > 0.05)
 		{
-			if (Jump(650, 0.5))
+			if (Jump(900, 2))
 				// °ø°ÝÆÇÁ¤ ÇÁ·¹ÀÓ
 			{
 				if (Attack(2, true, 3))
@@ -2933,10 +3163,16 @@ void Player::L130()	// ³¯¶óÂ÷±â Ã¼°øÁß
 					if (K_CTRL && UI->GetCotingLevel() > 0)
 					{
 						UI->MinusCotingLevel();
+						playerWireBug->SetActive(false);
+						playerWireBug->SetMove(Vector3::Zero(), false, Vector3::Zero());
 						SetState(L_133);  // Åõ±¸±ú±â
 					}
 					else
+					{
+						playerWireBug->SetActive(false);
+						playerWireBug->SetMove(Vector3::Zero(), false, Vector3::Zero());
 						SetState(L_136);  // ³«ÇÏÂî¸£±â
+					}
 				}
 
 				if (RATIO > 0.96)
@@ -2951,6 +3187,14 @@ void Player::L130()	// ³¯¶óÂ÷±â Ã¼°øÁß
 		}
 
 	}
+	if (RATIO > 0.25)
+		playerWireBug->SetStop();
+
+	if (RATIO > 0.5)
+	{
+		playerWireBug->SetActive(false);
+		playerWireBug->SetMove(Vector3::Zero(), false, Vector3::Zero());
+	}
 }
 
 void Player::L131() // Ã¼°ø ·çÇÁ
@@ -2958,7 +3202,7 @@ void Player::L131() // Ã¼°ø ·çÇÁ
 	PLAY;
 	// Ã¼°øÁß
 	{
-		if (Jump(650, 0.5))
+		if (Jump(900, 2))
 			// °ø°ÝÆÇÁ¤ ÇÁ·¹ÀÓ
 		{
 			if (Attack(2, true, 3))
@@ -2998,7 +3242,7 @@ void Player::L133()	// Åõ±¸±ú±â
 			isInitVoice = true;
 		}
 	}
-	
+
 	if (RATIO > 0.4 && RATIO < 0.44)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
 
@@ -3024,11 +3268,13 @@ void Player::L133()	// Åõ±¸±ú±â
 		}
 
 
-		if (realPos->Pos().y < 0)
+		if (RATIO > 0.38 && realPos->Pos().y < height)
 		{
-			Pos().y = 0.0f;
+			Pos().y = height;
 			tugu->active = true;
 			jumpVelocity = originJumpVelocity;
+			playOncePerMotion = false;
+			isJump = false;
 			SetState(L_135);
 		}
 	}
@@ -3079,11 +3325,12 @@ void Player::L136() // ³«ÇÏÂî¸£±â
 				isHitL136 = true;
 		}
 
-		if (realPos->Pos().y < 0)
+		if (realPos->Pos().y < height)
 		{
 			EndEffect();
-			Pos().y = 0.0f;
+			Pos().y = height;
 			jumpVelocity = originJumpVelocity;
+			isJump = false;
 			SetState(L_138);
 		}
 	}
@@ -3167,6 +3414,7 @@ void Player::L147() // °£ÆÄº£±â
 		else if (K_CTRLSPACE)	SetState(L_151);	// Æ¯¼ö ³³µµ
 		else if (K_CTRL && isEvaded)	SetState(L_109);	// ±âÀÎÅ«È¸Àüº£±â
 		else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// ³¯¶óÂ÷±â
+		else if (UI->IsAbleBugSkill() && K_RBUG)		SetState(L_126);	// ¼ö¿ùÀÇÀÚ¼¼
 		else if (K_SPACE)		Roll();				// ±¸¸£±â
 	}
 
@@ -3297,6 +3545,7 @@ void Player::L154() // ¾É¾Æ¹ßµµ º£±â
 			else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106); // ±âÀÎ º£±â 1		
 			else if (K_CTRLRMB)		SetState(L_147); // °£ÆÄ º£±â
 			else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// ³¯¶óÂ÷±â
+			else if (UI->IsAbleBugSkill() && K_RBUG)		SetState(L_126);	// ¼ö¿ùÀÇÀÚ¼¼
 			else if (K_SPACE)		Roll();			 // ±¸¸£±â
 		}
 	}
@@ -3345,11 +3594,12 @@ void Player::L155() // ¾É¾Æ¹ßµµ ±âÀÎº£±â
 
 	// Ä«¿îÅÍ ¼º°ø ½Ã Ãß°¡ °ø°Ý ÇÁ·¹ÀÓ
 	{
-		if (isEvaded && isHit && (RATIO > 0.385 && RATIO < 0.39))
+		if (isHit && (RATIO > 0.385 && RATIO < 0.39))
 		{
 			spSuccessParticle->Play(Pos(), 0);
 			if (isHitL155 == false)
 				UIManager::Get()->PlusCotingLevel();
+
 
 			isHitL155 = true;
 			Sounds::Get()->Play("pl_wp_l_swd_epv_media.bnk.2_8", .5f);
@@ -3367,6 +3617,7 @@ void Player::L155() // ¾É¾Æ¹ßµµ ±âÀÎº£±â
 			else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_108); // ±âÀÎ º£±â 3		
 			else if (K_CTRLSPACE)	SetState(L_151); // Æ¯¼ö ³³µµ
 			else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// ³¯¶óÂ÷±â
+			else if (UI->IsAbleBugSkill() && K_RBUG)		SetState(L_126);	// ¼ö¿ùÀÇÀÚ¼¼
 			else if (K_SPACE)		Roll();			 // ±¸¸£±â
 		}
 	}
@@ -3520,7 +3771,7 @@ void Player::R402() // ¹°¾à ´Ù¸ÔÀº
 		Sounds::Get()->Play("health_potion", 0.3f);
 		potionParticle->Play(Pos() + Back() * 10, { 0,0,0 });
 	}
-	
+
 	if (RATIO > 0.96)
 	{
 		if (K_MOVE)
@@ -3560,7 +3811,7 @@ void Player::R601() // ¼ýµ¹Áú
 		sutdol->Play(GetTranslationByNode(rightHandNode), r);
 		Sounds::Get()->Play("wheatstone1", 0.3f);
 	}
-	
+
 
 	if (RATIO > 0.96)
 		SetState(R_602);
@@ -3578,7 +3829,7 @@ void Player::R602() // ¼ýµ¹ ¸¶¹«¸®
 		sutdol->Play(GetTranslationByNode(rightHandNode), r);
 		Sounds::Get()->Play("wheatstone1", 0.3f);
 	}
-	if(RATIO>0.59)
+	if (RATIO > 0.59)
 		sutdol->SetPos(longSword->GlobalPos() + longSword->Back() * 120.0f);
 	if (RATIO < 0.6 && RATIO>0.59)
 	{
@@ -3715,14 +3966,31 @@ void Player::D011()  // 7ÀÇ ¹Ý´ë
 void Player::D015() // ÃÄ¸Â°í ´ýºí¸µ ³¯¶ó°¡±â
 {
 	PLAY;
+
+	if (!playOncePerMotion)
+	{
+		jumpVelocity = 2.0f;
+		playOncePerMotion = true;
+	}
 	//if (INIT)
 	//	RandHurtVoice();
 	if (Jump(300))
 	{
 		Pos() += Back() * temp4 * DELTA;
+
+		if (UI->IsAbleBugSkill() && K_LBUG)
+		{
+			playOncePerMotion = false;
+
+			Vector3 camRot = CAM->Rot();
+			camRot.y += XM_PI;
+			Rot().y = camRot.y;
+			SetState(W_009);
+		}
 	}
 	else
 	{
+		playOncePerMotion = false;
 		SetState(D_016);
 	}
 }
@@ -3888,6 +4156,286 @@ void Player::D080()
 	}
 }
 
+void Player::W005() // »ç¼±À¸·Î ½î´Â ¹åÁÙ¹ú·¹ Àü µ¿ÀÛ
+{
+	PLAY;
+
+	if (!playOncePerMotion)
+	{
+		//UI->UseBugSkill();
+		Sounds::Get()->Play("wirebug", 3.5f);
+		playerWireBug->SetActive(true);
+		playOncePerMotion = true;
+	}
+
+	if (RATIO > 0.5 && !playOncePerMotion2)
+	{
+		Vector3 pos = GetTranslationByNode(leftHandNode);
+		playerWireBug->SetMove(pos, true, Back() * 2000 + Up() * 800);
+		playOncePerMotion2 = true;
+	}
+
+	if (RATIO > 0.96)
+	{
+		playerWireBug->SetStop();
+		playOncePerMotion = false;
+		playOncePerMotion2 = false;
+		SetState(W_006);
+	}
+}
+
+void Player::W006() // W005¿¡¼­ ÀÌ¾îÁö´Â Ã¼°øÁß µ¿ÀÛ
+{
+	PLAY;
+
+	if (RATIO > 0.25)
+	{
+		playerWireBug->SetActive(false);
+		playerWireBug->SetMove(Vector3::Zero(), false, Vector3::Zero());
+	}
+
+	if (Jump(1200, 1.5))
+	{
+		if (RATIO > 0.1 && UI->IsAbleBugSkill() && K_LBUG)
+		{
+			Vector3 camRot = CAM->Rot();
+			camRot.y += XM_PI;
+			Rot().y = camRot.y;
+			SetState(W_009);
+		}
+
+		else if (RATIO > 0.1 && UI->IsAbleBugSkill() && K_SPACE)
+		{
+			Vector3 camRot = CAM->Rot();
+			camRot.y += XM_PI;
+			Rot().y = camRot.y;
+			SetState(W_020);
+		}
+
+		if (RATIO > 0.96)
+		{
+			if (KEY_DP('W'))
+			{
+				SetState(F_073);
+				playerWireBug->SetActive(false);
+				playerWireBug->SetMove(Vector3::Zero(), false, Vector3::Zero());
+			}
+			else
+			{
+				SetState(F_072);
+				playerWireBug->SetActive(false);
+				playerWireBug->SetMove(Vector3::Zero(), false, Vector3::Zero());
+			}
+		}
+	}
+	else
+	{
+		if (KEY_DP('W'))
+		{
+			SetState(F_073);
+			playerWireBug->SetActive(false);
+			playerWireBug->SetMove(Vector3::Zero(), false, Vector3::Zero());
+		}
+		else
+		{
+			SetState(F_072);
+			playerWireBug->SetActive(false);
+			playerWireBug->SetMove(Vector3::Zero(), false, Vector3::Zero());
+		}
+	}
+}
+
+void Player::W007() // ³«ÇÏ¸ð¼Ç Loop
+{
+	PLAY;
+
+	if (RATIO > 0.96)
+	{
+		ReturnIdle2();
+	}
+}
+
+void Player::W009() // °øÁß¿¡¼­ Àü¹æÀ¸·Î ¹åÁÙ¹ú·¹ ¹ß»ç
+{
+	PLAY;
+
+	Pos() -= Forward() * 500 * DELTA;
+
+	if (!playOncePerMotion)
+	{
+		//UI->UseBugSkill();
+		Sounds::Get()->Play("wirebug", 3.5f);
+		playerWireBug->SetActive(true);
+		playOncePerMotion = true;
+	}
+
+	if (!playOncePerMotion2)
+	{
+		Vector3 pos = GetTranslationByNode(leftHandNode);
+		playerWireBug->SetMove(pos, true, Back() * 1300 + Up() * 100);
+		playOncePerMotion2 = true;
+	}
+
+	if (RATIO > 0.96)
+	{
+		playOncePerMotion = false;
+		playOncePerMotion2 = false;
+		playerWireBug->SetStop();
+		SetState(W_020);
+	}
+}
+
+void Player::W010() // »ç¼± ¹åÁÙ¹ú·¹ ¹ß»ç ÂøÁö ÈÄ ´Þ¸®±â
+{
+	PLAY;
+
+	if (RATIO > 0.96)
+	{
+		SetState(W_010);
+	}
+}
+
+void Player::W020() // ¹åÁÙ¹ú·¹ ¹ß»ç ÈÄ °øÁß Ã¼°øÁß ±¸¸£±â ´­·¶À» ¶§
+{
+	PLAY;
+
+	if (!playOncePerMotion)
+	{
+		jumpVelocity = 3.0f;
+		playOncePerMotion = true;
+	}
+
+	if (Jump(1200, 1.5))
+	{
+		if (RATIO > 0.96)
+		{
+			if (KEY_DP('W'))
+			{
+				SetState(F_073);
+				playerWireBug->SetActive(false);
+				playerWireBug->SetMove(Vector3::Zero(), false, Vector3::Zero());
+			}
+			else
+			{
+				SetState(F_072);
+				playerWireBug->SetActive(false);
+				playerWireBug->SetMove(Vector3::Zero(), false, Vector3::Zero());
+			}
+		}
+	}
+	else
+	{
+		if (KEY_DP('W'))
+		{
+			SetState(F_073);
+			playerWireBug->SetActive(false);
+			playerWireBug->SetMove(Vector3::Zero(), false, Vector3::Zero());
+		}
+		else
+		{
+			SetState(F_072);
+			playerWireBug->SetActive(false);
+			playerWireBug->SetMove(Vector3::Zero(), false, Vector3::Zero());
+		}
+	}
+}
+
+void Player::W062() // °øÁß¿¡¼­ ¸Å´Þ·ÁÀÖ±â ½ÃÀÛ
+{
+	PLAY;
+
+	if (!playOncePerMotion)
+	{
+		playerWireBug->SetActive(true);
+		playOncePerMotion = true;
+	}
+
+	if (RATIO > 0.96)
+	{
+		SetState(W_063);
+	}
+}
+
+void Player::W063() // W062 ·çÇÁ
+{
+	PLAY;
+
+	if (RATIO > 0.96)
+	{
+		SetState(W_007);
+	}
+}
+
+void Player::F072() // ÂøÁö ÈÄ Á¦ÀÚ¸®
+{
+	PLAY;
+
+	if (RATIO > 0.96)
+	{
+		ReturnIdle2();
+	}
+}
+
+void Player::F073() // ÂøÁö ÈÄ ¾ÕÀ¸·Î ÀÌµ¿
+{
+	PLAY;
+
+	if (RATIO > 0.96)
+	{
+		SetState(S_011);
+	}
+}
+
+void Player::T019() // ¸Ê ÀÔÀå
+{
+	PLAY;
+
+	if (RATIO > 0.96)
+	{
+		ReturnIdle2();
+	}
+}
+
+void Player::T020() // ¸Ê µµÂø
+{
+	PLAY;
+
+	if (RATIO > 0.96)
+	{
+		ReturnIdle2();
+	}
+}
+
+void Player::T050() // °¥¹«¸® ½ÃÀÛ
+{
+	PLAY;
+
+	if (RATIO > 0.96)
+	{
+		SetState(T_051);
+	}
+}
+
+void Player::T051() // °¥¹«¸® Áß°£
+{
+	PLAY;
+
+	if (RATIO > 0.96)
+	{
+		SetState(T_052);
+	}
+}
+
+void Player::T052() // °¥¹«¸® ³¡
+{
+	PLAY;
+
+	if (RATIO > 0.96)
+	{
+		ReturnIdle2();
+	}
+}
+
 
 void Player::MotionRotate(float degree)
 {
@@ -3918,45 +4466,45 @@ void Player::StatusRender()
 {
 	vector<string> strStatus;
 
-	strStatus.push_back("L_001 ¹ßµµ »óÅÂ ´ë±â");
-	strStatus.push_back("L_002 ¹ßµµ");
-	strStatus.push_back("L_003 ¼­¼­³³µµ");
-	strStatus.push_back("L_004 ¹ßµµ»óÅÂ °È±â");
-	strStatus.push_back("L_005 ¹ßµµ»óÅÂ °È±â ½ÃÀÛ");
-	strStatus.push_back("L_006 ¹ßµµ»óÅÂ ÁÂ·Î °È±â ½ÃÀÛ");
-	strStatus.push_back("L_007 ¹ßµµ»óÅÂ ¿ì·Î °È±â ½ÃÀÛ");
-	strStatus.push_back("L_008 ¸ØÃã");
-	strStatus.push_back("L_009 °ÉÀ¸¸é¼­ ³³µµ ");
-	strStatus.push_back("L_010 ¾Õ±¸¸£±â");
-	strStatus.push_back("L_011 ¿ÞÂÊ±¸¸£±â");
-	strStatus.push_back("L_012 ¿À¸¥ÂÊ±¸¸£±â");
-	strStatus.push_back("L_013 µÚ±¸¸£±â");
-	strStatus.push_back("L_014 ±¸¸¥ÈÄ°È±â");
-	strStatus.push_back("L_015 ±¸¸¥ÈÄµÚ°È±â");
-	strStatus.push_back("L_071 ³·Àº³ôÀÌ¾ð´öÆÄÄí¸£");
-	strStatus.push_back("L_072 Áß°£³ôÀÌ¾ð´öÆÄÄí¸£");
-	strStatus.push_back("L_073 ³ôÀº³ôÀÌ¾ð´öÆÄÄí¸£");
-	strStatus.push_back("L_077 ?");
-	strStatus.push_back("L_078 ?");
-	strStatus.push_back("L_079 ?");
-	strStatus.push_back("L_101 ³»µðµ®º£±â");
-	strStatus.push_back("L_102 ¼¼·Îº£±â");
-	strStatus.push_back("L_103 º£¾î³»¸®±â");
-	strStatus.push_back("L_104 Âî¸£±â");
-	strStatus.push_back("L_105 º£¾î¿Ã¸®±â");
-	strStatus.push_back("L_106 ±âÀÎº£±â1");
-	strStatus.push_back("L_107 ±âÀÎº£±â2");
-	strStatus.push_back("L_108 ±âÀÎº£±â3");
-	strStatus.push_back("L_109 ±âÀÎÅ«È¸Àüº£±â");
-	strStatus.push_back("L_110 ±âÀÎ³»µðµ®º£±â");
-	strStatus.push_back("L_111 ÀÏÀÚº£±â");
-
-	strStatus.push_back("S_003 ³³µµ ´Þ¸®±â");
-	strStatus.push_back("S_008 Á¦ÀÚ¸® ³³µµ");
-	strStatus.push_back("S_009 °ÉÀ¸¸é¼­ ³³µµ");
-
-	string fps = "Status : " + strStatus.at((UINT)curState);
-	Font::Get()->RenderText(fps, { 150, WIN_HEIGHT - 30 });
+	//	strStatus.push_back("L_001 ¹ßµµ »óÅÂ ´ë±â");
+	//	strStatus.push_back("L_002 ¹ßµµ");
+	//	strStatus.push_back("L_003 ¼­¼­³³µµ");
+	//	strStatus.push_back("L_004 ¹ßµµ»óÅÂ °È±â");
+	//	strStatus.push_back("L_005 ¹ßµµ»óÅÂ °È±â ½ÃÀÛ");
+	//	strStatus.push_back("L_006 ¹ßµµ»óÅÂ ÁÂ·Î °È±â ½ÃÀÛ");
+	//	strStatus.push_back("L_007 ¹ßµµ»óÅÂ ¿ì·Î °È±â ½ÃÀÛ");
+	//	strStatus.push_back("L_008 ¸ØÃã");
+	//	strStatus.push_back("L_009 °ÉÀ¸¸é¼­ ³³µµ ");
+	//	strStatus.push_back("L_010 ¾Õ±¸¸£±â");
+	//	strStatus.push_back("L_011 ¿ÞÂÊ±¸¸£±â");
+	//	strStatus.push_back("L_012 ¿À¸¥ÂÊ±¸¸£±â");
+	//	strStatus.push_back("L_013 µÚ±¸¸£±â");
+	//	strStatus.push_back("L_014 ±¸¸¥ÈÄ°È±â");
+	//	strStatus.push_back("L_015 ±¸¸¥ÈÄµÚ°È±â");
+	//	strStatus.push_back("L_071 ³·Àº³ôÀÌ¾ð´öÆÄÄí¸£");
+	//	strStatus.push_back("L_072 Áß°£³ôÀÌ¾ð´öÆÄÄí¸£");
+	//	strStatus.push_back("L_073 ³ôÀº³ôÀÌ¾ð´öÆÄÄí¸£");
+	//	strStatus.push_back("L_077 ?");
+	//	strStatus.push_back("L_078 ?");
+	//	strStatus.push_back("L_079 ?");
+	//	strStatus.push_back("L_101 ³»µðµ®º£±â");
+	//	strStatus.push_back("L_102 ¼¼·Îº£±â");
+	//	strStatus.push_back("L_103 º£¾î³»¸®±â");
+	//	strStatus.push_back("L_104 Âî¸£±â");
+	//	strStatus.push_back("L_105 º£¾î¿Ã¸®±â");
+	//	strStatus.push_back("L_106 ±âÀÎº£±â1");
+	//	strStatus.push_back("L_107 ±âÀÎº£±â2");
+	//	strStatus.push_back("L_108 ±âÀÎº£±â3");
+	//	strStatus.push_back("L_109 ±âÀÎÅ«È¸Àüº£±â");
+	//	strStatus.push_back("L_110 ±âÀÎ³»µðµ®º£±â");
+	//	strStatus.push_back("L_111 ÀÏÀÚº£±â");
+	//
+	//	strStatus.push_back("S_003 ³³µµ ´Þ¸®±â");
+	//	strStatus.push_back("S_008 Á¦ÀÚ¸® ³³µµ");
+	//	strStatus.push_back("S_009 °ÉÀ¸¸é¼­ ³³µµ");
+	//
+	//	string fps = "Status : " + strStatus.at((UINT)curState);
+	//	Font::Get()->RenderText(fps, { 150, WIN_HEIGHT - 30 });
 }
 
 void Player::DamageRender()
@@ -4015,7 +4563,7 @@ bool Player::Jump(float moveSpeed, float jumpSpeed)
 	Pos() -= Forward() * moveSpeed * DELTA;
 	Pos().y += jumpVelocity;
 
-	if (realPos->Pos().y >= height - 100)
+	if (realPos->Pos().y >= height)
 	{
 		isJump = true;
 		return true;
@@ -4023,10 +4571,15 @@ bool Player::Jump(float moveSpeed, float jumpSpeed)
 
 	else
 	{
-		isJump = false;
-		Pos().y = height;
-		jumpVelocity = originJumpVelocity;
-		return false;
+		if (jumpVelocity > 0)
+			return true;
+		else
+		{
+			isJump = false;
+			Pos().y = height;
+			jumpVelocity = originJumpVelocity;
+			return false;
+		}
 	}
 }
 

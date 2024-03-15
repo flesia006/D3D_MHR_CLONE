@@ -183,6 +183,8 @@ using namespace GameMath;
 #include "Objects/Basic/Cylinder.h"
 #include "Objects/Basic/HalfSphere.h"
 #include "Objects/Basic/Cylinder2.h"
+#include "Objects/Basic/ModelQuad.h"
+#include "Objects/Basic/Ring.h"
 
 #include "Objects/Actor/ActorUI.h"
 #include "Objects/UI/ProgressBar.h"
@@ -228,6 +230,7 @@ using namespace GameMath;
 #include "Objects/Particle/FullBurstParticle.h"
 #include "Objects/Particle/FullBurstParticle2.h"
 
+#include "Objects/Particle/CircleEft.h"
 
 #include "Objects/Algorithm/Node.h"
 #include "Objects/Algorithm/Heap.h"
@@ -246,6 +249,7 @@ using namespace GameMath;
 #include "Objects/Character/DummyValphalk.h"
 #include "Objects/Character/Sample.h"
 #include "Objects/Character/WireBug.h"
+#include "Objects/Character/PlayerWireBug.h"
 
 #include "Objects/Manager/BlockManager.h"
 #include "Objects/Manager/KunaiManager.h"

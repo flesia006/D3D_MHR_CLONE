@@ -6,6 +6,7 @@
 #include "Scenes/GridScene.h"
 #include "Scenes/MapDesignScene.h"
 #include "Scenes/ParticleScene.h"
+#include "Scenes/SimpleTestScene.h"
 
 #include "Scenes/NotUse/CubeScene.h"
 #include "Scenes/NotUse/SphereScene.h"
@@ -67,6 +68,9 @@ GameManager::GameManager()
 
 //   SceneManager::Get()->Create("FightTestScene", new FightTestScene());
 //   SceneManager::Get()->Add("FightTestScene");
+
+//    SceneManager::Get()->Create("SimpleTestScene", new SimpleTestScene());
+//    SceneManager::Get()->Add("SimpleTestScene");
 
 //    SceneManager::Get()->Add("Terrain");
 
@@ -174,7 +178,6 @@ void GameManager::Create()
     sound->AddSound("env_114", SoundPath + L"env_114.mp3", true);
     sound->AddSound("questClear", SoundPath + L"quest_Clear.mp3", false);
 
-    //sound->Play("Valphalk_Thema", 0.03f);
     sound->Play("env_114", .5f);
     /////////////////////////////////////////////////////////////
     // Player
@@ -208,7 +211,8 @@ void GameManager::Create()
     Sounds::Get()->AddSound("start", SoundPath + L"Player/start.mp3");
     Sounds::Get()->AddSound("igonan1", SoundPath + L"Player/igonan1.mp3");
     Sounds::Get()->AddSound("igonan2", SoundPath + L"Player/igonan2.mp3");
-
+    Sounds::Get()->AddSound("suwolstart", SoundPath + L"Player/suwolstart.mp3");
+    Sounds::Get()->AddSound("suwolattack", SoundPath + L"Player/suwolattack.mp3");
 
 
     /////////////////////////////////////////////////////////////

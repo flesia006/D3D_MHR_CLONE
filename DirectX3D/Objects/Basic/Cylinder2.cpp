@@ -53,7 +53,7 @@ void Cylinder2::MakeMesh()
 
     indices.reserve(sliceCount * 6);
 
-    UINT sideIndex = (sliceCount + 2) * 2;
+    UINT sideIndex = 0;
 
     for (UINT i = 0; i < sliceCount; i++)
     {

@@ -112,6 +112,8 @@ UIManager::UIManager()
 	orangeRightHalfCircle3 = new Quad(L"Textures/UI/orangeHalfCircle2.png");
 	orangeRightHalfCircle3->SetActive(false);
 
+	questClearUI = new Quad(L"Textures/Quest/0.png");
+
 	// 퀵슬롯 UI 추가
 	quickSlot_Back = new Quad(L"Textures/UI/QickSlot_Back.png");
 	quickSlot_Back->Pos() = { 1224, 200, 0 };
@@ -510,6 +512,9 @@ UIManager::UIManager()
 	lsCoting->Pos() = { 510,900,0 };
 	lsCoting->Scale() *= 1.5f;
 
+	// 퀘스트 클리어 UI
+	questClearUI->Pos() = { CENTER_X , CENTER_Y, 0 };
+
 	ItemManager::Get();
 }
 
@@ -610,6 +615,7 @@ UIManager::~UIManager()
 	}
 	delete valphalkStateIcon1;
 	delete valphalkStateIcon2;
+	delete questClearUI;
 }
 
 void UIManager::Update()
@@ -620,6 +626,8 @@ void UIManager::Update()
 	DragSlotBar();
 	QuickSlotBar();
 	StateIcon();
+
+	UIAlphaOn();
 
 	stamina->UpdateWorld();
 	recover->UpdateWorld();
@@ -655,6 +663,7 @@ void UIManager::Update()
 	dragSlot_ButtonWheel->UpdateWorld();
 	dragSlot_ButtonDown->UpdateWorld();
 	dragSlot_KeyButton->UpdateWorld();
+	questClearUI->UpdateWorld();
 	// 잠시 넣음
 	//===================
 	potionIcon_Q->UpdateWorld();
@@ -833,6 +842,10 @@ void UIManager::Update()
 		slingerBug2->Pos() = { 922.5,120,0 };
 
 		slingerBug3->SetActive(false);
+		blackCircle3->SetActive(false);
+		blackHalfCircle3->SetActive(false);
+		orangeLeftHalfCircle3->SetActive(false);
+		orangeRightHalfCircle3->SetActive(false);
 	}
 	else if (bugCount == 3)
 	{
@@ -888,7 +901,7 @@ void UIManager::Update()
 		orangeRightHalfCircle2->SetActive(true);
 	}
 
-	if (isCoolTime3)
+	if (bugCount == 3 && isCoolTime3)
 	{
 		slingerBug3->SetActive(false);
 		blackCircle3->SetActive(true);
@@ -905,11 +918,9 @@ void UIManager::Update()
 	if (orangeLeftHalfCircle2->Active())
 		orangeLeftHalfCircle2->Rot().z += XM_PIDIV2 * 1 / 360; // 쿨타임 회복속도 부분
 
-	if (orangeLeftHalfCircle3->Active())
+	if (orangeLeftHalfCircle3->Active() || bugCount == 2)
 		orangeLeftHalfCircle3->Rot().z += XM_PIDIV2 * 1 / 360; // 쿨타임 회복속도 부분
 
-	if (KEY_DOWN(VK_RBUTTON))
-		GetWildBug();
 	/////////////////////////
 
 	if (orangeLeftHalfCircle->Rot().z > XM_2PI)
@@ -951,6 +962,12 @@ void UIManager::Update()
 
 void UIManager::PostRender()
 {
+	if (!isRender)
+	{
+		questClearUI->Render();
+		return;
+	}
+
 	recover->Render();
 	hp->Render();
 	stamina->Render();
@@ -1127,6 +1144,42 @@ void UIManager::GetWildBug()
 	bugCount++;
 
 	getWildBug = true;
+}
+
+void UIManager::PlusSpritGauge()
+{
+	curSpiritGauge += 15.0f;
+	if (curSpiritGauge > maxSpiritGauge)
+		curSpiritGauge = maxSpiritGauge;
+}
+
+void UIManager::DoublePlusSpritGauge()
+{
+	curSpiritGauge += 25.0f;
+	if (curSpiritGauge > maxSpiritGauge)
+		curSpiritGauge = maxSpiritGauge;
+}
+
+void UIManager::MinusSpiritGauge()
+{
+	curSpiritGauge -= 20.0f;
+	if (curSpiritGauge < 0)
+		curSpiritGauge = 0;
+}
+
+void UIManager::UIAlphaOn()
+{
+	if (isRender)
+		return;
+
+	clearUITimer += DELTA;
+
+	if (clearUITimer > 0.01f && clearCount < 11)
+	{
+		questClearUI->SetTexture(L"Textures/Quest/" + to_wstring(clearCount) + L".png");
+		clearCount++;
+		clearUITimer = 0.0f;
+	}
 }
 
 void UIManager::QuickSlot()
@@ -1744,9 +1797,9 @@ void UIManager::StateIcon()
 
 bool UIManager::IsAbleBugSkill()
 {
-	if (isCoolTime1 && isCoolTime2)
+	if (bugCount == 2 && isCoolTime1 && isCoolTime2)
 		return false;
-	else if (bugCount == 3 && isCoolTime3)
+	else if (bugCount == 3 && isCoolTime1 && isCoolTime2 && isCoolTime3)
 		return false;
 	else
 		return true;

@@ -1,4 +1,5 @@
 #pragma once
+
 class Sample : public ModelAnimator
 {
 private:
@@ -26,7 +27,8 @@ public:
 	void GUIRender();
 
 	void SetTarget(Transform* target) { this->target = target; }
-	void SetEnemy(Transform* target) { this->enemy = target; }
+	void SetEnemy(Valphalk* target);
+
 	Transform* GetRealPos() { return realPos; }
 	void SetRotPos(Vector3 rot, Vector3 pos)
 	{

@@ -31,9 +31,10 @@ public:
         else if (curDurability <= 20.0f && curDurability >= 0.0f)        return 1.05f;
     }
 
-    float PlusSpritGauge()   { return curSpiritGauge += 15; }   // 기인게이지 늘리는 함수
-    float DoublePlusSpritGauge() { return curSpiritGauge += 25; }
-    float MinusSpiritGauge() { return curSpiritGauge -= 10; }   // 기인게이지 깎는 함수
+    float GetSpritGauge() { return curSpiritGauge; }
+    void PlusSpritGauge();   //{ return curSpiritGauge += 15; }
+    void DoublePlusSpritGauge(); //{ return curSpiritGauge += 25; }
+    void MinusSpiritGauge(); //{ return curSpiritGauge -= 10; }
 
     float GetCotingLevel() { return cotingLevel; }
     float PlusCotingLevel()  {  
@@ -66,11 +67,14 @@ public:
     float curStamina = 100;//임시로 public에 올려둠
     bool staminaActive = false;
 
-    // 발파 상태 아이콘 관령 내용
+    // 발파 상태 아이콘 관련 내용
     bool specialMove = false;
     bool specialMove2 = false;
     bool partDestruct = false;
     bool partDestruct2 = false;
+
+    void SetAllUIOff() { isRender = false; }
+    void UIAlphaOn();
 
 private:
     // 퀵 슬롯 관한 내용
@@ -181,6 +185,9 @@ private:
     Quad* valphalkStateIcon1;
     Quad* valphalkStateIcon2;
 
+    // 퀘스트 클리어
+    Quad* questClearUI;
+
 public:
     UINT cotingLevel = 0;
     UINT bugCount = 2;    
@@ -215,7 +222,7 @@ public:
 
     bool getWildBug = false;
 
-    const float wildBugDurationLimit = 5.0f;
+    const float wildBugDurationLimit = 180.0f;
     float wildBugDuration = 0.0f;
     
     // 퀵 슬롯 실행 할때 유무 확인 하기
@@ -260,5 +267,9 @@ public:
     // 발파 상태 내용
     float stateIconTimer = 0.0f;
     float stateIconTimer2 = 0.0f;
+
+    bool isRender = true;
+    float clearUITimer = 0.0f;
+    UINT clearCount = 0;
 };
 

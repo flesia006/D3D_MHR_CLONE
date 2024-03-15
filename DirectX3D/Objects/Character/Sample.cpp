@@ -101,6 +101,12 @@ void Sample::GUIRender()
 	arrow->GUIRender();
 }
 
+void Sample::SetEnemy(Valphalk* target)
+{
+	this->enemy = target->GetRealPos();
+	ARROW->SetEnemy(target);
+}
+
 void Sample::UpdateWorlds()
 {
 	Vector3 camRot = CAM->Rot();
@@ -122,12 +128,16 @@ void Sample::UpdateWorlds()
 	if (Rot().y < -3.14)			Rot().y += XM_2PI;
 	if (Rot().y > 3.14)				Rot().y -= XM_2PI;
 
-	GetRadBtwTrgt();
-	GetRadBtwEnemy();
-	if(target != nullptr)
+	if (target != nullptr)
+	{
 		lengToTrgt = (target->GlobalPos() - realPos->Pos()).Length();
-	if(enemy != nullptr)
+		GetRadBtwTrgt();
+	}
+	if (enemy != nullptr)
+	{
 		lengToEnemy = (enemy->GlobalPos() - realPos->Pos()).Length();
+		GetRadBtwEnemy();
+	}
 	realPos->Pos() = GetTranslationByNode(1);
 	realPos->Rot() = Rot();
 	realPos->UpdateWorld();
