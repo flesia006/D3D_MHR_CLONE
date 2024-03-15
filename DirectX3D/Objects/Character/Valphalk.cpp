@@ -332,6 +332,7 @@ void Valphalk::Update()
 	DeathCheck();
 	PartDestroyCheck();
 	PushPlayer();
+	QuestClearCount();
 	head->Pos() = realPos->Pos() + Vector3::Up() * 200;
 	head->UpdateWorld();
 
@@ -427,7 +428,7 @@ void Valphalk::Update()
 	if (KEY_DOWN('6'))
 		colliders[LLEG1]->partHp = -100;
 
-	if (KEY_DOWN('7'))
+	if (KEY_DOWN('8'))
 		curHP = -100;
 	//////////////////////////
 }
@@ -1866,6 +1867,15 @@ void Valphalk::FlameOn()
 void Valphalk::FlameOff()
 {
 	FOR(hupgiFire.size()) hupgiFire[i]->Stop();
+}
+
+void Valphalk::QuestClearCount()
+{
+	if (isDead)
+		questClearCountDown += DELTA;
+
+	if (questClearCountDown > questClearCountLimit)
+		UI->SetAllUIOff();
 }
 
 void Valphalk::S_LegAtk()
@@ -5064,15 +5074,17 @@ void Valphalk::E3023() // »ç¸Á
 {
 	PLAY;
 
-	if (RATIO > 0.40 && RATIO < 0.44)
-	{
-		Sounds::Get()->Play("em086_05_vo_media_30", 3.0f);
+	if (INIT)
 		Sounds::Get()->Play("questClear", 0.1f);
-	}
 
+	if (RATIO > 0.40 && RATIO < 0.44)
+		Sounds::Get()->Play("em086_05_vo_media_30", 3.0f);
 	
 	if (RATIO > 0.96)
+	{
+		isDead = true;
 		isPlay = false;
+	}
 }
 
 void Valphalk::E3101()
@@ -5110,11 +5122,17 @@ void Valphalk::E3118()
 {
 	PLAY;
 
+	if (INIT)
+		Sounds::Get()->Play("questClear", 0.1f);
+
 	if (RATIO > 0.40 && RATIO < 0.50)
 		Sounds::Get()->Play("em086_05_vo_media_30", 3.0f);
 
 	if (RATIO > 0.96)
+	{
+		isDead = true;
 		isPlay = false;
+	}
 }
 
 void Valphalk::E4001()

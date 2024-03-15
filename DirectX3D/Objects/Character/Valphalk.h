@@ -155,6 +155,7 @@ public:
 	void minusRLegHP(int damage) { colliders[RLEG1]->partHp -= damage; }
 	void minusTailHP(int damage) { colliders[TAIL]->partHp -= damage; }
 	bool GetIsHupgi() { return isHupGi; }
+	bool GetIsDead() { return isDead; }
 
 	//ColliderName GetName() { return colliderName; }
 	float damage = 0.1f;
@@ -223,6 +224,8 @@ private:
 
 	void FlameOn();
 	void FlameOff();
+
+	void QuestClearCount();
 	// 모션 함수
 
 	void E0003();
@@ -525,6 +528,10 @@ private:
 
 	bool isReverse = false;
 	bool isStagger = false;
+	bool isDead = false;
+
+	float questClearCountDown = 0.0f;
+	const float questClearCountLimit = 10.0f; /////////// 필요에 의하면 수정 가능
 
 public:
 	float maxHP = 25000;
