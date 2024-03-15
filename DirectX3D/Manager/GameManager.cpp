@@ -66,8 +66,8 @@ GameManager::GameManager()
 //    SceneManager::Get()->Create("PlayerTestScene", new PlayerTestScene());
 //    SceneManager::Get()->Add("PlayerTestScene");
 
-   SceneManager::Get()->Create("FightTestScene", new FightTestScene());
-   SceneManager::Get()->Add("FightTestScene");
+//   SceneManager::Get()->Create("FightTestScene", new FightTestScene());
+//   SceneManager::Get()->Add("FightTestScene");
 
 //    SceneManager::Get()->Create("SimpleTestScene", new SimpleTestScene());
 //    SceneManager::Get()->Add("SimpleTestScene");
@@ -233,10 +233,15 @@ void GameManager::Create()
     /////////////////////////////////////////////////////////////
     // Valphalk
     // = Voice = 
+    // 물기
+    sound->AddSound("em086_05_vo_media_7", SoundPath + L"Valphalk/em086_05_vo_media_7.mp3");
+    // 
     // 포효
     sound->AddSound("em086_05_vo_media_10", SoundPath + L"Valphalk/em086_05_vo_media_10.mp3");
     // 흡기 사운드
     sound->AddSound("em086_05_vo_media_20", SoundPath + L"Valphalk/em086_05_vo_media_20.mp3");
+    // "앞발찍기"후 날개찍기
+    sound->AddSound("em086_05_vo_media_21", SoundPath + L"Valphalk/em086_05_vo_media_21.mp3");
     // DownBlast(옆으로돌아 측면 폭발)
     sound->AddSound("em086_05_vo_media_14", SoundPath + L"Valphalk/em086_05_vo_media_14.mp3");
     // 공격 사운드 1 아웅 (downblast 폭발 후)
@@ -247,10 +252,18 @@ void GameManager::Create()
     sound->AddSound("em086_05_vo_media_5", SoundPath + L"Valphalk/em086_05_vo_media_5.mp3");
     // 공격 사운드 6 ("앞발찍기")
     sound->AddSound("em086_05_vo_media_12", SoundPath + L"Valphalk/em086_05_vo_media_12.mp3");
+    // 앞발찍기 후 "날개찍기"
+    sound->AddSound("em086_05_vo_media_16", SoundPath + L"Valphalk/em086_05_vo_media_16.mp3");
     // 급강하 전방폭발
     sound->AddSound("em086_05_vo_media_18", SoundPath + L"Valphalk/em086_05_vo_media_18.mp3");
+    // 뒤돌아찍기 크앙
+    sound->AddSound("em086_05_vo_media_23", SoundPath + L"Valphalk/em086_05_vo_media_23.mp3");
+    // 돌진 보이스
+    sound->AddSound("em086_05_vo_media_24", SoundPath + L"Valphalk/em086_05_vo_media_24.mp3");
     // 대경직
     sound->AddSound("em086_05_vo_media_25", SoundPath + L"Valphalk/em086_05_vo_media_25.mp3");
+    // 날개 싸대기
+    sound->AddSound("em086_05_vo_media_26", SoundPath + L"Valphalk/em086_05_vo_media_26.mp3");
     // 소경직
     sound->AddSound("em086_05_vo_media_29", SoundPath + L"Valphalk/em086_05_vo_media_29.mp3");
     // 사망
@@ -284,6 +297,13 @@ void GameManager::Create()
     sound->AddSound("em086_05_fx_media_30", SoundPath + L"Valphalk/em086_05_fx_media_30.mp3");
     // 폭발 사운드
     sound->AddSound("em086_05_fx_media_35", SoundPath + L"Valphalk/em086_05_fx_media_35.mp3");
+    sound->AddSound("em086_05_fx_media_35_2", SoundPath + L"Valphalk/em086_05_fx_media_35.mp3");
+    // 돌진 사운드
+    sound->AddSound("em086_05_fx_media_24", SoundPath + L"Valphalk/em086_05_fx_media_24.mp3");
+    // 풀버스트 차지
+    sound->AddSound("em086_05_fx_media_41", SoundPath + L"Valphalk/em086_05_fx_media_41.mp3");
+    sound->AddSound("em086_05_fx_media_3", SoundPath + L"Valphalk/em086_05_fx_media_3.mp3");
+    sound->AddSound("em086_05_fx_media_11", SoundPath + L"Valphalk/em086_05_fx_media_11.mp3");
 
 
     // = SE = ( 폭발음, 걸음 소리 등)

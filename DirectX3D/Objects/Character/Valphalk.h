@@ -232,7 +232,6 @@ private:
 	void E0007();
 	void E0043();
 	void E0044(float degree);
-	void E0044a(float degree);
 	void E0045(float degree);
 	void E0055();
 	void E0059();
