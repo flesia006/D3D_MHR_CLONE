@@ -66,8 +66,8 @@ GameManager::GameManager()
 //    SceneManager::Get()->Create("PlayerTestScene", new PlayerTestScene());
 //    SceneManager::Get()->Add("PlayerTestScene");
 
-   SceneManager::Get()->Create("FightTestScene", new FightTestScene());
-   SceneManager::Get()->Add("FightTestScene");
+//   SceneManager::Get()->Create("FightTestScene", new FightTestScene());
+//   SceneManager::Get()->Add("FightTestScene");
 
 //    SceneManager::Get()->Create("SimpleTestScene", new SimpleTestScene());
 //    SceneManager::Get()->Add("SimpleTestScene");

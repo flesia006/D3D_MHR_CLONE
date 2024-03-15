@@ -51,7 +51,6 @@ void ValphalkTestScene::Render()
 
 void ValphalkTestScene::PostRender()
 {
-	UIManager::Get()->PostRender();
 	garuk->PostRender();
 }
 
