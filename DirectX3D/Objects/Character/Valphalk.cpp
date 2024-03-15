@@ -647,7 +647,7 @@ void Valphalk::Storm()
 	if (sequence == 2) // 공중에서 자유 비행중
 	{
 		Pos().z += 8000 * DELTA;
-		Scale() = { 0.2f,0.2f,0.2f };
+		Scale() = { 0.3f,0.3f,0.3f };
 		if (stormTime < 4.2f && stormTime>4.1f)
 			Sounds::Get()->Play("em086_05_fx_media_33", 0.5f);
 
@@ -3376,7 +3376,7 @@ void Valphalk::E1155() // 비상
 	PLAY;
 	//Vector3 Value = { 0.1f,0.1f,0.1f };
 	//if (Scale().x < Value.x && Scale().y < Value.y && Scale().z < Value.z) // 비상중 멀리 날아간 것 처럼 보이도록 점점 작게 만듦
-	Scale() = Lerp(Scale(), { 0.2f,0.2f,0.2f }, 0.008f);
+	Scale() = Lerp(Scale(), { 0.3f,0.3f,0.3f }, 0.008f);
 	if (RATIO < 0.1)
 	{
 		if (!UI->partDestruct)
