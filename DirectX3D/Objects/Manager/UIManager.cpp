@@ -358,10 +358,12 @@ UIManager::UIManager()
 		L"Textures/UI/LSCoting_none.png"
 	);
 
-	valphalkStateIcon1 = new Quad(L"Textures/UI/StateIcon.png");
+	valphalkStateIcon1 = new Quad(L"Textures/UI/StateIcon1.png");
 	valphalkStateIcon1->Pos() = { 1700, 600 };
-	valphalkStateIcon2 = new Quad(L"Textures/UI/StateIcon.png");
+	valphalkStateIcon2 = new Quad(L"Textures/UI/StateIcon2.png");
 	valphalkStateIcon2->Pos() = { 1700, 500 };
+	valphalkStateIcon3 = new Quad(L"Textures/UI/StateIcon3.png");
+	valphalkStateIcon3->Pos() = { 1700, 600 };
 
 	// 아이템 아이콘 추가 (퀵슬롯 쪽)
 	potionIcon_Q = new Quad(L"Textures/UI/Potion.png");
@@ -515,6 +517,16 @@ UIManager::UIManager()
 	// 퀘스트 클리어 UI
 	questClearUI->Pos() = { CENTER_X , CENTER_Y, 0 };
 
+	// 갈무리 아이콘
+	materialIcon1 = new Quad(L"Textures/UI/MaterialIcon1.png");
+	materialIcon1->Pos() = { 1700,600 };
+
+	materialIcon2 = new Quad(L"Textures/UI/MaterialIcon2.png");
+	materialIcon2->Pos() = { 1700,500 };
+
+	materialIcon3 = new Quad(L"Textures/UI/MaterialIcon3.png");
+	materialIcon3->Pos() = { 1700,400 };
+
 	ItemManager::Get();
 }
 
@@ -615,7 +627,11 @@ UIManager::~UIManager()
 	}
 	delete valphalkStateIcon1;
 	delete valphalkStateIcon2;
+	delete valphalkStateIcon3;
 	delete questClearUI;
+	delete materialIcon1;
+	delete materialIcon2;
+	delete materialIcon3;
 }
 
 void UIManager::Update()
@@ -664,6 +680,9 @@ void UIManager::Update()
 	dragSlot_ButtonDown->UpdateWorld();
 	dragSlot_KeyButton->UpdateWorld();
 	questClearUI->UpdateWorld();
+	materialIcon1->UpdateWorld();
+	materialIcon2->UpdateWorld();
+	materialIcon3->UpdateWorld();
 	// 잠시 넣음
 	//===================
 	potionIcon_Q->UpdateWorld();
@@ -715,6 +734,7 @@ void UIManager::Update()
 	}
 	valphalkStateIcon1->UpdateWorld();
 	valphalkStateIcon2->UpdateWorld();
+	valphalkStateIcon3->UpdateWorld();
 	//hp, stamina 부분
 	hp->SetAmount(curHP / maxHP);
 	recover->SetAmount(recoverHP / maxHP);
@@ -1027,27 +1047,56 @@ void UIManager::PostRender()
 	NumberSlot();
 	if (partDestruct)
 	{
+		valphalkStateIcon1->SetTexture(L"Textures/UI/StateIcon1.png");
 		valphalkStateIcon1->Render();
-		Font::Get()->RenderText("영묘한 광채의 발파루크", { valphalkStateIcon1->Pos().x + 108, valphalkStateIcon1->Pos().y + 18 });
-		Font::Get()->RenderText("부위 파괴", { valphalkStateIcon1->Pos().x - 18, valphalkStateIcon1->Pos().y - 15 });
 	}
 	if (partDestruct2)
 	{
+		valphalkStateIcon2->SetTexture(L"Textures/UI/StateIcon1.png");
 		valphalkStateIcon2->Render();
-		Font::Get()->RenderText("영묘한 광채의 발파루크", { valphalkStateIcon2->Pos().x + 108, valphalkStateIcon2->Pos().y + 18 });
-		Font::Get()->RenderText("부위 파괴", { valphalkStateIcon2->Pos().x - 18, valphalkStateIcon2->Pos().y - 15 });
 	}
 	if (specialMove)
 	{
+		valphalkStateIcon1->SetTexture(L"Textures/UI/StateIcon2.png");
 		valphalkStateIcon1->Render();
-		Font::Get()->RenderText("영묘한 광채의 발파루크", { valphalkStateIcon1->Pos().x + 108, valphalkStateIcon1->Pos().y + 18 });
-		Font::Get()->RenderText("습격", { valphalkStateIcon1->Pos().x - 68, valphalkStateIcon1->Pos().y - 15 });	
 	}
 	if (specialMove2)
 	{
+		valphalkStateIcon2->SetTexture(L"Textures/UI/StateIcon2.png");
 		valphalkStateIcon2->Render();
-		Font::Get()->RenderText("영묘한 광채의 발파루크", { valphalkStateIcon2->Pos().x + 108, valphalkStateIcon2->Pos().y + 18 });
-		Font::Get()->RenderText("습격", { valphalkStateIcon2->Pos().x - 68, valphalkStateIcon2->Pos().y - 15 });
+	}
+	if (valDeath)
+		valphalkStateIcon3->Render();
+
+	if (captureIcon1)
+	{
+		switch (randNum1)
+		{
+		case 0:		materialIcon1->Render(); break;
+		case 1:		materialIcon1->SetTexture(L"Textures/UI/MaterialIcon2.png"); materialIcon1->Render(); break;
+		case 2:		materialIcon1->SetTexture(L"Textures/UI/MaterialIcon3.png"); materialIcon1->Render(); break;
+		}
+		//materialIcon1->Render();
+	}
+	if (captureIcon2)
+	{
+		switch (randNum2)
+		{
+		case 0:		materialIcon2->SetTexture(L"Textures/UI/MaterialIcon1.png"); materialIcon2->Render(); break;
+		case 1:		materialIcon2->Render(); break;
+		case 2:		materialIcon2->SetTexture(L"Textures/UI/MaterialIcon3.png"); materialIcon2->Render(); break;
+		}
+		//materialIcon2->Render();
+	}
+	if (captureIcon3)
+	{
+		switch (randNum3)
+		{
+		case 0:		materialIcon3->SetTexture(L"Textures/UI/MaterialIcon1.png"); materialIcon3->Render(); break;
+		case 1:		materialIcon3->SetTexture(L"Textures/UI/MaterialIcon2.png"); materialIcon3->Render(); break;
+		case 2:		materialIcon3->Render(); break;
+		}
+		//0materialIcon3->Render();
 	}
 
 	ItemManager::Get()->PostRender();
@@ -1765,10 +1814,10 @@ void UIManager::StateIcon()
 	if (partDestruct || specialMove)
 	{
 		stateIconTimer += DELTA;
-		if (stateIconTimer > 5.0f)
+		if (stateIconTimer > 4.0f)
 		{
-			valphalkStateIcon1->Pos().y += 15.0f * DELTA;
-			if (stateIconTimer > 6.5f)
+			valphalkStateIcon1->Pos().y += 30.0f * DELTA;
+			if (stateIconTimer > 5.0f)
 			{
 				partDestruct = false;
 				specialMove = false;
@@ -1781,15 +1830,79 @@ void UIManager::StateIcon()
 	{
 		stateIconTimer2 += DELTA;
 
-		if (stateIconTimer2 > 5.0f)
+		if (stateIconTimer2 > 4.0f)
 		{
-			valphalkStateIcon2->Pos().y += 15.0f * DELTA;
-			if (stateIconTimer2 > 6.5f)
+			valphalkStateIcon2->Pos().y += 30.0f * DELTA;
+			if (stateIconTimer2 > 5.0f)
 			{
 				partDestruct2 = false;
 				specialMove2 = false;
 				stateIconTimer2 = 0.0f;
 				valphalkStateIcon2->Pos() = { 1700, 500 };
+			}
+		}
+	}
+
+	if (valDeath)
+	{
+		stateIconTimer3 += DELTA;
+
+		if (stateIconTimer3 > 4.0f)
+		{
+			valphalkStateIcon3->Pos().y += 30.0f * DELTA;
+			if (stateIconTimer3 > 5.0f)
+			{
+				valDeath = false;
+				stateIconTimer3 = 0.0f;
+				valphalkStateIcon3->Pos() = { 1700, 600 };
+			}
+		}
+	}
+
+	//////////////////////
+	//갈무리 부분
+	if (captureIcon1)
+	{
+		capturingTimer1 += DELTA;
+
+		if (capturingTimer1 > 4.0f)
+		{
+			materialIcon1->Pos().y += 30.0f * DELTA;
+			if (capturingTimer1 > 5.0f)
+			{
+				captureIcon1 = false;
+				capturingTimer1 = 0.0f;
+				materialIcon1->Pos() = { 1700, 600 };
+			}
+		}
+	}
+	if (captureIcon2)
+	{
+		capturingTimer2 += DELTA;
+
+		if (capturingTimer2 > 4.0f)
+		{
+			materialIcon2->Pos().y += 30.0f * DELTA;
+			if (capturingTimer2 > 5.0f)
+			{
+				captureIcon2 = false;
+				capturingTimer2 = 0.0f;
+				materialIcon2->Pos() = { 1700, 500 };
+			}
+		}
+	}
+	if (captureIcon3)
+	{
+		capturingTimer3 += DELTA;
+
+		if (capturingTimer3 > 4.0f)
+		{
+			materialIcon3->Pos().y += 30.0f * DELTA;
+			if (capturingTimer3 > 5.0f)
+			{
+				captureIcon3 = false;
+				capturingTimer3 = 0.0f;
+				materialIcon3->Pos() = { 1700, 400 };
 			}
 		}
 	}

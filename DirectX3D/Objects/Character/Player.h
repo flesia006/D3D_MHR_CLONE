@@ -48,7 +48,10 @@ private:
 		W_020, W_062, W_063, F_072, F_073,
 
 		// ¸Ê ÀÔÀå, µµÂø ¹× °¥¹«¸® ¸ð¼Ç
-		T_019, T_020, T_050, T_051, T_052
+		T_019, T_020, T_050, T_051, T_052,
+
+		// ½ÃÀÛ ¸ð¼Ç(ÆÈÂ¯)
+		E_092
 	};
 
 	enum Rotation
@@ -289,6 +292,8 @@ private:
 	void T051();
 	void T052();
 
+	void E092();
+
 private:
 	Transform* mainHand = nullptr;
 	Transform* backSwd = nullptr;
@@ -334,8 +339,8 @@ private:
 	UINT lastHitPart = 0;
 	Vector3 lastSwordDir;
 
-	State curState = L_101;
-	State preState = L_101;
+	State curState = E_092;
+	State preState = E_092;
 
 	float moveSpeed = 4000 * DELTA;
 	float rotSpeed = 5.0f;

@@ -183,11 +183,6 @@ void Player::Update()
 	if (KEY_DOWN('5'))
 		UI->PlusCotingLevel();
 
-	if (KEY_DOWN('6'))
-		SetState(T_050);
-
-	if (KEY_DOWN('7'))
-		UI->SetAllUIOff();
 	///////////////////////////////
 }
 
@@ -699,6 +694,8 @@ void Player::Control()
 	case Player::T_050:		T050();		break;
 	case Player::T_051:		T051();		break;
 	case Player::T_052:		T052();		break;
+
+	case Player::E_092:		E092();		break;
 	}
 
 	if (KEY_UP('W') || KEY_UP('A') || KEY_UP('S') || KEY_UP('D'))
@@ -1910,6 +1907,8 @@ void Player::ReadClips()
 	ReadClip("T_050");
 	ReadClip("T_051");
 	ReadClip("T_052");
+
+	ReadClip("E_092");
 }
 
 void Player::RecordLastPos()
@@ -4421,6 +4420,7 @@ void Player::T050() // 갈무리 시작
 
 	if (RATIO > 0.96)
 	{
+		UI->captureIcon1 = true;
 		SetState(T_051);
 	}
 }
@@ -4437,6 +4437,7 @@ void Player::T051() // 갈무리 중간
 
 	if (RATIO > 0.96)
 	{
+		UI->captureIcon2 = true;
 		SetState(T_052);
 	}
 }
@@ -4454,10 +4455,19 @@ void Player::T052() // 갈무리 끝
 
 	if (RATIO > 0.96)
 	{
+		UI->captureIcon3 = true;
 		isCaptured = true;
 		isCaptureUIActive = false;
 		ReturnIdle2();
 	}
+}
+
+void Player::E092()
+{
+	PLAY;
+
+	if (RATIO > 0.96)
+		ReturnIdle2();
 }
 
 
@@ -4762,10 +4772,7 @@ void Player::Capture()
 		isCaptureUIActive = true;
 
 		if (KEY_PRESS('G')) // 키 변경 가능
-		{
-			Sounds::Get()->Play("capturing", 1.0f);
 			SetState(T_050);
-		}
 	}
 	else
 		isCaptureUIActive = false;

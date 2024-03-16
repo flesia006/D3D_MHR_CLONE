@@ -72,6 +72,7 @@ public:
     bool specialMove2 = false;
     bool partDestruct = false;
     bool partDestruct2 = false;
+    bool valDeath = false;
 
     void SetAllUIOff() { isRender = false; }
     void UIAlphaOn();
@@ -184,9 +185,15 @@ private:
     // 발파 상태 UI
     Quad* valphalkStateIcon1;
     Quad* valphalkStateIcon2;
+    Quad* valphalkStateIcon3;
 
     // 퀘스트 클리어
     Quad* questClearUI;
+
+    // 갈무리 아이콘
+    Quad* materialIcon1;
+    Quad* materialIcon2;
+    Quad* materialIcon3;
 
 public:
     UINT cotingLevel = 0;
@@ -267,9 +274,23 @@ public:
     // 발파 상태 내용
     float stateIconTimer = 0.0f;
     float stateIconTimer2 = 0.0f;
+    float stateIconTimer3 = 0.0f;
 
     bool isRender = true;
     float clearUITimer = 0.0f;
     UINT clearCount = 0;
+
+    // 갈무리 아이콘 시간 체크용
+    bool captureIcon1 = false;
+    bool captureIcon2 = false;
+    bool captureIcon3 = false;
+
+    float capturingTimer1 = 0.0f;
+    float capturingTimer2 = 0.0f;
+    float capturingTimer3 = 0.0f;
+
+    UINT randNum1 = rand() % 3;
+    UINT randNum2 = rand() % 3;
+    UINT randNum3 = rand() % 3;
 };
 
