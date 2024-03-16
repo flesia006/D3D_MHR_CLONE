@@ -1996,7 +1996,7 @@ void Valphalk::QuestClearCount()
 		questClearCountDown += DELTA;
 
 	if (questClearCountDown > questClearCountLimit)
-		UI->SetAllUIOff();
+		UI->isRender = false;
 }
 
 void Valphalk::S_LegAtk()

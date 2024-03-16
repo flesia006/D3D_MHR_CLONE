@@ -74,8 +74,8 @@ public:
     bool partDestruct2 = false;
     bool valDeath = false;
 
-    void SetAllUIOff() { isRender = false; }
     void UIAlphaOn();
+    void StartUIAlphaOn();
 
 private:
     // 퀵 슬롯 관한 내용
@@ -189,6 +189,8 @@ private:
 
     // 퀘스트 클리어
     Quad* questClearUI;
+    // 퀘스트 시작
+    Quad* questStartUI;
 
     // 갈무리 아이콘
     Quad* materialIcon1;
@@ -276,9 +278,12 @@ public:
     float stateIconTimer2 = 0.0f;
     float stateIconTimer3 = 0.0f;
 
-    bool isRender = true;
+    bool isRender = false;
     float clearUITimer = 0.0f;
     UINT clearCount = 0;
+    float startUITimer = 0.0f;
+    float waitTimer = 0.0f;
+    UINT startCount = 0;
 
     // 갈무리 아이콘 시간 체크용
     bool captureIcon1 = false;

@@ -107,7 +107,7 @@ Player::Player() : ModelAnimator("Player")
 	ReadClips();
 
 	captureUI = new Quad(L"Textures/UI/CaptureUI.png");
-	captureUI->Scale() *= 1.5f;
+	captureUI->Scale() *= 2.0f;
 
 	CAM->SetTarget(head);
 }
@@ -4511,8 +4511,14 @@ void Player::E092()
 {
 	PLAY;
 
+	if (RATIO > 0.05 && RATIO < 0.15)
+		Sounds::Get()->Play("queststart", 2.0f);
+
 	if (RATIO > 0.96)
+	{
+		UI->isRender = true;
 		ReturnIdle2();
+	}
 }
 
 

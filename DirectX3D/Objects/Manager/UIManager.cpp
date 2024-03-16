@@ -113,6 +113,7 @@ UIManager::UIManager()
 	orangeRightHalfCircle3->SetActive(false);
 
 	questClearUI = new Quad(L"Textures/Quest/0.png");
+	questStartUI = new Quad(L"Textures/QuestStart/0.png");
 
 	// 퀵슬롯 UI 추가
 	quickSlot_Back = new Quad(L"Textures/UI/QickSlot_Back.png");
@@ -516,6 +517,9 @@ UIManager::UIManager()
 
 	// 퀘스트 클리어 UI
 	questClearUI->Pos() = { CENTER_X , CENTER_Y, 0 };
+	// 퀘스트 시작 UI
+	questStartUI->Pos() = { CENTER_X, 800,0 };
+	questStartUI->Scale() *= 1.3f;
 
 	// 갈무리 아이콘
 	materialIcon1 = new Quad(L"Textures/UI/MaterialIcon1.png");
@@ -629,6 +633,7 @@ UIManager::~UIManager()
 	delete valphalkStateIcon2;
 	delete valphalkStateIcon3;
 	delete questClearUI;
+	delete questStartUI;
 	delete materialIcon1;
 	delete materialIcon2;
 	delete materialIcon3;
@@ -644,6 +649,7 @@ void UIManager::Update()
 	StateIcon();
 
 	UIAlphaOn();
+	StartUIAlphaOn();
 
 	stamina->UpdateWorld();
 	recover->UpdateWorld();
@@ -680,6 +686,7 @@ void UIManager::Update()
 	dragSlot_ButtonDown->UpdateWorld();
 	dragSlot_KeyButton->UpdateWorld();
 	questClearUI->UpdateWorld();
+	questStartUI->UpdateWorld();
 	materialIcon1->UpdateWorld();
 	materialIcon2->UpdateWorld();
 	materialIcon3->UpdateWorld();
@@ -984,8 +991,16 @@ void UIManager::PostRender()
 {
 	if (!isRender)
 	{
-		questClearUI->Render();
-		return;
+		if (valDeath)
+		{
+			questClearUI->Render();
+			return;
+		}
+		else
+		{
+			questStartUI->Render();
+			return;
+		}
 	}
 
 	recover->Render();
@@ -1219,7 +1234,7 @@ void UIManager::MinusSpiritGauge()
 
 void UIManager::UIAlphaOn()
 {
-	if (isRender)
+	if (isRender || !valDeath)
 		return;
 
 	clearUITimer += DELTA;
@@ -1229,6 +1244,32 @@ void UIManager::UIAlphaOn()
 		questClearUI->SetTexture(L"Textures/Quest/" + to_wstring(clearCount) + L".png");
 		clearCount++;
 		clearUITimer = 0.0f;
+	}
+}
+
+void UIManager::StartUIAlphaOn()
+{
+	if (isRender || valDeath)
+		return;
+
+	startUITimer += DELTA;
+	waitTimer += DELTA;
+
+	if (startUITimer > 0.01f && startCount < 11 && waitTimer < 3.0f)
+	{
+		questStartUI->SetTexture(L"Textures/QuestStart/" + to_wstring(startCount) + L".png");
+		startCount++;
+		startUITimer = 0.0f;
+	}
+
+	if (waitTimer > 2.0f)
+	{
+		if (startUITimer > 0.01f && startCount > 0)
+		{
+			questStartUI->SetTexture(L"Textures/QuestStart/" + to_wstring(startCount - 1) + L".png");
+			startCount--;
+			startUITimer = 0.0f;
+		}
 	}
 }
 
