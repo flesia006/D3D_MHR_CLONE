@@ -421,10 +421,10 @@ private:
 	bool rideCAM = false;
 	bool isJump = false;
 	bool isInitVoice = false;
-	
+
 	WireBug* wireBug = nullptr; // 필드에서 주울 밧줄벌레
 	PlayerWireBug* playerWireBug; // 밧줄벌레 기술 사용시 나오는 벌레
-	
+
 	int randVoice = 0;
 	float breathCount = 0;
 
@@ -450,7 +450,8 @@ private:
 	Transform* haloTransform = nullptr;
 	CapsuleCollider* haloCollider = nullptr;
 	Suwol* suwol = nullptr;
-	TuguEft* tugu = nullptr;
 	vector<CircleEft*> circle;
+	SliceEft* slice = nullptr;
+	headBreakAtk* tuguAtk = nullptr;
 };
 

@@ -1099,7 +1099,8 @@ void UIManager::PostRender()
 		//0materialIcon3->Render();
 	}
 
-	ItemManager::Get()->PostRender();
+	//ItemManager::Get()->PostRender();
+
 	//FOR(inItDragItem_D.size())
 	//{
 	//	inItDragItem_D[i]->Render();

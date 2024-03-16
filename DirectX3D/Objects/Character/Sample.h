@@ -6,8 +6,8 @@ private:
 	enum State
 	{
 		IDLE, WALK, DIGIN, DIGOUT, G_0022,
-		G_0040, G_0084, G_0126, G_0127, 
-		BATTLEIDLE ,FIRE, BACKSTEP, FWDSTEP, TURNLEFT, TURNBACK,
+		G_0040, G_0084, G_0126, G_0127,
+		BATTLEIDLE, FIRE, BACKSTEP, FWDSTEP, TURNLEFT, TURNBACK,
 	};
 
 	enum Mode
@@ -24,6 +24,7 @@ public:
 	void Update();
 
 	void Render();
+	void PostRender();
 	void GUIRender();
 
 	void SetTarget(Transform* target) { this->target = target; }
@@ -40,7 +41,7 @@ public:
 
 	void SetRide() { mode = RIDING; }
 	void SetFollow() { mode = FOLLOWING; SetState(G_0084); }
-	void SetFight() { mode = BATTLE; SetState(BATTLEIDLE);}
+	void SetFight() { mode = BATTLE; SetState(BATTLEIDLE); }
 	void SetTerrain(TerrainEditor* terrain) { this->terrain = terrain; }
 
 	bool isCallDog = false;
@@ -112,7 +113,7 @@ private:
 	Model* bowGun;
 	Model* arrow;
 
-	TerrainEditor*  terrain;
+	TerrainEditor* terrain;
 
 private:
 

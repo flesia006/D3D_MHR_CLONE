@@ -21,6 +21,7 @@ public:
 	void SetVortex(Vector3 pos);
 	void PlayExplosion();
 	void PlaySpark();
+	void FullBurstScale(Vector3 pos);
 
 private:
 	ParticleSystem* particle = nullptr;
@@ -33,6 +34,10 @@ private:
 	Sprite* bulletExplosion3;
 	Sprite* bulletExplosion4;
 	Sprite* bulletSparkExplosion;
+
+	ParticleSystem* burstparticle1 = nullptr;
+	ParticleSystem* burstparticle2 = nullptr;
+
 
 	float lifeTime = 0;
 	Transform* parent = nullptr;

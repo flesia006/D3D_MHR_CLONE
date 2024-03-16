@@ -5,9 +5,7 @@ MapDesignScene::MapDesignScene()
 {
     objects = new M41Objects();
 
-
-    terrain = new TerrainEditor();
-
+    cap = new CapsuleCollider(5, 6000);
     ball = new HalfSphere();
     ball->Scale() *= 150000;
     ball->Pos().y -= 6000;
@@ -48,11 +46,16 @@ MapDesignScene::~MapDesignScene()
 
 void MapDesignScene::Update()
 {
-    terrain->Update();
     objects->Update();
     ball->Rot().y += 0.02 * DELTA;
     ball->UpdateWorld();
 
+    if (KEY_DP('W')) cap->Pos().x += 5;
+    if (KEY_DP('S')) cap->Pos().x -= 5;
+    if (KEY_DP('A')) cap->Pos().z += 5;
+    if (KEY_DP('D')) cap->Pos().z -= 5;
+
+    cap->Update();
     fog->Rot().y += 0.04 * DELTA;
     fog->UpdateWorld();
 }
@@ -62,8 +65,7 @@ void MapDesignScene::PreRender()
 }
 
 void MapDesignScene::Render()
-{    
-    //terrain->Render();
+{
 
     rasterizerState[1]->SetState(); // 후면도 그림
     {
@@ -77,6 +79,8 @@ void MapDesignScene::Render()
         blendState[0]->SetState();
     }
     rasterizerState[0]->SetState();
+
+    cap->Render();
 }
 
 void MapDesignScene::PostRender()
@@ -85,9 +89,9 @@ void MapDesignScene::PostRender()
 
 void MapDesignScene::GUIRender()
 {
-      objects->GUIRender(); 
+    //objects->GUIRender(); 
 //      ball->GUIRender();
 //    fog->GUIRender();
 //    
-      terrain->GUIRender();
+    cap->GUIRender();
 }

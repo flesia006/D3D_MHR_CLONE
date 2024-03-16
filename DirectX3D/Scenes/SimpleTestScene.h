@@ -19,6 +19,8 @@ private :
     Suwol* suwol = nullptr;
     Model* breath = nullptr;
     ValZet* val = nullptr;
+    SliceEft* slice = nullptr;
+    Quad* cut = nullptr;
 
     RasterizerState* rasterizerState[2];
     BlendState* blendState[2];

@@ -18,7 +18,7 @@ public:
 
 	void Respawn();
 
-	bool isPlay = false;
+	bool isPlay = true;
 	void SetWireBugPickUpUIActive(bool isActive) { isWireBugPickUpUIActive = isActive; }
 
 	void UpdateUI();

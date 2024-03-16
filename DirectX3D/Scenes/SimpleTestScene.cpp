@@ -11,9 +11,13 @@ SimpleTestScene::SimpleTestScene()
 	breath = new Model("breath");
 	breath->SetTag("breath");
 	val = new ValZet();
+	cut = new Quad(L"Textures/Effect/critical.png");
+	//cut->Pos() = 
 
 	FOR(breath->GetMaterials().size())
 		breath->GetMaterials()[i]->SetShader(L"Basic/Texture.hlsl");
+
+	slice = new SliceEft();
 
 	FOR(2) rasterizerState[i] = new RasterizerState();
 	FOR(2) blendState[i] = new BlendState();
@@ -33,6 +37,14 @@ SimpleTestScene::~SimpleTestScene()
 void SimpleTestScene::Update()
 {
 	ring->UpdateWorld();
+
+	if(KEY_DP('4'))
+		slice->active = true;
+
+
+	cut->UpdateWorld();
+
+	slice->Update();
 }
 
 void SimpleTestScene::PreRender()
@@ -47,7 +59,8 @@ void SimpleTestScene::Render()
 	depthState[1]->SetState();
 	//breath->Render();
 	//half->Render();
-	ring->Render();
+	//ring->Render();
+	//slice->Render();
 	//suwol->Render();
 	blendState[0]->SetState();
 	depthState[0]->SetState();
@@ -61,7 +74,8 @@ void SimpleTestScene::PostRender()
 void SimpleTestScene::GUIRender()
 {
 	//suwol->GUIRender();
-	ring->GUIRender();
+	//ring->GUIRender();
 	//breath->GUIRender();
 	//val->GUIRender();
+	slice->GUIRender();
 }

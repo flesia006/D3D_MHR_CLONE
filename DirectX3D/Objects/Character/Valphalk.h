@@ -141,6 +141,7 @@ public:
 	void Hit(); // 맞았을때 나오는 모션들
 	void Spawn(Vector3 pos); // 스폰위치
 	void SetTarget(Transform* target) { this->target = target; } // 타겟 설정
+	void SetTerrain(TerrainEditor* terrain) { this->terrain = terrain; }
 
 	Transform* GetTransform(int index) { return transforms[index]; }
 	vector<CapsuleCollider*> GetCollider() { return colliders; }
@@ -222,6 +223,9 @@ private:
 	int  SetRadAndMirror(bool needMirror);
 	void Loop() { GetClip(curState)->ResetPlayTime(); Pos() = realPos->Pos(); }
 
+	void GroundCheck();
+
+
 	void FlameOn();
 	void FlameOff();
 
@@ -232,6 +236,7 @@ private:
 	void E0007();
 	void E0043();
 	void E0044(float degree);
+	void E0044a(float degree);
 	void E0045(float degree);
 	void E0055();
 	void E0059();
@@ -397,7 +402,7 @@ private:
 	void E3114();
 	void E3118();
 
-	
+
 	void E4001();
 	void E4013();
 	void E4071();
@@ -417,6 +422,7 @@ private: // 이벤트 혹은 함수에서 조건이 필요할거 같을때
 	int Count = 0;
 	float timer = 0.0f;
 	int randX[6], randZ[6];
+	bool isStorm = false;
 
 private:
 	vector<Transform*> transforms;
@@ -436,6 +442,7 @@ private:
 	CapsuleCollider* realPos = nullptr;
 	Transform* realPosition = nullptr;
 	CapsuleCollider* tempCollider = nullptr;
+	TerrainEditor* terrain = nullptr;
 
 	// 샘플 무조건 바뀜
 	//float speed = 50; //속력 : 기본 스탯
@@ -445,7 +452,7 @@ private:
 	Vector3 velocity; //속력 : 실제 움직임
 
 	Pattern curPattern = PATROL;
-	State curState = E_0003; //= 기본 스테이트;
+	State curState = E_0043; //= 기본 스테이트;
 	State preState = curState;
 
 	UINT sequence = 0;
@@ -476,6 +483,7 @@ private:
 	Vector3 fullBurstScale;
 	Vector3 fullBurstPos;
 	Vector3 fullBurstRot;
+	Vector3 fullBurstFireScale;
 
 	float rotSpeed = 5.0f;
 	int ranPatrol = 0;
@@ -494,6 +502,7 @@ private:
 	bool isHupGi = false;
 	bool renderJet = false;
 	bool renderJetRight = false;
+	bool renderFullBurst = false;
 
 	bool  isFindTrgt = false;
 	float roarAfterTimer = 0.0f;  // 인식 포효 이후부터 타이머 시작
@@ -512,11 +521,14 @@ private:
 	bool ult50Threshold = false;
 
 	bool playOncePerPattern = false;
+	bool isSetState = false;
 
 	float radBtwTarget = 0.0f;
 	float initialRad = 0.0f;
 	float initRotY = 0.0f;
+	float height = 0.0f;
 
+	bool isJump = false;
 
 	const float rot135 = 2.36f;
 	const float rot45 = 0.785f;
@@ -532,6 +544,7 @@ private:
 
 	float questClearCountDown = 0.0f;
 	const float questClearCountLimit = 60.0f; /////////// 필요에 의하면 수정 가능
+	bool isStorming = false;
 
 public:
 	float maxHP = 25000;
@@ -552,8 +565,16 @@ private:
 
 	vector<HupgiFire*> hupgiFire;
 	vector<Explosion*> explosionParticle;
+	ParticleSystem2* hupgiCharge;
+	//StormEffect* stormEffect;
 	//Vector3 jetpos2;
 
 	vector<Transform*> zetPos;
 	vector<ValZet*> valZets;
+	FullBurstParticle* fullburstParticle;
+	FullBurstParticle2* fullburstParticle2;
+	ParticleSystem* storm_Start;
+	ParticleSystem* barrier;
+	Vector3 tempScale;
+	Trail* trail;
 };

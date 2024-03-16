@@ -12,15 +12,15 @@ WireBug::WireBug()
 	bugParticle->SetScale(2);
 	bugLightParticle->SetScale(0.4f);
 	bugLightParticle->Play({ Pos().x,Pos().y + 10,Pos().z }, 0);
-	bugLightParticle2->Play({ Pos().x,Pos().y + 10,Pos().z }, 0);
+	//bugLightParticle2->Play({ Pos().x,Pos().y + 10,Pos().z }, 0);
 	
 
 	FOR(2) blendState[i] = new BlendState();
 	FOR(2) depthState[i] = new DepthStencilState();
 	FOR(2) rasterizerState[i] = new RasterizerState();
 
-	//blendState[1]->Additive();
-	blendState[1]->Alpha(true);
+	blendState[1]->Additive();
+	//blendState[1]->Alpha(true);
 	depthState[1]->DepthWriteMask(D3D11_DEPTH_WRITE_MASK_ZERO);
 
 	//depthState[1]->DepthWriteMask(D3D11_DEPTH_WRITE_MASK_ALL);
@@ -49,8 +49,8 @@ void WireBug::Update()
 		//bugLightParticle2->Stop();
 		isPlay = false;
 	}
-	bugParticle->Update();
 	bugLightParticle->Update();
+	bugParticle->Update();
 	//bugLightParticle2->Update();
 	UpdateUI();
 
@@ -68,9 +68,9 @@ void WireBug::Render()
 	//bugLightParticle2->Render();
 	bugLightParticle->Render();
 	bugParticle->Render();
-	//blendState[0]->SetState();
-	//depthState[0]->SetState();
-	//rasterizerState[0]->SetState();
+	blendState[0]->SetState();
+	depthState[0]->SetState();
+	rasterizerState[0]->SetState();
 
 	if(Active())
 		ModelAnimator::Render();
@@ -98,6 +98,7 @@ void WireBug::Respawn()
 		bugLightParticle->Play({ Pos().x,Pos().y + 10,Pos().z }, 0);
 		bugLightParticle2->Play({ Pos().x,Pos().y + 10,Pos().z }, 0);
 		respawnDuration = 0.0f;
+		isPlay = true;
 	}
 }
 
