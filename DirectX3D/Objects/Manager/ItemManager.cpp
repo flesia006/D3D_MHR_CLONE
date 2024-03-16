@@ -190,35 +190,6 @@ void ItemManager::GUIRender()
 	//BlueBox->GUIRender();
 }
 
-//void ItemManager::GetBoxItem() // 여기서 아이템을 클릭하면 발생하는 이벤트 실행
-//{
-//	FOR(itemList.size()) // 지금 현재 지급품 박스에서
-//	{
-//		if (itemList[i]->IsOnMouseCursor() && KEY_DOWN(VK_LBUTTON)) // 클릭을 하면
-//		{
-//			Quad* quad = new Quad(itemList[i]->GetMaterial()->GetDiffuseMap()->GetFile());
-//			if (inventoryList.size() == 0) // 우선 0개라서 
-//			{
-//				inventoryList.push_back(quad); // 무조건 푸쉬
-//			}
-//			else if (inventoryList.size() > 0) // 사이즈가 1개부터는
-//			{
-//				if (InvenCheck(quad) == nullptr) // 인벤체크로 넘어가서
-//				{
-//					itemGetCount++; // 카운트가 올라가면 개수증가
-//				}
-//				else if (InvenCheck(quad)->GetMaterial()->GetDiffuseMap()->GetFile() !=
-//						 quad->GetMaterial()->GetDiffuseMap()->GetFile())
-//				{
-//					inventoryList.push_back(quad); // 다른 그림이면 랜
-//				}
-//			}
-//			itemList.erase(itemList.begin()+i);
-//		}
-//	}
-//}
-
-//vector<Quad*> ItemManager::GetBoxItem(vector<Quad*> invenList) // 여기서 아이템을 클릭하면 발생하는 이벤트 실행
 void ItemManager::GetBoxItem(vector<Quad*> invenList) // 여기서 아이템을 클릭하면 발생하는 이벤트 실행
 {
 	FOR(itemList.size()) // 지금 현재 지급품 박스에서
@@ -260,29 +231,6 @@ void ItemManager::GetBoxItem(vector<Quad*> invenList) // 여기서 아이템을 클릭하�
 		}
 	}
 }
-
-//Quad* ItemManager::InvenCheck(Quad* quad)
-//{
-//	vector<Quad*>::iterator iter = inventoryList.begin(); // 시작 만큼
-//	vector<Quad*>::iterator collisionItem = inventoryList.end(); // 이 뒤에는 없음
-//
-//	for (iter; iter != inventoryList.end(); ++iter)
-//	{
-//		if ((*iter)->GetMaterial()->GetDiffuseMap()->GetFile() ==
-//			quad->GetMaterial()->GetDiffuseMap()->GetFile())
-//		{
-//			return nullptr; // 같은 이미지면 아무것도 안내보냄
-//		}
-//		else if ((*iter)->GetMaterial()->GetDiffuseMap()->GetFile() !=
-//				 quad->GetMaterial()->GetDiffuseMap()->GetFile())
-//		{
-//			collisionItem = iter; // 다른 이미지면 그걸로 바뀌어서
-//		}
-//	}
-//
-//	Quad* Item = *collisionItem; // 새로 쿼드 만들어서
-//	return Item; // 내보냄
-//}
 
 Quad* ItemManager::InvenCheck(Quad* quad, vector<Quad*> invenList)
 // 이건 UI 에서 서로의 인벤 리스트 엮을라고 만들었는데

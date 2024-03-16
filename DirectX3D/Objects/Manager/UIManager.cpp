@@ -1115,13 +1115,8 @@ void UIManager::PostRender()
 		}
 		//0materialIcon3->Render();
 	}
-
 	ItemManager::Get()->PostRender();
-	// 임시로 넣음
-	//FOR(inItDragItem_D.size())
-	//{
-	//	inItDragItem_D[i]->Render();
-	//}
+
 }
 
 void UIManager::GUIRender()
@@ -1535,9 +1530,6 @@ void UIManager::DragSlot()
 				inItDragItem_D[i]->Render();
 				slotNames[2]->Render();
 				Font::Get()->RenderText("그레이트 물약", { slotNames[2]->Pos().x + 90,slotNames[2]->Pos().y + 16.5f });
-				//useDragGPotion = true;
-				//useDragPotion = false;
-				//useDragSton = false;
 				if (haveGPotion < 10)
 				{
 					itemNumber_D[haveGPotion]->Pos()
@@ -1560,9 +1552,6 @@ void UIManager::DragSlot()
 				inItDragItem_D[i]->Render();
 				slotNames[2]->Render();
 				Font::Get()->RenderText("일반 물약", { slotNames[2]->Pos().x + 65,slotNames[2]->Pos().y + 16.5f });
-				//useDragGPotion = false;
-				//useDragPotion = true;
-				//useDragSton = false;
 				if (havePotion < 20)
 				{
 					itemNumber_D[havePotion]->Pos()
@@ -1585,9 +1574,6 @@ void UIManager::DragSlot()
 				inItDragItem_D[i]->Render();
 				slotNames[2]->Render();
 				Font::Get()->RenderText("숫돌", { slotNames[2]->Pos().x + 42,slotNames[2]->Pos().y + 16.5f });
-				//useDragGPotion = false;
-				//useDragPotion = false;
-				//useDragSton = true;
 				break;
 			}
 				

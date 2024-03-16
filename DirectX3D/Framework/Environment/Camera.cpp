@@ -236,18 +236,20 @@ void Camera::ThirdPresonViewMode()
     {
         //Vector3 delta = mousePos - prevMousePos;
         //prevMousePos = mousePos;
-        if (!KEY_PRESS('X') && !ItemManager::Get()->useBlueBox)
         if (lockOnTarget == Vector3(0, 0, 0))
         {
-            Vector3 delta = mousePos - prevMousePos;
-            prevMousePos = mousePos;
-
-            sightRot->Rot().x -= delta.y * rotSpeed * DELTA;
-            sightRot->Rot().x = Clamp(-XM_PIDIV2 + 0.5f, XM_PIDIV2 - 0.01f, sightRot->Rot().x);
-            sightRot->Rot().y += delta.x * rotSpeed * DELTA;
-            sightRot->UpdateWorld();
-
-            CAM->Rot() = sightRot->Rot();
+            if (!KEY_PRESS('X') && !ItemManager::Get()->useBlueBox)
+            {
+                Vector3 delta = mousePos - prevMousePos;
+                prevMousePos = mousePos;
+        
+                sightRot->Rot().x -= delta.y * rotSpeed * DELTA;
+                sightRot->Rot().x = Clamp(-XM_PIDIV2 + 0.5f, XM_PIDIV2 - 0.01f, sightRot->Rot().x);
+                sightRot->Rot().y += delta.x * rotSpeed * DELTA;
+                sightRot->UpdateWorld();
+        
+                CAM->Rot() = sightRot->Rot();
+            }
             CAM->Pos() = target->GlobalPos() + sightRot->Back() * distance * 1.6;
         }
         else
@@ -257,12 +259,12 @@ void Camera::ThirdPresonViewMode()
             trgtToTrgt.y = 0;
             trgtToTrgt.z = (lockOnTarget.z - target->GlobalPos().z);
             trgtToTrgt = trgtToTrgt.GetNormalized();
-
+        
             sightRot->Rot().x = -0.1f;
             //sightRot->Rot().x = Clamp(-XM_PIDIV2 + 0.5f, XM_PIDIV2 - 0.01f, sightRot->Rot().x);
             sightRot->Rot().y = atan2(trgtToTrgt.x, trgtToTrgt.z);
             sightRot->UpdateWorld();
-
+        
             CAM->Rot() = Lerp(Rot(), sightRot->Rot(), 10 * DELTA);
             CAM->Pos() = target->GlobalPos() + Back() * distance * 1.6;
         }
