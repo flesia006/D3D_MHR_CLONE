@@ -75,6 +75,7 @@ void PlayerTestScene::Render()
 	garuk->Render();
 	wireBug->Render();
 	ARROW->Render();
+	ItemManager::Get()->Render();
 }
 
 void PlayerTestScene::PostRender()
@@ -90,4 +91,5 @@ void PlayerTestScene::GUIRender()
 	player->GUIRender();
 	garuk->GUIRender();
 	wireBug->GUIRender();
+	ItemManager::Get()->GUIRender();
 }

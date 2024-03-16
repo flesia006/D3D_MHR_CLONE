@@ -234,6 +234,9 @@ void Camera::ThirdPresonViewMode()
     }
     if (freeCam == false)
     {
+        //Vector3 delta = mousePos - prevMousePos;
+        //prevMousePos = mousePos;
+        if (!KEY_PRESS('X') && !ItemManager::Get()->useBlueBox)
         if (lockOnTarget == Vector3(0, 0, 0))
         {
             Vector3 delta = mousePos - prevMousePos;

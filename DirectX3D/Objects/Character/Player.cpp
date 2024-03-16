@@ -167,8 +167,11 @@ void Player::Update()
 
 	TermAttackUpdate();
 	HurtCheck();
-	Potion();
+	time += DELTA;
+	if (isRiding)
+		Potion();
 	SharpeningStone();
+	UseBlueBox();
 	GetWireBug();
 	Capture();
 	////////////////////////////////////
@@ -385,10 +388,9 @@ void Player::UpdateWorlds()
 
 void Player::Potion()
 {
-	time += DELTA;
-	if (UI->useQuickSlot1 && UI->haveGPotion > 0 && !Lcure && !cure
-		|| UI->useDragSlot1 && KEY_DOWN('E')
-		|| UI->useNumberBar && KEY_DOWN('2'))
+	if ((UI->useQuickSlot1 && UI->haveGPotion > 0 && time > 6.0f)
+		|| (UI->useDragSlot && ItemManager::Get()->tag == "GreatePotion" && KEY_DOWN('E') && UI->haveGPotion > 0 && time > 6.0f)
+		|| (UI->useNumberBar && UI->haveGPotion > 0 && KEY_DOWN('2') && time > 6.0f))
 	{
 
 		UI->haveGPotion--;
@@ -405,7 +407,7 @@ void Player::Potion()
 
 		if (time < 3)
 		{
-			UIManager::Get()->LargeHealthPotion();
+			UI->LargeHealthPotion();
 		}
 		else if (time >= 3)
 		{
@@ -413,9 +415,9 @@ void Player::Potion()
 		}
 	}
 
-	if (UI->useQuickSlot2 && UI->havePotion > 10 && !cure && !Lcure
-		|| UI->useDragSlot3 && UI->havePotion > 10 && KEY_DOWN('E') && !cure && !Lcure
-		|| UI->useNumberBar && UI->havePotion > 10 && KEY_DOWN('1') && !Lcure && !cure)
+	if ((UI->useQuickSlot2 && UI->havePotion > 10 && time > 6.0f)
+		|| (UI->useDragSlot && ItemManager::Get()->tag == "Potion" && KEY_DOWN('E') && UI->havePotion > 10 && time > 6.0f)
+		|| (UI->useNumberBar && UI->havePotion > 10 && KEY_DOWN('1') && time > 6.0f))
 	{
 		Sounds::Get()->Play("health_potion", 0.3f);
 		UI->havePotion--;
@@ -428,7 +430,7 @@ void Player::Potion()
 		UI->useQuickSlot2 = false;
 		if (time < 0.1f)
 		{
-			potionParticle->Play({ Pos().x,Pos().y + 100,Pos().z }, { 0,0,0 });
+			//potionParticle->Play({ Pos().x,Pos().y + 100,Pos().z }, { 0,0,0 });
 		}
 
 		if (time < 2)
@@ -452,12 +454,17 @@ void Player::Potion()
 
 void Player::SharpeningStone()
 {
-	if (UI->useQuickSlot3 && !cure && !Lcure
-		|| UI->useDragSlot2 && KEY_DOWN('E') && !cure && !Lcure
-		|| UI->useNumberBar && KEY_DOWN('3') && !Lcure && !cure)
+	if (UI->useQuickSlot3
+		|| UI->useDragSlot && ItemManager::Get()->tag == "Whetstone" && KEY_DOWN('E')
+		|| UI->useNumberBar && KEY_DOWN('3'))
 	{
 		//UI->SharpeningStone();
 	}
+}
+
+void Player::UseBlueBox()
+{
+	ItemManager::Get()->UseBlueBox(realPos->Pos());
 }
 
 
@@ -1941,7 +1948,7 @@ void Player::S001() // 납도 Idle
 		SetState(S_005);
 
 	// 왼 클릭 으로 공격 하는거 추가
-	if (K_LMB)		SetState(L_101);
+	if (K_LMB && !ItemManager::Get()->useBlueBox)		SetState(L_101);
 	else if (KEY_DP('F'))  callGaruk = true;
 	else if (UI->IsAbleBugSkill() && K_LBUG)	SetState(W_005);	// 사선 밧줄벌레 이동
 	else if (KEY_DP(VK_SPACE))	Roll();
@@ -1999,7 +2006,7 @@ void Player::S005() // 대기중 달리기 시작
 	}
 
 	// 101 내디뎌 베기
-	if (K_LMB)			SetState(L_101);
+	if (K_LMB && !ItemManager::Get()->useBlueBox)			SetState(L_101);
 	else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106);
 	else if (KEY_DP(VK_SPACE))	Roll();
 	else if (UI->IsAbleBugSkill() && K_LBUG)	SetState(W_005);	// 사선 밧줄벌레 이동
@@ -2282,7 +2289,7 @@ void Player::L001() // 발도상태 대기
 		SetState(L_005);
 
 	else if (KEY_PRESS(VK_LSHIFT))		SetState(S_008); // 납도	
-	else if (K_LMB)		SetState(L_101);	// 101 내디뎌 베기	
+	else if (K_LMB && !ItemManager::Get()->useBlueBox)		SetState(L_101);	// 101 내디뎌 베기	
 	else if (K_RMB)		SetState(L_104);	// 104 찌르기	
 	else if (K_LMBRMB)	SetState(L_103);	// 103 베어내리기
 	else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106);	// 106 기인 베기	
@@ -3696,8 +3703,10 @@ void Player::R001()  // 탑승 후 대기 idle
 	if (K_SPACE)			SetState(R_104);
 	if (KEY_DOWN('E'))
 	{
-		if (UI->useDragSlot2)	SetState(R_600);
-		else					SetState(R_400);
+		if (ItemManager::Get()->tag == "Whetstone")
+			SetState(R_600);
+		else if (ItemManager::Get()->tag == "Potion" && cure || ItemManager::Get()->tag == "GreatePotion" && Lcure)
+			SetState(R_400);
 	}
 }
 
@@ -3709,8 +3718,10 @@ void Player::R013() // 쉬프트 안누르고 뛰기 루프, 근데 포지션이랑 로테이션 다 가
 	if (K_SPACE)		SetState(R_104);
 	if (KEY_DOWN('E'))
 	{
-		if (UI->useDragSlot2)	SetState(R_600); // 숫돌
-		else					SetState(R_400); // 물약
+		if (ItemManager::Get()->tag == "Whetstone")
+			SetState(R_600); // 숫돌
+		else if (ItemManager::Get()->tag == "Potion" && cure || ItemManager::Get()->tag == "GreatePotion" && Lcure)
+			SetState(R_400); // 물약
 	}
 }
 

@@ -103,6 +103,7 @@ private:
 	void UpdateWorlds();
 	void Potion();
 	void SharpeningStone();
+	void UseBlueBox();
 
 	void Rotate(float rotateSpeed = 5.0f);   // 앞으로 쭉 달리는 루프모션
 	void LimitRotate(float limit, float rotSpeed = 5.0f);   // 공격모션  15 , 180
