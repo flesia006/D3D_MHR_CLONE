@@ -65,7 +65,6 @@ M41Objects::M41Objects()
     sm414_005_02->SetTag("sm414_005_02");
     sm414_005_02->Pos() = Vector3(6685.5, 150.1, 6536.2);
     sm414_005_02->Rot() = { 21 * unitRad, 77 * unitRad, 0 };
-    sm414_005_02->SetMap(basicTexPath);
     sm414_005_02->UpdateWorld();
 }
 
