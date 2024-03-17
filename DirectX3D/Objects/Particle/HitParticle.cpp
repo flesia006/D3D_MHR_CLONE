@@ -3,8 +3,8 @@
 
 HitParticle::HitParticle()
 {
-	hit1 = new ParticleSystem("TextData/Particles/Hit1_fix.fx");
-	hit2 = new ParticleSystem("TextData/Particles/Hit2_fix.fx");
+	hit1 = new ParticleSystem("TextData/Particles/Hit1_fix2.fx");
+	hit2 = new ParticleSystem("TextData/Particles/Hit2_fix2.fx");
 
 
 }
@@ -38,7 +38,7 @@ void HitParticle::GUIRender()
 void HitParticle::Play(Vector3 pos, Vector3 rot)
 {
 	hit1->Play(pos, rot);
-	hit2->Play(pos, rot);
+	hit2->Play2(pos, rot);
 }
 
 void HitParticle::Stop()

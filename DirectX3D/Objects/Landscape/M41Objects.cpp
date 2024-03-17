@@ -6,6 +6,11 @@ M41Objects::M41Objects()
     M42A01 = new Model("ground");
     M42A01->Pos() = basicPos;
     M42A01->Rot().y = XM_PI;
+//    FOR(M42A01->GetMaterials().size())
+//    {
+//        if (i == 0 || i == 16 || i == 17)
+//            M42A01->GetMaterials()[i]->SetShader(L"Basic/Texture.hlsl");
+//    }
     M42A01->UpdateWorld();
 
     grass = new Model("grass");
@@ -15,7 +20,7 @@ M41Objects::M41Objects()
 
     sm415_000_01 = new Model("sm415_000_01");
     sm415_000_01->SetTag("sm415_000_01");
-    sm415_000_01->Pos() = Vector3(65000, 3000, 3500);
+    sm415_000_01->Pos() = Vector3(75000, 3000, 3500);
     sm415_000_01->Rot().y = XM_PI;
     sm415_000_01->UpdateWorld();
 
@@ -43,8 +48,7 @@ M41Objects::~M41Objects()
 
 void M41Objects::Update()
 {
-    
-    
+
 }
 
 void M41Objects::Render()
@@ -65,10 +69,12 @@ void M41Objects::Render()
 
 void M41Objects::GUIRender()
 {
-        M42A01->GUIRender();
+    //grass->GUIRender();
+    M42A01->GUIRender();
         //sm414_007_00->GUIRender();
     //sm414_005_04->GUIRender();
     //    sm415_000_01->GUIRender();
+    //ImGui::DragInt("num", &num, 1, 0, M42A01->GetMaterials().size());
 }
 
 void M41Objects::SetShader(wstring path)

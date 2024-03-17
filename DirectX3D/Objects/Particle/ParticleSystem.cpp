@@ -123,6 +123,7 @@ void ParticleSystem::Play2(Vector3 pos, Vector3 rot)
 
     quad->Pos() = pos;
     quad->Rot() = rot;    
+    Init();
 }
 void ParticleSystem::Stop()
 {

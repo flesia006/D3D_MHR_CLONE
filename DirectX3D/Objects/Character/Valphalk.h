@@ -439,6 +439,7 @@ private:
 	Vector3 vecToTagt = Vector3::Zero();
 	Vector3 initForward = Vector3::Zero();
 	Transform* head = nullptr;
+	Transform* eyes = nullptr;
 	CapsuleCollider* realPos = nullptr;
 	Transform* realPosition = nullptr;
 	CapsuleCollider* tempCollider = nullptr;

@@ -334,8 +334,8 @@ private:
 	UINT lastHitPart = 0;
 	Vector3 lastSwordDir;
 
-	State curState = L_101;
-	State preState = L_101;
+	State curState = S_001;
+	State preState = S_001;
 
 	float moveSpeed = 4000 * DELTA;
 	float rotSpeed = 5.0f;

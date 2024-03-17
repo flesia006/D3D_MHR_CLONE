@@ -485,13 +485,13 @@ void Player::GUIRender()
 		//	float y = atan2(CAMForward.x, CAMForward.z);
 		//	ImGui::DragFloat("CAM.y", &y);
 
-	Vector3 realpos = realPos->Pos();
-	ImGui::DragFloat3("Pos", (float*)&Pos());
-
-	ImGui::DragFloat3("RealPos", (float*)&realpos);
-
-	Vector3 rot = Rot();
-	ImGui::DragFloat3("Rot", (float*)&rot);
+//	Vector3 realpos = realPos->Pos();
+//	ImGui::DragFloat3("Pos", (float*)&Pos());
+//
+//	ImGui::DragFloat3("RealPos", (float*)&realpos);
+//
+//	Vector3 rot = Rot();
+//	ImGui::DragFloat3("Rot", (float*)&rot);
 
 	Vector3 camRot = CAM->Rot();
 	camRot.y += XM_PI;
@@ -503,24 +503,27 @@ void Player::GUIRender()
 
 	ImGui::DragFloat3("camRot", (float*)&camRot);
 
-	float keyDir = keyboardRot;
-	ImGui::DragFloat("KeyDir", &keyDir);
+	Vector3 sightRot = CAM->sightRot->Rot();
+	ImGui::DragFloat3("sightRot", (float*)&sightRot);
 
-
-	float ratio = RATIO;
-	ImGui::DragFloat("clipRatio", &ratio);
-
-	ImGui::DragFloat("Speed", &temp4);
-
-	suwol->GUIRender();
-
-	//int U = Keyboard::Get()->ReturnFirst();
-	//ImGui::SliderInt("keyboard", &U, 0, 200);
-	//
-	//
-	ImGui::SliderInt("node", &node, 1, 210);
-	float value = UI->GetSpritGauge();
-	ImGui::DragFloat("SpiritGauge", &value);
+//	float keyDir = keyboardRot;
+//	ImGui::DragFloat("KeyDir", &keyDir);
+//
+//
+//	float ratio = RATIO;
+//	ImGui::DragFloat("clipRatio", &ratio);
+//
+//	ImGui::DragFloat("Speed", &temp4);
+//
+//	suwol->GUIRender();
+//
+//	//int U = Keyboard::Get()->ReturnFirst();
+//	//ImGui::SliderInt("keyboard", &U, 0, 200);
+//	//
+//	//
+//	ImGui::SliderInt("node", &node, 1, 210);
+//	float value = UI->GetSpritGauge();
+//	ImGui::DragFloat("SpiritGauge", &value);
 	//	ImGui::SliderFloat("temp", &temp, -10, 10);
 	//	ImGui::SliderFloat("temp2", &temp2, -10, 10);
 	//	ImGui::SliderFloat("temp3", &temp3, 10, 15);
@@ -3307,7 +3310,6 @@ void Player::L133()	// 투구깨기
 			if (Attack(40))
 			{
 				isHitL133 = true;
-				CAM->SetLockOnTarget(damages.back().pos);
 			}
 		}
 
@@ -3338,7 +3340,6 @@ void Player::L135()	// 투구깨기 끝
 	{
 		if (RATIO > 0.23)
 		{
-			CAM->SetLockOnTarget(Vector3(0, 0, 0));
 			if (K_LMB || K_RMB)		SetState(L_104);	// 찌르기
 			else if (K_CTRLSPACE)	SetState(L_151);	// 특수납도
 			else if (K_SPACE)		Roll();				// 구르기
@@ -3418,7 +3419,7 @@ void Player::L147() // 간파베기
 	{
 		if (RATIO > 0 && RATIO < 0.30)
 		{
-			CAM->Zoom(450);
+			CAM->Zoom(650);
 			EvadeCheck(); // 성공하면 띵 소리 나야함
 		}
 		if (RATIO > 0.30)

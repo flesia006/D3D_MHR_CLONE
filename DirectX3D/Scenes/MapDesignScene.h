@@ -17,14 +17,18 @@ public:
 
 private:
 
-
+    DummyValphalk* val = nullptr;
 
     HalfSphere* ball;
-    Model* fog;
+    HalfSphere* ball2;
+    HalfSphere* fog;
+    HalfSphere* fog2;
 
     TerrainEditor* terrain;
 
     LightBuffer::Light* light; //ºû »ç¿ëÇÏ±â
+    LightBuffer::Light* light2;
+    LightBuffer::Light* light3;
 
     M41Objects* objects;
 

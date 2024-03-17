@@ -169,6 +169,8 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 	realPos->Scale() *= 6.0f;
 	realPos->UpdateWorld();
 
+	eyes = new Transform();
+
 	tempCollider = new CapsuleCollider(6, 0.1);
 	tempCollider->UpdateWorld();
 
@@ -411,6 +413,11 @@ void Valphalk::Update()
 	zetPos[3]->SetWorld(GetTransformByNode(81));
 	zetPos[4]->SetWorld(GetTransformByNode(84));
 	zetPos[5]->SetWorld(GetTransformByNode(87));
+
+	eyes->Pos() = GetTranslationByNode(14);
+	eyes->Rot() = Rot();
+	eyes->UpdateWorld();
+
 
 	FOR(6)
 		valZets[i]->Update();
@@ -1126,12 +1133,21 @@ void Valphalk::SetState(State state, float rad)
 
 void Valphalk::DeathCheck()
 {
+	static bool once = false;
+
 	if (curHP < 0)
 	{
-		if (isSlashMode)
-			curPattern = S_DEAD;
-		else
-			curPattern = B_DEAD;
+		if (!once)
+		{
+			if (isSlashMode)
+				curPattern = S_DEAD;
+			else
+				curPattern = B_DEAD;
+
+
+			CAM->SetDeadCAM(eyes, this);
+			once = true;
+		}
 	}
 }
 

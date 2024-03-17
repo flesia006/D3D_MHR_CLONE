@@ -22,5 +22,6 @@ private:
 	string basicTexPath = "Textures/M41";
 	Vector3 basicPos = Vector3(2062.1f, 180, 17653.896f);
 
+	int num = 0;
 };
 

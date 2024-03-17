@@ -8,6 +8,8 @@ Environment::Environment()
     mainCamera = new Camera();
     mainCamera->Load();
     lightBuffer = new LightBuffer();
+    lightBuffer->Get().lights[1].color = { 0, 0, 0, 0 };
+    lightBuffer->Get().lights[2].color = { 0, 0, 0, 0 };
     uiViewBuffer = new ViewBuffer();    
 }
 
