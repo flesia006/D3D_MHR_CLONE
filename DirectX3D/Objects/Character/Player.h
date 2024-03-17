@@ -144,6 +144,8 @@ private:
 	void Capture();
 	void UpdateCaptureUI();
 
+	void NearMapChangeArea();
+
 private:
 	void ReadClips();
 	void RecordLastPos();
@@ -434,7 +436,13 @@ private:
 	Vector3 UIPos;
 	bool isCaptureUIActive = false;
 	bool isCaptured = false;
+	bool soundOncePerUI = false;
 
+	Quad* mapChangeUI;
+	Vector3 UIPos2;
+	bool isMapChangeUIActive = false;
+	bool soundOncePerUI2 = false;
+	bool mapChanged = false;
 	///////////////////////////////////////////
 	// Particle
 	vector<HitParticle*> hitParticle;

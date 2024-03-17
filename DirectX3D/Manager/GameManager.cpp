@@ -178,6 +178,9 @@ void GameManager::Create()
     sound->AddSound("env_114", SoundPath + L"env_114.mp3", true);
     sound->AddSound("questClear", SoundPath + L"quest_Clear.mp3", false);
     sound->AddSound("queststart", SoundPath + L"queststart.mp3", false);
+    sound->AddSound("uisound", SoundPath + L"UIsound.mp3", false);
+    sound->AddSound("mapchangestart", SoundPath + L"mapchangestart.mp3", false);
+    sound->AddSound("mapchangeend", SoundPath + L"mapchangeend.mp3", false);
 
     sound->Play("env_114", .5f);
     /////////////////////////////////////////////////////////////

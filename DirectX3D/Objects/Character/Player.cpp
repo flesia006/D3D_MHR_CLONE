@@ -109,6 +109,9 @@ Player::Player() : ModelAnimator("Player")
 	captureUI = new Quad(L"Textures/UI/CaptureUI.png");
 	captureUI->Scale() *= 2.0f;
 
+	mapChangeUI = new Quad(L"Textures/UI/MapChangeUI.png");
+	mapChangeUI->Scale() *= 1.5f;
+
 	CAM->SetTarget(head);
 }
 
@@ -146,6 +149,7 @@ Player::~Player()
 	delete playerWireBugHead;
 	delete playerWireBugTail;
 	delete captureUI;
+	delete mapChangeUI;
 }
 
 void Player::Update()
@@ -171,6 +175,7 @@ void Player::Update()
 	SharpeningStone();
 	GetWireBug();
 	Capture();
+	NearMapChangeArea();
 	////////////////////////////////////
 	Control();
 	ResetPlayTime();
@@ -549,6 +554,9 @@ void Player::PostRender()
 
 	if (isCaptureUIActive)
 		captureUI->Render();
+
+	if (isMapChangeUIActive)
+		mapChangeUI->Render();
 }
 
 void Player::Control()
@@ -4436,15 +4444,22 @@ void Player::T019() // 맵 입장
 {
 	PLAY;
 
+	if (RATIO > 0.03 && RATIO < 0.13)
+		Sounds::Get()->Play("mapchangestart", 1.0f);
+
 	if (RATIO > 0.96)
 	{
-		ReturnIdle2();
+		//ReturnIdle2(); 입장, 도착 따로 하려면 이거로 쓰고
+		SetState(T_020); // 합쳐서 쓰려면 그대로 쓰면 됨
 	}
 }
 
 void Player::T020() // 맵 도착
 {
 	PLAY;
+
+	if (RATIO > 0.05 && RATIO < 0.15)
+		Sounds::Get()->Play("mapchangeend", 1.0f);
 
 	if (RATIO > 0.96)
 	{
@@ -4781,6 +4796,12 @@ void Player::GetWireBug()
 	if (distance <= 150)
 	{
 		wireBug->SetWireBugPickUpUIActive(true);
+		
+		if (!soundOncePerUI)
+		{
+			Sounds::Get()->Play("uisound", 1.0f);
+			soundOncePerUI = true;
+		}
 
 		if (KEY_PRESS('G')) // 키 변경 가능
 		{
@@ -4791,7 +4812,10 @@ void Player::GetWireBug()
 		}
 	}
 	else
+	{
 		wireBug->SetWireBugPickUpUIActive(false);
+		soundOncePerUI = false;
+	}
 }
 
 void Player::Capture()
@@ -4819,11 +4843,20 @@ void Player::Capture()
 	{
 		isCaptureUIActive = true;
 
+		if (!soundOncePerUI)
+		{
+			Sounds::Get()->Play("uisound", 1.0f);
+			soundOncePerUI = true;
+		}
+
 		if (KEY_PRESS('G')) // 키 변경 가능
 			SetState(T_050);
 	}
 	else
+	{
 		isCaptureUIActive = false;
+		soundOncePerUI = false;
+	}
 }
 
 void Player::UpdateCaptureUI()
@@ -4839,4 +4872,53 @@ void Player::UpdateCaptureUI()
 	captureUI->Pos() = CAM->WorldToScreen(UIPos);
 
 	captureUI->UpdateWorld();
+}
+
+void Player::NearMapChangeArea()
+{
+	if (mapChanged)
+		return;
+
+	Vector3 playerPos = realPos->Pos();
+	playerPos.y = 0;
+
+	Vector3 mapChangeAreaPos = { 0,0,100 };// 여기서 맵 이동지점 정하기
+	mapChangeAreaPos.y = 0;
+
+	float distance = (playerPos - mapChangeAreaPos).Length();
+
+	UIPos2 = mapChangeAreaPos + Vector3::Up() * 200;
+
+	if (!CAM->ContainPoint(UIPos2))
+	{
+		isMapChangeUIActive = false;
+		return;
+	}
+
+	mapChangeUI->Pos() = CAM->WorldToScreen(UIPos2);
+
+	mapChangeUI->UpdateWorld();
+
+	if (distance <= 150)
+	{
+		isMapChangeUIActive = true;
+
+		if (!soundOncePerUI2)
+		{
+			Sounds::Get()->Play("uisound", 1.0f);
+			soundOncePerUI2 = true;
+		}
+
+		if (KEY_PRESS('G')) // 키 변경 가능
+		{
+			isMapChangeUIActive = false;
+			mapChanged = true;
+			SetState(T_019);
+		}
+	}
+	else
+	{
+		isMapChangeUIActive = false;
+		soundOncePerUI2 = false;
+	}
 }
