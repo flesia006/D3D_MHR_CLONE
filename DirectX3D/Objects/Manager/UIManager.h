@@ -286,7 +286,7 @@ public:
     float stateIconTimer2 = 0.0f;
     float stateIconTimer3 = 0.0f;
 
-    bool isRender = false;
+    bool isRender = true;
     float clearUITimer = 0.0f;
     UINT clearCount = 0;
     float startUITimer = 0.0f;
@@ -305,5 +305,8 @@ public:
     UINT randNum1 = rand() % 3;
     UINT randNum2 = rand() % 3;
     UINT randNum3 = rand() % 3;
+
+public:
+    bool isLoading = false;
 };
 

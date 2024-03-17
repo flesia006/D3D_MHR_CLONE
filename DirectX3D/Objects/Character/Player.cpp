@@ -150,6 +150,8 @@ Player::~Player()
 
 void Player::Update()
 {
+	if (UIManager::Get()->isLoading == true) return;
+
 	if (KEY_DOWN('B'))
 		SetState(L_001);
 
@@ -219,6 +221,8 @@ void Player::PreRender()
 
 void Player::Render()
 {
+	if (UIManager::Get()->isLoading == true && isFirstRender == true) return;
+
 	ModelAnimator::Render();
 	tmpCollider->Render();
 	tmpCollider2->Render();
@@ -249,11 +253,12 @@ void Player::Render()
 
 		isSetState = false;
 	}
+	isFirstRender = true;
 }
 
 
 void Player::UpdateWorlds()
-{
+{	
 	if (!State_S())
 	{
 		mainHand->SetWorld(GetTransformByNode(rightHandNode));
@@ -1446,6 +1451,7 @@ void Player::HurtCheck()
 				}
 				RandHurtVoice();
 				UI->curHP -= collider->atkDmg;
+				UI->recoverHP -= collider->atkDmg / 2;
 			}
 		}
 	}
@@ -1499,6 +1505,7 @@ void Player::HurtCheck()
 				}
 				RandHurtVoice();
 				UI->curHP -= collider->atkDmg;
+				UI->recoverHP -= collider->atkDmg / 2;
 			}
 		}
 	}
@@ -1552,6 +1559,7 @@ void Player::HurtCheck()
 				}
 				RandHurtVoice();
 				UI->curHP -= collider->atkDmg;
+				UI->recoverHP -= collider->atkDmg / 2;
 			}
 		}
 	}
@@ -3101,6 +3109,8 @@ void Player::L126() // 수월의 자세
 
 	if (RATIO < 0.2)
 		LimitRotate(180, 50);
+	if(RATIO<0.1)
+	Sounds::Get()->Play("suwolstart",0.5f);
 
 	if (RATIO > 0.01 && RATIO < 0.8)
 	{
@@ -3126,6 +3136,8 @@ void Player::L127() // 수월의 자세 카운터
 {
 	PLAY;
 
+	if (RATIO < 0.1)
+		Sounds::Get()->Play("suwolattack", 0.5f);
 	if (RATIO > 0.10)
 	{
 		suwol->effect = false;
@@ -3290,6 +3302,7 @@ void Player::L133()	// 투구깨기
 	if (INIT)
 	{
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_25", .5f);
+		Sounds::Get()->Play("helmbreaker", 0.5f);
 		if (isInitVoice == false)
 		{
 			RandSpecialVoice();

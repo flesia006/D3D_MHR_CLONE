@@ -642,6 +642,8 @@ UIManager::~UIManager()
 
 void UIManager::Update()
 {
+	if (isLoading == true) return;
+
 	ItemManager::Get()->Update();
 	// 임시로 놓은거임
 	FOR(inItDragItem_D.size())
@@ -993,6 +995,8 @@ void UIManager::Update()
 
 void UIManager::PostRender()
 {
+	if (isLoading == true) return;
+
 	if (!isRender)
 	{
 		if (valDeath)
@@ -1234,7 +1238,6 @@ void UIManager::UIAlphaOn()
 {
 	if (isRender || !valDeath)
 		return;
-
 	clearUITimer += DELTA;
 
 	if (clearUITimer > 0.01f && clearCount < 11)

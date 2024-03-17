@@ -546,6 +546,8 @@ private:
 	const float questClearCountLimit = 60.0f; /////////// 필요에 의하면 수정 가능
 	bool isStorming = false;
 
+	bool isFirstRender = false;
+
 public:
 	float maxHP = 25000;
 	float curHP = 25000;

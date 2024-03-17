@@ -55,8 +55,8 @@ GameManager::GameManager()
 
 //    SceneManager::Get()->Create("ShadowScene", new ShadowScene());
 //    SceneManager::Get()->Add("ShadowScene");
-    SceneManager::Get()->Create("MapDesignScene", new MapDesignScene());
-    SceneManager::Get()->Add("MapDesignScene");
+//    SceneManager::Get()->Create("MapDesignScene", new MapDesignScene());
+//    SceneManager::Get()->Add("MapDesignScene");
 //      SceneManager::Get()->Create("Particle", new ParticleScene());
 //      SceneManager::Get()->Add("Particle");
 //    SceneManager::Get()->Create("ParticleConfig", new ParticleConfigScene());
@@ -67,16 +67,15 @@ GameManager::GameManager()
 //    SceneManager::Get()->Add("ValphalkTestScene");
 
 
-//    SceneManager::Get()->Create("PlayerTestScene", new PlayerTestScene());
-//    SceneManager::Get()->Add("PlayerTestScene");
+    SceneManager::Get()->Create("PlayerTestScene", new PlayerTestScene());
+    SceneManager::Get()->Add("PlayerTestScene");
 
 //   SceneManager::Get()->Create("FightTestScene", new FightTestScene());
 //   SceneManager::Get()->Add("FightTestScene");
 
 //    SceneManager::Get()->Create("SimpleTestScene", new SimpleTestScene());
 //    SceneManager::Get()->Add("SimpleTestScene");
-    SceneManager::Get()->Create("OpeningScene", new OpeningScene());
-    // 테스트 시 이 아래 씬만 주석처리하면 됨
+    SceneManager::Get()->Create("OpeningScene", new OpeningScene());    
     SceneManager::Get()->Add("OpeningScene");
 
     SceneManager::Get()->Create("LoadingScene", new LoadingScene());
@@ -90,8 +89,7 @@ GameManager::GameManager()
 
     //dynamic_cast<OpeningScene*>(SceneManager::Get()->Add("OpeningScene")->choice)
     //int choice = dynamic_cast<OpeningScene*>(SceneManager::Get()->Add("OpeningScene"))->choice();
-    
-
+    UIManager::Get()->isLoading = true;
 }
 void LoadPlayScene(std::shared_future<void> play)
 {
@@ -120,9 +118,9 @@ void PlayScene(std::shared_future<void> play)
 void PlayScene() // 로딩씬을 지우고 원하는 씬으로 진입한다.
 {
     SceneManager::Get()->Remove("LoadingScene");
-    SceneManager::Get()->Add("FightTestScene");
+    //SceneManager::Get()->Add("PlayerTestScene");
     CAM->isFreeCamFalse();
-
+    UIManager::Get()->isLoading = false;
 }
 GameManager::~GameManager()
 {
@@ -158,23 +156,20 @@ void GameManager::Update()
 
     if (UIManager::Get()->choice == 1 && isStart == true)
         LoadScene();
-    if (UIManager::Get()->choice >= 1000)
+    if (UIManager::Get()->choice >= 5000) // 형식적인 로딩 원할시 조정
         PlayScene();
     if (UIManager::Get()->choice == 6)
         exit(0);    
 }
 
 void GameManager::Render()
-{
-    
+{    
     Device::Get()->Clear();
     Font::Get()->GetDC()->BeginDraw();
     
     Environment::Get()->Set();    
     SceneManager::Get()->Render();
     SceneManager::Get()->PreRender();
-
-
     
     Environment::Get()->PostSet();
     SceneManager::Get()->PostRender();

@@ -341,6 +341,8 @@ Valphalk::~Valphalk()
 
 void Valphalk::Update()
 {
+	if (UIManager::Get()->isLoading == true) return;
+
 	UpdateWorld();
 	if (preState != curState)
 		GetClip(preState)->ResetPlayTime();
@@ -481,6 +483,8 @@ void Valphalk::PreRender()
 
 void Valphalk::Render()
 {
+	if (UIManager::Get()->isLoading == true && isFirstRender == true) return;
+
 	for (CapsuleCollider* capsulCollider : colliders)
 	{
 		if (capsulCollider->isAttack)
@@ -531,6 +535,8 @@ void Valphalk::Render()
 	barrier->Render();
 	if (isStorming)
 		trail->Render();
+
+	isFirstRender = true;
 }
 
 void Valphalk::GUIRender()

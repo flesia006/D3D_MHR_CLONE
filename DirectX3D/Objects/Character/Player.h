@@ -436,6 +436,7 @@ private:
 	bool isCaptureUIActive = false;
 	bool isCaptured = false;
 
+	bool isFirstRender = false;
 	///////////////////////////////////////////
 	// Particle
 	vector<HitParticle*> hitParticle;

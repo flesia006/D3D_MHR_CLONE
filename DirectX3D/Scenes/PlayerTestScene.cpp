@@ -69,7 +69,8 @@ void PlayerTestScene::Render()
 	valphalk->Render();
 	player->Render();
 	garuk->Render();
-	wireBug->Render();
+	wireBug->Render();	
+	ItemManager::Get()->Render();
 }
 
 void PlayerTestScene::PostRender()
