@@ -86,4 +86,5 @@ void PlayerTestScene::GUIRender()
 	player->GUIRender();
 	garuk->GUIRender();
 	wireBug->GUIRender();
+	ItemManager::Get()->GUIRender();
 }

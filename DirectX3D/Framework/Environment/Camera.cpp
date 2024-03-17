@@ -336,35 +336,47 @@ void Camera::FollowMode()
 
 void Camera::ThirdPresonViewMode()
 {
-
-    if (lockOnTarget == Vector3(0, 0, 0))
+    if (freeCam == true)
     {
-        Vector3 delta = mousePos - prevMousePos;
-        prevMousePos = mousePos;
-
-        sightRot->Rot().x -= delta.y * rotSpeed * DELTA;
-        sightRot->Rot().x = Clamp(-XM_PIDIV2 + 0.5f, XM_PIDIV2 - 0.01f, sightRot->Rot().x);
-        sightRot->Rot().y += delta.x * rotSpeed * DELTA;
-        sightRot->UpdateWorld();
-
-        CAM->Rot() = sightRot->Rot();
-        CAM->Pos() = target->GlobalPos() + sightRot->Back() * distance * 1.6;
+        FreeMode();
+        return;
     }
-    else
+    if (freeCam == false)
     {
-        Vector3 trgtToTrgt;
-        trgtToTrgt.x = (lockOnTarget.x - target->GlobalPos().x);
-        trgtToTrgt.y = 0;
-        trgtToTrgt.z = (lockOnTarget.z - target->GlobalPos().z);
-        trgtToTrgt = trgtToTrgt.GetNormalized();
-
-        sightRot->Rot().x = -0.1f;
-        sightRot->Rot().x = Clamp(-XM_PIDIV2 + 0.5f, XM_PIDIV2 - 0.01f, sightRot->Rot().x);
-        sightRot->Rot().y = atan2(trgtToTrgt.x, trgtToTrgt.z);
-        sightRot->UpdateWorld();
-
-        CAM->Rot() = Lerp(Rot(), sightRot->Rot(), 10 * DELTA);
-        CAM->Pos() = target->GlobalPos() + Back() * distance * 1.6;
+        //Vector3 delta = mousePos - prevMousePos;
+        //prevMousePos = mousePos;
+        if (lockOnTarget == Vector3(0, 0, 0))
+        {
+            if (!KEY_PRESS('X') && !ItemManager::Get()->useBlueBox)
+            {
+                Vector3 delta = mousePos - prevMousePos;
+                prevMousePos = mousePos;
+        
+                sightRot->Rot().x -= delta.y * rotSpeed * DELTA;
+                sightRot->Rot().x = Clamp(-XM_PIDIV2 + 0.5f, XM_PIDIV2 - 0.01f, sightRot->Rot().x);
+                sightRot->Rot().y += delta.x * rotSpeed * DELTA;
+                sightRot->UpdateWorld();
+        
+                CAM->Rot() = sightRot->Rot();
+            }
+            CAM->Pos() = target->GlobalPos() + sightRot->Back() * distance * 1.6;
+        }
+        else
+        {
+            Vector3 trgtToTrgt;
+            trgtToTrgt.x = (lockOnTarget.x - target->GlobalPos().x);
+            trgtToTrgt.y = 0;
+            trgtToTrgt.z = (lockOnTarget.z - target->GlobalPos().z);
+            trgtToTrgt = trgtToTrgt.GetNormalized();
+        
+            sightRot->Rot().x = -0.1f;
+            //sightRot->Rot().x = Clamp(-XM_PIDIV2 + 0.5f, XM_PIDIV2 - 0.01f, sightRot->Rot().x);
+            sightRot->Rot().y = atan2(trgtToTrgt.x, trgtToTrgt.z);
+            sightRot->UpdateWorld();
+        
+            CAM->Rot() = Lerp(Rot(), sightRot->Rot(), 10 * DELTA);
+            CAM->Pos() = target->GlobalPos() + Back() * distance * 1.6;
+        }
     }
 
     // 만약 카메라가 지면을 파고든다? (TODO : Terrain 만들면 그에 맞게 수정)

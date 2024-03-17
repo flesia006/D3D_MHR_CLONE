@@ -63,8 +63,8 @@ GameManager::GameManager()
 //    SceneManager::Get()->Create("ValphalkTestScene", new ValphalkTestScene());
 //    SceneManager::Get()->Add("ValphalkTestScene");
 
-//    SceneManager::Get()->Create("PlayerTestScene", new PlayerTestScene());
-//    SceneManager::Get()->Add("PlayerTestScene");
+    SceneManager::Get()->Create("PlayerTestScene", new PlayerTestScene());
+    SceneManager::Get()->Add("PlayerTestScene");
 
 //   SceneManager::Get()->Create("FightTestScene", new FightTestScene());
 //   SceneManager::Get()->Add("FightTestScene");
@@ -177,6 +177,7 @@ void GameManager::Create()
     sound->AddSound("Valphalk_Thema", SoundPath + L"Valphalk_Thema.mp3", true);
     sound->AddSound("env_114", SoundPath + L"env_114.mp3", true);
     sound->AddSound("questClear", SoundPath + L"quest_Clear.mp3", false);
+    sound->AddSound("queststart", SoundPath + L"queststart.mp3", false);
 
     sound->Play("env_114", .5f);
     /////////////////////////////////////////////////////////////
@@ -213,6 +214,7 @@ void GameManager::Create()
     Sounds::Get()->AddSound("igonan2", SoundPath + L"Player/igonan2.mp3");
     Sounds::Get()->AddSound("suwolstart", SoundPath + L"Player/suwolstart.mp3");
     Sounds::Get()->AddSound("suwolattack", SoundPath + L"Player/suwolattack.mp3");
+    Sounds::Get()->AddSound("helmbreaker", SoundPath + L"Player/helmbreaker.mp3");
 
 
     /////////////////////////////////////////////////////////////
@@ -229,6 +231,12 @@ void GameManager::Create()
     sound->AddSound("pl_wp_l_swd_epv_media.bnk.2_8", SoundPath + L"pl_wp_l_swd_epv_media.bnk.2_8.mp3");
     // 검 휘두르는 바람소리
     sound->AddSound("pl_wp_l_swd_com_media.bnk.2_7", SoundPath + L"pl_wp_l_swd_com_media.bnk.2_7.mp3");
+    // 타격음 1,2,3
+    sound->AddSound("hit_pl_media.bnk.2_14", SoundPath + L"hit_pl_media.bnk.2_14.mp3");
+    sound->AddSound("hit_pl_media.bnk.2_20", SoundPath + L"hit_pl_media.bnk.2_20.mp3");
+    sound->AddSound("hit_pl_media.bnk.2_35", SoundPath + L"hit_pl_media.bnk.2_35.mp3");
+    // 막타
+    sound->AddSound("hit_pl_media.bnk.2_38", SoundPath + L"hit_pl_media.bnk.2_38.mp3");
 
     /////////////////////////////////////////////////////////////
     // Valphalk

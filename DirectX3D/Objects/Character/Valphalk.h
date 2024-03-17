@@ -544,7 +544,7 @@ private:
 	bool isDead = false;
 
 	float questClearCountDown = 0.0f;
-	const float questClearCountLimit = 10.0f; /////////// 필요에 의하면 수정 가능
+	const float questClearCountLimit = 60.0f; /////////// 필요에 의하면 수정 가능
 	bool isStorming = false;
 
 public:

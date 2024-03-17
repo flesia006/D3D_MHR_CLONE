@@ -2012,7 +2012,7 @@ void Valphalk::QuestClearCount()
 		questClearCountDown += DELTA;
 
 	if (questClearCountDown > questClearCountLimit)
-		UI->SetAllUIOff();
+		UI->isRender = false;
 }
 
 void Valphalk::S_LegAtk()
@@ -5314,7 +5314,10 @@ void Valphalk::E3023() // »ç¸Á
 	PLAY;
 
 	if (INIT)
+	{
 		Sounds::Get()->Play("questClear", 0.1f);
+		UI->valDeath = true;
+	}
 
 	if (RATIO > 0.40 && RATIO < 0.44)
 		Sounds::Get()->Play("em086_05_vo_media_30", 3.0f);
@@ -5362,7 +5365,10 @@ void Valphalk::E3118()
 	PLAY;
 
 	if (INIT)
+	{
 		Sounds::Get()->Play("questClear", 0.1f);
+		UI->valDeath = true;
+	}
 
 	if (RATIO > 0.40 && RATIO < 0.50)
 		Sounds::Get()->Play("em086_05_vo_media_30", 3.0f);

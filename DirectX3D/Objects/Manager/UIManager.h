@@ -72,9 +72,10 @@ public:
     bool specialMove2 = false;
     bool partDestruct = false;
     bool partDestruct2 = false;
+    bool valDeath = false;
 
-    void SetAllUIOff() { isRender = false; }
     void UIAlphaOn();
+    void StartUIAlphaOn();
 
 private:
     // 퀵 슬롯 관한 내용
@@ -150,7 +151,6 @@ private:
     Quad* potionIcon_D;
     Quad* greatepotionIcon_D;
     Quad* whetstoneIcon_D;
-    vector<Quad*>inItDragItem_D;
     //===================
     Quad* potionIcon_N;
     Quad* greatepotionIcon_N;
@@ -184,9 +184,17 @@ private:
     // 발파 상태 UI
     Quad* valphalkStateIcon1;
     Quad* valphalkStateIcon2;
+    Quad* valphalkStateIcon3;
 
     // 퀘스트 클리어
     Quad* questClearUI;
+    // 퀘스트 시작
+    Quad* questStartUI;
+
+    // 갈무리 아이콘
+    Quad* materialIcon1;
+    Quad* materialIcon2;
+    Quad* materialIcon3;
 
 public:
     UINT cotingLevel = 0;
@@ -239,14 +247,19 @@ public:
     bool useSelectBar = false;
     Vector3 MousePos;
 
+    // 드래그 슬롯 내용
+    vector<Quad*>inItDragItem_D;
     int havePotion = 10; // 애는 20이 10개
     int haveGPotion = 0; // 애는 10이 10개
 
     // 드래그 슬롯 실행 할때 유무 확인 하기
     bool useDragBar = false;
-    bool useDragSlot1 = true;
-    bool useDragSlot2 = false;
-    bool useDragSlot3 = false;
+    bool useDragPotion = false;
+    bool useDragGPotion = false;
+    bool useDragSton = false;
+    bool useDragSlot = false;
+    //bool useDragSlot2 = false;
+    //bool useDragSlot3 = false;
 
     float dragTimer = 0.0f;
     // 넘버 슬롯 실행 할때 유뮤 확인 하기
@@ -262,14 +275,33 @@ public:
     bool useNumberSlot7 = false;
     bool useNumberSlot8 = false;
 
-    int DragCout = 0;
+    int DragCount = 0;
+    //int MinDragCount = 0;
+    int MaxDragCount = 0;
 
     // 발파 상태 내용
     float stateIconTimer = 0.0f;
     float stateIconTimer2 = 0.0f;
+    float stateIconTimer3 = 0.0f;
 
-    bool isRender = true;
+    bool isRender = false;
     float clearUITimer = 0.0f;
     UINT clearCount = 0;
+    float startUITimer = 0.0f;
+    float waitTimer = 0.0f;
+    UINT startCount = 0;
+
+    // 갈무리 아이콘 시간 체크용
+    bool captureIcon1 = false;
+    bool captureIcon2 = false;
+    bool captureIcon3 = false;
+
+    float capturingTimer1 = 0.0f;
+    float capturingTimer2 = 0.0f;
+    float capturingTimer3 = 0.0f;
+
+    UINT randNum1 = rand() % 3;
+    UINT randNum2 = rand() % 3;
+    UINT randNum3 = rand() % 3;
 };
 

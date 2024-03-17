@@ -48,7 +48,10 @@ private:
 		W_020, W_062, W_063, F_072, F_073,
 
 		// 맵 입장, 도착 및 갈무리 모션
-		T_019, T_020, T_050, T_051, T_052
+		T_019, T_020, T_050, T_051, T_052,
+
+		// 시작 모션(팔짱)
+		E_092
 	};
 
 	enum Rotation
@@ -100,6 +103,7 @@ private:
 	void UpdateWorlds();
 	void Potion();
 	void SharpeningStone();
+	void UseBlueBox();
 
 	void Rotate(float rotateSpeed = 5.0f);   // 앞으로 쭉 달리는 루프모션
 	void LimitRotate(float limit, float rotSpeed = 5.0f);   // 공격모션  15 , 180
@@ -288,6 +292,8 @@ private:
 	void T050();
 	void T051();
 	void T052();
+
+	void E092();
 
 private:
 	Transform* mainHand = nullptr;
