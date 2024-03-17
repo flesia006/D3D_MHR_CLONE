@@ -126,9 +126,9 @@ void MapDesignScene::PostRender()
 
 void MapDesignScene::GUIRender()
 {
-    //objects->GUIRender(); 
+    objects->GUIRender(); 
     //ball2->GUIRender();
-    val->GUIRender();
+//    val->GUIRender();
 //      ball->GUIRender();
 //    fog->GUIRender();
 //    

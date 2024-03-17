@@ -13,11 +13,15 @@ public:
 private:
 	Model* M42A01;
 	Model* grass;
-	Model* sm415_000_01;
-	Model* sm414_007_00;
+	Model* sm415_000_01;   //
+	Model* sm414_007_00;   //사각 기둥
 	Model* sm414_007_00_2;
 
-	Model* sm414_005_04;
+	Model* sm414_005_04;   // 법규 모양 벽
+
+	Model* sm414_005_01;   // 울퉁불퉁 벽
+	Model* sm414_005_01_2;   // 울퉁불퉁 벽
+
 
 	string basicTexPath = "Textures/M41";
 	Vector3 basicPos = Vector3(2062.1f, 180, 17653.896f);
