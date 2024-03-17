@@ -236,7 +236,6 @@ private:
 	void E0007();
 	void E0043();
 	void E0044(float degree);
-	void E0044a(float degree);
 	void E0045(float degree);
 	void E0055();
 	void E0059();
@@ -439,6 +438,7 @@ private:
 	Vector3 vecToTagt = Vector3::Zero();
 	Vector3 initForward = Vector3::Zero();
 	Transform* head = nullptr;
+	Transform* eyes = nullptr;
 	CapsuleCollider* realPos = nullptr;
 	Transform* realPosition = nullptr;
 	CapsuleCollider* tempCollider = nullptr;

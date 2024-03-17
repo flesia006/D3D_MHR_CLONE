@@ -103,6 +103,7 @@ private:
 	void UpdateWorlds();
 	void Potion();
 	void SharpeningStone();
+	void UseBlueBox();
 
 	void Rotate(float rotateSpeed = 5.0f);   // 앞으로 쭉 달리는 루프모션
 	void LimitRotate(float limit, float rotSpeed = 5.0f);   // 공격모션  15 , 180
@@ -341,8 +342,8 @@ private:
 	UINT lastHitPart = 0;
 	Vector3 lastSwordDir;
 
-	State curState = E_092;
-	State preState = E_092;
+	State curState = S_001;
+	State preState = S_001;
 
 	float moveSpeed = 4000 * DELTA;
 	float rotSpeed = 5.0f;

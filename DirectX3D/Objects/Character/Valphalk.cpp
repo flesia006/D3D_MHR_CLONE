@@ -162,12 +162,14 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 	ReadClip("E_4073");
 	ReadClip("E_4074");
 	//	ReadClip("E_22005");
-
+	Sounds::Get()->Play("env_114", 0.5f);
 	ColliderAdd();
 	realPos = new CapsuleCollider(1, 0.1);
 	realPos->Pos() = Vector3(4000, 500, 4000);
 	realPos->Scale() *= 6.0f;
 	realPos->UpdateWorld();
+
+	eyes = new Transform();
 
 	tempCollider = new CapsuleCollider(6, 0.1);
 	tempCollider->UpdateWorld();
@@ -411,6 +413,11 @@ void Valphalk::Update()
 	zetPos[3]->SetWorld(GetTransformByNode(81));
 	zetPos[4]->SetWorld(GetTransformByNode(84));
 	zetPos[5]->SetWorld(GetTransformByNode(87));
+
+	eyes->Pos() = GetTranslationByNode(14);
+	eyes->Rot() = Rot();
+	eyes->UpdateWorld();
+
 
 	FOR(6)
 		valZets[i]->Update();
@@ -1126,12 +1133,21 @@ void Valphalk::SetState(State state, float rad)
 
 void Valphalk::DeathCheck()
 {
+	static bool once = false;
+
 	if (curHP < 0)
 	{
-		if (isSlashMode)
-			curPattern = S_DEAD;
-		else
-			curPattern = B_DEAD;
+		if (!once)
+		{
+			if (isSlashMode)
+				curPattern = S_DEAD;
+			else
+				curPattern = B_DEAD;
+
+
+			CAM->SetDeadCAM(eyes, this);
+			once = true;
+		}
 	}
 }
 
@@ -2288,10 +2304,12 @@ void Valphalk::S_JetRush()
 		case 5:		SetState(E_2002);	E2002(XM_PIDIV2);  break;
 		case 6:		SetState(E_2003);	E2003(XM_PI);  break;
 		}
+		if (RATIO > 0.38 && RATIO < 0.40)
+			Sounds::Get()->Play("em086_05_vo_media_24", 0.7f);
 	}
 
 	if (sequence == 2) // 돌진모션
-	{
+	{		
 		if (!renderJet)
 			renderJet = true;
 		SetState(E_2013);	E2013();
@@ -2473,7 +2491,10 @@ void Valphalk::B_SwingAtk()
 		case 4:		SetState(E_2091);  E2091();				break;
 		case 5:		SetState(E_2092);  E2092(XM_PIDIV2);	break;
 		case 6:		SetState(E_2093);  E2093(XM_PI);		break;
-		}
+		}		
+		if (RATIO > 0.80 && RATIO < 0.81)
+			Sounds::Get()->Play("em086_05_vo_media_26", 0.3f);
+
 	}
 
 	if (sequence == 2) // 공격 모션
@@ -3557,6 +3578,8 @@ void Valphalk::E2003(float degree)//2001를 왼쪽 180도로 방향틀고 실행
 void Valphalk::E2013()//돌진 시작
 {
 	PLAY;
+	if (RATIO < 0.1f)
+		Sounds::Get()->Play("em086_05_fx_media_24", 0.4f);
 
 	SetColliderAttack(HEAD, 0.95, 45, 2);
 	SetColliderAttack(LWING, 0.95, 45, 2);
@@ -3955,11 +3978,10 @@ void Valphalk::E2093(float degree) // 180도
 
 void Valphalk::E2103(float degree) // 휘두르기 공격
 {
-	PLAY;
+	PLAY;	
 
 	if (RATIO < 0.15)
 	{
-		Sounds::Get()->Play("em086_05_se_media_46", 0.3f);
 		SetColliderAttack(RWING, 0.15, 30, 2);
 	}
 
@@ -4055,7 +4077,10 @@ void Valphalk::E2145a() // 2145, 2146 합친거
 void Valphalk::E2171()
 {
 	PLAY;
+	if (RATIO < 0.1)
+		Sounds::Get()->Play("em086_05_vo_media_7", 0.5f);
 
+		
 	if (RATIO > 0.237 && RATIO < 0.417)
 	{
 		SetColliderAttack(HEAD, 0.417, 30, 1);
@@ -4146,10 +4171,14 @@ void Valphalk::E2141()
 	if (RATIO > 0.056 && RATIO < 0.09)
 	{
 		SetColliderAttack(RLEG1_FOOT, 0.09, 25, 1);
+		Sounds::Get()->Play("em086_05_vo_media_21", 0.5f);
 	}
 
+	if (RATIO < 2.0f && RATIO>1.9f)
+		Sounds::Get()->Play("em086_05_vo_media_16", 0.5f);
 	if (RATIO > 0.256 && RATIO < 0.296)
 	{
+		Sounds::Get()->Play("em086_05_se_media_10", 0.3f);
 		SetColliderAttack(RWING, 0.296, 40, 2);
 	}
 
@@ -4262,10 +4291,10 @@ void Valphalk::E2175(float degree)// 정면 보다가 오른쪽 보고 오른발 들기
 void Valphalk::E2185()// 들었던 발을 내려찍으며 깨물기
 {
 	PLAY;
-
+	if (RATIO < 0.1)
+		Sounds::Get()->Play("em086_05_vo_media_7", 0.3f);
 	if (RATIO > 0.121 && RATIO < 0.331)
 	{
-		Sounds::Get()->Play("em086_05_vo_media_5", 0.3f);
 		SetColliderAttack(HEAD, 0.331, 25, 1);
 	}
 
@@ -4389,7 +4418,12 @@ void Valphalk::E2210()//왼쪽 90도 날개찍기 준비동작
 	PLAY;
 
 	if (RATIO > 0.700f && RATIO < 0.96f)
+	{
 		RotateToTarget(0.700f, 0.96f);
+	}
+	if (RATIO > 0.80 && RATIO < 0.81)
+		Sounds::Get()->Play("em086_05_vo_media_23", 0.5f);
+
 
 	if (RATIO > 0.96)
 	{
@@ -4406,7 +4440,6 @@ void Valphalk::E2211(float degree)//왼쪽 90도 날개찍기 공격동작
 
 	if (RATIO > 0.117 && RATIO < 0.185)
 	{
-		Sounds::Get()->Play("em086_05_vo_media_5", 0.3f);
 		SetColliderAttack(RWING, 0.185, 40, 2);
 	}
 
@@ -4802,7 +4835,8 @@ void Valphalk::E2354(float degree) // 풀버스트 전방
 	PLAY;
 	if (RATIO > 0.0176f && RATIO < 0.876f)
 		RotateToTarget(0.0176f, 0.876f);
-
+	if (RATIO < 0.1f)
+		Sounds::Get()->Play("em086_05_vo_media_24", 0.5f);
 	if (RATIO > 0.96)
 	{
 		sequence++;
@@ -4867,10 +4901,16 @@ void Valphalk::E2367() // 풀버스트 발사
 	PLAY;
 	if (RATIO < 0.01f && RATIO>0.0001f)
 	{
+		Sounds::Get()->Play("em086_05_fx_media_41", 0.5f);
+
 		FOR(fireParticle.size())fireParticle[i]->Stop();
 		fullburstParticle2->Play(fullBurst->GlobalPos() + Forward() * 2800, 0);
 		fullburstParticle2->PlaySpark(fullBurst->GlobalPos() + Forward() * 3200, 0);
 	}
+	if (RATIO > 0.14 && RATIO<0.15)
+		Sounds::Get()->Play("em086_05_fx_media_3", 0.5f);
+	if (RATIO > 0.27 && RATIO < 0.28)
+		Sounds::Get()->Play("em086_05_fx_media_11", 0.3f);
 	if (RATIO < 0.31 && RATIO>0.30)
 	{
 		renderFullBurst = true;
@@ -4890,6 +4930,32 @@ void Valphalk::E2367() // 풀버스트 발사
 		fullburstParticle2->PlaySpark5(fullBurst->GlobalPos() + Forward() * -1200, 0);
 		fullburstParticle2->PlaySpark6(fullBurst->GlobalPos() + Forward() * -2200, 0);
 	}
+	if (RATIO > 0.5 && RATIO < 0.51)
+	{		
+		Sounds::Get()->Play("em086_05_fx_media_35", 0.06f);
+		explosionParticle[0]->Play2(fullBurst->GlobalPos() + Forward() * 2200 + Down() * 300, 0);
+	}
+	if (RATIO > 0.55 && RATIO < 0.56)
+	{
+		Sounds::Get()->Play("em086_05_fx_media_35_2", 0.06f);
+		explosionParticle[1]->Play3(fullBurst->GlobalPos() + Forward() * 1200 + Down() * 300, 0);
+	}
+	if (RATIO > 0.60 && RATIO < 0.61)
+	{
+		Sounds::Get()->Play("em086_05_fx_media_35", 0.06f);
+		explosionParticle[2]->Play2(fullBurst->GlobalPos() + Forward() * 200 + Down() * 300, 0);
+	}
+	if (RATIO > 0.65 && RATIO < 0.66)
+	{
+		Sounds::Get()->Play("em086_05_fx_media_35_2", 0.06f);
+		explosionParticle[3]->Play3(fullBurst->GlobalPos() + Forward() * -1200 + Down() * 300, 0);
+	}
+	if (RATIO > 0.7 && RATIO < 0.71)
+	{
+		Sounds::Get()->Play("em086_05_fx_media_35", 0.06f);
+		explosionParticle[4]->Play2(fullBurst->GlobalPos() + Forward() * -2400 + Down() * 300, 0);
+	}
+
 	if (RATIO > 0.31)
 		fullBurst->SetActive(true);
 

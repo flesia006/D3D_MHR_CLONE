@@ -377,23 +377,10 @@ UIManager::UIManager()
 	whetstoneIcon_Q->Pos() = { quickSlot_Back->Pos().x + 127.5f, quickSlot_Back->Pos().y + 2.5f, 0 };
 	whetstoneIcon_Q->Scale() *= 0.95;
 	// 아이템 아이콘 추가 (드래그 슬롯 쪽)
-	//FOR(2)
-	//{
-	//	if (i == 0)
-	//	{
-	//		Quad* quad = new Quad(L"Textures/UI/ItemSlot.png");
-	//		quad->Pos() = { itemSlot->Pos().x + 81,itemSlot->Pos().y + 4,0 };
-	//		quad->Scale() *= 1.25f;
-	//		inItDragItem_D.push_back(quad);
-	//	}
-	//	if (i == 1)
-	//	{
-	//		Quad* quad = new Quad(L"Textures/UI/Whetstone-icon.png");
-	//		quad->Pos() = { itemSlot->Pos().x + 81,itemSlot->Pos().y + 4,0 };
-	//		quad->Scale() *= 1.25f;
-	//		inItDragItem_D.push_back(quad);
-	//	}
-	//}
+	inItDragItem_D.push_back(new Quad(L"Textures/UI/Whetstone-icon.png"));
+	inItDragItem_D[0]->Scale() *= 1.25f;
+	inItDragItem_D[0]->Pos() = itemSlot->Pos();
+	inItDragItem_D[0]->SetTag("Whetstone");
 	potionIcon_D = new Quad(L"Textures/UI/Potion.png");
 	potionIcon_D->Pos() = { itemSlot->Pos().x -83,itemSlot->Pos().y + 2,0 };
 	potionIcon_D->Scale() *= 1.2;
@@ -439,16 +426,30 @@ UIManager::UIManager()
 		}
 	}
 
-	FOR(10)
+	FOR(20)
 	{
 		wstring texture;
-		texture = L"Textures/UI/Number" + to_wstring(i) + L".png";
-		Quad* quad = new Quad(texture);
-		quad->Pos().x = greatepotionIcon_D->Pos().x + 15;
-		quad->Pos().y = greatepotionIcon_D->Pos().y - 16;
-		quad->Scale() *= 0.4;
-		itemNumber_D.push_back(quad);
-		itemNumber_D[i]->UpdateWorld();
+		//texture = L"Textures/UI/Number" + to_wstring(i) + L".png";
+		//Quad* quad = new Quad(texture);
+		//quad->Scale() *= 0.4;
+		//itemNumber_D.push_back(quad);
+		//itemNumber_D[i]->UpdateWorld();
+		if (i < 10)
+		{
+			texture = L"Textures/UI/Number" + to_wstring(i) + L".png";
+			Quad* quad = new Quad(texture);
+			quad->Scale() *= 0.4;
+			itemNumber_D.push_back(quad);
+			itemNumber_D[i]->UpdateWorld();
+		}
+		else if (i >= 10)
+		{
+			texture = L"Textures/UI/Number" + to_wstring(i - 10) + L".png";
+			Quad* quad = new Quad(texture);
+			quad->Scale() *= 0.4;
+			itemNumber_D.push_back(quad);
+			itemNumber_D[i]->UpdateWorld();
+		}
 	}
 
 	FOR(20)
@@ -603,10 +604,10 @@ UIManager::~UIManager()
 	delete potionIcon_Q;
 	delete greatepotionIcon_Q;
 	delete whetstoneIcon_Q;
-	//FOR(inItDragItem_D.size())
-	//{
-	//	delete inItDragItem_D[i];
-	//}
+	FOR(inItDragItem_D.size())
+	{
+		delete inItDragItem_D[i];
+	}
 	delete potionIcon_D;
 	delete greatepotionIcon_D;
 	delete whetstoneIcon_D;
@@ -642,7 +643,12 @@ UIManager::~UIManager()
 void UIManager::Update()
 {
 	ItemManager::Get()->Update();
-	DragInvenItem();
+	// 임시로 놓은거임
+	FOR(inItDragItem_D.size())
+	{
+		inItDragItem_D[i]->UpdateWorld();
+	}
+	
 	NumberSlotBar();
 	DragSlotBar();
 	QuickSlotBar();
@@ -695,10 +701,6 @@ void UIManager::Update()
 	potionIcon_Q->UpdateWorld();
 	greatepotionIcon_Q->UpdateWorld();
 	whetstoneIcon_Q->UpdateWorld();
-	//FOR(inItDragItem_D.size())
-	//{
-	//	inItDragItem_D[i]->UpdateWorld();
-	//}
 	potionIcon_D->UpdateWorld();
 	greatepotionIcon_D->UpdateWorld();
 	whetstoneIcon_D->UpdateWorld();
@@ -985,6 +987,8 @@ void UIManager::Update()
 		orangeLeftHalfCircle3->SetActive(false);
 		orangeRightHalfCircle3->SetActive(false);
 	}
+
+	
 }
 
 void UIManager::PostRender()
@@ -1113,13 +1117,8 @@ void UIManager::PostRender()
 		}
 		//0materialIcon3->Render();
 	}
+	ItemManager::Get()->PostRender();
 
-	//ItemManager::Get()->PostRender();
-
-	//FOR(inItDragItem_D.size())
-	//{
-	//	inItDragItem_D[i]->Render();
-	//}
 }
 
 void UIManager::GUIRender()
@@ -1142,7 +1141,6 @@ void UIManager::GUIRender()
 	//ImGui::Text("CamRot_X: %f", CamRot);
 	//ImGui::Text("CAM_Rot_Y: %f", CAM->Rot().y);
 	//ImGui::Text("CamRot_Y: %f", CamRot.y);
-
 }
 
 void UIManager::Hit(float damage)
@@ -1493,24 +1491,15 @@ void UIManager::QuickSlotBar()
 
 void UIManager::DragInvenItem()
 {
-	// 오류 나서 일단 주석
-	//if (ItemManager::Get()->invenSize > 0)
-	//{
-	//	FOR(ItemManager::Get()->invenSize)
-	//	{
-	//		if (ItemManager::Get()->itemList[i]->IsOnMouseCursor() && KEY_DOWN(VK_LBUTTON))
-	//		{
-	//			Quad* quad = new Quad(ItemManager::Get()->inventoryList[i]->GetMaterial()->GetDiffuseMap()->GetFile());
-	//			if (ItemManager::Get()->InvenCheck(quad, inItDragItem_D)->GetMaterial()->GetDiffuseMap()->GetFile() !=
-	//				quad->GetMaterial()->GetDiffuseMap()->GetFile())
-	//			{
-	//				quad->Pos() = { CENTER_X, CENTER_Y + 10 * i };
-	//				inItDragItem_D.push_back(quad);
-	//			}
-	//		}
-	//		
-	//	}
-	//}
+	ItemManager::Get()->GetBoxItem(inItDragItem_D);
+	if (inItDragItem_D.size() <= 3)
+	{
+		MaxDragCount = 2;
+	}
+	else if (inItDragItem_D.size() > 3)
+	{
+		MaxDragCount = inItDragItem_D.size() - 1;
+	}
 }
 
 void UIManager::DragSlot()
@@ -1524,92 +1513,79 @@ void UIManager::DragSlot()
 		dragSlotBox->Render();
 		itemSlot->Render();
 
-		if (DragCout == 0) // 그레이트 포션 중앙
-		{
-			potionIcon_D->Pos() = { itemSlot->Pos().x - 83,itemSlot->Pos().y + 2,0 };
-			greatepotionIcon_D->Pos() = { itemSlot->Pos().x - 3,itemSlot->Pos().y + 3,0 };
-			whetstoneIcon_D->Pos() = { itemSlot->Pos().x + 81,itemSlot->Pos().y + 4,0 };
-			potionIcon_D->Render();
-			greatepotionIcon_D->Render();
-			whetstoneIcon_D->Render();
-			useDragSlot1 = true;
-			useDragSlot2 = false;
-			useDragSlot3 = false;
-		}
-		if (DragCout == 1 || DragCout == -2) // 숫돌 중앙 1740 120
-		{
-			potionIcon_D->Pos() = { itemSlot->Pos().x + 81,itemSlot->Pos().y + 2,0 };
-			greatepotionIcon_D->Pos() = { itemSlot->Pos().x - 83,itemSlot->Pos().y + 2,0 };
-			whetstoneIcon_D->Pos() = { itemSlot->Pos().x + 1,itemSlot->Pos().y + 3,0 }; 
-			potionIcon_D->Render();
-			greatepotionIcon_D->Render();
-			whetstoneIcon_D->Render();
-			useDragSlot1 = false;
-			useDragSlot2 = true;
-			useDragSlot3 = false;
-		}
-		if (DragCout == 2 || DragCout == -1) // 일반 포션 중앙
-		{
-			potionIcon_D->Pos() = { itemSlot->Pos().x - 1,itemSlot->Pos().y + 1,0 };
-			greatepotionIcon_D->Pos() = { itemSlot->Pos().x + 81,itemSlot->Pos().y + 2,0 };
-			whetstoneIcon_D->Pos() = { itemSlot->Pos().x - 83,itemSlot->Pos().y + 4,0 };
-			potionIcon_D->Render();
-			greatepotionIcon_D->Render();
-			whetstoneIcon_D->Render();
-			useDragSlot1 = false;
-			useDragSlot2 = false;
-			useDragSlot3 = true;
-		}
 		dragSlot_ButtonUp->Render();
 		dragSlot_ButtonDown->Render();
+		FOR(inItDragItem_D.size())
+		{
+			inItDragItem_D[i]->Render();
+		}
 	}
 
-	if (useDragSlot1)
+	FOR(inItDragItem_D.size())
 	{
-		slotNames[2]->Render();
-		Font::Get()->RenderText("그레이트 물약", { slotNames[2]->Pos().x + 90,slotNames[2]->Pos().y + 16.5f });
-		greatepotionIcon_D->Render();
-		if (haveGPotion < 10)
+		if (ItemManager::Get()->UseItem(inItDragItem_D[i]))
 		{
-			itemNumber_D[haveGPotion]->Pos().x = 1752;
-			itemNumber_D[haveGPotion]->Render();
-		}
-		else if (haveGPotion == 10)
-		{
-			itemNumber_D[1]->Pos().x = 1746;
-			itemNumber_D[0]->Pos().x = 1758;
-			itemNumber_D[1]->Render();
-			itemNumber_D[0]->Render();
+			useDragSlot = true;
+			if (inItDragItem_D[i]->GetTag() == "GreatePotion")
+			{
+				inItDragItem_D[i]->Render();
+				slotNames[2]->Render();
+				Font::Get()->RenderText("그레이트 물약", { slotNames[2]->Pos().x + 90,slotNames[2]->Pos().y + 16.5f });
+				if (haveGPotion < 10)
+				{
+					itemNumber_D[haveGPotion]->Pos()
+						= { inItDragItem_D[i]->Pos().x + 15, inItDragItem_D[i]->Pos().y - 16 };
+					itemNumber_D[haveGPotion]->Render();
+				}
+				else if (haveGPotion == 10)
+				{
+					itemNumber_D[1]->Pos()
+						= { inItDragItem_D[i]->Pos().x + 9, inItDragItem_D[i]->Pos().y - 16 };
+					itemNumber_D[0]->Pos()
+						= { inItDragItem_D[i]->Pos().x + 21, inItDragItem_D[i]->Pos().y - 16 };
+					itemNumber_D[1]->Render();
+					itemNumber_D[0]->Render();
+				}
+				break;
+			}
+			if (inItDragItem_D[i]->GetTag() == "Potion")
+			{
+				inItDragItem_D[i]->Render();
+				slotNames[2]->Render();
+				Font::Get()->RenderText("일반 물약", { slotNames[2]->Pos().x + 65,slotNames[2]->Pos().y + 16.5f });
+				if (havePotion < 20)
+				{
+					itemNumber_D[havePotion]->Pos()
+						= { inItDragItem_D[i]->Pos().x + 15, inItDragItem_D[i]->Pos().y - 16 };
+					itemNumber_D[havePotion]->Render();
+				}
+				else if (havePotion == 20)
+				{
+					itemNumber_D[11]->Pos()
+						= { inItDragItem_D[i]->Pos().x + 9, inItDragItem_D[i]->Pos().y - 16 };
+					itemNumber_D[10]->Pos()
+						= { inItDragItem_D[i]->Pos().x + 21, inItDragItem_D[i]->Pos().y - 16 };
+					itemNumber_D[11]->Render();
+					itemNumber_D[10]->Render();
+				}
+				break;
+			}
+			if (inItDragItem_D[i]->GetTag() == "Whetstone")
+			{
+				inItDragItem_D[i]->Render();
+				slotNames[2]->Render();
+				Font::Get()->RenderText("숫돌", { slotNames[2]->Pos().x + 42,slotNames[2]->Pos().y + 16.5f });
+				break;
+			}
+				
 		}
 	}
-	if (useDragSlot2)
-	{
-		slotNames[2]->Render();
-		Font::Get()->RenderText("숫돌", { slotNames[2]->Pos().x + 42,slotNames[2]->Pos().y + 16.5f });
-		whetstoneIcon_D->Render();
-	}
-	if (useDragSlot3)
-	{
-		slotNames[2]->Render();
-		Font::Get()->RenderText("일반 물약", { slotNames[2]->Pos().x + 65,slotNames[2]->Pos().y + 16.5f });
-		potionIcon_D->Render();
-		if (10 <= havePotion && havePotion < 20)
-		{
-			itemNumber_D[havePotion - 10]->Pos().x = 1752;
-			itemNumber_D[havePotion - 10]->Render();
-		}
-		else if (havePotion == 20)
-		{
-			itemNumber_D[1]->Pos().x = 1746;
-			itemNumber_D[0]->Pos().x = 1758;
-			itemNumber_D[1]->Render();
-			itemNumber_D[0]->Render();
-		}
-	}
+	
 }
 
 void UIManager::DragSlotBar()
 {
+	DragInvenItem();
 	if (useDragBar)
 	{
 		dragTimer += DELTA;
@@ -1622,25 +1598,105 @@ void UIManager::DragSlotBar()
 	}
 	if (wheelPos.z > 0)
 	{
-		DragCout--;
+		DragCount--;
 		useDragBar = true;
 		dragTimer = 0.0f;
-		if (DragCout < -2)
+		if (DragCount < 0)
 		{
-			DragCout = 0;
+			DragCount = MaxDragCount;
 		}
 		wheelPos = {};
 	}
 	else if (wheelPos.z < 0)
 	{
-		DragCout++;
+		DragCount++;
 		useDragBar = true;
 		dragTimer = 0.0f;
-		if (DragCout > 2)
+		if (DragCount > MaxDragCount)
 		{
-			DragCout = 0;
+			DragCount = 0;
 		}
 		wheelPos = {};
+	}
+
+	if (inItDragItem_D.size() == 1)
+	{
+		if (DragCount == 0)
+		{
+			inItDragItem_D[0]->Pos() = { itemSlot->Pos().x - 83, itemSlot->Pos().y + 2 };
+		}
+		if (DragCount == 1)
+		{
+			inItDragItem_D[0]->Pos() = { itemSlot->Pos().x, itemSlot->Pos().y + 2 };
+		}
+		if (DragCount == 2)
+		{
+			inItDragItem_D[0]->Pos() = { itemSlot->Pos().x + 83, itemSlot->Pos().y + 2 };
+		}
+	}
+	else if (inItDragItem_D.size() == 2)
+	{
+		if (DragCount == 0)
+		{
+			FOR(2)
+			{
+				inItDragItem_D[i]->Pos() = { itemSlot->Pos().x - 83 + i * 83 , itemSlot->Pos().y + 2 };
+			}
+		}
+		if (DragCount == 1)
+		{
+			FOR(2)
+			{
+				inItDragItem_D[i]->Pos() = { itemSlot->Pos().x + i * 83 , itemSlot->Pos().y + 2 };
+			}
+		}
+		if (DragCount == 2)
+		{
+			FOR(2)
+			{
+				inItDragItem_D[i]->Pos() = { itemSlot->Pos().x + 83 - (i * 2) * 83 , itemSlot->Pos().y + 2 };
+			}
+		}
+	}
+	else if (inItDragItem_D.size() == 3)
+	{
+		if (DragCount == 0)
+		{
+			FOR(3)
+			{
+				inItDragItem_D[i]->Pos() = { itemSlot->Pos().x - 83 + i * 83 , itemSlot->Pos().y + 2 };
+			}
+		}
+		if (DragCount == 1)
+		{
+			FOR(3)
+			{
+				if (i < 2)
+				{
+					inItDragItem_D[i]->Pos() = { itemSlot->Pos().x + i * 83 , itemSlot->Pos().y + 2 };
+				}
+				else if (i >= 2)
+				{
+					inItDragItem_D[i]->Pos() = { itemSlot->Pos().x - (i - 1) * 83 , itemSlot->Pos().y + 2 };
+				}
+
+			}
+		}
+		if (DragCount == 2)
+		{
+			FOR(3)
+			{
+				if (i < 2)
+				{
+					inItDragItem_D[i]->Pos() = { itemSlot->Pos().x + 83 - (i * 2) * 83 , itemSlot->Pos().y + 2 };
+				}
+				else if (i >= 2)
+				{
+					inItDragItem_D[i]->Pos() = { itemSlot->Pos().x, itemSlot->Pos().y + 2 };
+				}
+
+			}
+		}
 	}
 }
 

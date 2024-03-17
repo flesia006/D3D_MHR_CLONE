@@ -18,6 +18,7 @@ Quad::Quad(wstring file)
     mesh = new Mesh<VertexType>();
     MakeMesh();
     mesh->CreateMesh();
+    
 }
 
 Quad::~Quad()

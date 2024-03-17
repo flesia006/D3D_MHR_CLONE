@@ -11,8 +11,8 @@ FullBurstParticle2::FullBurstParticle2()
     sprite4 = new Sprite(L"Textures/Effect/val_spark.png", 2650, 2650, 8, 4, true);
     sprite5 = new Sprite(L"Textures/Effect/val_spark.png", 2650, 2650, 8, 4, true);
     sprite6 = new Sprite(L"Textures/Effect/val_spark.png", 2650, 2650, 8, 4, true);
-    particle->SetScale(13.0f);
-    particle2->SetScale(13.0f);
+    particle->SetScale(7.0f);
+    particle2->SetScale(7.0f);
 
     //zet1->Pos().z -= 1000;
     //zet2->Pos().z -= 1000;

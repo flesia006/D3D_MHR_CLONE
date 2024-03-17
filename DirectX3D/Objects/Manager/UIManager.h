@@ -77,6 +77,8 @@ public:
     void UIAlphaOn();
     void StartUIAlphaOn();
 
+    int choice = 0;
+
 private:
     // 퀵 슬롯 관한 내용
     //=====================
@@ -151,7 +153,6 @@ private:
     Quad* potionIcon_D;
     Quad* greatepotionIcon_D;
     Quad* whetstoneIcon_D;
-    vector<Quad*>inItDragItem_D;
     //===================
     Quad* potionIcon_N;
     Quad* greatepotionIcon_N;
@@ -248,14 +249,19 @@ public:
     bool useSelectBar = false;
     Vector3 MousePos;
 
+    // 드래그 슬롯 내용
+    vector<Quad*>inItDragItem_D;
     int havePotion = 10; // 애는 20이 10개
     int haveGPotion = 0; // 애는 10이 10개
 
     // 드래그 슬롯 실행 할때 유무 확인 하기
     bool useDragBar = false;
-    bool useDragSlot1 = true;
-    bool useDragSlot2 = false;
-    bool useDragSlot3 = false;
+    bool useDragPotion = false;
+    bool useDragGPotion = false;
+    bool useDragSton = false;
+    bool useDragSlot = false;
+    //bool useDragSlot2 = false;
+    //bool useDragSlot3 = false;
 
     float dragTimer = 0.0f;
     // 넘버 슬롯 실행 할때 유뮤 확인 하기
@@ -271,7 +277,9 @@ public:
     bool useNumberSlot7 = false;
     bool useNumberSlot8 = false;
 
-    int DragCout = 0;
+    int DragCount = 0;
+    //int MinDragCount = 0;
+    int MaxDragCount = 0;
 
     // 발파 상태 내용
     float stateIconTimer = 0.0f;

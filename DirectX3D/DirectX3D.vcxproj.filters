@@ -184,6 +184,8 @@
     <ClCompile Include="Objects\Character\PlayerWireBug.cpp" />
     <ClCompile Include="Objects\Basic\ModelQuad.cpp" />
     <ClCompile Include="Objects\Basic\Ring.cpp" />
+    <ClCompile Include="Scenes\OpeningScene.cpp" />
+    <ClCompile Include="Scenes\LoadingScene.cpp" />
     <ClCompile Include="Objects\Particle\SliceEft.cpp" />
     <ClCompile Include="Objects\Algorithm\AStar.cpp" />
     <ClCompile Include="Objects\Algorithm\Heap.cpp" />
@@ -364,6 +366,8 @@
     <ClInclude Include="Objects\Algorithm\Node.h" />
     <ClInclude Include="Objects\Particle\headBreakAtk.h" />
     <ClInclude Include="Scenes\SimpleTestScene.h" />
+    <ClInclude Include="Scenes\OpeningScene.h" />
+    <ClInclude Include="Scenes\LoadingScene.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DirectX3D.rc" />

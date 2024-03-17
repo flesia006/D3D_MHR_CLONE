@@ -2,6 +2,15 @@
 class TerrainEditor;
 class Camera : public Transform
 {
+private:
+    enum CAMmode
+    {
+        BASIC, 
+        OPENING, 
+        DEAD, 
+        FREE
+    };
+
 public:
     Camera();
     ~Camera();
@@ -14,6 +23,12 @@ public:
     void SetTarget(Transform* target) { this->target = target; }
     void SetLockOnTarget(Vector3 target) { this->lockOnTarget = target; }
     void SetTerrain(TerrainEditor* terrain) { this->terrain = terrain; }
+
+    void SetOpeningCAM();
+    void SetDeadCAM(Transform* target, Transform* target2 = nullptr);
+
+    void OpeningCAM();
+    void DeadCAM();
 
     Vector3 ScreenToWorld(Vector3 screenPos);
     Vector3 WorldToScreen(Vector3 worldPos);
@@ -36,7 +51,10 @@ public:
     {
         distance = Lerp(distance, dist, damping * DELTA);
     }
+    bool isFreeCamTrue() { return freeCam = true; }
+    bool isFreeCamFalse() { return freeCam = false; }
 
+    Transform* sightRot;
 private:
     void FreeMode();
     void FollowMode();
@@ -44,7 +62,6 @@ private:
     void ThirdPresonViewMode();
 
     void Frustum();
-
 private:
     ViewBuffer* viewBuffer;
     Matrix view;
@@ -59,9 +76,11 @@ private:
     Vector3 prevMousePos;
 
     Transform* target = nullptr;
+    Transform* target1 = nullptr;
+    Transform* target2 = nullptr;
     Vector3 lockOnTarget;
 
-    float distance = 300.0f;
+    float distance = 400.0f;
     float height = 100.0f;
     float moveDamping = 5.0f;
     float rotDamping = 1.0f;
@@ -75,6 +94,10 @@ private:
     bool isLookAtTargetX = true;
     bool isLookAtTargetY = true;
 
+    bool playOpening = false;
+    bool playDeadScene = false;
+    bool once = false;
+
     bool lateInitialize = false;
 
     Matrix rotMatrix;
@@ -82,10 +105,11 @@ private:
     char file[128] = {};
 
     SphereCollider* camSphere = nullptr;
-    BoxCollider* ground = nullptr;
     Ray sight;
-    Transform* sightRot;
     TerrainEditor* terrain = nullptr;
 
+    CAMmode mode = BASIC;
+    float timer = 0.0f;
     bool freeCam = false;
+
 };
