@@ -45,6 +45,7 @@ void FightTestScene::PreRender()
 
 void FightTestScene::Render()
 {
+	ItemManager::Get()->Render();
 	rasterizer->SetState();
 	valphalk->Render();
 	garuk->Render();
