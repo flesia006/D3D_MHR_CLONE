@@ -23,6 +23,8 @@ private:
     HalfSphere* ball2;
     HalfSphere* fog;
     HalfSphere* fog2;
+    Model* fieldFog;
+
 
     TerrainEditor* terrain;
 

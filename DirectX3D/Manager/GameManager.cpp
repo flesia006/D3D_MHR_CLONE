@@ -43,8 +43,8 @@ GameManager::GameManager()
 {
     Create();
 
-    SceneManager::Get()->Create("ModelExport", new ModelExportScene());
-    SceneManager::Get()->Add("ModelExport");
+//    SceneManager::Get()->Create("ModelExport", new ModelExportScene());
+//    SceneManager::Get()->Add("ModelExport");
 //
     SceneManager::Get()->Create("Grid", new GridScene());
     SceneManager::Get()->Add("Grid");
@@ -52,8 +52,8 @@ GameManager::GameManager()
 
 //    SceneManager::Get()->Create("ShadowScene", new ShadowScene());
 //    SceneManager::Get()->Add("ShadowScene");
-//    SceneManager::Get()->Create("MapDesignScene", new MapDesignScene());
-//    SceneManager::Get()->Add("MapDesignScene");
+    SceneManager::Get()->Create("MapDesignScene", new MapDesignScene());
+    SceneManager::Get()->Add("MapDesignScene");
 //      SceneManager::Get()->Create("Particle", new ParticleScene());
 //      SceneManager::Get()->Add("Particle");
 //    SceneManager::Get()->Create("ParticleConfig", new ParticleConfigScene());

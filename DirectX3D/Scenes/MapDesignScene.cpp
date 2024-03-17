@@ -41,6 +41,11 @@ MapDesignScene::MapDesignScene()
     fog2->GetMaterial()->SetDiffuseMap(L"Textures/M41Sky/newcloud2.png");
     fog2->UpdateWorld();
 
+    fieldFog = new Model("fog");
+    fieldFog->Pos() = Vector3(2062.1f, 230, 17653.896f);
+    fieldFog->Rot().y = XM_PI;
+    fieldFog->UpdateWorld();
+
 
     light = Environment::Get()->GetLight(0);
     light->type = 0;
@@ -56,7 +61,7 @@ MapDesignScene::MapDesignScene()
     light2 = Environment::Get()->GetLight(2);
     light2->type = 0;
     light2->direction = { 1, -0.6, 1 };
-    light2->color = { 0.35, 0.35, 0.35, 1 };        // 낮조명
+    light2->color = { 0.45, 0.45, 0.45, 1 };        // 낮조명
 
 
     FOR(2) rasterizerState[i] = new RasterizerState();
@@ -104,14 +109,15 @@ void MapDesignScene::Render()
 
     rasterizerState[1]->SetState(); // 후면도 그림
     {
-        val->Render();
         objects->Render();
+        val->Render();
         ball->Render();
         ball2->Render();
         blendState[1]->SetState(); // 반투명
         {
             fog->Render();
             fog2->Render();
+            //fieldFog->Render();
         }
         blendState[0]->SetState();
     }
@@ -132,5 +138,5 @@ void MapDesignScene::GUIRender()
 //      ball->GUIRender();
 //    fog->GUIRender();
 //    
-//    cap->GUIRender();
+    cap->GUIRender();
 }
