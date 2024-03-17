@@ -4,8 +4,8 @@
 PlayerTestScene::PlayerTestScene()
 {
 	valphalk = new DummyValphalk();
-	valphalk->Pos().x = +1500.0f;
-	valphalk->Pos().z = +1500.0f;
+	valphalk->Pos().x = -1500.0f;
+	valphalk->Pos().z = -1500.0f;
 
 	garuk = new Sample();
 	player = new Player();
@@ -17,11 +17,14 @@ PlayerTestScene::PlayerTestScene()
 	player->SetValphalk(valphalk);
 	player->SetDog(garuk);
 	player->SetTerrain(terrain);
+
 	UI;
-	ARROW;
 
 	wireBug = new WireBug();
 	player->SetWireBug(wireBug);
+
+	CAM->SetTerrain(terrain);
+
 }
 
 PlayerTestScene::~PlayerTestScene()
@@ -30,7 +33,6 @@ PlayerTestScene::~PlayerTestScene()
 	delete player;
 	delete garuk;
 	delete wireBug;
-	ARROW->Delete();
 }
 
 void PlayerTestScene::Update()
@@ -40,7 +42,6 @@ void PlayerTestScene::Update()
 	player->Update();
 	wireBug->Update();
 	UI->Update();
-	ARROW->Update();
 	//	Vector3 playerPos;
 	//	Vector3 garuk1Pos;
 	//	Vector3 garuk2Pos;
@@ -64,12 +65,11 @@ void PlayerTestScene::PreRender()
 
 void PlayerTestScene::Render()
 {
+	terrain->Render();
 	valphalk->Render();
 	player->Render();
 	garuk->Render();
-	terrain->Render();
 	wireBug->Render();
-	ARROW->Render();
 }
 
 void PlayerTestScene::PostRender()
@@ -77,6 +77,7 @@ void PlayerTestScene::PostRender()
 	player->PostRender();
 	UI->PostRender();
 	wireBug->PostRender();
+	garuk->PostRender();
 }
 
 void PlayerTestScene::GUIRender()
@@ -85,4 +86,5 @@ void PlayerTestScene::GUIRender()
 	player->GUIRender();
 	garuk->GUIRender();
 	wireBug->GUIRender();
+	ItemManager::Get()->GUIRender();
 }

@@ -113,6 +113,7 @@ UIManager::UIManager()
 	orangeRightHalfCircle3->SetActive(false);
 
 	questClearUI = new Quad(L"Textures/Quest/0.png");
+	questStartUI = new Quad(L"Textures/QuestStart/0.png");
 
 	// 퀵슬롯 UI 추가
 	quickSlot_Back = new Quad(L"Textures/UI/QickSlot_Back.png");
@@ -358,10 +359,12 @@ UIManager::UIManager()
 		L"Textures/UI/LSCoting_none.png"
 	);
 
-	valphalkStateIcon1 = new Quad(L"Textures/UI/StateIcon.png");
+	valphalkStateIcon1 = new Quad(L"Textures/UI/StateIcon1.png");
 	valphalkStateIcon1->Pos() = { 1700, 600 };
-	valphalkStateIcon2 = new Quad(L"Textures/UI/StateIcon.png");
+	valphalkStateIcon2 = new Quad(L"Textures/UI/StateIcon2.png");
 	valphalkStateIcon2->Pos() = { 1700, 500 };
+	valphalkStateIcon3 = new Quad(L"Textures/UI/StateIcon3.png");
+	valphalkStateIcon3->Pos() = { 1700, 600 };
 
 	// 아이템 아이콘 추가 (퀵슬롯 쪽)
 	potionIcon_Q = new Quad(L"Textures/UI/Potion.png");
@@ -374,23 +377,10 @@ UIManager::UIManager()
 	whetstoneIcon_Q->Pos() = { quickSlot_Back->Pos().x + 127.5f, quickSlot_Back->Pos().y + 2.5f, 0 };
 	whetstoneIcon_Q->Scale() *= 0.95;
 	// 아이템 아이콘 추가 (드래그 슬롯 쪽)
-	//FOR(2)
-	//{
-	//	if (i == 0)
-	//	{
-	//		Quad* quad = new Quad(L"Textures/UI/ItemSlot.png");
-	//		quad->Pos() = { itemSlot->Pos().x + 81,itemSlot->Pos().y + 4,0 };
-	//		quad->Scale() *= 1.25f;
-	//		inItDragItem_D.push_back(quad);
-	//	}
-	//	if (i == 1)
-	//	{
-	//		Quad* quad = new Quad(L"Textures/UI/Whetstone-icon.png");
-	//		quad->Pos() = { itemSlot->Pos().x + 81,itemSlot->Pos().y + 4,0 };
-	//		quad->Scale() *= 1.25f;
-	//		inItDragItem_D.push_back(quad);
-	//	}
-	//}
+	inItDragItem_D.push_back(new Quad(L"Textures/UI/Whetstone-icon.png"));
+	inItDragItem_D[0]->Scale() *= 1.25f;
+	inItDragItem_D[0]->Pos() = itemSlot->Pos();
+	inItDragItem_D[0]->SetTag("Whetstone");
 	potionIcon_D = new Quad(L"Textures/UI/Potion.png");
 	potionIcon_D->Pos() = { itemSlot->Pos().x -83,itemSlot->Pos().y + 2,0 };
 	potionIcon_D->Scale() *= 1.2;
@@ -436,16 +426,30 @@ UIManager::UIManager()
 		}
 	}
 
-	FOR(10)
+	FOR(20)
 	{
 		wstring texture;
-		texture = L"Textures/UI/Number" + to_wstring(i) + L".png";
-		Quad* quad = new Quad(texture);
-		quad->Pos().x = greatepotionIcon_D->Pos().x + 15;
-		quad->Pos().y = greatepotionIcon_D->Pos().y - 16;
-		quad->Scale() *= 0.4;
-		itemNumber_D.push_back(quad);
-		itemNumber_D[i]->UpdateWorld();
+		//texture = L"Textures/UI/Number" + to_wstring(i) + L".png";
+		//Quad* quad = new Quad(texture);
+		//quad->Scale() *= 0.4;
+		//itemNumber_D.push_back(quad);
+		//itemNumber_D[i]->UpdateWorld();
+		if (i < 10)
+		{
+			texture = L"Textures/UI/Number" + to_wstring(i) + L".png";
+			Quad* quad = new Quad(texture);
+			quad->Scale() *= 0.4;
+			itemNumber_D.push_back(quad);
+			itemNumber_D[i]->UpdateWorld();
+		}
+		else if (i >= 10)
+		{
+			texture = L"Textures/UI/Number" + to_wstring(i - 10) + L".png";
+			Quad* quad = new Quad(texture);
+			quad->Scale() *= 0.4;
+			itemNumber_D.push_back(quad);
+			itemNumber_D[i]->UpdateWorld();
+		}
 	}
 
 	FOR(20)
@@ -514,6 +518,19 @@ UIManager::UIManager()
 
 	// 퀘스트 클리어 UI
 	questClearUI->Pos() = { CENTER_X , CENTER_Y, 0 };
+	// 퀘스트 시작 UI
+	questStartUI->Pos() = { CENTER_X, 800,0 };
+	questStartUI->Scale() *= 1.3f;
+
+	// 갈무리 아이콘
+	materialIcon1 = new Quad(L"Textures/UI/MaterialIcon1.png");
+	materialIcon1->Pos() = { 1700,600 };
+
+	materialIcon2 = new Quad(L"Textures/UI/MaterialIcon2.png");
+	materialIcon2->Pos() = { 1700,500 };
+
+	materialIcon3 = new Quad(L"Textures/UI/MaterialIcon3.png");
+	materialIcon3->Pos() = { 1700,400 };
 
 	ItemManager::Get();
 }
@@ -587,10 +604,10 @@ UIManager::~UIManager()
 	delete potionIcon_Q;
 	delete greatepotionIcon_Q;
 	delete whetstoneIcon_Q;
-	//FOR(inItDragItem_D.size())
-	//{
-	//	delete inItDragItem_D[i];
-	//}
+	FOR(inItDragItem_D.size())
+	{
+		delete inItDragItem_D[i];
+	}
 	delete potionIcon_D;
 	delete greatepotionIcon_D;
 	delete whetstoneIcon_D;
@@ -615,19 +632,30 @@ UIManager::~UIManager()
 	}
 	delete valphalkStateIcon1;
 	delete valphalkStateIcon2;
+	delete valphalkStateIcon3;
 	delete questClearUI;
+	delete questStartUI;
+	delete materialIcon1;
+	delete materialIcon2;
+	delete materialIcon3;
 }
 
 void UIManager::Update()
 {
 	ItemManager::Get()->Update();
-	DragInvenItem();
+	// 임시로 놓은거임
+	FOR(inItDragItem_D.size())
+	{
+		inItDragItem_D[i]->UpdateWorld();
+	}
+	
 	NumberSlotBar();
 	DragSlotBar();
 	QuickSlotBar();
 	StateIcon();
 
 	UIAlphaOn();
+	StartUIAlphaOn();
 
 	stamina->UpdateWorld();
 	recover->UpdateWorld();
@@ -664,15 +692,15 @@ void UIManager::Update()
 	dragSlot_ButtonDown->UpdateWorld();
 	dragSlot_KeyButton->UpdateWorld();
 	questClearUI->UpdateWorld();
+	questStartUI->UpdateWorld();
+	materialIcon1->UpdateWorld();
+	materialIcon2->UpdateWorld();
+	materialIcon3->UpdateWorld();
 	// 잠시 넣음
 	//===================
 	potionIcon_Q->UpdateWorld();
 	greatepotionIcon_Q->UpdateWorld();
 	whetstoneIcon_Q->UpdateWorld();
-	//FOR(inItDragItem_D.size())
-	//{
-	//	inItDragItem_D[i]->UpdateWorld();
-	//}
 	potionIcon_D->UpdateWorld();
 	greatepotionIcon_D->UpdateWorld();
 	whetstoneIcon_D->UpdateWorld();
@@ -715,6 +743,7 @@ void UIManager::Update()
 	}
 	valphalkStateIcon1->UpdateWorld();
 	valphalkStateIcon2->UpdateWorld();
+	valphalkStateIcon3->UpdateWorld();
 	//hp, stamina 부분
 	hp->SetAmount(curHP / maxHP);
 	recover->SetAmount(recoverHP / maxHP);
@@ -966,8 +995,16 @@ void UIManager::PostRender()
 {
 	if (!isRender)
 	{
-		questClearUI->Render();
-		return;
+		if (valDeath)
+		{
+			questClearUI->Render();
+			return;
+		}
+		else
+		{
+			questStartUI->Render();
+			return;
+		}
 	}
 
 	recover->Render();
@@ -1029,34 +1066,59 @@ void UIManager::PostRender()
 	NumberSlot();
 	if (partDestruct)
 	{
+		valphalkStateIcon1->SetTexture(L"Textures/UI/StateIcon1.png");
 		valphalkStateIcon1->Render();
-		Font::Get()->RenderText("영묘한 광채의 발파루크", { valphalkStateIcon1->Pos().x + 108, valphalkStateIcon1->Pos().y + 18 });
-		Font::Get()->RenderText("부위 파괴", { valphalkStateIcon1->Pos().x - 18, valphalkStateIcon1->Pos().y - 15 });
 	}
 	if (partDestruct2)
 	{
+		valphalkStateIcon2->SetTexture(L"Textures/UI/StateIcon1.png");
 		valphalkStateIcon2->Render();
-		Font::Get()->RenderText("영묘한 광채의 발파루크", { valphalkStateIcon2->Pos().x + 108, valphalkStateIcon2->Pos().y + 18 });
-		Font::Get()->RenderText("부위 파괴", { valphalkStateIcon2->Pos().x - 18, valphalkStateIcon2->Pos().y - 15 });
 	}
 	if (specialMove)
 	{
+		valphalkStateIcon1->SetTexture(L"Textures/UI/StateIcon2.png");
 		valphalkStateIcon1->Render();
-		Font::Get()->RenderText("영묘한 광채의 발파루크", { valphalkStateIcon1->Pos().x + 108, valphalkStateIcon1->Pos().y + 18 });
-		Font::Get()->RenderText("습격", { valphalkStateIcon1->Pos().x - 68, valphalkStateIcon1->Pos().y - 15 });	
 	}
 	if (specialMove2)
 	{
+		valphalkStateIcon2->SetTexture(L"Textures/UI/StateIcon2.png");
 		valphalkStateIcon2->Render();
-		Font::Get()->RenderText("영묘한 광채의 발파루크", { valphalkStateIcon2->Pos().x + 108, valphalkStateIcon2->Pos().y + 18 });
-		Font::Get()->RenderText("습격", { valphalkStateIcon2->Pos().x - 68, valphalkStateIcon2->Pos().y - 15 });
 	}
+	if (valDeath)
+		valphalkStateIcon3->Render();
 
+	if (captureIcon1)
+	{
+		switch (randNum1)
+		{
+		case 0:		materialIcon1->Render(); break;
+		case 1:		materialIcon1->SetTexture(L"Textures/UI/MaterialIcon2.png"); materialIcon1->Render(); break;
+		case 2:		materialIcon1->SetTexture(L"Textures/UI/MaterialIcon3.png"); materialIcon1->Render(); break;
+		}
+		//materialIcon1->Render();
+	}
+	if (captureIcon2)
+	{
+		switch (randNum2)
+		{
+		case 0:		materialIcon2->SetTexture(L"Textures/UI/MaterialIcon1.png"); materialIcon2->Render(); break;
+		case 1:		materialIcon2->Render(); break;
+		case 2:		materialIcon2->SetTexture(L"Textures/UI/MaterialIcon3.png"); materialIcon2->Render(); break;
+		}
+		//materialIcon2->Render();
+	}
+	if (captureIcon3)
+	{
+		switch (randNum3)
+		{
+		case 0:		materialIcon3->SetTexture(L"Textures/UI/MaterialIcon1.png"); materialIcon3->Render(); break;
+		case 1:		materialIcon3->SetTexture(L"Textures/UI/MaterialIcon2.png"); materialIcon3->Render(); break;
+		case 2:		materialIcon3->Render(); break;
+		}
+		//0materialIcon3->Render();
+	}
 	ItemManager::Get()->PostRender();
-	//FOR(inItDragItem_D.size())
-	//{
-	//	inItDragItem_D[i]->Render();
-	//}
+
 }
 
 void UIManager::GUIRender()
@@ -1170,7 +1232,7 @@ void UIManager::MinusSpiritGauge()
 
 void UIManager::UIAlphaOn()
 {
-	if (isRender)
+	if (isRender || !valDeath)
 		return;
 
 	clearUITimer += DELTA;
@@ -1180,6 +1242,32 @@ void UIManager::UIAlphaOn()
 		questClearUI->SetTexture(L"Textures/Quest/" + to_wstring(clearCount) + L".png");
 		clearCount++;
 		clearUITimer = 0.0f;
+	}
+}
+
+void UIManager::StartUIAlphaOn()
+{
+	if (isRender || valDeath)
+		return;
+
+	startUITimer += DELTA;
+	waitTimer += DELTA;
+
+	if (startUITimer > 0.01f && startCount < 11 && waitTimer < 3.0f)
+	{
+		questStartUI->SetTexture(L"Textures/QuestStart/" + to_wstring(startCount) + L".png");
+		startCount++;
+		startUITimer = 0.0f;
+	}
+
+	if (waitTimer > 2.0f)
+	{
+		if (startUITimer > 0.01f && startCount > 0)
+		{
+			questStartUI->SetTexture(L"Textures/QuestStart/" + to_wstring(startCount - 1) + L".png");
+			startCount--;
+			startUITimer = 0.0f;
+		}
 	}
 }
 
@@ -1403,24 +1491,15 @@ void UIManager::QuickSlotBar()
 
 void UIManager::DragInvenItem()
 {
-	// 오류 나서 일단 주석
-	//if (ItemManager::Get()->invenSize > 0)
-	//{
-	//	FOR(ItemManager::Get()->invenSize)
-	//	{
-	//		if (ItemManager::Get()->itemList[i]->IsOnMouseCursor() && KEY_DOWN(VK_LBUTTON))
-	//		{
-	//			Quad* quad = new Quad(ItemManager::Get()->inventoryList[i]->GetMaterial()->GetDiffuseMap()->GetFile());
-	//			if (ItemManager::Get()->InvenCheck(quad, inItDragItem_D)->GetMaterial()->GetDiffuseMap()->GetFile() !=
-	//				quad->GetMaterial()->GetDiffuseMap()->GetFile())
-	//			{
-	//				quad->Pos() = { CENTER_X, CENTER_Y + 10 * i };
-	//				inItDragItem_D.push_back(quad);
-	//			}
-	//		}
-	//		
-	//	}
-	//}
+	ItemManager::Get()->GetBoxItem(inItDragItem_D);
+	if (inItDragItem_D.size() <= 3)
+	{
+		MaxDragCount = 2;
+	}
+	else if (inItDragItem_D.size() > 3)
+	{
+		MaxDragCount = inItDragItem_D.size() - 1;
+	}
 }
 
 void UIManager::DragSlot()
@@ -1434,92 +1513,79 @@ void UIManager::DragSlot()
 		dragSlotBox->Render();
 		itemSlot->Render();
 
-		if (DragCout == 0) // 그레이트 포션 중앙
-		{
-			potionIcon_D->Pos() = { itemSlot->Pos().x - 83,itemSlot->Pos().y + 2,0 };
-			greatepotionIcon_D->Pos() = { itemSlot->Pos().x - 3,itemSlot->Pos().y + 3,0 };
-			whetstoneIcon_D->Pos() = { itemSlot->Pos().x + 81,itemSlot->Pos().y + 4,0 };
-			potionIcon_D->Render();
-			greatepotionIcon_D->Render();
-			whetstoneIcon_D->Render();
-			useDragSlot1 = true;
-			useDragSlot2 = false;
-			useDragSlot3 = false;
-		}
-		if (DragCout == 1 || DragCout == -2) // 숫돌 중앙 1740 120
-		{
-			potionIcon_D->Pos() = { itemSlot->Pos().x + 81,itemSlot->Pos().y + 2,0 };
-			greatepotionIcon_D->Pos() = { itemSlot->Pos().x - 83,itemSlot->Pos().y + 2,0 };
-			whetstoneIcon_D->Pos() = { itemSlot->Pos().x + 1,itemSlot->Pos().y + 3,0 }; 
-			potionIcon_D->Render();
-			greatepotionIcon_D->Render();
-			whetstoneIcon_D->Render();
-			useDragSlot1 = false;
-			useDragSlot2 = true;
-			useDragSlot3 = false;
-		}
-		if (DragCout == 2 || DragCout == -1) // 일반 포션 중앙
-		{
-			potionIcon_D->Pos() = { itemSlot->Pos().x - 1,itemSlot->Pos().y + 1,0 };
-			greatepotionIcon_D->Pos() = { itemSlot->Pos().x + 81,itemSlot->Pos().y + 2,0 };
-			whetstoneIcon_D->Pos() = { itemSlot->Pos().x - 83,itemSlot->Pos().y + 4,0 };
-			potionIcon_D->Render();
-			greatepotionIcon_D->Render();
-			whetstoneIcon_D->Render();
-			useDragSlot1 = false;
-			useDragSlot2 = false;
-			useDragSlot3 = true;
-		}
 		dragSlot_ButtonUp->Render();
 		dragSlot_ButtonDown->Render();
+		FOR(inItDragItem_D.size())
+		{
+			inItDragItem_D[i]->Render();
+		}
 	}
 
-	if (useDragSlot1)
+	FOR(inItDragItem_D.size())
 	{
-		slotNames[2]->Render();
-		Font::Get()->RenderText("그레이트 물약", { slotNames[2]->Pos().x + 90,slotNames[2]->Pos().y + 16.5f });
-		greatepotionIcon_D->Render();
-		if (haveGPotion < 10)
+		if (ItemManager::Get()->UseItem(inItDragItem_D[i]))
 		{
-			itemNumber_D[haveGPotion]->Pos().x = 1752;
-			itemNumber_D[haveGPotion]->Render();
-		}
-		else if (haveGPotion == 10)
-		{
-			itemNumber_D[1]->Pos().x = 1746;
-			itemNumber_D[0]->Pos().x = 1758;
-			itemNumber_D[1]->Render();
-			itemNumber_D[0]->Render();
+			useDragSlot = true;
+			if (inItDragItem_D[i]->GetTag() == "GreatePotion")
+			{
+				inItDragItem_D[i]->Render();
+				slotNames[2]->Render();
+				Font::Get()->RenderText("그레이트 물약", { slotNames[2]->Pos().x + 90,slotNames[2]->Pos().y + 16.5f });
+				if (haveGPotion < 10)
+				{
+					itemNumber_D[haveGPotion]->Pos()
+						= { inItDragItem_D[i]->Pos().x + 15, inItDragItem_D[i]->Pos().y - 16 };
+					itemNumber_D[haveGPotion]->Render();
+				}
+				else if (haveGPotion == 10)
+				{
+					itemNumber_D[1]->Pos()
+						= { inItDragItem_D[i]->Pos().x + 9, inItDragItem_D[i]->Pos().y - 16 };
+					itemNumber_D[0]->Pos()
+						= { inItDragItem_D[i]->Pos().x + 21, inItDragItem_D[i]->Pos().y - 16 };
+					itemNumber_D[1]->Render();
+					itemNumber_D[0]->Render();
+				}
+				break;
+			}
+			if (inItDragItem_D[i]->GetTag() == "Potion")
+			{
+				inItDragItem_D[i]->Render();
+				slotNames[2]->Render();
+				Font::Get()->RenderText("일반 물약", { slotNames[2]->Pos().x + 65,slotNames[2]->Pos().y + 16.5f });
+				if (havePotion < 20)
+				{
+					itemNumber_D[havePotion]->Pos()
+						= { inItDragItem_D[i]->Pos().x + 15, inItDragItem_D[i]->Pos().y - 16 };
+					itemNumber_D[havePotion]->Render();
+				}
+				else if (havePotion == 20)
+				{
+					itemNumber_D[11]->Pos()
+						= { inItDragItem_D[i]->Pos().x + 9, inItDragItem_D[i]->Pos().y - 16 };
+					itemNumber_D[10]->Pos()
+						= { inItDragItem_D[i]->Pos().x + 21, inItDragItem_D[i]->Pos().y - 16 };
+					itemNumber_D[11]->Render();
+					itemNumber_D[10]->Render();
+				}
+				break;
+			}
+			if (inItDragItem_D[i]->GetTag() == "Whetstone")
+			{
+				inItDragItem_D[i]->Render();
+				slotNames[2]->Render();
+				Font::Get()->RenderText("숫돌", { slotNames[2]->Pos().x + 42,slotNames[2]->Pos().y + 16.5f });
+				break;
+			}
+				
 		}
 	}
-	if (useDragSlot2)
-	{
-		slotNames[2]->Render();
-		Font::Get()->RenderText("숫돌", { slotNames[2]->Pos().x + 42,slotNames[2]->Pos().y + 16.5f });
-		whetstoneIcon_D->Render();
-	}
-	if (useDragSlot3)
-	{
-		slotNames[2]->Render();
-		Font::Get()->RenderText("일반 물약", { slotNames[2]->Pos().x + 65,slotNames[2]->Pos().y + 16.5f });
-		potionIcon_D->Render();
-		if (10 <= havePotion && havePotion < 20)
-		{
-			itemNumber_D[havePotion - 10]->Pos().x = 1752;
-			itemNumber_D[havePotion - 10]->Render();
-		}
-		else if (havePotion == 20)
-		{
-			itemNumber_D[1]->Pos().x = 1746;
-			itemNumber_D[0]->Pos().x = 1758;
-			itemNumber_D[1]->Render();
-			itemNumber_D[0]->Render();
-		}
-	}
+	
 }
 
 void UIManager::DragSlotBar()
 {
+	DragInvenItem();
 	if (useDragBar)
 	{
 		dragTimer += DELTA;
@@ -1532,25 +1598,105 @@ void UIManager::DragSlotBar()
 	}
 	if (wheelPos.z > 0)
 	{
-		DragCout--;
+		DragCount--;
 		useDragBar = true;
 		dragTimer = 0.0f;
-		if (DragCout < -2)
+		if (DragCount < 0)
 		{
-			DragCout = 0;
+			DragCount = MaxDragCount;
 		}
 		wheelPos = {};
 	}
 	else if (wheelPos.z < 0)
 	{
-		DragCout++;
+		DragCount++;
 		useDragBar = true;
 		dragTimer = 0.0f;
-		if (DragCout > 2)
+		if (DragCount > MaxDragCount)
 		{
-			DragCout = 0;
+			DragCount = 0;
 		}
 		wheelPos = {};
+	}
+
+	if (inItDragItem_D.size() == 1)
+	{
+		if (DragCount == 0)
+		{
+			inItDragItem_D[0]->Pos() = { itemSlot->Pos().x - 83, itemSlot->Pos().y + 2 };
+		}
+		if (DragCount == 1)
+		{
+			inItDragItem_D[0]->Pos() = { itemSlot->Pos().x, itemSlot->Pos().y + 2 };
+		}
+		if (DragCount == 2)
+		{
+			inItDragItem_D[0]->Pos() = { itemSlot->Pos().x + 83, itemSlot->Pos().y + 2 };
+		}
+	}
+	else if (inItDragItem_D.size() == 2)
+	{
+		if (DragCount == 0)
+		{
+			FOR(2)
+			{
+				inItDragItem_D[i]->Pos() = { itemSlot->Pos().x - 83 + i * 83 , itemSlot->Pos().y + 2 };
+			}
+		}
+		if (DragCount == 1)
+		{
+			FOR(2)
+			{
+				inItDragItem_D[i]->Pos() = { itemSlot->Pos().x + i * 83 , itemSlot->Pos().y + 2 };
+			}
+		}
+		if (DragCount == 2)
+		{
+			FOR(2)
+			{
+				inItDragItem_D[i]->Pos() = { itemSlot->Pos().x + 83 - (i * 2) * 83 , itemSlot->Pos().y + 2 };
+			}
+		}
+	}
+	else if (inItDragItem_D.size() == 3)
+	{
+		if (DragCount == 0)
+		{
+			FOR(3)
+			{
+				inItDragItem_D[i]->Pos() = { itemSlot->Pos().x - 83 + i * 83 , itemSlot->Pos().y + 2 };
+			}
+		}
+		if (DragCount == 1)
+		{
+			FOR(3)
+			{
+				if (i < 2)
+				{
+					inItDragItem_D[i]->Pos() = { itemSlot->Pos().x + i * 83 , itemSlot->Pos().y + 2 };
+				}
+				else if (i >= 2)
+				{
+					inItDragItem_D[i]->Pos() = { itemSlot->Pos().x - (i - 1) * 83 , itemSlot->Pos().y + 2 };
+				}
+
+			}
+		}
+		if (DragCount == 2)
+		{
+			FOR(3)
+			{
+				if (i < 2)
+				{
+					inItDragItem_D[i]->Pos() = { itemSlot->Pos().x + 83 - (i * 2) * 83 , itemSlot->Pos().y + 2 };
+				}
+				else if (i >= 2)
+				{
+					inItDragItem_D[i]->Pos() = { itemSlot->Pos().x, itemSlot->Pos().y + 2 };
+				}
+
+			}
+		}
 	}
 }
 
@@ -1766,10 +1912,10 @@ void UIManager::StateIcon()
 	if (partDestruct || specialMove)
 	{
 		stateIconTimer += DELTA;
-		if (stateIconTimer > 5.0f)
+		if (stateIconTimer > 4.0f)
 		{
-			valphalkStateIcon1->Pos().y += 15.0f * DELTA;
-			if (stateIconTimer > 6.5f)
+			valphalkStateIcon1->Pos().y += 30.0f * DELTA;
+			if (stateIconTimer > 5.0f)
 			{
 				partDestruct = false;
 				specialMove = false;
@@ -1782,15 +1928,79 @@ void UIManager::StateIcon()
 	{
 		stateIconTimer2 += DELTA;
 
-		if (stateIconTimer2 > 5.0f)
+		if (stateIconTimer2 > 4.0f)
 		{
-			valphalkStateIcon2->Pos().y += 15.0f * DELTA;
-			if (stateIconTimer2 > 6.5f)
+			valphalkStateIcon2->Pos().y += 30.0f * DELTA;
+			if (stateIconTimer2 > 5.0f)
 			{
 				partDestruct2 = false;
 				specialMove2 = false;
 				stateIconTimer2 = 0.0f;
 				valphalkStateIcon2->Pos() = { 1700, 500 };
+			}
+		}
+	}
+
+	if (valDeath)
+	{
+		stateIconTimer3 += DELTA;
+
+		if (stateIconTimer3 > 4.0f)
+		{
+			valphalkStateIcon3->Pos().y += 30.0f * DELTA;
+			if (stateIconTimer3 > 5.0f)
+			{
+				valDeath = false;
+				stateIconTimer3 = 0.0f;
+				valphalkStateIcon3->Pos() = { 1700, 600 };
+			}
+		}
+	}
+
+	//////////////////////
+	//갈무리 부분
+	if (captureIcon1)
+	{
+		capturingTimer1 += DELTA;
+
+		if (capturingTimer1 > 4.0f)
+		{
+			materialIcon1->Pos().y += 30.0f * DELTA;
+			if (capturingTimer1 > 5.0f)
+			{
+				captureIcon1 = false;
+				capturingTimer1 = 0.0f;
+				materialIcon1->Pos() = { 1700, 600 };
+			}
+		}
+	}
+	if (captureIcon2)
+	{
+		capturingTimer2 += DELTA;
+
+		if (capturingTimer2 > 4.0f)
+		{
+			materialIcon2->Pos().y += 30.0f * DELTA;
+			if (capturingTimer2 > 5.0f)
+			{
+				captureIcon2 = false;
+				capturingTimer2 = 0.0f;
+				materialIcon2->Pos() = { 1700, 500 };
+			}
+		}
+	}
+	if (captureIcon3)
+	{
+		capturingTimer3 += DELTA;
+
+		if (capturingTimer3 > 4.0f)
+		{
+			materialIcon3->Pos().y += 30.0f * DELTA;
+			if (capturingTimer3 > 5.0f)
+			{
+				captureIcon3 = false;
+				capturingTimer3 = 0.0f;
+				materialIcon3->Pos() = { 1700, 400 };
 			}
 		}
 	}

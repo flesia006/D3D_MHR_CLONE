@@ -14,9 +14,12 @@ public:
 	void Render();
 	void GUIRender();
 
+	bool effect = false;
 	bool active = false;
 private:
 	vector<Model*> suwol;
+	vector<Vector3> originPos;
+
 
 	BlendState* blendState[2];
 	DepthStencilState* depthState[2];

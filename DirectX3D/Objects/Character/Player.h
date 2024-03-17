@@ -48,7 +48,10 @@ private:
 		W_020, W_062, W_063, F_072, F_073,
 
 		// 맵 입장, 도착 및 갈무리 모션
-		T_019, T_020, T_050, T_051, T_052
+		T_019, T_020, T_050, T_051, T_052,
+
+		// 시작 모션(팔짱)
+		E_092
 	};
 
 	enum Rotation
@@ -100,6 +103,7 @@ private:
 	void UpdateWorlds();
 	void Potion();
 	void SharpeningStone();
+	void UseBlueBox();
 
 	void Rotate(float rotateSpeed = 5.0f);   // 앞으로 쭉 달리는 루프모션
 	void LimitRotate(float limit, float rotSpeed = 5.0f);   // 공격모션  15 , 180
@@ -289,6 +293,8 @@ private:
 	void T051();
 	void T052();
 
+	void E092();
+
 private:
 	Transform* mainHand = nullptr;
 	Transform* backSwd = nullptr;
@@ -334,8 +340,8 @@ private:
 	UINT lastHitPart = 0;
 	Vector3 lastSwordDir;
 
-	State curState = L_101;
-	State preState = L_101;
+	State curState = S_001;
+	State preState = S_001;
 
 	float moveSpeed = 4000 * DELTA;
 	float rotSpeed = 5.0f;
@@ -416,10 +422,10 @@ private:
 	bool rideCAM = false;
 	bool isJump = false;
 	bool isInitVoice = false;
-	
+
 	WireBug* wireBug = nullptr; // 필드에서 주울 밧줄벌레
 	PlayerWireBug* playerWireBug; // 밧줄벌레 기술 사용시 나오는 벌레
-	
+
 	int randVoice = 0;
 	float breathCount = 0;
 
@@ -445,7 +451,8 @@ private:
 	Transform* haloTransform = nullptr;
 	CapsuleCollider* haloCollider = nullptr;
 	Suwol* suwol = nullptr;
-	TuguEft* tugu = nullptr;
 	vector<CircleEft*> circle;
+	SliceEft* slice = nullptr;
+	headBreakAtk* tuguAtk = nullptr;
 };
 

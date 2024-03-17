@@ -53,6 +53,8 @@ void CircleEft::Update()
             num = 1;
         }
     }
+    v_circle->Rot().y += 50 * DELTA;
+    h_circle->Rot().y += 50 * DELTA;
     v_circle->UpdateWorld();
     h_circle->UpdateWorld();
     Transform::UpdateWorld();

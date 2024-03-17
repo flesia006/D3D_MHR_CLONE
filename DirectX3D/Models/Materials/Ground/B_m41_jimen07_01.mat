@@ -1,6 +1,6 @@
 <Material Name="B_m41_jimen07_01">
     <Shader Vertex="" Pixel="Shaders/Light/Light.hlsl"/>
-    <Texture Diffuse="Textures/M41/m41_jimen07_ALBD.tga" Specular="Textures/Color/White.png" Normal="Textures/M41/m41_jimen07_NRMR.tga" Emissive="Textures/Color/Black.png"/>
+    <Texture Diffuse="Textures\M41fix\m41_jimen07_ALBD.png" Specular="Textures/Color/White.png" Normal="Textures\M41fix\m41_jimen07_NRMR.png" Emissive="Textures/Color/Black.png"/>
     <Property Shininess="20" HasNormalMap="1">
         <Diffuse R="0.80000001" G="0.80000001" B="0.80000001" A="1"/>
         <Specular R="0.2" G="0.2" B="0.2" A="1"/>

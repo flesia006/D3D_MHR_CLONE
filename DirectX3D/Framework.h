@@ -231,6 +231,8 @@ using namespace GameMath;
 #include "Objects/Particle/FullBurstParticle2.h"
 
 #include "Objects/Particle/CircleEft.h"
+#include "Objects/Particle/SliceEft.h"
+#include "Objects/Particle/headBreakAtk.h"
 
 #include "Objects/Algorithm/Node.h"
 #include "Objects/Algorithm/Heap.h"

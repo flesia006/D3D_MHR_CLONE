@@ -20,6 +20,7 @@ Sample::Sample() : ModelAnimator("Sample")
 	ReadClip("TURNLEFT");
 	ReadClip("TURNBACK");
 
+	ARROW;
 
 	realPos = new Transform();
 	waist = new Transform();
@@ -28,7 +29,7 @@ Sample::Sample() : ModelAnimator("Sample")
 	arrow = new Model("arrow");
 	bowGun->SetParent(waist);
 
-	fireParticle = new Garuk_Fire();	
+	fireParticle = new Garuk_Fire();
 }
 
 Sample::~Sample()
@@ -52,6 +53,7 @@ void Sample::Update()
 	case Sample::BATTLE:		Battle();		break;
 	}
 
+	ARROW->Update();
 	ModelAnimator::Update();
 	ResetPlayTime();
 	GroundCheck();
@@ -68,7 +70,7 @@ void Sample::Render()
 		bowGun->Render();
 	}
 
-	
+
 
 	if (isSetState)
 	{
@@ -82,22 +84,27 @@ void Sample::Render()
 		isLoop = false;
 
 	}
-
+	ARROW->Render();
 	fireParticle->Render();
+}
+
+void Sample::PostRender()
+{
+	ARROW->PostRender();
 }
 
 void Sample::GUIRender()
 {
-//	ModelAnimator::GUIRender();
-//	Vector3 realpos = realPos->Pos();
-//	Vector3 pos = Pos();
-//
-//	ImGui::DragFloat3("realPos", (float*)&realpos);
-//	ImGui::DragFloat3("Pos", (float*)&pos);
-//	ImGui::DragFloat("lengToTrgt", &lengToTrgt);
-//	ImGui::DragFloat("radbtw", &radBtwEnemy);
-//	
-//	bowGun->GUIRender();	
+	//	ModelAnimator::GUIRender();
+	//	Vector3 realpos = realPos->Pos();
+	//	Vector3 pos = Pos();
+	//
+	//	ImGui::DragFloat3("realPos", (float*)&realpos);
+	//	ImGui::DragFloat3("Pos", (float*)&pos);
+	//	ImGui::DragFloat("lengToTrgt", &lengToTrgt);
+	//	ImGui::DragFloat("radbtw", &radBtwEnemy);
+	//	
+	//	bowGun->GUIRender();	
 	arrow->GUIRender();
 }
 
@@ -142,7 +149,7 @@ void Sample::UpdateWorlds()
 	realPos->Rot() = Rot();
 	realPos->UpdateWorld();
 
-	waist->SetWorld(GetTransformByNode(waistNode));	
+	waist->SetWorld(GetTransformByNode(waistNode));
 	bowGun->UpdateWorld();
 }
 
@@ -201,6 +208,15 @@ void Sample::GroundCheck()
 			Pos().y = 0;
 		return;
 	}
+
+	if (realPos->Pos().x < 800)
+		Pos().x += (800 - realPos->Pos().x);
+	if (realPos->Pos().x > 5100)
+		Pos().x -= (realPos->Pos().x - 5100);
+	if (realPos->Pos().z < 660)
+		Pos().z += (660 - realPos->Pos().z);
+	if (realPos->Pos().z > 7160)
+		Pos().z -= (realPos->Pos().z - 7160);
 
 
 	Vector3 pos1;
@@ -629,7 +645,7 @@ void Sample::G0040_F()
 
 	if (radBtwTarget < -1)
 		RealRotate(-3 * DELTA);
-	else if(radBtwTarget > 1)
+	else if (radBtwTarget > 1)
 		RealRotate(3 * DELTA);
 
 	if (!isCallDog)

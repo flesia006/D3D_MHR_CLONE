@@ -3,38 +3,37 @@
 
 ValphalkTestScene::ValphalkTestScene()
 {
+	objects = new M41Objects();
+
 	valphalk = new Valphalk();
-	valphalk->Pos().z = -1500.0f;
+	valphalk->Pos() = Vector3(4000, 500, 4000);
+
 	garuk = new Sample();
+	garuk->Pos() = Vector3(4000, 500, 4000);
+	terrain = new TerrainEditor();
 
-
-	capsule = new CapsuleCollider(10, 50);
-	capsule->Pos().y += 150;
 	valphalk->SetTarget(garuk);
+	valphalk->SetTerrain(terrain);
+
 	garuk->SetEnemy(valphalk);
-	garuk->SetTarget(capsule);
+	garuk->SetTarget(valphalk->GetRealPos());
+	garuk->SetTerrain(terrain);
 
 	rasterizer = new RasterizerState();
 	rasterizer->CullMode(D3D11_CULL_NONE);
 
-	UIManager::Get();
 
 }
 
 ValphalkTestScene::~ValphalkTestScene()
 {
 	delete valphalk;
-	delete capsule;
 }
 
 void ValphalkTestScene::Update()
 {
-	capsule->UpdateWorld();
 	valphalk->Update();
 	garuk->Update();
-	UIManager::Get()->Update();
-	ARROW->Update();
-	CapsuleMove();
 }
 
 void ValphalkTestScene::PreRender()
@@ -44,35 +43,18 @@ void ValphalkTestScene::PreRender()
 void ValphalkTestScene::Render()
 {
 	rasterizer->SetState();
+	objects->Render();
 	valphalk->Render();
-	capsule->Render();
 	garuk->Render();
-	ARROW->Render();
+	//	terrain->Render();
 }
 
 void ValphalkTestScene::PostRender()
 {
-	UIManager::Get()->PostRender();
-	ARROW->PostRender();
+	garuk->PostRender();
 }
 
 void ValphalkTestScene::GUIRender()
 {
-	valphalk->GUIRender();
-}
-
-void ValphalkTestScene::CapsuleMove()
-{
-	if (KEY_PRESS('W')) capsule->Pos().z -= 1300 * DELTA;
-	if (KEY_PRESS('S')) capsule->Pos().z += 1300 * DELTA;
-	if (KEY_PRESS('A')) capsule->Pos().x += 1300 * DELTA;
-	if (KEY_PRESS('D')) capsule->Pos().x -= 1300 * DELTA;
-
-	if (KEY_DOWN(VK_F5)) CAM->SetTarget(capsule);
-	if (KEY_DOWN(VK_F6)) CAM->SetTarget(nullptr);
-
-	if (KEY_PRESS('Z')) valphalk->curHP -= 1000;
-
-
-	capsule->Update();
+	//valphalk->GUIRender();
 }
