@@ -15,7 +15,7 @@ public:
     bool isStart = false;
 
     int timer = 0;
-
+    float randN = 0;
 private:
     void Create();
     void Delete();

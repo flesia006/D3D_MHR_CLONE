@@ -208,10 +208,7 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 		fullBurst->atkDmg = 55;
 		fullBurstScale = fullBurst->Scale();
 		fullBurstPos = fullBurst->Pos();
-		fullBurstRot = fullBurst->Rot();
-		
-			
-		
+		fullBurstRot = fullBurst->Rot();		
 	}
 
 	effectBox1 = new BoxCollider();
@@ -300,10 +297,11 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 	FOR(8) hupgiFire.push_back(new HupgiFire());
 	FOR(6) explosionParticle.push_back(new Explosion());
 	barrier = new ParticleSystem("TextData/Particles/val_energy.fx");
-	trail = new Trail(L"Textures/Effect/val.png", head, realPosition, 180, 185);
-
+	trail = new Trail(L"Textures/Effect/val.png", head, jetposend, 180, 35);
+	barrier->SetScale(10);
 	tempScale = Scale();
 	
+	stormScale = forwardBoom->Scale();
 }
 
 Valphalk::~Valphalk()
@@ -470,8 +468,7 @@ void Valphalk::Update()
 	if (KEY_DOWN('6'))
 		colliders[LLEG1]->partHp = -100;
 
-	if (KEY_DOWN('8'))
-		curHP = -100;
+	
 	//if (isStorm)
 	//	stormEffect->SetPos(realPos->GlobalPos());
 	//////////////////////////
@@ -544,6 +541,7 @@ void Valphalk::GUIRender()
 	//ModelAnimator::GUIRender();
 	//ImGui::SliderFloat3("ValphalkPos", (float*)&Pos(), -5000, 5000);
 	//ImGui::SliderFloat3("ValphalkRot", (float*)&Rot(), 0, 3.14f);
+	ImGui::DragFloat3("Pos", (float*)&Pos());
 	ImGui::DragFloat3("RealPos", (float*)&realPos->Pos());
 	ImGui::DragFloat3("RealRot", (float*)&realPos->Rot());
 	ImGui::DragFloat("radbtwTrgt", (float*)&radBtwTarget);
@@ -653,21 +651,28 @@ void Valphalk::Storm()
 {
 	stormTime += DELTA;
 	combo = true;
-
-	if (sequence == 0) { SetState(E_1151); E1151(); } // 준비
+	tempY = Pos().y;
+	//stormScale = forwardBoom->Scale();
+	if (sequence == 0) 
+	{ 
+		forwardBoom->Scale().x *= 15;
+		forwardBoom->Scale().z *= 15;
+		forwardBoom->Pos() = realPos->Pos();
+		SetState(E_1151); 
+		E1151(); 
+	} // 준비
 
 	if (sequence == 1) { SetState(E_1155); E1155(); } // 비상중
 
 	//if (sequence == 2) { SetState(E_1163); E1163();	}
 	if (sequence >= 2 && sequence < 4)
 	{
-		barrier->Play(head->GlobalPos());
-		//barrier->SetScale(5);
+		barrier->Play(head->GlobalPos());		
 		barrier->SetRot(+0.2f);
 	}
 	if (sequence == 2) // 공중에서 자유 비행중
 	{
-		Pos().z += 8000 * DELTA;
+		Pos().z -= 8000 * DELTA;
 		Scale() = { 0.3f,0.3f,0.3f };
 		if (stormTime < 4.2f && stormTime>4.1f)
 			Sounds::Get()->Play("em086_05_fx_media_33", 0.5f);
@@ -681,16 +686,26 @@ void Valphalk::Storm()
 	
 	if (stormTime >= 8.5 && curState != E_1164 && sequence == 3) // 하강중
 	{ 
+		barrier->SetScale(20);
 		Scale() = tempScale;  // 앞에서 줄였던 Scale값을 원래대로 복구
 		SetState(E_1163); 		
 		E1163(); 
 	}
+	if(sequence>=3)
+		forwardBoom->SetActive(true);
+
+	if (sequence >= 4)
+	{
+		Pos().y = tempY;
+	}
 	if (sequence == 4) // 착지
 	{ 
+		forwardBoom->Scale() = stormScale;
+		forwardBoom->Pos() = forwardBoomPosInit;
 		isStorming = false; 
 		SetState(E_1164); 
 		E1164(); 
-	} // 착지
+	} 
 }
 
 void Valphalk::EnergyBullets()
@@ -1563,7 +1578,7 @@ void Valphalk::ChooseNextPattern()
 	//int i = rand() % 3;
 	//switch (0)
 	//{
-	//case 0:	curPattern = HS_FLYFALLATK;	 break;
+	//case 0:	curPattern = STORM;	 break;
 	//case 1:	curPattern = B_DOWNBLAST;		 break;
 	//case 2:	curPattern = B_ENERGYBLAST;		 break;
 	//}
@@ -1975,16 +1990,17 @@ void Valphalk::GroundCheck()
 		height = 0.0f;
 		return;
 	}
-
-	if (realPos->Pos().x < 800)
-		Pos().x += (800 - realPos->Pos().x);
-	if (realPos->Pos().x > 5100)
-		Pos().x -= (realPos->Pos().x - 5100);
-	if (realPos->Pos().z < 660)
-		Pos().z += (660 - realPos->Pos().z);
-	if (realPos->Pos().z > 7160)
-		Pos().z -= (realPos->Pos().z - 7160);
-
+	if (realPos->Pos().y < 3000)
+	{
+		if (realPos->Pos().x < 800)
+			Pos().x += (800 - realPos->Pos().x);
+		if (realPos->Pos().x > 5100)
+			Pos().x -= (realPos->Pos().x - 5100);
+		if (realPos->Pos().z < 660)
+			Pos().z += (660 - realPos->Pos().z);
+		if (realPos->Pos().z > 7160)
+			Pos().z -= (realPos->Pos().z - 7160);
+	}
 
 	Vector3 pos;
 	terrain->ComputePicking(pos, realPos->Pos() + Vector3::Up() * 1000, Vector3::Down());
@@ -3419,21 +3435,22 @@ void Valphalk::E1151() // 습격준비
 	if (RATIO < 0.1)
 		Sounds::Get()->Play("em086_05_fx_media_25", 0.5f);
 	
+	forwardBoom->SetActive(true);
 	renderJet = true;
-	if (RATIO > 0.99)
+	if (RATIO > 0.97)
 	{
-		colliders[ROAR]->SetActive(true);
-		SetColliderAttack(ROAR, 0.99f, 10, 2);
+		//colliders[ROAR]->SetActive(true);
+		//SetColliderAttack(ROAR, 0.97f, 10, 2);
 		playOncePerPattern = true;			
 		storm_Start->Play(Pos(), 0);
 		sequence++;
-		colliders[ROAR]->SetActive(false);
+		//colliders[ROAR]->SetActive(false);
 	}
 }
 
 void Valphalk::E1155() // 비상
-{
-	isStorming = true;
+{	
+	isJump = true;
 	Vector3 StormDir = Pos() + Forward() * 500 + Up() * 800;
 	StormDir.GetNormalized();
 	Rot().x = XM_PIDIV2 / 2;
@@ -3444,6 +3461,7 @@ void Valphalk::E1155() // 비상
 	//Rot().x = StormDir.x;	
 	isStorm = true;
 	PLAY;
+	//colliders[ROAR]->SetActive(false);
 	//Vector3 Value = { 0.1f,0.1f,0.1f };
 	//if (Scale().x < Value.x && Scale().y < Value.y && Scale().z < Value.z) // 비상중 멀리 날아간 것 처럼 보이도록 점점 작게 만듦
 	Scale() = Lerp(Scale(), { 0.3f,0.3f,0.3f }, 0.008f);
@@ -3476,35 +3494,29 @@ void Valphalk::E1163() // 하강
 
 	if (distance > 50000) // 일정거리까지 타겟 위치 추적
 	{
-		Pos() = Lerp(Pos(), target->Pos(), 0.001f);
+		Pos() = Lerp(Pos(), target->Pos(), 0.003f);
 	}
 	else if (distance <= 50000 && distance > 5000)// 그 이상 가까워지면 더빠르게 박음
-		Pos() = Lerp(Pos(),target->Pos(), 0.011f);
+		Pos() = Lerp(Pos(),target->Pos(), 0.018f);
 	else if (distance <= 5000) // 걍 무조건 플레이어한테 박음 왜 why? 초필살기니까 무조건 맞아야됨
 	{	
-		Pos() = Lerp(Pos(), { target->Pos().x,target->Pos().y - 1000,target->Pos().z }, 0.185f);
+		Pos() = Lerp(Pos(), { target->Pos().x,target->Pos().y,target->Pos().z }, 0.185f);
 	}
 
 	//Pos().y -= 25000 * DELTA;
 	//Pos().z += 1000 * DELTA;
-	if (Pos().y > target->Pos().y)
-	{
-		//Pos() = Lerp(Pos(), target->Pos(), 0.001f);
-		//Pos().y -= 20000 * DELTA;
-		//Pos().x -= 15000 * DELTA;
-		//Pos().x = target->Pos().x;
-		//Pos().z = target->Pos().z;
-		//Pos().y = realPos->Pos().y;
-		//realPos->Pos().y = Pos().y;
-		//Pos() = realPos->Pos();
-		//Pos().y = realPos->Pos().y;
+	if (Pos().y > 1000)
+	{	
 		PLAY;
 	}
-	else
+	else if(Pos().y < 1000)
 	{
-		colliders[ROAR]->SetActive(true);
-		SetColliderAttack(ROAR, 0.1f, 50, 2);
+		Pos().y = target->Pos().y;
+				
+		//colliders[ROAR]->SetActive(true);
+		//SetColliderAttack(ROAR, 0.05f, 50, 2);
 		storm_Start->Play(Pos(), 0);
+		isJump = false;
 
 		barrier->Stop();
 		sequence++;
@@ -3514,21 +3526,21 @@ void Valphalk::E1163() // 하강
 		Sounds::Get()->Play("em086_05_fx_media_19", 0.5f);
 	if (Pos().y > 3000 && Pos().y < 3500)
 		Sounds::Get()->Play("em086_05_fx_media_20", 0.5f);
-
-
 }
 
 void Valphalk::E1164() // 착지
 {
 	colliders[ROAR]->SetActive(false);
+	isJump = false;	
 
 	Rot().x = 0;
 	Rot().z = 0;
-	Pos().y = 1380.0f;
+	
 	stormTime = 0;
 	PLAY;
 	if (RATIO < 0.1 && RATIO > 0.05)
 	{
+		forwardBoom->SetActive(false);
 		renderJet = false;
 		explosionParticle[0]->PlayStormParticle(Pos(), 0);
 	}
@@ -4939,27 +4951,27 @@ void Valphalk::E2367() // 풀버스트 발사
 	if (RATIO > 0.5 && RATIO < 0.51)
 	{		
 		Sounds::Get()->Play("em086_05_fx_media_35", 0.06f);
-		explosionParticle[0]->Play2(fullBurst->GlobalPos() + Forward() * 2200 + Down() * 300, 0);
+		explosionParticle[0]->Play2(fullBurst->GlobalPos() + Forward() * 2200 + Down() * 120, 0);
 	}
 	if (RATIO > 0.55 && RATIO < 0.56)
 	{
 		Sounds::Get()->Play("em086_05_fx_media_35_2", 0.06f);
-		explosionParticle[1]->Play3(fullBurst->GlobalPos() + Forward() * 1200 + Down() * 300, 0);
+		explosionParticle[1]->Play3(fullBurst->GlobalPos() + Forward() * 1200 + Down() * 120, 0);
 	}
 	if (RATIO > 0.60 && RATIO < 0.61)
 	{
 		Sounds::Get()->Play("em086_05_fx_media_35", 0.06f);
-		explosionParticle[2]->Play2(fullBurst->GlobalPos() + Forward() * 200 + Down() * 300, 0);
+		explosionParticle[2]->Play2(fullBurst->GlobalPos() + Forward() * 200 + Down() * 120, 0);
 	}
 	if (RATIO > 0.65 && RATIO < 0.66)
 	{
 		Sounds::Get()->Play("em086_05_fx_media_35_2", 0.06f);
-		explosionParticle[3]->Play3(fullBurst->GlobalPos() + Forward() * -1200 + Down() * 300, 0);
+		explosionParticle[3]->Play3(fullBurst->GlobalPos() + Forward() * -1200 + Down() * 120, 0);
 	}
 	if (RATIO > 0.7 && RATIO < 0.71)
 	{
 		Sounds::Get()->Play("em086_05_fx_media_35", 0.06f);
-		explosionParticle[4]->Play2(fullBurst->GlobalPos() + Forward() * -2400 + Down() * 300, 0);
+		explosionParticle[4]->Play2(fullBurst->GlobalPos() + Forward() * -2400 + Down() * 120, 0);
 	}
 
 	if (RATIO > 0.31)

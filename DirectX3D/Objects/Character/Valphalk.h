@@ -485,6 +485,8 @@ private:
 	Vector3 fullBurstRot;
 	Vector3 fullBurstFireScale;
 
+	Vector3 stormScale;
+	float tempY;
 	float rotSpeed = 5.0f;
 	int ranPatrol = 0;
 	float patrolTime = 0;

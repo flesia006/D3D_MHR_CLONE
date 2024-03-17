@@ -45,6 +45,8 @@
 GameManager::GameManager()
 {
     Create();
+    srand(static_cast<unsigned int>(time(NULL)));
+    randN = (rand() % 2000) + 1000;
 
 //    SceneManager::Get()->Create("ModelExport", new ModelExportScene());
 //    SceneManager::Get()->Add("ModelExport");
@@ -67,11 +69,11 @@ GameManager::GameManager()
 //    SceneManager::Get()->Add("ValphalkTestScene");
 
 
-    SceneManager::Get()->Create("PlayerTestScene", new PlayerTestScene());
-    SceneManager::Get()->Add("PlayerTestScene");
+//    SceneManager::Get()->Create("PlayerTestScene", new PlayerTestScene());
+//    SceneManager::Get()->Add("PlayerTestScene");
 
-//   SceneManager::Get()->Create("FightTestScene", new FightTestScene());
-//   SceneManager::Get()->Add("FightTestScene");
+   SceneManager::Get()->Create("FightTestScene", new FightTestScene());
+   SceneManager::Get()->Add("FightTestScene");
 
 //    SceneManager::Get()->Create("SimpleTestScene", new SimpleTestScene());
 //    SceneManager::Get()->Add("SimpleTestScene");
@@ -156,7 +158,7 @@ void GameManager::Update()
 
     if (UIManager::Get()->choice == 1 && isStart == true)
         LoadScene();
-    if (UIManager::Get()->choice >= 5000) // 형식적인 로딩 원할시 조정
+    if (UIManager::Get()->choice >= randN) // 운좋으면 빨리되고 운나쁘면 오래걸림^^ // 형식적인 로딩 원할시 조정
         PlayScene();
     if (UIManager::Get()->choice == 6)
         exit(0);    
