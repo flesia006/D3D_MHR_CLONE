@@ -110,4 +110,6 @@ private:
 
     CAMmode mode = BASIC;
     float timer = 0.0f;
+    bool freeCam = false;
+
 };
