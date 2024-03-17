@@ -19,8 +19,6 @@ public:
 
 	void UseBlueBox(Vector3 Pos);
 
-	void Sound();
-
 public: // 임시로 놓은거임
 	string tag;
 	bool lookBoxIcon = false;
