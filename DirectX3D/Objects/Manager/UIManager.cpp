@@ -1594,6 +1594,7 @@ void UIManager::DragSlotBar()
 		dragTimer += DELTA;
 		if (dragTimer > 1.0f)
 		{
+			Sounds::Get()->Play("Slot_off", 1.2f);
 			useDragBar = false;
 			dragSlot_ButtonWheel->SetActive(true);
 			dragSlot_KeyButton->SetActive(true);
@@ -1601,6 +1602,7 @@ void UIManager::DragSlotBar()
 	}
 	if (wheelPos.z > 0)
 	{
+		Sounds::Get()->Play("Slot_move", 1.2f);
 		DragCount--;
 		useDragBar = true;
 		dragTimer = 0.0f;
@@ -1612,6 +1614,7 @@ void UIManager::DragSlotBar()
 	}
 	else if (wheelPos.z < 0)
 	{
+		Sounds::Get()->Play("Slot_move", 1.2f);
 		DragCount++;
 		useDragBar = true;
 		dragTimer = 0.0f;

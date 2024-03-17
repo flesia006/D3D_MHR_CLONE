@@ -421,6 +421,14 @@ void GameManager::Create()
 
     Sounds::Get()->AddSound("capturing", SoundPath + L"pl_prop_media.bnk.2_81.mp3");
     Sounds::Get()->AddSound("capturing2", SoundPath + L"pl_prop_media.bnk.2_112.mp3");
+
+    //UI
+    Sounds::Get()->AddSound("Boxframe_select", SoundPath + L"UI/Boxframe_select.mp3");
+    Sounds::Get()->AddSound("Boxitem_select", SoundPath + L"UI/Boxitem_select.mp3");
+    Sounds::Get()->AddSound("Boxopen", SoundPath + L"UI/Boxopen.mp3");
+    Sounds::Get()->AddSound("Icon_on", SoundPath + L"UI/Icon_on.mp3");
+    Sounds::Get()->AddSound("Slot_move", SoundPath + L"UI/Slot_move.mp3");
+    Sounds::Get()->AddSound("Slot_off", SoundPath + L"UI/Slot_off.mp3");
 }
 
 void GameManager::Delete()
