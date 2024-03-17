@@ -188,6 +188,8 @@
     <ClCompile Include="Objects\Particle\CircleEft.cpp" />
     <ClCompile Include="Objects\Basic\ModelQuad.cpp" />
     <ClCompile Include="Objects\Basic\Ring.cpp" />
+    <ClCompile Include="Scenes\OpeningScene.cpp" />
+    <ClCompile Include="Scenes\LoadingScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Objects\Character\DummyValphalk.h" />
@@ -356,6 +358,8 @@
     <ClInclude Include="Objects\Particle\CircleEft.h" />
     <ClInclude Include="Objects\Basic\ModelQuad.h" />
     <ClInclude Include="Objects\Basic\Ring.h" />
+    <ClInclude Include="Scenes\OpeningScene.h" />
+    <ClInclude Include="Scenes\LoadingScene.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DirectX3D.rc" />

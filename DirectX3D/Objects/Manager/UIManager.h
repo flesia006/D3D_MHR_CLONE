@@ -76,6 +76,8 @@ public:
     void SetAllUIOff() { isRender = false; }
     void UIAlphaOn();
 
+    int choice = 0;
+
 private:
     // Äü ½½·Ô °üÇÑ ³»¿ë
     //=====================

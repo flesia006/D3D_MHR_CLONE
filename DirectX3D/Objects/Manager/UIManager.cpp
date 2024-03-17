@@ -958,6 +958,8 @@ void UIManager::Update()
 		orangeLeftHalfCircle3->SetActive(false);
 		orangeRightHalfCircle3->SetActive(false);
 	}
+
+	
 }
 
 void UIManager::PostRender()
@@ -1077,7 +1079,6 @@ void UIManager::GUIRender()
 	//ImGui::Text("CamRot_X: %f", CamRot);
 	//ImGui::Text("CAM_Rot_Y: %f", CAM->Rot().y);
 	//ImGui::Text("CamRot_Y: %f", CamRot.y);
-
 }
 
 void UIManager::Hit(float damage)

@@ -30,8 +30,11 @@
 #include "Scenes/ValphalkTestScene.h"
 #include "Scenes/PlayerTestScene.h"
 #include "Scenes/FightTestScene.h"
-
-
+#include "Scenes/OpeningScene.h"
+#include "Scenes/LoadingScene.h"
+#include <thread>
+#include <chrono>
+#include <future>
 // 오늘 진행된 설명 : 궤적 파티클, 다른 특수 파티클(눈, 스파크)
 //                   + 궤적 파티클 적용 (휴먼 클래스에 추가함)
 //                   + 파티클 파일 설정용 씬
@@ -60,8 +63,9 @@ GameManager::GameManager()
 //    SceneManager::Get()->Add("ParticleConfig");
 
 
-    SceneManager::Get()->Create("ValphalkTestScene", new ValphalkTestScene());
-    SceneManager::Get()->Add("ValphalkTestScene");
+//    SceneManager::Get()->Create("ValphalkTestScene", new ValphalkTestScene());
+//    SceneManager::Get()->Add("ValphalkTestScene");
+
 
 //    SceneManager::Get()->Create("PlayerTestScene", new PlayerTestScene());
 //    SceneManager::Get()->Add("PlayerTestScene");
@@ -71,12 +75,55 @@ GameManager::GameManager()
 
 //    SceneManager::Get()->Create("SimpleTestScene", new SimpleTestScene());
 //    SceneManager::Get()->Add("SimpleTestScene");
+    SceneManager::Get()->Create("OpeningScene", new OpeningScene());
+    // 테스트 시 이 아래 씬만 주석처리하면 됨
+    SceneManager::Get()->Add("OpeningScene");
+
+    SceneManager::Get()->Create("LoadingScene", new LoadingScene());
+    //SceneManager::Get()->Add("LoadingScene");
+    // 
+    //SceneManager::Get()->Add("ValphalkTestScene");
+
 
 //    SceneManager::Get()->Add("Terrain");
+    CAM->isFreeCamTrue();
 
+    //dynamic_cast<OpeningScene*>(SceneManager::Get()->Add("OpeningScene")->choice)
+    //int choice = dynamic_cast<OpeningScene*>(SceneManager::Get()->Add("OpeningScene"))->choice();
+    
 
 }
+void LoadPlayScene(std::shared_future<void> play)
+{
+    play.get();
+    //SceneManager::Get()->Add("FightTestScene");
+    return play.get();
+}
+void LoadScene() // 게임 시작시 오프닝씬 -> 로딩씬으로 전환
+{
+    SceneManager::Get()->Remove("OpeningScene");
+    Sounds::Get()->Pause("lobbyBGM");    
+    SceneManager::Get()->Add("LoadingScene");
+    UIManager::Get()->choice = 100;
+}
 
+void PlayScene(std::shared_future<void> play)
+{
+    play.get();
+    SceneManager::Get()->Remove("LoadingScene");
+    SceneManager::Get()->Add("FightTestScene");        
+    CAM->isFreeCamFalse();
+
+    std::this_thread::sleep_for(std::chrono::seconds(3));
+    return play.get();
+}
+void PlayScene() // 로딩씬을 지우고 원하는 씬으로 진입한다.
+{
+    SceneManager::Get()->Remove("LoadingScene");
+    SceneManager::Get()->Add("FightTestScene");
+    CAM->isFreeCamFalse();
+
+}
 GameManager::~GameManager()
 {
     Delete();
@@ -86,10 +133,35 @@ void GameManager::Update()
 {
     Keyboard::Get()->Update();
     Timer::Get()->Update();    
-
+    
     SceneManager::Get()->Update();
 
     Environment::Get()->Update();
+
+    std::promise<void> p;
+    std::shared_future<void> start = p.get_future();
+
+    thread t1(LoadPlayScene, start);
+
+    p.set_value();
+
+    t1.join();
+
+    if (!isStart)
+    {
+        for (int key = 0; key < 256; key++) // 어떤 키든 입력시 감지
+        {
+            if (GetAsyncKeyState(key) & 0x8000)            
+                isStart = true;            
+        }
+    }
+
+    if (UIManager::Get()->choice == 1 && isStart == true)
+        LoadScene();
+    if (UIManager::Get()->choice >= 1000)
+        PlayScene();
+    if (UIManager::Get()->choice == 6)
+        exit(0);    
 }
 
 void GameManager::Render()
@@ -178,7 +250,16 @@ void GameManager::Create()
     sound->AddSound("env_114", SoundPath + L"env_114.mp3", true);
     sound->AddSound("questClear", SoundPath + L"quest_Clear.mp3", false);
 
-    sound->Play("env_114", .5f);
+    /////////////////////////////////////////////////////////////
+    // UI
+    sound->AddSound("gameStart", SoundPath + L"UI/Start.mp3", false);
+    sound->AddSound("choice", SoundPath + L"UI/choice.mp3", false);
+    sound->AddSound("select", SoundPath + L"UI/Select.mp3", false);
+    sound->AddSound("back", SoundPath + L"UI/Back.mp3", false);
+    sound->AddSound("playgame", SoundPath + L"UI/PlayGame.mp3", false);
+
+    
+    
     /////////////////////////////////////////////////////////////
     // Player
     Sounds::Get()->AddSound("attack1", SoundPath + L"Player/attack1.mp3");
@@ -209,8 +290,8 @@ void GameManager::Create()
     Sounds::Get()->AddSound("special3", SoundPath + L"Player/special_3.mp3");
     Sounds::Get()->AddSound("special4", SoundPath + L"Player/special_4.mp3");
     Sounds::Get()->AddSound("start", SoundPath + L"Player/start.mp3");
-    Sounds::Get()->AddSound("igonan1", SoundPath + L"Player/igonan1.mp3");
-    Sounds::Get()->AddSound("igonan2", SoundPath + L"Player/igonan2.mp3");
+    //Sounds::Get()->AddSound("igonan1", SoundPath + L"Player/igonan1.mp3");
+    //Sounds::Get()->AddSound("igonan2", SoundPath + L"Player/igonan2.mp3");
     Sounds::Get()->AddSound("suwolstart", SoundPath + L"Player/suwolstart.mp3");
     Sounds::Get()->AddSound("suwolattack", SoundPath + L"Player/suwolattack.mp3");
 
@@ -350,3 +431,4 @@ void GameManager::Delete()
     
     ImGui::DestroyContext();
 }
+

@@ -104,7 +104,7 @@ Player::Player() : ModelAnimator("Player")
 
 	captureUI = new Quad(L"Textures/UI/CaptureUI.png");
 	captureUI->Scale() *= 1.5f;
-
+	
 	CAM->SetTarget(head);
 }
 

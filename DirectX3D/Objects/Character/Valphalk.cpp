@@ -162,7 +162,7 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 	ReadClip("E_4073");
 	ReadClip("E_4074");
 	//	ReadClip("E_22005");
-
+	Sounds::Get()->Play("env_114", 0.5f);
 	ColliderAdd();
 
 	Pos().z += 5000;

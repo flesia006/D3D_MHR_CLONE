@@ -34,6 +34,8 @@ public:
     {
         distance = Lerp(distance, dist, damping * DELTA);
     }
+    bool isFreeCamTrue() { return freeCam = true; }
+    bool isFreeCamFalse() { return freeCam = false; }
 
 private:
     void FreeMode();
@@ -42,7 +44,6 @@ private:
     void ThirdPresonViewMode();
 
     void Frustum();
-
 private:
     ViewBuffer* viewBuffer;
     Matrix view;
