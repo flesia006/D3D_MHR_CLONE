@@ -41,6 +41,8 @@
 
 // * 파티클 설정 씬 -> 특수효과가 추가로 필요하거나, 혹은 그냥 복습하실 분이라도...
 //                    그런 경우에 해당하는 분들은 바로 한번 써봅시다.
+void LoadScene();
+void PlayScene();
 
 GameManager::GameManager()
 {
@@ -104,11 +106,11 @@ void GameManager::Update()
     std::promise<void> p;
     std::shared_future<void> start = p.get_future();
 
-    thread t1(LoadPlayScene, start);
-
+    //thread t1(LoadPlayScene, start);
     p.set_value();
+    //t1.join();
 
-    t1.join();
+
 
     if (!isStart)
     {
