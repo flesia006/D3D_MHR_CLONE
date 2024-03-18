@@ -1494,23 +1494,6 @@ void UIManager::QuickSlot()
 			itemNumber_Q[11]->Render();
 			itemNumber_Q[10]->Render();
 		}
-
-		//if (useQuickSlot1)
-		//	useQuickSlot1 = false;
-		//if (useQuickSlot2)
-		//	useQuickSlot2 = false;
-		//if (useQuickSlot3)
-		//	useQuickSlot3 = false;
-		//if (useQuickSlot4)
-		//	useQuickSlot4 = false;
-		//if (useQuickSlot5)
-		//	useQuickSlot5 = false;
-		//if (useQuickSlot6)
-		//	useQuickSlot6 = false;
-		//if (useQuickSlot7)
-		//	useQuickSlot7 = false;
-		//if (useQuickSlot8)
-		//	useQuickSlot8 = false;
 	}
 }
 

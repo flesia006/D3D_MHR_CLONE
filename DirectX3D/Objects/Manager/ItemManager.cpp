@@ -96,9 +96,9 @@ ItemManager::ItemManager()
 	FOR(2) blendState[i] = new BlendState();
 	blendState[1]->Alpha(true);
 	rasterizerState[1]->CullMode(D3D11_CULL_NONE);
-	//depthState[0] = new DepthStencilState();
-	//depthState[1] = new DepthStencilState();
-	//depthState[1]->DepthWriteMask(D3D11_DEPTH_WRITE_MASK_ZERO);
+	depthState[0] = new DepthStencilState();
+	depthState[1] = new DepthStencilState();
+	depthState[1]->DepthWriteMask(D3D11_DEPTH_WRITE_MASK_ZERO);
 }
 
 ItemManager::~ItemManager()
@@ -134,7 +134,7 @@ ItemManager::~ItemManager()
 	{
 		delete rasterizerState[i];
 		delete blendState[i];
-		//delete depthState[i];
+		delete depthState[i];
 	}
 }
 
@@ -198,11 +198,11 @@ void ItemManager::Render()
 	{
 		rasterizerState[1]->SetState();
 		blendState[1]->SetState();
-		//depthState[1]->SetState();
+		depthState[1]->SetState();
 		ThisIcon1->Render();
 		ThisIcon2->Render();
 		blendState[0]->SetState();
-		//depthState[0]->SetState();
+		depthState[0]->SetState();
 		rasterizerState[0]->SetState();
 	}
 

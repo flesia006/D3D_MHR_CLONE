@@ -44,6 +44,6 @@ private:
 
 	RasterizerState* rasterizerState[2];
 	BlendState* blendState[2];
-	//DepthStencilState* depthState[2];
+	DepthStencilState* depthState[2];
 	bool isCursorOn = false;
 };
