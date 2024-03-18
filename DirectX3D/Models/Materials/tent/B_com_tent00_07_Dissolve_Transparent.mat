@@ -1,0 +1,10 @@
+<Material Name="B_com_tent00_07_Dissolve_Transparent">
+    <Shader Vertex="" Pixel="Shaders/Light/Light.hlsl"/>
+    <Texture Diffuse="Textures\Tent\com_tent00_07_ALBD.tga" Specular="Textures\Tent\com_tent00_07_ALP.tga" Normal="Textures\Tent\com_tent00_07_NRMR.tga" Emissive="Textures/Color/Black.png"/>
+    <Property Shininess="20" HasNormalMap="1">
+        <Diffuse R="0.80000001" G="0.80000001" B="0.80000001" A="1"/>
+        <Specular R="0.2" G="0.2" B="0.2" A="1"/>
+        <Ambient R="0.2" G="0.2" B="0.2" A="1"/>
+        <Emissive R="0" G="0" B="0" A="1"/>
+    </Property>
+</Material>

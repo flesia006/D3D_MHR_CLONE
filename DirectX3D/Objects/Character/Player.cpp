@@ -424,9 +424,6 @@ void Player::Potion()
 	}
 	if (Lcure == true)
 	{
-		UI->useQuickSlot1 = false;
-		UI->useQuickSlot2 = false;
-		
 		if (time > 2 && time < 4.2f)
 		{
 			UI->LargeHealthPotion();
@@ -440,18 +437,13 @@ void Player::Potion()
 	if ((UI->useQuickSlot2 && UI->havePotion > 10 && time > 6.0f)
 		|| (UI->useDragSlot && ItemManager::Get()->tag == "Potion" && KEY_DOWN('E') && UI->havePotion > 10 && time > 6.0f)
 		|| (UI->useNumberBar && UI->havePotion > 10 && KEY_DOWN('1') && time > 6.0f))
-	{		
+	{
 		UI->havePotion--;
 		cure = true;
 		time = 0;
 	}
 	if (cure == true)
 	{
-		UI->useQuickSlot1 = false;
-		UI->useQuickSlot2 = false;
-		//potionParticle->Play({ Pos().x,Pos().y + 100,Pos().z }, { 0,0,0 });
-		
-
 		if (time > 2 && time < 4)
 		{
 			UI->HealthPotion();
@@ -465,10 +457,11 @@ void Player::Potion()
 
 void Player::SharpeningStone()
 {
-	if (UI->useQuickSlot3
-		|| UI->useDragSlot && ItemManager::Get()->tag == "Whetstone" && KEY_DOWN('E')
-		|| UI->useNumberBar && KEY_DOWN('3'))
+	if (UI->useQuickSlot3 && time > 6.0f
+		|| UI->useDragSlot && ItemManager::Get()->tag == "Whetstone" && KEY_DOWN('E') && time > 6.0f
+		|| UI->useNumberBar && KEY_DOWN('3') && time > 6.0f)
 	{
+		time = 0;
 		//UI->SharpeningStone();
 	}
 }
@@ -3741,7 +3734,14 @@ void Player::R001()  // 탑승 후 대기 idle
 	{
 		if (ItemManager::Get()->tag == "Whetstone")
 			SetState(R_600);
-		else if (ItemManager::Get()->tag == "Potion" && cure || ItemManager::Get()->tag == "GreatePotion" && Lcure)
+		else if (cure || Lcure)
+			SetState(R_400);
+	}
+	else if (UI->useNumberBar || UI->useSelectBar)
+	{
+		if (UI->useQuickSlot3 || UI->useNumberSlot3)
+			SetState(R_600);
+		else if (cure || Lcure)
 			SetState(R_400);
 	}
 }
@@ -3756,8 +3756,15 @@ void Player::R013() // 쉬프트 안누르고 뛰기 루프, 근데 포지션이랑 로테이션 다 가
 	{
 		if (ItemManager::Get()->tag == "Whetstone")
 			SetState(R_600); // 숫돌
-		else if (ItemManager::Get()->tag == "Potion" && cure || ItemManager::Get()->tag == "GreatePotion" && Lcure)
+		else if (cure || Lcure)
 			SetState(R_400); // 물약
+	}
+	else if (UI->useNumberBar || UI->useSelectBar)
+	{
+		if (UI->useQuickSlot3 || UI->useNumberSlot3)
+			SetState(R_600);
+		else if (cure || Lcure)
+			SetState(R_400);
 	}
 }
 

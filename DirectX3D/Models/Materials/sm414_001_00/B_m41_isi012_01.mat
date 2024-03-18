@@ -1,7 +1,7 @@
 <Material Name="B_m41_isi012_01">
-    <Shader Vertex="" Pixel=""/>
-    <Texture Diffuse="Textures/Color/White.png" Specular="Textures/Color/White.png" Normal="Textures/Color/White.png" Emissive="Textures/Color/Black.png"/>
-    <Property Shininess="20" HasNormalMap="0">
+    <Shader Vertex="" Pixel="Shaders/Light/Light.hlsl"/>
+    <Texture Diffuse="Textures\M41\m41_isi12_ALBD.tga" Specular="Textures/Color/White.png" Normal="Textures\M41\m41_isi12_NRMR.tga" Emissive="Textures/Color/Black.png"/>
+    <Property Shininess="20" HasNormalMap="1">
         <Diffuse R="0.80000001" G="0.80000001" B="0.80000001" A="1"/>
         <Specular R="0.2" G="0.2" B="0.2" A="1"/>
         <Ambient R="0.2" G="0.2" B="0.2" A="1"/>

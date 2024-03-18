@@ -3,11 +3,21 @@
 
 MapDesignScene::MapDesignScene()
 {
-    objects = new M41Objects();
+//    objects = new M41Objects();
+    objects_M42 = new M42Objects();
 
-    val = new DummyValphalk();
-    val->Pos() = Vector3(3000, 153.3, 3000);
-    val->Rot().y += XM_PI;
+//    val = new DummyValphalk();
+//    val->Pos() = Vector3(3000, 153.3, 3000);
+//    val->Rot().y += XM_PI;
+
+    utusi = new ModelAnimator("player");
+    utusi->ReadClip("L_001");
+    utusi->Pos().z += 4000;
+    utusi->Pos().x += 250;
+    utusi->GetMaterials()[7]->SetShader(L"Model/ModelAnimation2.hlsl");
+    utusi->GetMaterials()[9]->SetShader(L"Model/ModelAnimation2.hlsl");
+    utusi->Rot().y += XM_PI;
+    utusi->UpdateWorld();
 
     cap = new CapsuleCollider(5, 6000);
     ball = new HalfSphere(1, 360, 5);
@@ -65,8 +75,9 @@ MapDesignScene::MapDesignScene()
 
 
     FOR(2) rasterizerState[i] = new RasterizerState();
-    FOR(2) blendState[i] = new BlendState();
+    FOR(3) blendState[i] = new BlendState();
     blendState[1]->Additive();
+    blendState[2]->Alpha(true);
     rasterizerState[1]->CullMode(D3D11_CULL_NONE);
 }
 
@@ -77,7 +88,7 @@ MapDesignScene::~MapDesignScene()
 
 void MapDesignScene::Update()
 {
-    objects->Update();
+    objects_M42->Update();
     ball->Rot().y += 0.02 * DELTA;
     ball->UpdateWorld();
 
@@ -96,8 +107,8 @@ void MapDesignScene::Update()
     fog2->Rot().y += 0.06 * DELTA;
     fog2->UpdateWorld();
 
-    val->Update();
-
+    //val->Update();
+    utusi->Update();
 }
 
 void MapDesignScene::PreRender()
@@ -106,13 +117,13 @@ void MapDesignScene::PreRender()
 
 void MapDesignScene::Render()
 {
-
     rasterizerState[1]->SetState(); // 후면도 그림
     {
-        objects->Render();
-        val->Render();
+        utusi->Render();
+       // val->Render();
         ball->Render();
         ball2->Render();
+        objects_M42->Render();
         blendState[1]->SetState(); // 반투명
         {
             fog->Render();
@@ -123,6 +134,7 @@ void MapDesignScene::Render()
     }
     rasterizerState[0]->SetState();
 
+
     cap->Render();
 }
 
@@ -132,11 +144,13 @@ void MapDesignScene::PostRender()
 
 void MapDesignScene::GUIRender()
 {
-    objects->GUIRender(); 
+    objects_M42->GUIRender();
     //ball2->GUIRender();
 //    val->GUIRender();
 //      ball->GUIRender();
 //    fog->GUIRender();
 //    
-    cap->GUIRender();
+   // cap->GUIRender();
+    //utusi->GUIRender();
 }
+

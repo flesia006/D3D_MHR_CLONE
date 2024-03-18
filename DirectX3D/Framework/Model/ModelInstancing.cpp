@@ -45,6 +45,7 @@ void ModelInstancing::GUIRender()
 {
     ImGui::Text("DrawCount : %d", drawCount);
 
+    Model::GUIRender();
     for (Transform* transform : transforms)
         transform->GUIRender();
 }

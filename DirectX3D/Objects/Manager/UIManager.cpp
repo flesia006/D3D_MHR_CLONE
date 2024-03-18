@@ -119,6 +119,7 @@ UIManager::UIManager()
 	quickSlot_Back = new Quad(L"Textures/UI/QickSlot_Back.png");
 	quickSlot_Back->Pos() = { 1224, 200, 0 };
 	quickSlot_Back->Scale() *= 0.3f;
+	quickSlot_Back->SetActive(false);
 	quickSlot_Back->UpdateWorld();
 
 	quickSlot_Select = new Quad(L"Textures/UI/QickSlot_Select.png");
@@ -272,6 +273,7 @@ UIManager::UIManager()
 		quad->Scale() *= 1.28f;
 		quad->Pos().x = selectBoxs[i]->Pos().x - 3;
 		quad->Pos().y = selectBoxs[i]->Pos().y + 2;
+		quad->SetActive(false);
 		selectBoxFrames.push_back(quad);
 		selectBoxFrames[i]->UpdateWorld();
 	}
@@ -1267,175 +1269,6 @@ void UIManager::StartUIAlphaOn()
 void UIManager::QuickSlot()
 {
 
-	if (KEY_PRESS('X')) // X 만 누르면 슬롯만 나옴
-	{
-		quickSlot_Back->Render();
-		slotNames[1]->Render();
-
-		FOR(selectBoxs.size())
-		{
-			selectBoxs[i]->Render();
-		}
-
-		if (quickSlot_Select->Rot().z > -0.42f && useSelectBar)
-		{
-			selectBoxFrames[0]->Render();
-			Font::Get()->RenderText("그레이트 물약", { slotNames[1]->Pos().x + 88, slotNames[1]->Pos().y + 18 });
-		}
-		if (quickSlot_Select->Rot().z < -5.98f && useSelectBar)
-		{
-			selectBoxFrames[0]->Render();
-			Font::Get()->RenderText("그레이트 물약", { slotNames[1]->Pos().x + 88, slotNames[1]->Pos().y + 18 });
-		}
-		if (quickSlot_Select->Rot().z <= -0.42f && quickSlot_Select->Rot().z > -1.2f && useSelectBar)
-		{
-			selectBoxFrames[1]->Render();
-			Font::Get()->RenderText("일반 물약", { slotNames[1]->Pos().x + 70, slotNames[1]->Pos().y + 18 });
-
-		}
-		if (quickSlot_Select->Rot().z <= -1.2f && quickSlot_Select->Rot().z > -1.98f && useSelectBar)
-		{
-			selectBoxFrames[2]->Render();
-			Font::Get()->RenderText("숫돌", { slotNames[1]->Pos().x + 40, slotNames[1]->Pos().y + 18 });
-
-		}
-		if (quickSlot_Select->Rot().z <= -1.98f && quickSlot_Select->Rot().z > -2.78f && useSelectBar)
-		{
-			selectBoxFrames[3]->Render();
-
-		}
-		if (quickSlot_Select->Rot().z <= -2.78f && quickSlot_Select->Rot().z > -3.6f && useSelectBar)
-		{
-			selectBoxFrames[4]->Render();
-
-		}
-		if (quickSlot_Select->Rot().z <= -3.6f && quickSlot_Select->Rot().z > -4.38f && useSelectBar)
-		{
-			selectBoxFrames[5]->Render();
-
-		}
-		if (quickSlot_Select->Rot().z <= -4.38f && quickSlot_Select->Rot().z > -5.12f && useSelectBar)
-		{
-			selectBoxFrames[6]->Render();
-
-		}
-		if (quickSlot_Select->Rot().z <= -5.12f && quickSlot_Select->Rot().z > -5.98f && useSelectBar)
-		{
-			selectBoxFrames[7]->Render();
-
-		}
-		if (useSelectBar)
-		{
-			quickSlot_Select->Render();
-		}
-		quickSlot_Button->Render();
-
-		potionIcon_Q->Render();
-		greatepotionIcon_Q->Render();
-		whetstoneIcon_Q->Render();
-
-		if (haveGPotion < 10)
-		{
-			itemNumber_Q[haveGPotion]->Pos().x = 1234.5;
-			itemNumber_Q[haveGPotion]->Render();
-		}
-		else if (haveGPotion == 10)
-		{
-			itemNumber_Q[1]->Pos().x = 1228;
-			itemNumber_Q[0]->Pos().x = 1241;
-			itemNumber_Q[1]->Render();
-			itemNumber_Q[0]->Render();
-		}
-
-		if (10 <= havePotion && havePotion < 20)
-		{
-			itemNumber_Q[havePotion]->Pos().x = 1328.5;
-			itemNumber_Q[havePotion]->Render();
-		}
-		else if (havePotion == 20)
-		{
-			itemNumber_Q[11]->Pos().x = 1317;
-			itemNumber_Q[10]->Pos().x = 1330;
-			itemNumber_Q[11]->Render();
-			itemNumber_Q[10]->Render();
-		}
-	}
-}
-
-void UIManager::QuickSlotBar()
-{
-
-	if (quickSlot_Select->Rot().z <= -3.0f && quickSlot_Select->Rot().z >= -6.0f)
-	{
-		quickSlot_Select->Pos() = { quickSlot_Back->Pos().x - 2.5f, quickSlot_Back->Pos().y, 0 };
-	}
-	else if (quickSlot_Select->Rot().z > -3.0f && quickSlot_Select->Rot().z < -6.0f)
-	{
-		quickSlot_Select->Pos() = { quickSlot_Back->Pos().x, quickSlot_Back->Pos().y, 0 };
-	}
-
-	if (KEY_DOWN('X'))
-	{
-		MousePos = mousePos;
-	}
-	else if (KEY_UP('X'))
-	{
-		useSelectBar = false;
-		if (MousePos.y > CENTER_Y)
-		{
-			SetCursorPos(MousePos.x + 8.0f, CENTER_Y - Distance(MousePos.y, CENTER_Y) + 31.0f);
-		}
-		else if (MousePos.y <= CENTER_Y)
-		{
-			SetCursorPos(MousePos.x + 8.0f, CENTER_Y + Distance(MousePos.y, CENTER_Y) + 31.0f);
-		}
-	}
-
-	if (KEY_PRESS('X'))
-	{
-		if (MousePos.y > CENTER_Y && !KEY_PRESS(VK_MBUTTON))// C 누르기 에서 마우스 휠 버튼 누르기로
-		{
-			SetCursorPos(MousePos.x + 8.0f, CENTER_Y - Distance(MousePos.y, CENTER_Y) + 31.0f);
-		}
-		else if (MousePos.y <= CENTER_Y && !KEY_PRESS(VK_MBUTTON))// C 누르기 에서 마우스 휠 버튼 누르기로
-		{
-			SetCursorPos(MousePos.x + 8.0f, CENTER_Y + Distance(MousePos.y, CENTER_Y) + 31.0f);
-		}
-		if (KEY_PRESS(VK_MBUTTON)) // 마우스 휠 버튼 을 누른다면 Bar 활성화
-		{
-			useSelectBar = true;
-		}
-	}
-
-	if (KEY_PRESS('X') && KEY_PRESS(VK_MBUTTON))
-		// X 와 마우스 휠 버튼 을 누르면 Bar 보이면서 마우스 휠 버튼 누르기 를 때어도 Bar는 보임 
-		// 대신 X 를 놓는거 아님 사용 하는거 아님
-	{
-		// 마우스가 오른쪽으로 가면 오른쪽 방향으로 바늘이 회전
-		// 마우스가 왼쪽 으로 가면 왼쪽으로 회전
-		//SetCursorPos(quickSlot_Back->Pos().x + 8.069f, quickSlot_Back->Pos().y);
-		//Vector3 pos = mousePos - Vector3(quickSlot_Back->Pos().x, quickSlot_Back->Pos().y);
-		if (MousePos.y > CENTER_Y)
-		{
-			SetCursorPos(MousePos.x + 8.0f, CENTER_Y - Distance(MousePos.y, CENTER_Y) + 31.0f);
-		}
-		else if (MousePos.y <= CENTER_Y)
-		{
-			SetCursorPos(MousePos.x + 8.0f, CENTER_Y + Distance(MousePos.y, CENTER_Y) + 31.0f);
-		}
-		Vector3 pos = mousePos - Vector3(MousePos.x , CENTER_Y - Distance(MousePos.y, CENTER_Y));
-		quickSlot_Select->Rot().z -= pos.x * 0.4f * DELTA;
-
-		if (0.01f <= quickSlot_Select->Rot().z)
-		{
-			quickSlot_Select->Rot().z = -6.3f;
-		}
-		else if (quickSlot_Select->Rot().z <= -6.31f)
-		{
-			quickSlot_Select->Rot().z = 0.0f;
-		}
-	}
-
 	if (KEY_PRESS('X') && KEY_UP(VK_MBUTTON)) // C 누르기 에서 마우스 휠 버튼 누르기로
 		// X 를 누른 상태에서 C 를 누르면 지금 선택 되어있는 슬롯을 잡아줌
 	{
@@ -1480,6 +1313,303 @@ void UIManager::QuickSlotBar()
 			useQuickSlot8 = true;
 		}
 	}
+
+	if (KEY_PRESS('X')) // X 만 누르면 슬롯만 나옴
+	{
+		quickSlot_Back->Render();
+		slotNames[1]->Render();
+
+		FOR(selectBoxs.size())
+		{
+			selectBoxs[i]->Render();
+		}
+
+		if (quickSlot_Select->Rot().z > -0.42f && useSelectBar 
+			|| quickSlot_Select->Rot().z < -5.98f && useSelectBar)
+		{
+			if (!selectBoxFrames[0]->Active())
+			{
+				selectBoxFrames[0]->SetActive(true);
+				selectBoxFrames[1]->SetActive(false);
+				selectBoxFrames[2]->SetActive(false);
+				selectBoxFrames[3]->SetActive(false);
+				selectBoxFrames[4]->SetActive(false);
+				selectBoxFrames[5]->SetActive(false);
+				selectBoxFrames[6]->SetActive(false);
+				selectBoxFrames[7]->SetActive(false);
+				Sounds::Get()->Play("Select", 1.2f);
+			}
+
+			selectBoxFrames[0]->Render();
+			Font::Get()->RenderText("그레이트 물약", { slotNames[1]->Pos().x + 88, slotNames[1]->Pos().y + 18 });
+		}
+		if (quickSlot_Select->Rot().z <= -0.42f && quickSlot_Select->Rot().z > -1.2f && useSelectBar)
+		{
+			if (!selectBoxFrames[1]->Active())
+			{
+				selectBoxFrames[0]->SetActive(false);
+				selectBoxFrames[1]->SetActive(true);
+				selectBoxFrames[2]->SetActive(false);
+				selectBoxFrames[3]->SetActive(false);
+				selectBoxFrames[4]->SetActive(false);
+				selectBoxFrames[5]->SetActive(false);
+				selectBoxFrames[6]->SetActive(false);
+				selectBoxFrames[7]->SetActive(false);
+				Sounds::Get()->Play("Select", 1.2f);
+			}
+			selectBoxFrames[1]->Render();
+			Font::Get()->RenderText("일반 물약", { slotNames[1]->Pos().x + 70, slotNames[1]->Pos().y + 18 });
+		}			
+		if (quickSlot_Select->Rot().z <= -1.2f && quickSlot_Select->Rot().z > -1.98f && useSelectBar)
+		{
+			if (!selectBoxFrames[2]->Active())
+			{
+				selectBoxFrames[0]->SetActive(false);
+				selectBoxFrames[1]->SetActive(false);
+				selectBoxFrames[2]->SetActive(true);
+				selectBoxFrames[3]->SetActive(false);
+				selectBoxFrames[4]->SetActive(false);
+				selectBoxFrames[5]->SetActive(false);
+				selectBoxFrames[6]->SetActive(false);
+				selectBoxFrames[7]->SetActive(false);
+				Sounds::Get()->Play("Select", 1.2f);
+			}
+			selectBoxFrames[2]->Render();
+			Font::Get()->RenderText("숫돌", { slotNames[1]->Pos().x + 40, slotNames[1]->Pos().y + 18 });
+		}
+		if (quickSlot_Select->Rot().z <= -1.98f && quickSlot_Select->Rot().z > -2.78f && useSelectBar)
+		{
+			if (!selectBoxFrames[3]->Active())
+			{
+				selectBoxFrames[0]->SetActive(false);
+				selectBoxFrames[1]->SetActive(false);
+				selectBoxFrames[2]->SetActive(false);
+				selectBoxFrames[3]->SetActive(true);
+				selectBoxFrames[4]->SetActive(false);
+				selectBoxFrames[5]->SetActive(false);
+				selectBoxFrames[6]->SetActive(false);
+				selectBoxFrames[7]->SetActive(false);
+				Sounds::Get()->Play("Select", 1.2f);
+			}
+			selectBoxFrames[3]->Render();
+		}
+		if (quickSlot_Select->Rot().z <= -2.78f && quickSlot_Select->Rot().z > -3.6f && useSelectBar)
+		{
+			if (!selectBoxFrames[4]->Active())
+			{
+				selectBoxFrames[0]->SetActive(false);
+				selectBoxFrames[1]->SetActive(false);
+				selectBoxFrames[2]->SetActive(false);
+				selectBoxFrames[3]->SetActive(false);
+				selectBoxFrames[4]->SetActive(true);
+				selectBoxFrames[5]->SetActive(false);
+				selectBoxFrames[6]->SetActive(false);
+				selectBoxFrames[7]->SetActive(false);
+				Sounds::Get()->Play("Select", 1.2f);
+			}
+			selectBoxFrames[4]->Render();
+		}
+		if (quickSlot_Select->Rot().z <= -3.6f && quickSlot_Select->Rot().z > -4.38f && useSelectBar)
+		{
+			if (!selectBoxFrames[5]->Active())
+			{
+				selectBoxFrames[0]->SetActive(false);
+				selectBoxFrames[1]->SetActive(false);
+				selectBoxFrames[2]->SetActive(false);
+				selectBoxFrames[3]->SetActive(false);
+				selectBoxFrames[4]->SetActive(false);
+				selectBoxFrames[5]->SetActive(true);
+				selectBoxFrames[6]->SetActive(false);
+				selectBoxFrames[7]->SetActive(false);
+				Sounds::Get()->Play("Select", 1.2f);
+			}
+			selectBoxFrames[5]->Render();
+		}
+		if (quickSlot_Select->Rot().z <= -4.38f && quickSlot_Select->Rot().z > -5.12f && useSelectBar)
+		{
+			if (!selectBoxFrames[6]->Active())
+			{
+				selectBoxFrames[0]->SetActive(false);
+				selectBoxFrames[1]->SetActive(false);
+				selectBoxFrames[2]->SetActive(false);
+				selectBoxFrames[3]->SetActive(false);
+				selectBoxFrames[4]->SetActive(false);
+				selectBoxFrames[5]->SetActive(false);
+				selectBoxFrames[6]->SetActive(true);
+				selectBoxFrames[7]->SetActive(false);
+				Sounds::Get()->Play("Select", 1.2f);
+			}
+			selectBoxFrames[6]->Render();
+		}
+		if (quickSlot_Select->Rot().z <= -5.12f && quickSlot_Select->Rot().z > -5.98f && useSelectBar)
+		{
+			if (!selectBoxFrames[7]->Active())
+			{
+				selectBoxFrames[0]->SetActive(false);
+				selectBoxFrames[1]->SetActive(false);
+				selectBoxFrames[2]->SetActive(false);
+				selectBoxFrames[3]->SetActive(false);
+				selectBoxFrames[4]->SetActive(false);
+				selectBoxFrames[5]->SetActive(false);
+				selectBoxFrames[6]->SetActive(false);
+				selectBoxFrames[7]->SetActive(true);
+				Sounds::Get()->Play("Select", 1.2f);
+			}
+			selectBoxFrames[7]->Render();
+		}
+		if (useSelectBar)
+		{
+			quickSlot_Select->Render();
+		}
+		quickSlot_Button->Render();
+
+		potionIcon_Q->Render();
+		greatepotionIcon_Q->Render();
+		whetstoneIcon_Q->Render();
+
+		if (haveGPotion < 10)
+		{
+			itemNumber_Q[haveGPotion]->Pos().x = 1234.5;
+			itemNumber_Q[haveGPotion]->Render();
+		}
+		else if (haveGPotion == 10)
+		{
+			itemNumber_Q[1]->Pos().x = 1228;
+			itemNumber_Q[0]->Pos().x = 1241;
+			itemNumber_Q[1]->Render();
+			itemNumber_Q[0]->Render();
+		}
+
+		if (10 <= havePotion && havePotion < 20)
+		{
+			itemNumber_Q[havePotion]->Pos().x = 1328.5;
+			itemNumber_Q[havePotion]->Render();
+		}
+		else if (havePotion == 20)
+		{
+			itemNumber_Q[11]->Pos().x = 1317;
+			itemNumber_Q[10]->Pos().x = 1330;
+			itemNumber_Q[11]->Render();
+			itemNumber_Q[10]->Render();
+		}
+
+		//if (useQuickSlot1)
+		//	useQuickSlot1 = false;
+		//if (useQuickSlot2)
+		//	useQuickSlot2 = false;
+		//if (useQuickSlot3)
+		//	useQuickSlot3 = false;
+		//if (useQuickSlot4)
+		//	useQuickSlot4 = false;
+		//if (useQuickSlot5)
+		//	useQuickSlot5 = false;
+		//if (useQuickSlot6)
+		//	useQuickSlot6 = false;
+		//if (useQuickSlot7)
+		//	useQuickSlot7 = false;
+		//if (useQuickSlot8)
+		//	useQuickSlot8 = false;
+	}
+}
+
+void UIManager::QuickSlotBar()
+{
+
+	if (quickSlot_Select->Rot().z <= -3.0f && quickSlot_Select->Rot().z >= -6.0f)
+	{
+		quickSlot_Select->Pos() = { quickSlot_Back->Pos().x - 2.5f, quickSlot_Back->Pos().y, 0 };
+	}
+	else if (quickSlot_Select->Rot().z > -3.0f && quickSlot_Select->Rot().z < -6.0f)
+	{
+		quickSlot_Select->Pos() = { quickSlot_Back->Pos().x, quickSlot_Back->Pos().y, 0 };
+	}
+
+	if (KEY_DOWN('X'))
+	{
+		MousePos = mousePos;
+	}
+	if (KEY_UP('X'))
+	{
+		useSelectBar = false;
+		quickSlot_Back->SetActive(false);
+		Sounds::Get()->Play("Slot_off", 1.2f);
+
+		if (MousePos.y > CENTER_Y)
+		{
+			SetCursorPos(MousePos.x + 8.0f, CENTER_Y - Distance(MousePos.y, CENTER_Y) + 31.0f);
+		}
+		else if (MousePos.y <= CENTER_Y)
+		{
+			SetCursorPos(MousePos.x + 8.0f, CENTER_Y + Distance(MousePos.y, CENTER_Y) + 31.0f);
+		}
+	}
+
+	if (KEY_PRESS('X'))
+	{
+		if (!quickSlot_Back->Active())
+		{
+			quickSlot_Back->SetActive(true);
+			Sounds::Get()->Play("Icon_on", 1.2f);
+		}
+		if (MousePos.y > CENTER_Y && !KEY_PRESS(VK_MBUTTON))// C 누르기 에서 마우스 휠 버튼 누르기로
+		{
+			SetCursorPos(MousePos.x + 8.0f, CENTER_Y - Distance(MousePos.y, CENTER_Y) + 31.0f);
+		}
+		else if (MousePos.y <= CENTER_Y && !KEY_PRESS(VK_MBUTTON))// C 누르기 에서 마우스 휠 버튼 누르기로
+		{
+			SetCursorPos(MousePos.x + 8.0f, CENTER_Y + Distance(MousePos.y, CENTER_Y) + 31.0f);
+		}
+		if (KEY_PRESS(VK_MBUTTON)) // 마우스 휠 버튼 을 누른다면 Bar 활성화
+		{
+			useSelectBar = true;
+		}
+	}
+
+	if (KEY_PRESS('X') && KEY_PRESS(VK_MBUTTON))
+		// X 와 마우스 휠 버튼 을 누르면 Bar 보이면서 마우스 휠 버튼 누르기 를 때어도 Bar는 보임 
+		// 대신 X 를 놓는거 아님 사용 하는거 아님
+	{
+		// 마우스가 오른쪽으로 가면 오른쪽 방향으로 바늘이 회전
+		// 마우스가 왼쪽 으로 가면 왼쪽으로 회전
+		//SetCursorPos(quickSlot_Back->Pos().x + 8.069f, quickSlot_Back->Pos().y);
+		//Vector3 pos = mousePos - Vector3(quickSlot_Back->Pos().x, quickSlot_Back->Pos().y);
+		if (MousePos.y > CENTER_Y)
+		{
+			SetCursorPos(MousePos.x + 8.0f, CENTER_Y - Distance(MousePos.y, CENTER_Y) + 31.0f);
+		}
+		else if (MousePos.y <= CENTER_Y)
+		{
+			SetCursorPos(MousePos.x + 8.0f, CENTER_Y + Distance(MousePos.y, CENTER_Y) + 31.0f);
+		}
+		Vector3 pos = mousePos - Vector3(MousePos.x , CENTER_Y - Distance(MousePos.y, CENTER_Y));
+		quickSlot_Select->Rot().z -= pos.x * 0.4f * DELTA;
+
+		if (0.01f <= quickSlot_Select->Rot().z)
+		{
+			quickSlot_Select->Rot().z = -6.3f;
+		}
+		else if (quickSlot_Select->Rot().z <= -6.31f)
+		{
+			quickSlot_Select->Rot().z = 0.0f;
+		}
+	}
+
+	if (useQuickSlot1)
+		useQuickSlot1 = false;
+	if (useQuickSlot2)
+		useQuickSlot2 = false;
+	if (useQuickSlot3)
+		useQuickSlot3 = false;
+	if (useQuickSlot4)
+		useQuickSlot4 = false;
+	if (useQuickSlot5)
+		useQuickSlot5 = false;
+	if (useQuickSlot6)
+		useQuickSlot6 = false;
+	if (useQuickSlot7)
+		useQuickSlot7 = false;
+	if (useQuickSlot8)
+		useQuickSlot8 = false;
 }
 
 void UIManager::DragInvenItem()
@@ -1787,6 +1917,7 @@ void UIManager::NumberSlotBar()
 
 	if (useNumberBar && KEY_DOWN('1'))
 	{
+		Sounds::Get()->Play("Select", 1.2f);
 		useNumberSlot1 = true;
 		useNumberSlot2 = false;
 		useNumberSlot3 = false;
@@ -1799,6 +1930,7 @@ void UIManager::NumberSlotBar()
 	}
 	else if (useNumberBar && KEY_DOWN('2'))
 	{
+		Sounds::Get()->Play("Select", 1.2f);
 		useNumberSlot1 = false;
 		useNumberSlot2 = true;
 		useNumberSlot3 = false;
@@ -1811,6 +1943,7 @@ void UIManager::NumberSlotBar()
 	}
 	else if (useNumberBar && KEY_DOWN('3'))
 	{
+		Sounds::Get()->Play("Select", 1.2f);
 		useNumberSlot1 = false;
 		useNumberSlot2 = false;
 		useNumberSlot3 = true;
@@ -1823,6 +1956,7 @@ void UIManager::NumberSlotBar()
 	}
 	else if (useNumberBar && KEY_DOWN('4'))
 	{
+		Sounds::Get()->Play("Select", 1.2f);
 		useNumberSlot1 = false;
 		useNumberSlot2 = false;
 		useNumberSlot3 = false;
@@ -1835,6 +1969,7 @@ void UIManager::NumberSlotBar()
 	}
 	else if (useNumberBar && KEY_DOWN('5'))
 	{
+		Sounds::Get()->Play("Select", 1.2f);
 		useNumberSlot1 = false;
 		useNumberSlot2 = false;
 		useNumberSlot3 = false;
@@ -1847,6 +1982,7 @@ void UIManager::NumberSlotBar()
 	}
 	else if (useNumberBar && KEY_DOWN('6'))
 	{
+		Sounds::Get()->Play("Select", 1.2f);
 		useNumberSlot1 = false;
 		useNumberSlot2 = false;
 		useNumberSlot3 = false;
@@ -1859,6 +1995,7 @@ void UIManager::NumberSlotBar()
 	}
 	else if (useNumberBar && KEY_DOWN('7'))
 	{
+		Sounds::Get()->Play("Select", 1.2f);
 		useNumberSlot1 = false;
 		useNumberSlot2 = false;
 		useNumberSlot3 = false;
@@ -1871,6 +2008,7 @@ void UIManager::NumberSlotBar()
 	}
 	else if (useNumberBar && KEY_DOWN('8'))
 	{
+		Sounds::Get()->Play("Select", 1.2f);
 		useNumberSlot1 = false;
 		useNumberSlot2 = false;
 		useNumberSlot3 = false;
@@ -1886,6 +2024,7 @@ void UIManager::NumberSlotBar()
 		|| !useNumberBar && KEY_UP('7') || !useNumberBar && KEY_UP('8'))
 	{
 		useNumberBar = true;
+		Sounds::Get()->Play("Icon_on", 1.2f);
 	}
 	if (timer >= 3.0f || KEY_DOWN(VK_ESCAPE))
 	{
@@ -1899,6 +2038,7 @@ void UIManager::NumberSlotBar()
 		useNumberSlot7 = false;
 		useNumberSlot8 = false;
 		timer = 0;
+		Sounds::Get()->Play("Slot_off", 1.2f);
 	}
 
 }
