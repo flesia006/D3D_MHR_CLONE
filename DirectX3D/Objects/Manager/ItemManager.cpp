@@ -21,6 +21,7 @@ ItemManager::ItemManager()
 		else if (i >= 14 && i < 21)
 			quad->Pos() = { (itemBoxList->Pos().x - 183) + (60 * (i - 14)) , itemBoxList->Pos().y + 170 };
 		quad->InItPos(quad->Pos()); // <= 이것으로 마우스 온 위치 잡아줌
+		//quad->SetActive(false);
 		itemBoxBack.push_back(quad);
 
 		quad = new Quad(L"Textures/UI/ItemBoxFrame.png");
@@ -46,6 +47,7 @@ ItemManager::ItemManager()
 			quad->Pos() = itemBoxBack[i]->Pos();
 			quad->InItPos(quad->Pos());
 			quad->SetTag("Potion");
+			quad->SetActive(false);
 			itemList.push_back(quad);
 		}
 		else if (i > 1)
@@ -54,6 +56,7 @@ ItemManager::ItemManager()
 			quad->Pos() = itemBoxBack[i]->Pos();
 			quad->InItPos(quad->Pos());
 			quad->SetTag("GreatePotion");
+			quad->SetActive(false);
 			itemList.push_back(quad);
 		}
 
@@ -72,7 +75,7 @@ ItemManager::ItemManager()
 	}
 
 	BlueBox = new Model("BlueBox");
-	BlueBox->Pos() = { -100, 0 , -50 };
+	BlueBox->Pos() = { -1000, 0 , 200 };
 
 	BoxIcon = new Quad(L"Textures/UI/BoxIcon.png");
 	BoxIcon->Scale() *= 1.5f;
@@ -80,6 +83,22 @@ ItemManager::ItemManager()
 
 	MouseIcon = new Quad(L"Textures/UI/MouseCursor.png");
 	MouseIcon->Scale() *= 0.55f;
+
+	ThisIcon1 = new Quad(L"Textures/UI/ThisIcon.png");
+	ThisIcon1->Pos() = BlueBox->Pos();
+	ThisIcon1->Pos().y += 200;
+	ThisIcon2 = new Quad(L"Textures/UI/ThisIcon.png");
+	ThisIcon2->Scale().x *= -1;
+	ThisIcon2->Pos() = BlueBox->Pos();
+	ThisIcon2->Pos().y += 200;
+
+	FOR(2) rasterizerState[i] = new RasterizerState();
+	FOR(2) blendState[i] = new BlendState();
+	blendState[1]->Alpha(true);
+	rasterizerState[1]->CullMode(D3D11_CULL_NONE);
+	//depthState[0] = new DepthStencilState();
+	//depthState[1] = new DepthStencilState();
+	//depthState[1]->DepthWriteMask(D3D11_DEPTH_WRITE_MASK_ZERO);
 }
 
 ItemManager::~ItemManager()
@@ -107,49 +126,84 @@ ItemManager::~ItemManager()
 	delete BlueBox;
 	delete BoxIcon;
 	delete MouseIcon;
+
+	delete ThisIcon1;
+	delete ThisIcon2;
+
+	FOR(2)
+	{
+		delete rasterizerState[i];
+		delete blendState[i];
+		//delete depthState[i];
+	}
 }
 
 void ItemManager::Update()
 {
 	FOR(itemList.size())
 	{
+		if (useBlueBox)
+			itemList[i]->SetActive(true);
+		else
+			itemList[i]->SetActive(false);
+
 		itemList[i]->UpdateWorld();
 	}
 	FOR(itemBoxBack.size())
 	{
+		if (useBlueBox)
+			itemBoxBack[i]->SetActive(true);
+		else
+			itemBoxBack[i]->SetActive(false);
+
 		itemBoxBack[i]->UpdateWorld();
 	}
 	FOR(itemBoxFrame.size())
 	{
-		if (itemBoxBack[i]->IsOnMouseCursor())
+		if (useBlueBox && itemBoxBack[i]->IsOnMouseCursor())
 		{
-			itemBoxFrame[i]->SetActive(true);
+			if (!itemBoxFrame[i]->Active())
+			{
+				itemBoxFrame[i]->SetActive(true);
+				Sounds::Get()->Play("Boxframe_select", 1.1f);
+			}
 		}
-		else if (!itemBoxBack[i]->IsOnMouseCursor())
-		{
+		else if (useBlueBox && !itemBoxBack[i]->IsOnMouseCursor())
 			itemBoxFrame[i]->SetActive(false);
-		}
+
 		itemBoxFrame[i]->UpdateWorld();
 	}
-	FOR(potionNumber.size())
-	{
-		potionNumber[i]->UpdateWorld();
-	}
+
 	if (mouseOn)
 	{
 		MouseIcon->Pos() = { mousePos.x + 2, mousePos.y - 15 };
 		MouseIcon->UpdateWorld();
 	}
-
-	//GetBoxItem();
-	//GetQuadItem();
+	
 	BlueBox->UpdateWorld();
 	BoxIcon->UpdateWorld();
+
+	ThisIcon1->Rot().y += 0.5f * DELTA;
+	ThisIcon2->Rot().y += 0.5f * DELTA;
+	ThisIcon1->UpdateWorld();
+	ThisIcon2->UpdateWorld();
 }
 
 void ItemManager::Render()
 {
 	BlueBox->Render();
+	if (lookBoxIcon)
+	{
+		rasterizerState[1]->SetState();
+		blendState[1]->SetState();
+		//depthState[1]->SetState();
+		ThisIcon1->Render();
+		ThisIcon2->Render();
+		blendState[0]->SetState();
+		//depthState[0]->SetState();
+		rasterizerState[0]->SetState();
+	}
+
 }
 
 void ItemManager::PostRender()
@@ -158,29 +212,22 @@ void ItemManager::PostRender()
 	{
 		itemBoxList->Render();
 		FOR(itemBoxBack.size())
-		{
 			itemBoxBack[i]->Render();
-		}
 		FOR(itemBoxFrame.size())
-		{
 			itemBoxFrame[i]->Render();
-		}
 		FOR(itemList.size())
-		{
 			itemList[i]->Render();
-		}
 		FOR(potionNumber.size())
-		{
 			potionNumber[i]->Render();
-		}
 	}
 
 	if (mouseOn)
-	{
 		MouseIcon->Render();
-	}
 	if (lookBoxIcon)
 	{
+		if (iconSoundTimer <= 0.0001f)
+			Sounds::Get()->Play("Icon_on", 1.4f);
+		iconSoundTimer += DELTA;
 		BoxIcon->Render();
 	}
 }
@@ -194,27 +241,27 @@ void ItemManager::GetBoxItem(vector<Quad*> invenList) // 여기서 아이템을 클릭하�
 {
 	FOR(itemList.size()) // 지금 현재 지급품 박스에서
 	{
-		if (itemList[i]->IsOnMouseCursor() && KEY_DOWN(VK_LBUTTON)) // 클릭을 하면
+		if (useBlueBox && itemList[i]->IsOnMouseCursor() && KEY_DOWN(VK_LBUTTON)) // 클릭을 하면
 		{
 			Quad* quad = new Quad(itemList[i]->GetMaterial()->GetDiffuseMap()->GetFile());
 			quad->SetTag(itemList[i]->GetTag());
 			if (invenList.size() == 0) // 우선 0개라서 
 			{
+				Sounds::Get()->Play("Boxitem_select", 1.2f);
 				invenList.push_back(quad); // 무조건 푸쉬
-				//inventoryList.push_back(quad);
 				UI->inItDragItem_D.push_back(quad);
 			}
 			else if (invenList.size() > 0) // 사이즈가 1개부터는
 			{
 				if (InvenCheck(quad, invenList) == nullptr) // 인벤체크로 넘어가서
 				{
-
+					Sounds::Get()->Play("Boxitem_select", 1.2f);
 				}
 				else if (InvenCheck(quad, invenList)->GetMaterial()->GetDiffuseMap()->GetFile() !=
 					quad->GetMaterial()->GetDiffuseMap()->GetFile())
 				{
+					Sounds::Get()->Play("Boxitem_select", 1.2f);
 					invenList.push_back(quad);
-					//inventoryList.push_back(quad);
 					UI->inItDragItem_D.push_back(quad);
 				}
 			}
@@ -233,8 +280,6 @@ void ItemManager::GetBoxItem(vector<Quad*> invenList) // 여기서 아이템을 클릭하�
 }
 
 Quad* ItemManager::InvenCheck(Quad* quad, vector<Quad*> invenList)
-// 이건 UI 에서 서로의 인벤 리스트 엮을라고 만들었는데
-// 터져서 일단 보류
 {
 	vector<Quad*>::iterator iter = invenList.begin();
 	vector<Quad*>::iterator collisionItem = invenList.end();
@@ -258,9 +303,6 @@ Quad* ItemManager::InvenCheck(Quad* quad, vector<Quad*> invenList)
 }
 
 bool ItemManager::UseItem(Quad* quad)
-// UI 메니저에서 inItDragItem_D 의 draMain과 같은 그림이 있는데
-// 같은 이미지 라면 사용 하지 않음
-// 다른 이지미 라면 사용
 {
 	Vector3 pos = { 1740, 122, 0 };
 
@@ -283,17 +325,24 @@ void ItemManager::UseBlueBox(Vector3 Pos)
 	if (distance <= 250)
 	{
 		lookBoxIcon = true;
-		if (KEY_DOWN('G'))
+		if (KEY_DOWN('G') && !useBlueBox)
 		{
+			Sounds::Get()->Play("Boxopen", 1.2f);
 			useBlueBox = true;
 			mouseOn = true;
+			lookBoxIcon = false;
 			BoxIcon->SetActive(false);
+			ThisIcon1->SetActive(false);
+			ThisIcon2->SetActive(false);
 		}
 		else if (KEY_DOWN(VK_ESCAPE))
 		{
 			useBlueBox = false;
 			mouseOn = false;
+			lookBoxIcon = true;
 			BoxIcon->SetActive(true);
+			ThisIcon1->SetActive(true);
+			ThisIcon2->SetActive(true);
 		}
 	}
 	else
@@ -301,6 +350,9 @@ void ItemManager::UseBlueBox(Vector3 Pos)
 		mouseOn = false;
 		lookBoxIcon = false;
 		useBlueBox = false;
+		iconSoundTimer = 0.0f;
 		BoxIcon->SetActive(true);
+		ThisIcon1->SetActive(true);
+		ThisIcon2->SetActive(true);
 	}
 }

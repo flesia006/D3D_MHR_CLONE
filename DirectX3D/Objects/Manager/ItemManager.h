@@ -12,11 +12,8 @@ public:
 	void PostRender();
 	void GUIRender();
 
-	//void GetBoxItem();
 	void GetBoxItem(vector<Quad*> invenList);
-	//vector<Quad*> GetBoxItem(vector<Quad*> invenList);
-	//void GetQuadItem();
-	//Quad* InvenCheck(Quad* quad);
+
 	Quad* InvenCheck(Quad* quad, vector<Quad*> invenList);
 	bool UseItem(Quad* quad);
 
@@ -36,12 +33,17 @@ private:
 	Quad* itemBoxList;
 
 	int itemGetCount = 0;
-	int invenSize = 0;
 	vector<Quad*> potionNumber;
 
 	Model* BlueBox;
 	Quad* BoxIcon;
 	Quad* MouseIcon;
+	Quad* ThisIcon1;
+	Quad* ThisIcon2;
 
+	float iconSoundTimer = 0.0f;
 
+	RasterizerState* rasterizerState[2];
+	BlendState* blendState[2];
+	//DepthStencilState* depthState[2];
 };
