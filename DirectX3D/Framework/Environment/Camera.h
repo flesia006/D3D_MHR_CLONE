@@ -96,6 +96,7 @@ private:
     bool playOpening = false;
     bool playDeadScene = false;
     bool once = false;
+    bool freeCam = false;
 
     bool lateInitialize = false;
 

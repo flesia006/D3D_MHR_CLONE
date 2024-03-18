@@ -1,5 +1,5 @@
 <Material Name="body_skin">
-    <Shader Vertex="" Pixel="Shaders/Light/Shadow.hlsl"/>
+    <Shader Vertex="" Pixel="Shaders/Model/ModelAnimation.hlsl"/>
     <Texture Diffuse="Textures\Model\player\skin.png" Specular="Textures/Color/White.png" Normal="Textures/Color/White.png" Emissive="Textures/Color/Black.png"/>
     <Property Shininess="20" HasNormalMap="0">
         <Diffuse R="0.80000001" G="0.80000001" B="0.80000001" A="1"/>

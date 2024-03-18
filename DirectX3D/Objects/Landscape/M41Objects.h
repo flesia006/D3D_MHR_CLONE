@@ -12,19 +12,19 @@ public:
 
 private:
 	Model* M42A01;
-	Model* grass;
+	//Model* grass;
 	Model* sm415_000_01;   //
-	Model* sm414_007_00;   //사각 기둥
-	Model* sm414_007_00_2;
-	Model* sm414_007_00_3;
 
 
-	Model* sm414_005_04;   // 법규 모양 벽
+	ModelInstancing* sm414_007_00;   //사각 기둥
+
+	ModelInstancing* sm414_005_04;   // 법규 모양 벽
 
 	Model* sm414_005_01;   // 울퉁불퉁 벽
 	Model* sm414_005_01_2;   // 울퉁불퉁 벽
 
-	Model* sm414_005_02;   // 울퉁불퉁 벽 2
+	ModelInstancing* sm414_005_02;   // 울퉁불퉁 벽 2
+	ModelInstancing* sm414_009_00;
 
 	string basicTexPath = "Textures/M41";
 	Vector3 basicPos = Vector3(2062.1f, 180, 17653.896f);

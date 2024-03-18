@@ -18,6 +18,7 @@ public:
 private:
 
     DummyValphalk* val = nullptr;
+    ModelAnimator* utusi = nullptr;
 
     HalfSphere* ball;
     HalfSphere* ball2;
@@ -33,9 +34,11 @@ private:
     LightBuffer::Light* light3;
 
     M41Objects* objects;
+    M42Objects* objects_M42;
+
 
     RasterizerState* rasterizerState[2];
-    BlendState* blendState[2];
+    BlendState* blendState[3];
 
     CapsuleCollider* cap;
 };

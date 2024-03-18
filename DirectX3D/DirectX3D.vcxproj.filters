@@ -191,6 +191,7 @@
     <ClCompile Include="Objects\Particle\headBreakAtk.cpp" />
     <ClCompile Include="Objects\Particle\CircleEft.cpp" />
     <ClCompile Include="Scenes\SimpleTestScene.cpp" />
+    <ClCompile Include="Objects\Landscape\M42Objects.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Objects\Character\DummyValphalk.h" />
@@ -364,6 +365,7 @@
     <ClInclude Include="Objects\Algorithm\Node.h" />
     <ClInclude Include="Objects\Particle\headBreakAtk.h" />
     <ClInclude Include="Scenes\SimpleTestScene.h" />
+    <ClInclude Include="Objects\Landscape\M42Objects.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DirectX3D.rc" />

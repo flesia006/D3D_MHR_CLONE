@@ -25,5 +25,6 @@ LightPixelInput VS(VertexUVNormalTangentBlend input)
 
 float4 PS(LightPixelInput input) : SV_TARGET
 {
+
 	return CalcLights(input);
 }
