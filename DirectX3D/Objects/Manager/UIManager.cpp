@@ -238,38 +238,30 @@ UIManager::UIManager()
 	{
 		Quad* quad = new Quad(L"Textures/UI/ItemSlotBox.png");
 		quad->Scale() *= 0.5f;
-		if (i == 0)
-		{
+		if (i == 0)		
 			quad->Pos() = { quickSlot_Back->Pos().x, quickSlot_Back->Pos().y + 130, 0}; // 0 번째
-		}
-		if (i == 1)
-		{
+		
+		if (i == 1)		
 			quad->Pos() = { quickSlot_Back->Pos().x + 93, quickSlot_Back->Pos().y + 85, 0 }; // 1 번째
-		}
-		if (i == 2)
-		{
+		
+		if (i == 2)		
 			quad->Pos() = { quickSlot_Back->Pos().x + 130, quickSlot_Back->Pos().y, 0 }; // 2 번째
-		}
-		if (i == 3)
-		{
+		
+		if (i == 3)		
 			quad->Pos() = { quickSlot_Back->Pos().x + 93, quickSlot_Back->Pos().y - 90, 0 }; // 3 번째
-		}
-		if (i == 4)
-		{
+		
+		if (i == 4)		
 			quad->Pos() = { quickSlot_Back->Pos().x, quickSlot_Back->Pos().y - 129, 0 }; // 4 번째
-		}
-		if (i == 5)
-		{
+		
+		if (i == 5)		
 			quad->Pos() = { quickSlot_Back->Pos().x - 93, quickSlot_Back->Pos().y - 90, 0 }; // 5 번째
-		}
-		if (i == 6)
-		{
+		
+		if (i == 6)		
 			quad->Pos() = { quickSlot_Back->Pos().x - 130, quickSlot_Back->Pos().y, 0 }; // 6 번째
-		}
-		if (i == 7)
-		{
+		
+		if (i == 7)		
 			quad->Pos() = { quickSlot_Back->Pos().x - 93, quickSlot_Back->Pos().y + 85, 0 }; // 7 번째
-		}
+		
 		selectBoxs.push_back(quad);
 		selectBoxs[i]->UpdateWorld();
 	}
@@ -289,37 +281,29 @@ UIManager::UIManager()
 		Quad* quad = new Quad(L"Textures/UI/KeyNumber_SlotBox.png");
 		quad->Scale() *= 1.5f;
 		if (i == 0)
-		{
 			quad->Pos() = { 210, 220, 0 }; // 0 번째
-		}
+		
 		if (i == 1)
-		{
 			quad->Pos() = { 410, 220, 0 }; // 1 번째
-		}
+		
 		if (i == 2)
-		{
 			quad->Pos() = { 610, 220, 0 }; // 2 번째
-		}
+		
 		if (i == 3)
-		{
 			quad->Pos() = { 810, 220, 0 }; // 3 번째
-		}
+		
 		if (i == 4)
-		{
 			quad->Pos() = { 1010, 220, 0 }; // 4 번째
-		}
+		
 		if (i == 5)
-		{
 			quad->Pos() = { 1210, 220, 0 }; // 5 번째
-		}
+		
 		if (i == 6)
-		{
 			quad->Pos() = { 1410, 220, 0 }; // 6 번째
-		}
+		
 		if (i == 7)
-		{
 			quad->Pos() = { 1610, 220, 0 }; // 7 번째
-		}
+		
 		numberBoxs.push_back(quad);
 		numberBoxs[i]->UpdateWorld();
 	}
@@ -750,16 +734,17 @@ void UIManager::Update()
 	hp->SetAmount(curHP / maxHP);
 	recover->SetAmount(recoverHP / maxHP);
 	stamina->SetAmount(curStamina / maxStamina);
-	if (curHP < recoverHP) // 빨간체력까지 자연회복
+	if (curHP <= recoverHP) // 빨간체력까지 자연회복
 		curHP += 0.1f * DELTA;
 	if (curHP > recoverHP)
 		recoverHP = curHP;
+	if (curHP > maxHP) // 최대체력 이상 넘어가면 막음
+		curHP = maxHP;	
 
 	if (staminaActive == false) // 행동이 끝나면 스태미너 자연회복
 		curStamina += 7.5f * DELTA;
 	if (curStamina >= maxStamina) // 최대 스태미나까지만 자연회복
 		curStamina = maxStamina;
-
 
 	//예리도 부분
 	durability_gauge->SetAmount(curDurability / maxDurability);
@@ -777,6 +762,8 @@ void UIManager::Update()
 	//예리도는 0 이하로 떨어지지 않는다.
 	if (curDurability <= 0.0f)
 		curDurability = 0;
+	if (curDurability > maxDurability) // 예리도 최대 넘어가지 않게 안전장치
+		curDurability = maxDurability;
 
 	//if (curDurability < 0.0f)
 	//	SharpeningStone();
@@ -789,6 +776,9 @@ void UIManager::Update()
 		curSpiritGauge -= 0.1f * DELTA;
 	if (curSpiritGauge <= 0)
 		curSpiritGauge = 0;
+
+	if (curSpiritGauge > maxSpiritGauge) // 기인게이지 최대치 넘지 않게
+		curSpiritGauge = maxSpiritGauge;
 
 	if (isBonus)
 	{
@@ -1158,12 +1148,12 @@ void UIManager::Hit(float damage)
 
 void UIManager::HealthPotion()
 {
-	curHP += 20.0f * DELTA;
+	curHP += 10.0f * DELTA;
 }
 
 void UIManager::LargeHealthPotion()
 {
-	curHP += 30.f * DELTA;
+	curHP += 20.f * DELTA;
 }
 
 void UIManager::Running()

@@ -197,6 +197,14 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 	forwardBoom->SetParent(head);
 	forwardBoom->SetActive(false);
 	forwardBoom->atkDmg = 35;
+
+	stormBox = new BoxCollider();
+	stormBox->Scale() *= 2000;
+	stormBox->Pos() = Pos();
+	stormBox->SetColor(1, 0, 0);
+	stormBox->atkDmg = 50;
+	stormBox->SetParent(realPos);
+	stormBox->SetActive(false);
 	{//fullBurst
 		fullBurst = new BoxCollider();
 		fullBurst->Scale() *= 500;
@@ -297,7 +305,8 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 	FOR(8) hupgiFire.push_back(new HupgiFire());
 	FOR(6) explosionParticle.push_back(new Explosion());
 	barrier = new ParticleSystem("TextData/Particles/val_energy.fx");
-	trail = new Trail(L"Textures/Effect/val.png", head, jetposend, 180, 35);
+	trail = new Trail(L"Textures/Effect/val.png", head, realPos, 180, 155);
+	trail->Scale() *= 2;
 	barrier->SetScale(10);
 	tempScale = Scale();
 	
@@ -386,6 +395,7 @@ void Valphalk::Update()
 
 	forwardBoom->Update();
 	fullBurst->Update();
+	stormBox->Update();
 
 	effectBox1->Update();
 	effectBox2->Update();
@@ -473,6 +483,16 @@ void Valphalk::Update()
 	//if (isStorm)
 	//	stormEffect->SetPos(realPos->GlobalPos());
 	//////////////////////////
+	stormBox->GlobalPos() = Pos();
+	if (stormTime > 2.f)
+	{	
+		stormBox->SetActive(true);
+	}
+	else
+	{
+		stormBox->SetActive(false);
+	}
+	stormBox->UpdateWorld();
 }
 
 void Valphalk::PreRender()
@@ -531,8 +551,11 @@ void Valphalk::Render()
 	hupgiCharge->Render();
 	storm_Start->Render();
 	barrier->Render();
-	if (isStorming)
+	if (isStorm)
+	{
 		trail->Render();
+		stormBox->Render();
+	}
 
 	isFirstRender = true;
 }
@@ -565,9 +588,13 @@ void Valphalk::GUIRender()
 	ImGui::DragFloat3("effectsphere2pos", (float*)&effectSphere2->Pos());
 	ImGui::DragFloat3("effectsphere1rot", (float*)&effectSphere1->Rot());
 	ImGui::DragFloat3("effectsphere2rot", (float*)&effectSphere2->Rot());
-
+	ImGui::DragFloat3("storm", (float*)&stormBox->Pos());
+	//ImGui::DragFloat3("storm", (float*)&stormBox->GlobalPos());
+	
+	//ImGui::DragFloat3("storm", (float*)&forwardBoom->GlobalPos());
 	ImGui::SliderFloat3("zet1", (float*)&fullburstParticle->Rot(), -3.14, 3.14);
 
+	ImGui::Text("%f", stormTime);
 	//jetParticle[0]->GUIRender();
 	//jetParticle[1]->GUIRender();
 	//jetParticle[2]->GUIRender();
@@ -653,12 +680,12 @@ void Valphalk::Storm()
 	stormTime += DELTA;
 	combo = true;
 	tempY = Pos().y;
-	//stormScale = forwardBoom->Scale();
+	
 	if (sequence == 0) 
 	{ 
-		forwardBoom->Scale().x *= 15;
-		forwardBoom->Scale().z *= 15;
-		forwardBoom->Pos() = realPos->Pos();
+		//forwardBoom->Scale().x *= 15;
+		//forwardBoom->Scale().z *= 15;
+		//forwardBoom->Pos() = realPos->Pos();
 		SetState(E_1151); 
 		E1151(); 
 	} // 준비
@@ -691,9 +718,7 @@ void Valphalk::Storm()
 		Scale() = tempScale;  // 앞에서 줄였던 Scale값을 원래대로 복구
 		SetState(E_1163); 		
 		E1163(); 
-	}
-	if(sequence>=3)
-		forwardBoom->SetActive(true);
+	}		
 
 	if (sequence >= 4)
 	{
@@ -703,7 +728,6 @@ void Valphalk::Storm()
 	{ 
 		forwardBoom->Scale() = stormScale;
 		forwardBoom->Pos() = forwardBoomPosInit;
-		isStorming = false; 
 		SetState(E_1164); 
 		E1164(); 
 	} 
@@ -1161,6 +1185,7 @@ void Valphalk::DeathCheck()
 	{
 		if (!once)
 		{
+			Sounds::Get()->Play("hit_pl_media.bnk.2_38", 1.f);
 			if (isSlashMode)
 				curPattern = S_DEAD;
 			else
@@ -3438,8 +3463,10 @@ void Valphalk::E1151() // 습격준비
 	if (RATIO < 0.1)
 		Sounds::Get()->Play("em086_05_fx_media_25", 0.5f);
 	
-	forwardBoom->SetActive(true);
 	renderJet = true;
+	if(RATIO>0.95)
+		isStorm = true;
+
 	if (RATIO > 0.97)
 	{
 		//colliders[ROAR]->SetActive(true);
@@ -3462,7 +3489,6 @@ void Valphalk::E1155() // 비상
 	//Pos().x += 15000 * DELTA;
 	//Pos() += (0.1f);
 	//Rot().x = StormDir.x;	
-	isStorm = true;
 	PLAY;
 	//colliders[ROAR]->SetActive(false);
 	//Vector3 Value = { 0.1f,0.1f,0.1f };
@@ -3521,7 +3547,7 @@ void Valphalk::E1163() // 하강
 		storm_Start->Play(Pos(), 0);
 		isJump = false;
 		colliders[ROAR]->SetActive(false);
-		forwardBoom->SetActive(false);
+		//forwardBoom->SetActive(false);
 
 		barrier->Stop();
 		sequence++;
@@ -3540,12 +3566,16 @@ void Valphalk::E1164() // 착지
 	Rot().x = 0;
 	Rot().z = 0;
 	
-	stormTime = 0;
 	PLAY;
 	if (RATIO < 0.1 && RATIO > 0.05)
 	{
 		renderJet = false;
 		explosionParticle[0]->PlayStormParticle(Pos(), 0);
+	}
+	if (RATIO > 0.78f && RATIO < 0.8f)
+	{
+		stormTime = 0;
+		isStorm = false;
 	}
 	if (RATIO > 0.96)
 	{

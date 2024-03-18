@@ -467,6 +467,7 @@ private:
 	// 공격 콜라이더 (투사체, 폭발 등)	
 	vector<SphereCollider*> bullets;
 	BoxCollider* forwardBoom;
+	BoxCollider* stormBox;
 	BoxCollider* fullBurst;
 	BoxCollider* effectBox1;
 	BoxCollider* effectBox2;

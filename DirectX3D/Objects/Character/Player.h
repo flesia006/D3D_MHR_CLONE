@@ -141,6 +141,7 @@ private:
 	void RandHurtVoice();
 	void RandBreath();
 	void GetWireBug();
+	void RandHitSounds();
 
 	void Capture();
 	void UpdateCaptureUI();
