@@ -19,6 +19,7 @@ public:
 
 	void UseBlueBox(Vector3 Pos);
 
+	Quad* GetMouseIcon() { return MouseIcon; }
 public: // 임시로 놓은거임
 	string tag;
 	bool lookBoxIcon = false;
@@ -46,4 +47,5 @@ private:
 	RasterizerState* rasterizerState[2];
 	BlendState* blendState[2];
 	//DepthStencilState* depthState[2];
+	bool isCursorOn = false;
 };

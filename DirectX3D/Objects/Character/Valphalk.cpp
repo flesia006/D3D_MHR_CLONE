@@ -1645,7 +1645,7 @@ void Valphalk::ChooseNextPattern()
 			{
 				if (isHupGi)   // Èí
 				{
-					int i = rand() % 5;
+					int i = rand() % 6;
 					switch (i)
 					{
 					case 0:	curPattern = HB_WINGATK;	  break;
@@ -1653,6 +1653,8 @@ void Valphalk::ChooseNextPattern()
 					case 2:	curPattern = FORWARDBOOM;	break;
 					case 3:	curPattern = HS_FLYFALLATK;	break;
 					case 4:	curPattern = FULLBURST;	break;
+					case 5: curPattern = HS_FLYBLAST; break;
+
 					}
 				}
 				else           // ¤¤Èí
@@ -1708,7 +1710,7 @@ void Valphalk::ChooseNextPattern()
 			{
 				if (isHupGi)  // Èí
 				{
-					int i = rand() % 5;
+					int i = rand() % 6;
 					switch (i)
 					{
 					case 0:	curPattern = B_DOWNBLAST;	  break;
@@ -1716,6 +1718,7 @@ void Valphalk::ChooseNextPattern()
 					case 2:	curPattern = HS_FLYFALLATK;	  break;
 					case 3:	curPattern = FULLBURST;	break;
 					case 4:	curPattern = B_DUMBLING;  break;
+					case 5: curPattern = HS_FLYBLAST; break;
 					}
 				}
 				else		  // Èí ¤¤
@@ -1771,26 +1774,26 @@ void Valphalk::ChooseNextPattern()
 			{
 				if (isHupGi)       // Èí
 				{
-					int i = rand() % 4;
+					int i = rand() % 3;
 					switch (i)
 					{
 					case 0:	curPattern = FULLBURST;		break;
-					case 1:	curPattern = B_DUMBLING;  break;
-					case 2:	curPattern = HS_FLYFALLATK;  break; // Æ®·£½ºÆû ÇÏ°í ³¯°Ô ¼öÁ¤
-					case 3: curPattern = HS_FLYBLAST; break;
+					case 1:	curPattern = HS_FLYFALLATK;  break; // Æ®·£½ºÆû ÇÏ°í ³¯°Ô ¼öÁ¤
+					case 2: curPattern = HS_FLYBLAST; break;
+					//case 1:	curPattern = B_DUMBLING;  break;
 					}
 				}
 				else              // Èí¤¤
 				{
-					int i = rand() % 3;
+					int i = rand() % 2;
 					switch (i)
 					{
 					case 0:	curPattern = B_ENERGYBLAST;		break;
-					case 1:	curPattern = B_DUMBLING;		break;
-					case 2:
+					case 1:
 						if (curPattern != S_TRANSFORM)
 							curPattern = B_TRANSFORM;
 						else curPattern = B_SWINGATK;
+					//case 1:	curPattern = B_DUMBLING;		break;
 						break;
 					}
 				}

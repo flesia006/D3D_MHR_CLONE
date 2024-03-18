@@ -306,7 +306,7 @@ void Player::UpdateWorlds()
 		else
 		{
 			if ((garuk->GlobalPos() - Pos()).Length() < 300)
-			{
+			{				
 				Pos().x = garuk->GlobalPos().x + Forward().x * 50;
 				Pos().z = garuk->GlobalPos().z + Forward().z * 50;
 			}
@@ -2087,6 +2087,7 @@ void Player::S009() // 걸으면서 납도
 void Player::S011() // 달리기 루프
 {
 	PLAYLOOP;
+	UI->staminaActive = false;
 
 	Rotate();
 	RandBreath();
@@ -2293,25 +2294,27 @@ void Player::S122()   // 전력질주
 	PLAYLOOP;
 	Rotate();
 	RandBreath();
+	UI->curStamina -= 0.05f;
 
 	if (UIManager::Get()->curStamina < 0.1f)
 		SetState(S_118);
 
 	if (KEY_UP(VK_LSHIFT))
-		SetState(S_011);
+		SetState(S_011);	
 
-	if (!K_MOVE)	SetState(S_014);
+	if (!K_MOVE)	
+		SetState(S_014);	
 
 	if (KEY_DOWN('F')) callGaruk = true;
 	else if (UI->IsAbleBugSkill() && K_LBUG)	SetState(W_005);	// 사선 밧줄벌레 이동
 
 
 	if (K_LMB)		SetState(L_101);
-	else if (K_SPACE)	Roll();
+	else if (K_SPACE)	
+		Roll();	
 
 	if (RATIO > 0.95)
 		Loop();
-
 }
 
 void Player::L001() // 발도상태 대기
@@ -2363,7 +2366,6 @@ void Player::L004() // 발도상태 걷기 중 // 루프
 
 	if (!K_MOVE) // 이동 중 키를 뗄 때
 		SetState(L_008);
-
 
 	if (RATIO > 0.95)
 		Loop();

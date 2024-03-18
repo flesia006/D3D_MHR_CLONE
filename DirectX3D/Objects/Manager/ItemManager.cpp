@@ -82,7 +82,7 @@ ItemManager::ItemManager()
 	BoxIcon->Pos() = { 1000, 550 };
 
 	MouseIcon = new Quad(L"Textures/UI/MouseCursor.png");
-	MouseIcon->Scale() *= 0.55f;
+	MouseIcon->Scale() *= 0.85f;
 
 	ThisIcon1 = new Quad(L"Textures/UI/ThisIcon.png");
 	ThisIcon1->Pos() = BlueBox->Pos();
@@ -173,6 +173,8 @@ void ItemManager::Update()
 
 		itemBoxFrame[i]->UpdateWorld();
 	}
+	MouseIcon->Pos() = { mousePos.x + 2, mousePos.y - 15 };
+	MouseIcon->UpdateWorld();
 
 	if (mouseOn)
 	{
@@ -229,6 +231,20 @@ void ItemManager::PostRender()
 			Sounds::Get()->Play("Icon_on", 1.4f);
 		iconSoundTimer += DELTA;
 		BoxIcon->Render();
+	}
+	if (KEY_DOWN(VK_F4))
+	{
+		mouseOn = true;
+		isCursorOn = true;
+	}
+
+	if(isCursorOn)
+		MouseIcon->Render();
+
+	if (KEY_DOWN(VK_F5))
+	{
+		mouseOn = false;
+		isCursorOn = false;
 	}
 }
 
