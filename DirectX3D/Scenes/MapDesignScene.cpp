@@ -13,6 +13,7 @@ MapDesignScene::MapDesignScene()
     utusi = new ModelAnimator("player");
     utusi->ReadClip("L_001");
     utusi->Pos().z += 4000;
+    utusi->Pos().x += 250;
     utusi->GetMaterials()[7]->SetShader(L"Model/ModelAnimation2.hlsl");
     utusi->GetMaterials()[9]->SetShader(L"Model/ModelAnimation2.hlsl");
     utusi->Rot().y += XM_PI;
@@ -143,13 +144,13 @@ void MapDesignScene::PostRender()
 
 void MapDesignScene::GUIRender()
 {
- //   objects_M42->GUIRender();
+    objects_M42->GUIRender();
     //ball2->GUIRender();
 //    val->GUIRender();
 //      ball->GUIRender();
 //    fog->GUIRender();
 //    
    // cap->GUIRender();
-    utusi->GUIRender();
+    //utusi->GUIRender();
 }
 

@@ -8,10 +8,10 @@ ModelExportScene::ModelExportScene()
     ModelExporter* exporter;
     string clipName;
 
-    //exporter = new ModelExporter(name, file);
-    //exporter->ExportMaterial();
-    //exporter->ExportMesh();
-    //delete exporter;    
+    exporter = new ModelExporter(name, file);
+    exporter->ExportMaterial();
+    exporter->ExportMesh();
+    delete exporter;    
 
 // Å¬¸³µþ ¶§ ÀÌ°Å ¾²¼À
 //    ExportClip(name, "BattleIdle");
