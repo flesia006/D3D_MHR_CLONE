@@ -2308,7 +2308,6 @@ void Player::S122()   // 전력질주
 	if (KEY_DOWN('F')) callGaruk = true;
 	else if (UI->IsAbleBugSkill() && K_LBUG)	SetState(W_005);	// 사선 밧줄벌레 이동
 
-
 	if (K_LMB)		SetState(L_101);
 	else if (K_SPACE)	
 		Roll();	
