@@ -468,7 +468,8 @@ void Valphalk::Update()
 	if (KEY_DOWN('6'))
 		colliders[LLEG1]->partHp = -100;
 
-	
+	if (KEY_DOWN('8'))
+		curHP -= 1000;
 	//if (isStorm)
 	//	stormEffect->SetPos(realPos->GlobalPos());
 	//////////////////////////
@@ -1164,7 +1165,9 @@ void Valphalk::DeathCheck()
 				curPattern = S_DEAD;
 			else
 				curPattern = B_DEAD;
-
+			Sounds::Get()->Stop("Valphalk_Thema");
+			renderJet = false;
+			renderJetRight = false;
 
 			CAM->SetDeadCAM(eyes, this);
 			once = true;
@@ -3517,6 +3520,8 @@ void Valphalk::E1163() // 하강
 		//SetColliderAttack(ROAR, 0.05f, 50, 2);
 		storm_Start->Play(Pos(), 0);
 		isJump = false;
+		colliders[ROAR]->SetActive(false);
+		forwardBoom->SetActive(false);
 
 		barrier->Stop();
 		sequence++;
@@ -3530,7 +3535,6 @@ void Valphalk::E1163() // 하강
 
 void Valphalk::E1164() // 착지
 {
-	colliders[ROAR]->SetActive(false);
 	isJump = false;	
 
 	Rot().x = 0;
@@ -3540,7 +3544,6 @@ void Valphalk::E1164() // 착지
 	PLAY;
 	if (RATIO < 0.1 && RATIO > 0.05)
 	{
-		forwardBoom->SetActive(false);
 		renderJet = false;
 		explosionParticle[0]->PlayStormParticle(Pos(), 0);
 	}

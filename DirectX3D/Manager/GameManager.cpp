@@ -46,14 +46,13 @@ GameManager::GameManager()
 {
     Create();
     srand(static_cast<unsigned int>(time(NULL)));
-    randN = (rand() % 2000) + 1000;
+    randN = (rand() % 3000) + 1000;
 
 //    SceneManager::Get()->Create("ModelExport", new ModelExportScene());
 //    SceneManager::Get()->Add("ModelExport");
 //
     SceneManager::Get()->Create("Grid", new GridScene());
     SceneManager::Get()->Add("Grid");
-
 
 //    SceneManager::Get()->Create("ShadowScene", new ShadowScene());
 //    SceneManager::Get()->Add("ShadowScene");
@@ -62,12 +61,10 @@ GameManager::GameManager()
 //      SceneManager::Get()->Create("Particle", new ParticleScene());
 //      SceneManager::Get()->Add("Particle");
 //    SceneManager::Get()->Create("ParticleConfig", new ParticleConfigScene());
-//    SceneManager::Get()->Add("ParticleConfig");
-
+//    SceneManager::Get()->Add("ParticleConfig");    
 
 //    SceneManager::Get()->Create("ValphalkTestScene", new ValphalkTestScene());
 //    SceneManager::Get()->Add("ValphalkTestScene");
-
 
 //    SceneManager::Get()->Create("PlayerTestScene", new PlayerTestScene());
 //    SceneManager::Get()->Add("PlayerTestScene");
@@ -77,53 +74,19 @@ GameManager::GameManager()
 
 //    SceneManager::Get()->Create("SimpleTestScene", new SimpleTestScene());
 //    SceneManager::Get()->Add("SimpleTestScene");
+
     SceneManager::Get()->Create("OpeningScene", new OpeningScene());    
     SceneManager::Get()->Add("OpeningScene");
 
     SceneManager::Get()->Create("LoadingScene", new LoadingScene());
     //SceneManager::Get()->Add("LoadingScene");
-    // 
-    //SceneManager::Get()->Add("ValphalkTestScene");
-
 
 //    SceneManager::Get()->Add("Terrain");
     CAM->isFreeCamTrue();
 
-    //dynamic_cast<OpeningScene*>(SceneManager::Get()->Add("OpeningScene")->choice)
-    //int choice = dynamic_cast<OpeningScene*>(SceneManager::Get()->Add("OpeningScene"))->choice();
     UIManager::Get()->isLoading = true;
 }
-void LoadPlayScene(std::shared_future<void> play)
-{
-    play.get();
-    //SceneManager::Get()->Add("FightTestScene");
-    return play.get();
-}
-void LoadScene() // 게임 시작시 오프닝씬 -> 로딩씬으로 전환
-{
-    SceneManager::Get()->Remove("OpeningScene");
-    Sounds::Get()->Pause("lobbyBGM");    
-    SceneManager::Get()->Add("LoadingScene");
-    UIManager::Get()->choice = 100;
-}
 
-void PlayScene(std::shared_future<void> play)
-{
-    play.get();
-    SceneManager::Get()->Remove("LoadingScene");
-    SceneManager::Get()->Add("FightTestScene");        
-    CAM->isFreeCamFalse();
-
-    std::this_thread::sleep_for(std::chrono::seconds(3));
-    return play.get();
-}
-void PlayScene() // 로딩씬을 지우고 원하는 씬으로 진입한다.
-{
-    SceneManager::Get()->Remove("LoadingScene");
-    //SceneManager::Get()->Add("PlayerTestScene");
-    CAM->isFreeCamFalse();
-    UIManager::Get()->isLoading = false;
-}
 GameManager::~GameManager()
 {
     Delete();
@@ -258,6 +221,7 @@ void GameManager::Create()
     sound->AddSound("select", SoundPath + L"UI/Select.mp3", false);
     sound->AddSound("back", SoundPath + L"UI/Back.mp3", false);
     sound->AddSound("playgame", SoundPath + L"UI/PlayGame.mp3", false);
+    sound->AddSound("dontget", SoundPath + L"UI/dontGet.mp3", false);
 
     
     
@@ -440,3 +404,34 @@ void GameManager::Delete()
     ImGui::DestroyContext();
 }
 
+void LoadPlayScene(std::shared_future<void> play)
+{
+    play.get();
+    //SceneManager::Get()->Add("FightTestScene");
+    return play.get();
+}
+void LoadScene() // 게임 시작시 오프닝씬 -> 로딩씬으로 전환
+{
+    SceneManager::Get()->Remove("OpeningScene");
+    Sounds::Get()->Pause("lobbyBGM");
+    SceneManager::Get()->Add("LoadingScene");
+    UIManager::Get()->choice = 100;
+}
+
+void PlayScene(std::shared_future<void> play)
+{
+    play.get();
+    SceneManager::Get()->Remove("LoadingScene");
+    SceneManager::Get()->Add("FightTestScene");
+    CAM->isFreeCamFalse();
+
+    std::this_thread::sleep_for(std::chrono::seconds(3));
+    return play.get();
+}
+void PlayScene() // 로딩씬을 지우고 원하는 씬으로 진입한다.
+{
+    SceneManager::Get()->Remove("LoadingScene");
+    //SceneManager::Get()->Add("PlayerTestScene");
+    CAM->isFreeCamFalse();
+    UIManager::Get()->isLoading = false;
+}

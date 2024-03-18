@@ -71,6 +71,10 @@ void OpeningScene::Update()
         UIManager::Get()->choice = 1;
     }
 
+    if (KEY_DOWN(VK_SPACE) && selectNum > 0 && selectNum < 5)
+    {
+        Sounds::Get()->Play("dontget", 0.5f);        
+    }
     if (KEY_DOWN(VK_SPACE) && selectNum == 5)
     {
         Sounds::Get()->Play("select", 0.5f);
