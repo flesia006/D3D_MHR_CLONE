@@ -424,9 +424,6 @@ void Player::Potion()
 	}
 	if (Lcure == true)
 	{
-		UI->useQuickSlot1 = false;
-		UI->useQuickSlot2 = false;
-		
 		if (time > 2 && time < 4.2f)
 		{
 			UI->LargeHealthPotion();
@@ -441,19 +438,12 @@ void Player::Potion()
 		|| (UI->useDragSlot && ItemManager::Get()->tag == "Potion" && KEY_DOWN('E') && UI->havePotion > 10 && time > 6.0f)
 		|| (UI->useNumberBar && UI->havePotion > 10 && KEY_DOWN('1') && time > 6.0f))
 	{
-	
 		UI->havePotion--;
 		cure = true;
 		time = 0;
-
 	}
 	if (cure == true)
 	{
-		UI->useQuickSlot1 = false;
-		UI->useQuickSlot2 = false;
-		//potionParticle->Play({ Pos().x,Pos().y + 100,Pos().z }, { 0,0,0 });
-		
-
 		if (time > 2 && time < 4)
 		{
 			UI->HealthPotion();

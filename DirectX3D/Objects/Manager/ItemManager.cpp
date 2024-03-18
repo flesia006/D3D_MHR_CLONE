@@ -227,7 +227,6 @@ void ItemManager::PostRender()
 		MouseIcon->Render();
 	if (lookBoxIcon)
 		BoxIcon->Render();
-	}
 	if (KEY_DOWN(VK_F4))
 	{
 		mouseOn = true;
