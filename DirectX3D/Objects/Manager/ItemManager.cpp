@@ -75,7 +75,7 @@ ItemManager::ItemManager()
 	}
 
 	BlueBox = new Model("BlueBox");
-	BlueBox->Pos() = { -1000, 0 , 200 };
+	BlueBox->Pos() = { -1000, 0 , 200 }; //TODO : 나중에 아이템 박스 위치 바꿔야함
 
 	BoxIcon = new Quad(L"Textures/UI/BoxIcon.png");
 	BoxIcon->Scale() *= 1.5f;
