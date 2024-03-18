@@ -42,8 +42,6 @@ private:
 	Quad* ThisIcon1;
 	Quad* ThisIcon2;
 
-	float iconSoundTimer = 0.0f;
-
 	RasterizerState* rasterizerState[2];
 	BlendState* blendState[2];
 	//DepthStencilState* depthState[2];

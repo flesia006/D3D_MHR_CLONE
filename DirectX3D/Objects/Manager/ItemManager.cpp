@@ -226,10 +226,6 @@ void ItemManager::PostRender()
 	if (mouseOn)
 		MouseIcon->Render();
 	if (lookBoxIcon)
-	{
-		if (iconSoundTimer <= 0.0001f)
-			Sounds::Get()->Play("Icon_on", 1.4f);
-		iconSoundTimer += DELTA;
 		BoxIcon->Render();
 	}
 	if (KEY_DOWN(VK_F4))
@@ -340,7 +336,11 @@ void ItemManager::UseBlueBox(Vector3 Pos)
 
 	if (distance <= 250)
 	{
-		lookBoxIcon = true;
+		if (!lookBoxIcon)
+		{
+			lookBoxIcon = true;
+			Sounds::Get()->Play("Icon_on", 1.4f);
+		}
 		if (KEY_DOWN('G') && !useBlueBox)
 		{
 			Sounds::Get()->Play("Boxopen", 1.2f);
@@ -366,7 +366,6 @@ void ItemManager::UseBlueBox(Vector3 Pos)
 		mouseOn = false;
 		lookBoxIcon = false;
 		useBlueBox = false;
-		iconSoundTimer = 0.0f;
 		BoxIcon->SetActive(true);
 		ThisIcon1->SetActive(true);
 		ThisIcon2->SetActive(true);

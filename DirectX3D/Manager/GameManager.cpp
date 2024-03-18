@@ -395,6 +395,7 @@ void GameManager::Create()
     Sounds::Get()->AddSound("Icon_on", SoundPath + L"UI/Icon_on.mp3");
     Sounds::Get()->AddSound("Slot_move", SoundPath + L"UI/Slot_move.mp3");
     Sounds::Get()->AddSound("Slot_off", SoundPath + L"UI/Slot_off.mp3");
+    Sounds::Get()->AddSound("Select", SoundPath + L"UI/Select.mp3");
 }
 
 void GameManager::Delete()
