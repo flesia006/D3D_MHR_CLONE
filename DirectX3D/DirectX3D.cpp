@@ -46,6 +46,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     GameManager* gameManager = new GameManager();
 
+
     while (msg.message != WM_QUIT)
     {
         if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
@@ -78,7 +79,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 ATOM MyRegisterClass(HINSTANCE hInstance)
 {
     WNDCLASSEXW wcex;
-
     wcex.cbSize = sizeof(WNDCLASSEX);
 
     wcex.style          = CS_HREDRAW | CS_VREDRAW;
@@ -88,7 +88,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     wcex.hInstance      = hInstance;
     wcex.hIcon          = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_DIRECTX3D));
     wcex.hCursor        = LoadCursor(nullptr, IDC_ARROW);
-    wcex.hbrBackground  = (HBRUSH)(COLOR_WINDOW+1);
+    wcex.hbrBackground  = (HBRUSH)(COLOR_WINDOW+3);
     wcex.lpszMenuName   = MAKEINTRESOURCEW(IDC_DIRECTX3D);
     wcex.lpszClassName  = szWindowClass;
     wcex.hIconSm        = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
@@ -116,7 +116,8 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    {
       return FALSE;
    }
-
+   // 게임이 완성되면 아래 코드 활성화
+   //ShowCursor(false);
    ShowWindow(hWnd, nCmdShow);
    UpdateWindow(hWnd);
 

@@ -236,7 +236,6 @@ private:
 	void E0007();
 	void E0043();
 	void E0044(float degree);
-	void E0044a(float degree);
 	void E0045(float degree);
 	void E0055();
 	void E0059();
@@ -468,6 +467,7 @@ private:
 	// 공격 콜라이더 (투사체, 폭발 등)	
 	vector<SphereCollider*> bullets;
 	BoxCollider* forwardBoom;
+	BoxCollider* stormBox;
 	BoxCollider* fullBurst;
 	BoxCollider* effectBox1;
 	BoxCollider* effectBox2;
@@ -486,6 +486,8 @@ private:
 	Vector3 fullBurstRot;
 	Vector3 fullBurstFireScale;
 
+	Vector3 stormScale;
+	float tempY;
 	float rotSpeed = 5.0f;
 	int ranPatrol = 0;
 	float patrolTime = 0;
@@ -546,6 +548,8 @@ private:
 	float questClearCountDown = 0.0f;
 	const float questClearCountLimit = 60.0f; /////////// 필요에 의하면 수정 가능
 	bool isStorming = false;
+
+	bool isFirstRender = false;
 
 public:
 	float maxHP = 25000;

@@ -14,7 +14,7 @@ SceneManager::~SceneManager()
 void SceneManager::Update()
 {
     for (Scene* scene : curScenes)
-        scene->Update();
+        scene->Update();   
 }
 
 void SceneManager::PreRender()

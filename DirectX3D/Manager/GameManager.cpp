@@ -30,18 +30,25 @@
 #include "Scenes/ValphalkTestScene.h"
 #include "Scenes/PlayerTestScene.h"
 #include "Scenes/FightTestScene.h"
-
-
+#include "Scenes/OpeningScene.h"
+#include "Scenes/LoadingScene.h"
+#include <thread>
+#include <chrono>
+#include <future>
 // 오늘 진행된 설명 : 궤적 파티클, 다른 특수 파티클(눈, 스파크)
 //                   + 궤적 파티클 적용 (휴먼 클래스에 추가함)
 //                   + 파티클 파일 설정용 씬
 
 // * 파티클 설정 씬 -> 특수효과가 추가로 필요하거나, 혹은 그냥 복습하실 분이라도...
 //                    그런 경우에 해당하는 분들은 바로 한번 써봅시다.
+void LoadScene();
+void PlayScene();
 
 GameManager::GameManager()
 {
     Create();
+    srand(static_cast<unsigned int>(time(NULL)));
+    randN = (rand() % 3000) + 1000;
 
 //    SceneManager::Get()->Create("ModelExport", new ModelExportScene());
 //    SceneManager::Get()->Add("ModelExport");
@@ -49,16 +56,14 @@ GameManager::GameManager()
 //    SceneManager::Get()->Create("Grid", new GridScene());
 //    SceneManager::Get()->Add("Grid");
 
-
 //    SceneManager::Get()->Create("ShadowScene", new ShadowScene());
 //    SceneManager::Get()->Add("ShadowScene");
-    SceneManager::Get()->Create("MapDesignScene", new MapDesignScene());
-    SceneManager::Get()->Add("MapDesignScene");
+//    SceneManager::Get()->Create("MapDesignScene", new MapDesignScene());
+//    SceneManager::Get()->Add("MapDesignScene");
 //      SceneManager::Get()->Create("Particle", new ParticleScene());
 //      SceneManager::Get()->Add("Particle");
 //    SceneManager::Get()->Create("ParticleConfig", new ParticleConfigScene());
-//    SceneManager::Get()->Add("ParticleConfig");
-
+//    SceneManager::Get()->Add("ParticleConfig");    
 
 //    SceneManager::Get()->Create("ValphalkTestScene", new ValphalkTestScene());
 //    SceneManager::Get()->Add("ValphalkTestScene");
@@ -66,15 +71,22 @@ GameManager::GameManager()
 //    SceneManager::Get()->Create("PlayerTestScene", new PlayerTestScene());
 //    SceneManager::Get()->Add("PlayerTestScene");
 
-//   SceneManager::Get()->Create("FightTestScene", new FightTestScene());
-//   SceneManager::Get()->Add("FightTestScene");
+   SceneManager::Get()->Create("FightTestScene", new FightTestScene());
+   SceneManager::Get()->Add("FightTestScene");
 
 //    SceneManager::Get()->Create("SimpleTestScene", new SimpleTestScene());
 //    SceneManager::Get()->Add("SimpleTestScene");
 
+    SceneManager::Get()->Create("OpeningScene", new OpeningScene());    
+    SceneManager::Get()->Add("OpeningScene");
+
+    SceneManager::Get()->Create("LoadingScene", new LoadingScene());
+    //SceneManager::Get()->Add("LoadingScene");
+
 //    SceneManager::Get()->Add("Terrain");
+    CAM->isFreeCamTrue();
 
-
+    UIManager::Get()->isLoading = true;
 }
 
 GameManager::~GameManager()
@@ -86,23 +98,45 @@ void GameManager::Update()
 {
     Keyboard::Get()->Update();
     Timer::Get()->Update();    
-
+    
     SceneManager::Get()->Update();
 
     Environment::Get()->Update();
+
+    std::promise<void> p;
+    std::shared_future<void> start = p.get_future();
+
+    //thread t1(LoadPlayScene, start);
+    p.set_value();
+    //t1.join();
+
+
+
+    if (!isStart)
+    {
+        for (int key = 0; key < 256; key++) // 어떤 키든 입력시 감지
+        {
+            if (GetAsyncKeyState(key) & 0x8000)            
+                isStart = true;            
+        }
+    }
+
+    if (UIManager::Get()->choice == 1 && isStart == true)
+        LoadScene();
+    if (UIManager::Get()->choice >= randN) // 운좋으면 빨리되고 운나쁘면 오래걸림^^ // 형식적인 로딩 원할시 조정
+        PlayScene();
+    if (UIManager::Get()->choice == 6)
+        exit(0);    
 }
 
 void GameManager::Render()
-{
-    
+{    
     Device::Get()->Clear();
     Font::Get()->GetDC()->BeginDraw();
     
     Environment::Get()->Set();    
     SceneManager::Get()->Render();
     SceneManager::Get()->PreRender();
-
-
     
     Environment::Get()->PostSet();
     SceneManager::Get()->PostRender();
@@ -178,8 +212,21 @@ void GameManager::Create()
     sound->AddSound("env_114", SoundPath + L"env_114.mp3", true);
     sound->AddSound("questClear", SoundPath + L"quest_Clear.mp3", false);
     sound->AddSound("queststart", SoundPath + L"queststart.mp3", false);
+    sound->AddSound("uisound", SoundPath + L"UIsound.mp3", false);
+    sound->AddSound("mapchangestart", SoundPath + L"mapchangestart.mp3", false);
+    sound->AddSound("mapchangeend", SoundPath + L"mapchangeend.mp3", false);
 
-    sound->Play("env_114", .5f);
+    /////////////////////////////////////////////////////////////
+    // UI
+    sound->AddSound("gameStart", SoundPath + L"UI/Start.mp3", false);
+    sound->AddSound("choice", SoundPath + L"UI/choice.mp3", false);
+    sound->AddSound("select", SoundPath + L"UI/Select.mp3", false);
+    sound->AddSound("back", SoundPath + L"UI/Back.mp3", false);
+    sound->AddSound("playgame", SoundPath + L"UI/PlayGame.mp3", false);
+    sound->AddSound("dontget", SoundPath + L"UI/dontGet.mp3", false);
+
+    
+    
     /////////////////////////////////////////////////////////////
     // Player
     Sounds::Get()->AddSound("attack1", SoundPath + L"Player/attack1.mp3");
@@ -241,10 +288,15 @@ void GameManager::Create()
     /////////////////////////////////////////////////////////////
     // Valphalk
     // = Voice = 
+    // 물기
+    sound->AddSound("em086_05_vo_media_7", SoundPath + L"Valphalk/em086_05_vo_media_7.mp3");
+    // 
     // 포효
     sound->AddSound("em086_05_vo_media_10", SoundPath + L"Valphalk/em086_05_vo_media_10.mp3");
     // 흡기 사운드
     sound->AddSound("em086_05_vo_media_20", SoundPath + L"Valphalk/em086_05_vo_media_20.mp3");
+    // "앞발찍기"후 날개찍기
+    sound->AddSound("em086_05_vo_media_21", SoundPath + L"Valphalk/em086_05_vo_media_21.mp3");
     // DownBlast(옆으로돌아 측면 폭발)
     sound->AddSound("em086_05_vo_media_14", SoundPath + L"Valphalk/em086_05_vo_media_14.mp3");
     // 공격 사운드 1 아웅 (downblast 폭발 후)
@@ -255,10 +307,18 @@ void GameManager::Create()
     sound->AddSound("em086_05_vo_media_5", SoundPath + L"Valphalk/em086_05_vo_media_5.mp3");
     // 공격 사운드 6 ("앞발찍기")
     sound->AddSound("em086_05_vo_media_12", SoundPath + L"Valphalk/em086_05_vo_media_12.mp3");
+    // 앞발찍기 후 "날개찍기"
+    sound->AddSound("em086_05_vo_media_16", SoundPath + L"Valphalk/em086_05_vo_media_16.mp3");
     // 급강하 전방폭발
     sound->AddSound("em086_05_vo_media_18", SoundPath + L"Valphalk/em086_05_vo_media_18.mp3");
+    // 뒤돌아찍기 크앙
+    sound->AddSound("em086_05_vo_media_23", SoundPath + L"Valphalk/em086_05_vo_media_23.mp3");
+    // 돌진 보이스
+    sound->AddSound("em086_05_vo_media_24", SoundPath + L"Valphalk/em086_05_vo_media_24.mp3");
     // 대경직
     sound->AddSound("em086_05_vo_media_25", SoundPath + L"Valphalk/em086_05_vo_media_25.mp3");
+    // 날개 싸대기
+    sound->AddSound("em086_05_vo_media_26", SoundPath + L"Valphalk/em086_05_vo_media_26.mp3");
     // 소경직
     sound->AddSound("em086_05_vo_media_29", SoundPath + L"Valphalk/em086_05_vo_media_29.mp3");
     // 사망
@@ -292,6 +352,13 @@ void GameManager::Create()
     sound->AddSound("em086_05_fx_media_30", SoundPath + L"Valphalk/em086_05_fx_media_30.mp3");
     // 폭발 사운드
     sound->AddSound("em086_05_fx_media_35", SoundPath + L"Valphalk/em086_05_fx_media_35.mp3");
+    sound->AddSound("em086_05_fx_media_35_2", SoundPath + L"Valphalk/em086_05_fx_media_35.mp3");
+    // 돌진 사운드
+    sound->AddSound("em086_05_fx_media_24", SoundPath + L"Valphalk/em086_05_fx_media_24.mp3");
+    // 풀버스트 차지
+    sound->AddSound("em086_05_fx_media_41", SoundPath + L"Valphalk/em086_05_fx_media_41.mp3");
+    sound->AddSound("em086_05_fx_media_3", SoundPath + L"Valphalk/em086_05_fx_media_3.mp3");
+    sound->AddSound("em086_05_fx_media_11", SoundPath + L"Valphalk/em086_05_fx_media_11.mp3");
 
 
     // = SE = ( 폭발음, 걸음 소리 등)
@@ -320,6 +387,15 @@ void GameManager::Create()
 
     Sounds::Get()->AddSound("capturing", SoundPath + L"pl_prop_media.bnk.2_81.mp3");
     Sounds::Get()->AddSound("capturing2", SoundPath + L"pl_prop_media.bnk.2_112.mp3");
+
+    //UI
+    Sounds::Get()->AddSound("Boxframe_select", SoundPath + L"UI/Boxframe_select.mp3");
+    Sounds::Get()->AddSound("Boxitem_select", SoundPath + L"UI/Boxitem_select.mp3");
+    Sounds::Get()->AddSound("Boxopen", SoundPath + L"UI/Boxopen.mp3");
+    Sounds::Get()->AddSound("Icon_on", SoundPath + L"UI/Icon_on.mp3");
+    Sounds::Get()->AddSound("Slot_move", SoundPath + L"UI/Slot_move.mp3");
+    Sounds::Get()->AddSound("Slot_off", SoundPath + L"UI/Slot_off.mp3");
+    Sounds::Get()->AddSound("Select", SoundPath + L"UI/Select.mp3");
 }
 
 void GameManager::Delete()
@@ -337,4 +413,36 @@ void GameManager::Delete()
     ImGui_ImplWin32_Shutdown();
     
     ImGui::DestroyContext();
+}
+
+void LoadPlayScene(std::shared_future<void> play)
+{
+    play.get();
+    //SceneManager::Get()->Add("FightTestScene");
+    return play.get();
+}
+void LoadScene() // 게임 시작시 오프닝씬 -> 로딩씬으로 전환
+{
+    SceneManager::Get()->Remove("OpeningScene");
+    Sounds::Get()->Pause("lobbyBGM");
+    SceneManager::Get()->Add("LoadingScene");
+    UIManager::Get()->choice = 100;
+}
+
+void PlayScene(std::shared_future<void> play)
+{
+    play.get();
+    SceneManager::Get()->Remove("LoadingScene");
+    SceneManager::Get()->Add("FightTestScene");
+    CAM->isFreeCamFalse();
+
+    std::this_thread::sleep_for(std::chrono::seconds(3));
+    return play.get();
+}
+void PlayScene() // 로딩씬을 지우고 원하는 씬으로 진입한다.
+{
+    SceneManager::Get()->Remove("LoadingScene");
+    //SceneManager::Get()->Add("PlayerTestScene");
+    CAM->isFreeCamFalse();
+    UIManager::Get()->isLoading = false;
 }

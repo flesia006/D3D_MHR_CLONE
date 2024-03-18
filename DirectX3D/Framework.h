@@ -273,3 +273,4 @@ extern Vector3 mousePos;
 extern Vector3 wheelPos;
 
 const wstring SoundPath = L"../DirectX3D/Sounds/";
+

@@ -56,5 +56,5 @@ void ValphalkTestScene::PostRender()
 
 void ValphalkTestScene::GUIRender()
 {
-	//valphalk->GUIRender();
+	valphalk->GUIRender();
 }

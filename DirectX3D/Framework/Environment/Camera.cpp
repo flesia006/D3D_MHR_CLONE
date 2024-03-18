@@ -398,9 +398,6 @@ void Camera::ThirdPresonViewMode()
             CAM->Pos() = pos - sight.dir.Back() * 20;
         }
     }
-
-
-
 }
 
 void Camera::Frustum()

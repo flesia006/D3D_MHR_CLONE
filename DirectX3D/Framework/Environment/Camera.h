@@ -51,6 +51,8 @@ public:
     {
         distance = Lerp(distance, dist, damping * DELTA);
     }
+    bool isFreeCamTrue() { return freeCam = true; }
+    bool isFreeCamFalse() { return freeCam = false; }
 
     Transform* sightRot;
 private:
@@ -60,7 +62,6 @@ private:
     void ThirdPresonViewMode();
 
     void Frustum();
-
 private:
     ViewBuffer* viewBuffer;
     Matrix view;
@@ -70,7 +71,7 @@ private:
     float a, b, c, d;
 
     float moveSpeed = 5000.0f;
-    float rotSpeed = 4.0f;
+    float rotSpeed = 2.0f;
 
     Vector3 prevMousePos;
 
@@ -110,4 +111,6 @@ private:
 
     CAMmode mode = BASIC;
     float timer = 0.0f;
+    bool freeCam = false;
+
 };

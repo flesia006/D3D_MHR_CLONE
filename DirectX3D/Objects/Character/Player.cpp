@@ -109,6 +109,9 @@ Player::Player() : ModelAnimator("Player")
 	captureUI = new Quad(L"Textures/UI/CaptureUI.png");
 	captureUI->Scale() *= 2.0f;
 
+	mapChangeUI = new Quad(L"Textures/UI/MapChangeUI.png");
+	mapChangeUI->Scale() *= 1.5f;
+
 	CAM->SetTarget(head);
 }
 
@@ -146,10 +149,13 @@ Player::~Player()
 	delete playerWireBugHead;
 	delete playerWireBugTail;
 	delete captureUI;
+	delete mapChangeUI;
 }
 
 void Player::Update()
 {
+	if (UIManager::Get()->isLoading == true) return;
+
 	if (KEY_DOWN('B'))
 		SetState(L_001);
 
@@ -174,6 +180,7 @@ void Player::Update()
 	UseBlueBox();
 	GetWireBug();
 	Capture();
+	NearMapChangeArea();
 	////////////////////////////////////
 	Control();
 	ResetPlayTime();
@@ -219,6 +226,8 @@ void Player::PreRender()
 
 void Player::Render()
 {
+	if (UIManager::Get()->isLoading == true && isFirstRender == true) return;
+
 	ModelAnimator::Render();
 	tmpCollider->Render();
 	tmpCollider2->Render();
@@ -249,11 +258,12 @@ void Player::Render()
 
 		isSetState = false;
 	}
+	isFirstRender = true;
 }
 
 
 void Player::UpdateWorlds()
-{
+{	
 	if (!State_S())
 	{
 		mainHand->SetWorld(GetTransformByNode(rightHandNode));
@@ -296,7 +306,7 @@ void Player::UpdateWorlds()
 		else
 		{
 			if ((garuk->GlobalPos() - Pos()).Length() < 300)
-			{
+			{				
 				Pos().x = garuk->GlobalPos().x + Forward().x * 50;
 				Pos().z = garuk->GlobalPos().z + Forward().z * 50;
 			}
@@ -384,6 +394,22 @@ void Player::UpdateWorlds()
 
 	haloTransform->Pos() = longSword->GlobalPos() + longSword->Back() * 55.f;
 	haloCollider->Pos() = haloTransform->Pos();
+
+	if (KEY_DOWN('T'))
+	{
+		Sounds::Get()->Play("igonan2", 0.1f);
+		UI->curHP = UI->maxHP;		
+		UI->curStamina = 100;
+		UI->curSpiritGauge = UI->maxSpiritGauge;
+		UI->cotingLevel = 3;
+		UI->curCoting = UI->maxCoting;
+		UI->bugCount = 0;
+	}
+	if (KEY_DOWN('Y'))
+	{
+		UI->curHP -= 10;
+		UI->recoverHP -= 5;
+	}
 }
 
 void Player::Potion()
@@ -392,24 +418,17 @@ void Player::Potion()
 		|| (UI->useDragSlot && ItemManager::Get()->tag == "GreatePotion" && KEY_DOWN('E') && UI->haveGPotion > 0 && time > 6.0f)
 		|| (UI->useNumberBar && UI->haveGPotion > 0 && KEY_DOWN('2') && time > 6.0f))
 	{
-
 		UI->haveGPotion--;
 		Lcure = true;
 		time = 0;
 	}
 	if (Lcure == true)
 	{
-		UI->useQuickSlot1 = false;
-		UI->useQuickSlot2 = false;
-		if (time < 0.1f)
-		{
-		}
-
-		if (time < 3)
+		if (time > 2 && time < 4.2f)
 		{
 			UI->LargeHealthPotion();
 		}
-		else if (time >= 3)
+		else if (time >= 5)
 		{
 			Lcure = false;
 		}
@@ -419,45 +438,30 @@ void Player::Potion()
 		|| (UI->useDragSlot && ItemManager::Get()->tag == "Potion" && KEY_DOWN('E') && UI->havePotion > 10 && time > 6.0f)
 		|| (UI->useNumberBar && UI->havePotion > 10 && KEY_DOWN('1') && time > 6.0f))
 	{
-		Sounds::Get()->Play("health_potion", 0.3f);
 		UI->havePotion--;
 		cure = true;
 		time = 0;
 	}
 	if (cure == true)
 	{
-		UI->useQuickSlot1 = false;
-		UI->useQuickSlot2 = false;
-		if (time < 0.1f)
-		{
-			//potionParticle->Play({ Pos().x,Pos().y + 100,Pos().z }, { 0,0,0 });
-		}
-
-		if (time < 2)
+		if (time > 2 && time < 4)
 		{
 			UI->HealthPotion();
 		}
-		else if (time >= 2)
+		else if (time >= 4)
 		{
 			cure = false;
 		}
-	}
-
-	if (KEY_DOWN('T'))
-	{
-		Sounds::Get()->Play("health_potion", 0.3f);
-		UI->curStamina = 100;
-		UI->cotingLevel = 3;
-		UI->curCoting = UI->maxCoting;
 	}
 }
 
 void Player::SharpeningStone()
 {
-	if (UI->useQuickSlot3
-		|| UI->useDragSlot && ItemManager::Get()->tag == "Whetstone" && KEY_DOWN('E')
-		|| UI->useNumberBar && KEY_DOWN('3'))
+	if (UI->useQuickSlot3 && time > 6.0f
+		|| UI->useDragSlot && ItemManager::Get()->tag == "Whetstone" && KEY_DOWN('E') && time > 6.0f
+		|| UI->useNumberBar && KEY_DOWN('3') && time > 6.0f)
 	{
+		time = 0;
 		//UI->SharpeningStone();
 	}
 }
@@ -559,6 +563,9 @@ void Player::PostRender()
 
 	if (isCaptureUIActive)
 		captureUI->Render();
+
+	if (isMapChangeUIActive)
+		mapChangeUI->Render();
 }
 
 void Player::Control()
@@ -1174,6 +1181,7 @@ bool Player::Attack(float power, bool push, UINT useOtherCollider) // Ãæµ¹ÆÇÁ¤ Ç
 			lastHitPart = collider->part;
 			lastSwordDir = swordSwingDir;
 
+			RandHitSounds();
 			val->minusCurHP(deal);
 
 			if (collider->part == Valphalk::HEAD
@@ -1446,6 +1454,7 @@ void Player::HurtCheck()
 				}
 				RandHurtVoice();
 				UI->curHP -= collider->atkDmg;
+				UI->recoverHP -= collider->atkDmg / 2;
 			}
 		}
 	}
@@ -1499,6 +1508,7 @@ void Player::HurtCheck()
 				}
 				RandHurtVoice();
 				UI->curHP -= collider->atkDmg;
+				UI->recoverHP -= collider->atkDmg / 2;
 			}
 		}
 	}
@@ -1517,7 +1527,7 @@ void Player::HurtCheck()
 
 			if (collider->Active())
 			{
-				if (curState >= L_400)
+  				if (curState >= L_400)
 					return;
 
 				if (curState == L_155 && RATIO < 0.36)
@@ -1552,6 +1562,7 @@ void Player::HurtCheck()
 				}
 				RandHurtVoice();
 				UI->curHP -= collider->atkDmg;
+				UI->recoverHP -= collider->atkDmg / 2;
 			}
 		}
 	}
@@ -1612,6 +1623,7 @@ void Player::TermAttackUpdate()
 		{
 			if (!playOncePerTerm)
 			{
+				RandHitSounds();
 				AttackWOCollision(17);
 				circle[0]->active = true;
 				playOncePerTerm = true;
@@ -1621,6 +1633,7 @@ void Player::TermAttackUpdate()
 		{
 			if (playOncePerTerm)
 			{
+				RandHitSounds();
 				AttackWOCollision(17);
 				circle[1]->active = true;
 				playOncePerTerm = false;
@@ -1630,6 +1643,7 @@ void Player::TermAttackUpdate()
 		{
 			if (!playOncePerTerm)
 			{
+				RandHitSounds();
 				AttackWOCollision(17);
 				circle[2]->active = true;
 				playOncePerTerm = true;
@@ -1658,6 +1672,7 @@ void Player::TermAttackUpdate()
 		{
 			if (!playOncePerTerm2)
 			{
+				RandHitSounds();
 				AttackWOCollision(dmg);
 				playOncePerTerm2 = true;
 			}
@@ -1666,6 +1681,7 @@ void Player::TermAttackUpdate()
 		{
 			if (playOncePerTerm2)
 			{
+				RandHitSounds();
 				AttackWOCollision(dmg);
 				playOncePerTerm2 = false;
 			}
@@ -1674,6 +1690,7 @@ void Player::TermAttackUpdate()
 		{
 			if (!playOncePerTerm2)
 			{
+				RandHitSounds();
 				AttackWOCollision(dmg);
 				playOncePerTerm2 = true;
 			}
@@ -1682,6 +1699,7 @@ void Player::TermAttackUpdate()
 		{
 			if (playOncePerTerm2)
 			{
+				RandHitSounds();
 				AttackWOCollision(dmg);
 				playOncePerTerm2 = false;
 			}
@@ -1690,6 +1708,7 @@ void Player::TermAttackUpdate()
 		{
 			if (!playOncePerTerm2)
 			{
+				RandHitSounds();
 				AttackWOCollision(dmg);
 				playOncePerTerm2 = true;
 			}
@@ -1698,6 +1717,7 @@ void Player::TermAttackUpdate()
 		{
 			if (playOncePerTerm2)
 			{
+				RandHitSounds();
 				AttackWOCollision(dmg);
 				playOncePerTerm2 = false;
 			}
@@ -1717,6 +1737,7 @@ void Player::TermAttackUpdate()
 		{
 			if (!playOncePerTerm2)
 			{
+				RandHitSounds();
 				AttackWOCollision(19);
 				playOncePerTerm2 = true;
 			}
@@ -1725,6 +1746,7 @@ void Player::TermAttackUpdate()
 		{
 			if (playOncePerTerm2)
 			{
+				RandHitSounds();
 				AttackWOCollision(19);
 				playOncePerTerm2 = false;
 			}
@@ -2058,6 +2080,7 @@ void Player::S009() // °ÉÀ¸¸é¼­ ³³µµ
 void Player::S011() // ´Þ¸®±â ·çÇÁ
 {
 	PLAYLOOP;
+	UI->staminaActive = false;
 
 	Rotate();
 	RandBreath();
@@ -2264,25 +2287,27 @@ void Player::S122()   // Àü·ÂÁúÁÖ
 	PLAYLOOP;
 	Rotate();
 	RandBreath();
+	UI->curStamina -= 0.05f;
 
 	if (UIManager::Get()->curStamina < 0.1f)
 		SetState(S_118);
 
 	if (KEY_UP(VK_LSHIFT))
-		SetState(S_011);
+		SetState(S_011);	
 
-	if (!K_MOVE)	SetState(S_014);
+	if (!K_MOVE)	
+		SetState(S_014);	
 
 	if (KEY_DOWN('F')) callGaruk = true;
 	else if (UI->IsAbleBugSkill() && K_LBUG)	SetState(W_005);	// »ç¼± ¹åÁÙ¹ú·¹ ÀÌµ¿
 
 
 	if (K_LMB)		SetState(L_101);
-	else if (K_SPACE)	Roll();
+	else if (K_SPACE)	
+		Roll();	
 
 	if (RATIO > 0.95)
 		Loop();
-
 }
 
 void Player::L001() // ¹ßµµ»óÅÂ ´ë±â
@@ -2334,7 +2359,6 @@ void Player::L004() // ¹ßµµ»óÅÂ °È±â Áß // ·çÇÁ
 
 	if (!K_MOVE) // ÀÌµ¿ Áß Å°¸¦ ¶¿ ¶§
 		SetState(L_008);
-
 
 	if (RATIO > 0.95)
 		Loop();
@@ -3101,6 +3125,8 @@ void Player::L126() // ¼ö¿ùÀÇ ÀÚ¼¼
 
 	if (RATIO < 0.2)
 		LimitRotate(180, 50);
+	if(RATIO<0.1)
+	Sounds::Get()->Play("suwolstart",0.5f);
 
 	if (RATIO > 0.01 && RATIO < 0.8)
 	{
@@ -3126,6 +3152,8 @@ void Player::L127() // ¼ö¿ùÀÇ ÀÚ¼¼ Ä«¿îÅÍ
 {
 	PLAY;
 
+	if (RATIO < 0.1)
+		Sounds::Get()->Play("suwolattack", 0.5f);
 	if (RATIO > 0.10)
 	{
 		suwol->effect = false;
@@ -3290,6 +3318,7 @@ void Player::L133()	// Åõ±¸±ú±â
 	if (INIT)
 	{
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_25", .5f);
+		Sounds::Get()->Play("helmbreaker", 0.5f);
 		if (isInitVoice == false)
 		{
 			RandSpecialVoice();
@@ -3706,7 +3735,14 @@ void Player::R001()  // Å¾½Â ÈÄ ´ë±â idle
 	{
 		if (ItemManager::Get()->tag == "Whetstone")
 			SetState(R_600);
-		else if (ItemManager::Get()->tag == "Potion" && cure || ItemManager::Get()->tag == "GreatePotion" && Lcure)
+		else if (cure || Lcure)
+			SetState(R_400);
+	}
+	else if (UI->useNumberBar || UI->useSelectBar)
+	{
+		if (UI->useQuickSlot3 || UI->useNumberSlot3)
+			SetState(R_600);
+		else if (cure || Lcure)
 			SetState(R_400);
 	}
 }
@@ -3721,8 +3757,15 @@ void Player::R013() // ½¬ÇÁÆ® ¾È´©¸£°í ¶Ù±â ·çÇÁ, ±Ùµ¥ Æ÷Áö¼ÇÀÌ¶û ·ÎÅ×ÀÌ¼Ç ´Ù °¡
 	{
 		if (ItemManager::Get()->tag == "Whetstone")
 			SetState(R_600); // ¼ýµ¹
-		else if (ItemManager::Get()->tag == "Potion" && cure || ItemManager::Get()->tag == "GreatePotion" && Lcure)
+		else if (cure || Lcure)
 			SetState(R_400); // ¹°¾à
+	}
+	else if (UI->useNumberBar || UI->useSelectBar)
+	{
+		if (UI->useQuickSlot3 || UI->useNumberSlot3)
+			SetState(R_600);
+		else if (cure || Lcure)
+			SetState(R_400);
 	}
 }
 
@@ -4448,15 +4491,22 @@ void Player::T019() // ¸Ê ÀÔÀå
 {
 	PLAY;
 
+	if (RATIO > 0.03 && RATIO < 0.13)
+		Sounds::Get()->Play("mapchangestart", 1.0f);
+
 	if (RATIO > 0.96)
 	{
-		ReturnIdle2();
+		//ReturnIdle2(); ÀÔÀå, µµÂø µû·Î ÇÏ·Á¸é ÀÌ°Å·Î ¾²°í
+		SetState(T_020); // ÇÕÃÄ¼­ ¾²·Á¸é ±×´ë·Î ¾²¸é µÊ
 	}
 }
 
 void Player::T020() // ¸Ê µµÂø
 {
 	PLAY;
+
+	if (RATIO > 0.05 && RATIO < 0.15)
+		Sounds::Get()->Play("mapchangeend", 1.0f);
 
 	if (RATIO > 0.96)
 	{
@@ -4725,7 +4775,7 @@ void Player::RandSpecialVoice()
 void Player::RandHurtVoice()
 {
 	// ÇöÀç »óÅÂ°¡ ´ë°æÁ÷ÀÌ ¾Æ´Ï¶ó¸é
-	randVoice = rand() % 4;
+	randVoice = rand() % 3;
 	if (curState != L_451 && curState != L_453 && curState != D_015 && curState != D_016 && curState != D_021 &&
 		curState != D_022 && curState != D_026 && curState != D_029 && curState != D_031 && curState != D_032)
 	{
@@ -4741,7 +4791,7 @@ void Player::RandHurtVoice()
 	}
 	else // ´ë°æÁ÷ÀÌ¶ó¸é
 	{
-		randVoice = rand() % 3;
+		randVoice = rand() % 2;
 		switch (randVoice)
 		{
 		case 0:		Sounds::Get()->Play("big_hurt1", 2.5f);		break;
@@ -4793,6 +4843,12 @@ void Player::GetWireBug()
 	if (distance <= 150)
 	{
 		wireBug->SetWireBugPickUpUIActive(true);
+		
+		if (!soundOncePerUI)
+		{
+			Sounds::Get()->Play("uisound", 1.0f);
+			soundOncePerUI = true;
+		}
 
 		if (KEY_PRESS('G')) // Å° º¯°æ °¡´É
 		{
@@ -4803,7 +4859,23 @@ void Player::GetWireBug()
 		}
 	}
 	else
+	{
 		wireBug->SetWireBugPickUpUIActive(false);
+		soundOncePerUI = false;
+	}
+}
+
+void Player::RandHitSounds()
+{
+	int i = rand() % 3;
+	switch (i)
+	{
+	case 0:		Sounds::Get()->Play("hit_pl_media.bnk.2_14", 1.1f);		break;
+	case 1:		Sounds::Get()->Play("hit_pl_media.bnk.2_20", 1.1f);		break;
+	case 2:		Sounds::Get()->Play("hit_pl_media.bnk.2_35", 1.1f);		break;
+	default:
+		break;
+	}
 }
 
 void Player::Capture()
@@ -4831,11 +4903,20 @@ void Player::Capture()
 	{
 		isCaptureUIActive = true;
 
+		if (!soundOncePerUI)
+		{
+			Sounds::Get()->Play("uisound", 1.0f);
+			soundOncePerUI = true;
+		}
+
 		if (KEY_PRESS('G')) // Å° º¯°æ °¡´É
 			SetState(T_050);
 	}
 	else
+	{
 		isCaptureUIActive = false;
+		soundOncePerUI = false;
+	}
 }
 
 void Player::UpdateCaptureUI()
@@ -4851,4 +4932,53 @@ void Player::UpdateCaptureUI()
 	captureUI->Pos() = CAM->WorldToScreen(UIPos);
 
 	captureUI->UpdateWorld();
+}
+
+void Player::NearMapChangeArea()
+{
+	if (mapChanged)
+		return;
+
+	Vector3 playerPos = realPos->Pos();
+	playerPos.y = 0;
+
+	Vector3 mapChangeAreaPos = { 0,0,100 };// ¿©±â¼­ ¸Ê ÀÌµ¿ÁöÁ¡ Á¤ÇÏ±â
+	mapChangeAreaPos.y = 0;
+
+	float distance = (playerPos - mapChangeAreaPos).Length();
+
+	UIPos2 = mapChangeAreaPos + Vector3::Up() * 200;
+
+	if (!CAM->ContainPoint(UIPos2))
+	{
+		isMapChangeUIActive = false;
+		return;
+	}
+
+	mapChangeUI->Pos() = CAM->WorldToScreen(UIPos2);
+
+	mapChangeUI->UpdateWorld();
+
+	if (distance <= 150)
+	{
+		isMapChangeUIActive = true;
+
+		if (!soundOncePerUI2)
+		{
+			Sounds::Get()->Play("uisound", 1.0f);
+			soundOncePerUI2 = true;
+		}
+
+		if (KEY_PRESS('G')) // Å° º¯°æ °¡´É
+		{
+			isMapChangeUIActive = false;
+			mapChanged = true;
+			SetState(T_019);
+		}
+	}
+	else
+	{
+		isMapChangeUIActive = false;
+		soundOncePerUI2 = false;
+	}
 }
