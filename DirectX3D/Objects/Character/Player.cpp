@@ -1649,7 +1649,11 @@ void Player::Roll()
 		SetState(S_018);
 
 	else if (!State_S())
+	{
+		if (curState == L_152)
+			holdingSword = false;
 		SetState(L_010);
+	}
 
 	UIManager::Get()->staminaActive = true;
 
@@ -3722,7 +3726,7 @@ void Player::L155() // 앉아발도 기인베기
 
 	// 카운터 성공 시 추가 공격 프레임
 	{
-		if (isHit && (RATIO > 0.385 && RATIO < 0.39))
+		if (isEvaded && isHit && (RATIO > 0.385 && RATIO < 0.39))
 		{
 			spSuccessParticle->Play(Pos(), 0);
 			if (isHitL155 == false)
