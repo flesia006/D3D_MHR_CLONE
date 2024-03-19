@@ -8,6 +8,8 @@ private:
         BASIC, 
         OPENING, 
         DEAD, 
+        MAPMOVE,
+        MAPARRIVE,
         FREE
     };
 
@@ -26,9 +28,13 @@ public:
 
     void SetOpeningCAM();
     void SetDeadCAM(Transform* target, Transform* target2 = nullptr);
+    void SetMapMoveCAM(Transform* target);
+    void SetMapArriveCAM(Transform* target);
 
     void OpeningCAM();
     void DeadCAM();
+    void MapMoveCAM();
+    void MapArriveCAM();
 
     Vector3 ScreenToWorld(Vector3 screenPos);
     Vector3 WorldToScreen(Vector3 worldPos);
@@ -111,6 +117,4 @@ private:
 
     CAMmode mode = BASIC;
     float timer = 0.0f;
-    bool freeCam = false;
-
 };

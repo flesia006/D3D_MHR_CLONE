@@ -628,7 +628,7 @@ UIManager::~UIManager()
 
 void UIManager::Update()
 {
-	if (isLoading == true) return;
+//	if (isLoading == true) return;
 
 	ItemManager::Get()->Update();
 	// 임시로 놓은거임
@@ -987,7 +987,7 @@ void UIManager::Update()
 
 void UIManager::PostRender()
 {
-	if (isLoading == true) return;
+//	if (isLoading == true) return;
 
 	if (!isRender)
 	{
@@ -996,11 +996,13 @@ void UIManager::PostRender()
 			questClearUI->Render();
 			return;
 		}
-		else
+		else if (questStart)
 		{
 			questStartUI->Render();
 			return;
 		}
+		else
+			return;
 	}
 
 	recover->Render();
@@ -1242,22 +1244,22 @@ void UIManager::UIAlphaOn()
 
 void UIManager::StartUIAlphaOn()
 {
-	if (isRender || valDeath)
+	if (!questStart || valDeath)
 		return;
 
 	startUITimer += DELTA;
 	waitTimer += DELTA;
 
-	if (startUITimer > 0.01f && startCount < 11 && waitTimer < 3.0f)
+	if (startUITimer > 0.05f && startCount < 11 && waitTimer < 1.1f)
 	{
 		questStartUI->SetTexture(L"Textures/QuestStart/" + to_wstring(startCount) + L".png");
 		startCount++;
 		startUITimer = 0.0f;
 	}
 
-	if (waitTimer > 2.0f)
+	if (waitTimer > 1.1f)
 	{
-		if (startUITimer > 0.01f && startCount > 0)
+		if (startUITimer > 0.05f && startCount > 0)
 		{
 			questStartUI->SetTexture(L"Textures/QuestStart/" + to_wstring(startCount - 1) + L".png");
 			startCount--;

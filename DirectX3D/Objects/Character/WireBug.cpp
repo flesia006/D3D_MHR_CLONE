@@ -4,8 +4,9 @@ WireBug::WireBug()
 	: ModelAnimator("WireBug")
 {
 	ReadClip("IDLE");
-	Pos().y += 130; // 밧줄벌레 위치는 여기서 조정하면 됨
-	Pos().x += 300;
+	Pos().y += 600; // TODO : 밧줄벌레 위치는 여기서 조정하면 됨
+	Pos().x += 2010;
+	Pos().z += 4900;
 	bugParticle = new ParticleSystem("TextData/Particles/bug_get.fx");
 	bugLightParticle = new ParticleSystem("TextData/Particles/wire_bug_light.fx");
 	bugLightParticle2 = new ParticleSystem("TextData/Particles/wire_bug_light2.fx");

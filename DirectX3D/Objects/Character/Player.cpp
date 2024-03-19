@@ -9,6 +9,7 @@
 Player::Player() : ModelAnimator("Player")
 {
 	head = new Transform();
+	center = new Transform();
 	realPos = new Transform();
 	backPos = new Transform();
 	forwardPos = new Transform();
@@ -144,6 +145,7 @@ Player::~Player()
 	delete backPos;
 	delete realPos;
 	delete head;
+	delete center;
 	delete playerWireBug;
 	delete wireBugTrail;
 	delete playerWireBugHead;
@@ -154,7 +156,7 @@ Player::~Player()
 
 void Player::Update()
 {
-	if (UIManager::Get()->isLoading == true) return;
+	//if (UIManager::Get()->isLoading == true) return;
 
 	if (KEY_DOWN('B'))
 		SetState(L_001);
@@ -196,6 +198,8 @@ void Player::Update()
 	//디버그용
 	if (KEY_DOWN('5'))
 		UI->PlusCotingLevel();
+	if (KEY_DOWN('6'))
+		SetState(T_019);
 	if (KEY_DOWN('8'))
 		isEvaded = true;
 	///////////////////////////////
@@ -226,7 +230,7 @@ void Player::PreRender()
 
 void Player::Render()
 {
-	if (UIManager::Get()->isLoading == true && isFirstRender == true) return;
+	//if (UIManager::Get()->isLoading == true && isFirstRender == true) return;
 
 	ModelAnimator::Render();
 	tmpCollider->Render();
@@ -237,7 +241,6 @@ void Player::Render()
 		//swordCollider->Render();
 	longSword->Render();
 	kalzip->Render();
-
 
 	if (playerWireBug->Active())
 		playerWireBug->Render();
@@ -355,6 +358,10 @@ void Player::UpdateWorlds()
 	else
 		head->Pos().y = realPos->Pos().y + 200;
 	head->Pos().z = realPos->Pos().z;
+	center->Pos().x = realPos->Pos().x;
+	center->Pos().y = realPos->Pos().y + 100;
+	center->Pos().z = realPos->Pos().z;
+	center->Rot() = Rot();
 
 	lastSwordEnd = swordStart->Pos();
 
@@ -383,6 +390,7 @@ void Player::UpdateWorlds()
 	longSword->UpdateWorld();
 	kalzip->UpdateWorld();
 	head->UpdateWorld();
+	center->UpdateWorld();
 	tmpCollider->UpdateWorld();
 	tmpCollider2->UpdateWorld();
 	tmpCollider3->UpdateWorld();
@@ -525,7 +533,7 @@ void Player::GUIRender()
 //	//ImGui::SliderInt("keyboard", &U, 0, 200);
 //	//
 //	//
-//	ImGui::SliderInt("node", &node, 1, 210);
+	ImGui::SliderInt("node", &node, 1, 210);
 //	float value = UI->GetSpritGauge();
 //	ImGui::DragFloat("SpiritGauge", &value);
 	//	ImGui::SliderFloat("temp", &temp, -10, 10);
@@ -4490,6 +4498,14 @@ void Player::F073() // 착지 후 앞으로 이동
 void Player::T019() // 맵 입장
 {
 	PLAY;
+	if (INIT)
+		UI->isRender = false;
+
+	if (RATIO > 0.1 && !playOncePerMotion)
+	{
+		CAM->SetMapMoveCAM(center);
+		playOncePerMotion = true;
+	}
 
 	if (RATIO > 0.03 && RATIO < 0.13)
 		Sounds::Get()->Play("mapchangestart", 1.0f);
@@ -4497,6 +4513,8 @@ void Player::T019() // 맵 입장
 	if (RATIO > 0.96)
 	{
 		//ReturnIdle2(); 입장, 도착 따로 하려면 이거로 쓰고
+		inBattleMap = true;
+		playOncePerMotion = false;
 		SetState(T_020); // 합쳐서 쓰려면 그대로 쓰면 됨
 	}
 }
@@ -4505,11 +4523,19 @@ void Player::T020() // 맵 도착
 {
 	PLAY;
 
+	if (INIT)
+	{
+		CAM->SetMapArriveCAM(center);
+		Pos() = Vector3(0, 0, -200); // TODO : 도착지점 지형좌표 넣어야함 y값 아닐수도 940, 500, 6625
+		realPos->Pos() = Vector3(0, 0, -200);
+	}
+
 	if (RATIO > 0.05 && RATIO < 0.15)
 		Sounds::Get()->Play("mapchangeend", 1.0f);
 
 	if (RATIO > 0.96)
 	{
+		UI->isRender = true;
 		ReturnIdle2();
 	}
 }
@@ -4573,11 +4599,18 @@ void Player::E092()
 {
 	PLAY;
 
+	if (INIT)
+		CAM->SetOpeningCAM();
+
 	if (RATIO > 0.05 && RATIO < 0.15)
 		Sounds::Get()->Play("queststart", 2.0f);
 
+	if (RATIO > 0.5 && RATIO < 0.6)
+		UI->questStart = true;
+
 	if (RATIO > 0.96)
 	{
+		UI->questStart = false;
 		UI->isRender = true;
 		ReturnIdle2();
 	}
@@ -4942,7 +4975,7 @@ void Player::NearMapChangeArea()
 	Vector3 playerPos = realPos->Pos();
 	playerPos.y = 0;
 
-	Vector3 mapChangeAreaPos = { 0,0,100 };// 여기서 맵 이동지점 정하기
+	Vector3 mapChangeAreaPos = { 0,0,200 };// TODO : 여기서 맵 이동좌표 정해야함 350,0,3895
 	mapChangeAreaPos.y = 0;
 
 	float distance = (playerPos - mapChangeAreaPos).Length();

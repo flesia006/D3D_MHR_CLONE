@@ -5,40 +5,47 @@
 ShadowScene::ShadowScene()
 {    
     objects = new M41Objects();
-
+    objects2 = new M42Objects();
     terrain = new TerrainEditor();
+    ball = new HalfSphere();
+    fog = new Model("skydom");
+    fieldFog = new Model("fog");
+    player = new Player();
+    valphalk = new Valphalk();
+    garuk = new Sample();
+    wireBug = new WireBug();
 
-
-    ball = new HalfSphere();    
     ball->Scale() *= 150000;
     ball->Pos().y -= 6000;
     //ball->GetMaterial()->SetShader(L"Basic/Texture.hlsl");
     ball->GetMaterial()->SetDiffuseMap(L"Textures/M41Sky/storm.tga");
     ball->UpdateWorld();
 
-    fog = new Model("skydom");
     fog->SetTag("fog");
     fog->Scale() *= 100;
     fog->Pos().y -= 10000;
     fog->UpdateWorld();
 
-    fieldFog = new Model("fog");
     fieldFog->Pos() = Vector3(2062.1f, 220, 17653.896f);
     fieldFog->Rot().y = XM_PI;
     fieldFog->UpdateWorld();
 
-    player = new Player();
     player->Pos() = Vector3(2237.314, 460, 6411.237);
+    player->SetDog(garuk);
+    player->SetTerrain(terrain);
+    player->SetValphalk(valphalk);
+    player->SetWireBug(wireBug);
 
-    garuk = new Garuk();
-    garuk->SetTarget(player);
-
-    valphalk = new Valphalk();
     valphalk->Pos().x = 2000;
     valphalk->Pos().z = 3000;
     valphalk->Rot().y += XM_PI;
     valphalk->UpdateWorld();
     valphalk->SetTarget(player);
+    valphalk->SetTerrain(terrain);
+
+    garuk->SetTarget(player);
+    garuk->SetEnemy(valphalk);
+    garuk->SetTerrain(terrain);
 
     shadow = new Shadow();
     UIManager::Get();
@@ -58,26 +65,27 @@ ShadowScene::ShadowScene()
     light->inner;   //조명 집중 범위 (빛이 집중되어 쏘이는 범위...의 비중)
     light->outer;   //조명 외곽 범위 (빛이 흩어져서 비치는 범위...의 비중)
 
-    
 
-    Sounds::Get()->AddSound("Valphalk_Thema", SoundPath + L"Valphalk_Thema.mp3",true);
-    Sounds::Get()->Play("Valphalk_Thema", 0.03f);
+    //Sounds::Get()->AddSound("Valphalk_Thema", SoundPath + L"Valphalk_Thema.mp3",true);
+    //Sounds::Get()->Play("Valphalk_Thema", 0.03f);
     Sounds::Get()->AddSound("health_potion", SoundPath + L"health_potion.mp3");
     FOR(2) rasterizerState[i] = new RasterizerState();
     FOR(2) blendState[i] = new BlendState();
     blendState[1]->Additive();
     rasterizerState[1]->CullMode(D3D11_CULL_NONE);
-
-    AddSounds();
 }
 
 ShadowScene::~ShadowScene()
 {
     delete garuk;
     delete objects;
+    delete objects2;
     delete player;
     delete shadow;
-
+    delete valphalk;
+    delete ball;
+    delete fog;
+    delete terrain;
 }
 
 void ShadowScene::Update()
@@ -137,6 +145,7 @@ void ShadowScene::Render()
 
     //그림자를 받기 위한 셰이더 세팅
     objects->SetShader(L"Light/Shadow.hlsl");
+    objects2->SetShader(L"Light/Shadow.hlsl");
     valphalk->SetShader(L"Light/Shadow.hlsl");
     player->SetShader(L"Light/Shadow.hlsl");
     garuk->SetShader(L"Light/Shadow.hlsl");
@@ -148,7 +157,10 @@ void ShadowScene::Render()
     {
         ball->Render();        
         valphalk->Render();
-        objects->Render();
+        if (player->GetInBattleMap())
+            objects->Render();
+        else
+            objects2->Render();
     }
     rasterizerState[0]->SetState();
     
@@ -190,9 +202,4 @@ void ShadowScene::GUIRender()
     valphalk->GUIRender();
     //player->GUIRender(); // 디버그 조작용
     //UIManager::Get()->GUIRender();
-}
-
-void ShadowScene::AddSounds()
-{    
- 
 }

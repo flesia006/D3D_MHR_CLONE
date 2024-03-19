@@ -286,9 +286,10 @@ public:
     float stateIconTimer2 = 0.0f;
     float stateIconTimer3 = 0.0f;
 
-    bool isRender = true;
+    bool isRender = false;
     float clearUITimer = 0.0f;
     UINT clearCount = 0;
+    bool questStart = false;
     float startUITimer = 0.0f;
     float waitTimer = 0.0f;
     UINT startCount = 0;

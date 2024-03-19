@@ -42,6 +42,8 @@ void Camera::Update()
     case Camera::BASIC:     ThirdPresonViewMode();          break;
     case Camera::OPENING:   OpeningCAM();                   break;
     case Camera::DEAD:      DeadCAM();                      break;
+    case Camera::MAPMOVE:   MapMoveCAM();                   break;
+    case Camera::MAPARRIVE: MapArriveCAM();                 break;
     case Camera::FREE:      FreeMode();                     break;
     }
 
@@ -125,7 +127,8 @@ void Camera::OpeningCAM()
     timer += DELTA;
     if (timer < 1.5f)
     {
-
+        CAM->Rot() = sightRot->Rot();
+        CAM->Pos() = target->GlobalPos() + sightRot->Back() * distance * 1.6;
     }
     else if (timer < 6.0f)
     {
@@ -142,10 +145,12 @@ void Camera::OpeningCAM()
     }
     else
     {
-
+        sightRot->Rot().x = 0.2f;
+        sightRot->Rot().y = XM_PI;
         distance = 400.0f;
         height = 0.0f;
         timer = 0.0f;
+        prevMousePos = mousePos;
         mode = BASIC;
     }
 
@@ -211,6 +216,110 @@ void Camera::DeadCAM()
     sightRot->UpdateWorld();
     CAM->Rot() = sightRot->Rot();
     CAM->Pos() = target1->GlobalPos() + sightRot->Back() * distance * 1.6;
+}
+
+void Camera::SetMapMoveCAM(Transform* target)
+{
+    this->target1 = target;
+    mode = MAPMOVE;
+    distance = 160.0f;
+    height = -100.0f;
+    sightRot->Rot().x = 0.1f;
+    sightRot->Rot().y = target->Rot().y - 0.2f;
+    sightRot->UpdateWorld();
+
+    CAM->Rot() = sightRot->Rot();
+    CAM->Pos() = target->GlobalPos() + sightRot->Back() * distance * 1.6;
+    CAM->Pos().y += height;
+}
+
+void Camera::MapMoveCAM()
+{
+    timer += DELTA;
+    if (timer < 1.5f)
+    {
+        sightRot->Rot().y = Lerp(sightRot->Rot().y, sightRot->Rot().y - 0.15f, 0.3 * DELTA);
+        distance = Lerp(distance, 180, 0.3 * DELTA);
+
+        sightRot->UpdateWorld();
+
+        CAM->Rot() = sightRot->Rot();
+        CAM->Pos() = target->GlobalPos() + sightRot->Back() * distance * 1.6;
+        CAM->Pos().y += height;
+    }
+    else if (timer < 3.0f)
+    {
+        sightRot->Rot().x = Lerp(sightRot->Rot().x, sightRot->Rot().x - 0.4, 1.0 * DELTA);
+        sightRot->Rot().y = Lerp(sightRot->Rot().y, sightRot->Rot().y - 0.15f, 0.3 * DELTA);
+        distance = Lerp(distance, 220, 0.3 * DELTA);
+        height = Lerp(height, 0, 1 * DELTA);
+        
+        sightRot->UpdateWorld();
+        
+        CAM->Rot() = sightRot->Rot();
+        CAM->Pos() = target->GlobalPos() + sightRot->Back() * distance * 1.6;
+        CAM->Pos().y += height;
+    }
+    else
+    {
+        distance = 400.0f;
+        height = 0.0f;
+        timer = 0.0f;
+        prevMousePos = mousePos;
+        mode = BASIC;
+    }
+}
+
+void Camera::SetMapArriveCAM(Transform* target)
+{
+    this->target1 = target;
+    mode = MAPARRIVE;
+    distance = 140.0f;
+    height = -100.0f;
+    sightRot->Rot().x = -0.3f;
+    sightRot->Rot().y = target->Rot().y - 0.35f;
+    sightRot->UpdateWorld();
+
+    CAM->Rot() = sightRot->Rot();
+    CAM->Pos() = target->GlobalPos() + sightRot->Back() * distance * 1.6;
+    CAM->Pos().y += height;
+}
+
+void Camera::MapArriveCAM()
+{
+    timer += DELTA;
+    if (timer < 1.5f)
+    {
+        sightRot->Rot().y = Lerp(sightRot->Rot().y, sightRot->Rot().y - 0.3f, 0.3 * DELTA);
+        distance = Lerp(distance, 16, 0.3 * DELTA);
+
+        sightRot->UpdateWorld();
+
+        CAM->Rot() = sightRot->Rot();
+        CAM->Pos() = target->GlobalPos() + sightRot->Back() * distance * 1.6;
+        CAM->Pos().y += height;
+    }
+    else if (timer < 5.0f)
+    {
+        sightRot->Rot().x = Lerp(sightRot->Rot().x, 0.2, 1.5 * DELTA);
+        sightRot->Rot().y = Lerp(sightRot->Rot().y, XM_PI, 1.5 * DELTA);
+        distance = Lerp(distance, 400, 2 * DELTA);
+        height = Lerp(height, 0, 1 * DELTA);
+
+        sightRot->UpdateWorld();
+
+        CAM->Rot() = sightRot->Rot();
+        CAM->Pos() = target->GlobalPos() + sightRot->Back() * distance * 1.6;
+        CAM->Pos().y += height;
+    }
+    else
+    {
+        distance = 400.0f;
+        height = 0.0f;
+        timer = 0.0f;
+        prevMousePos = mousePos;
+        mode = BASIC;
+    }
 }
 
 Vector3 Camera::ScreenToWorld(Vector3 screenPos)

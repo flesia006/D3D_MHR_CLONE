@@ -3,8 +3,9 @@
 
 MapDesignScene::MapDesignScene()
 {
-//    objects = new M41Objects();
-    objects_M42 = new M42Objects();
+    objects = new M41Objects();
+    objects->Update();
+//    objects_M42 = new M42Objects();
 
 //    val = new DummyValphalk();
 //    val->Pos() = Vector3(3000, 153.3, 3000);
@@ -88,7 +89,7 @@ MapDesignScene::~MapDesignScene()
 
 void MapDesignScene::Update()
 {
-    objects_M42->Update();
+    //    objects_M42->Update();
     ball->Rot().y += 0.02 * DELTA;
     ball->UpdateWorld();
 
@@ -123,7 +124,8 @@ void MapDesignScene::Render()
        // val->Render();
         ball->Render();
         ball2->Render();
-        objects_M42->Render();
+        objects->Render();
+        //        objects_M42->Render();
         blendState[1]->SetState(); // ¹ÝÅõ¸í
         {
             fog->Render();
@@ -144,13 +146,13 @@ void MapDesignScene::PostRender()
 
 void MapDesignScene::GUIRender()
 {
-    objects_M42->GUIRender();
+    //    objects_M42->GUIRender();
     //ball2->GUIRender();
 //    val->GUIRender();
 //      ball->GUIRender();
 //    fog->GUIRender();
 //    
-   // cap->GUIRender();
+    cap->GUIRender();
     //utusi->GUIRender();
 }
 
