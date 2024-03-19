@@ -53,8 +53,8 @@ GameManager::GameManager()
 //    SceneManager::Get()->Create("ModelExport", new ModelExportScene());
 //    SceneManager::Get()->Add("ModelExport");
 //
-//    SceneManager::Get()->Create("Grid", new GridScene());
-//    SceneManager::Get()->Add("Grid");
+    SceneManager::Get()->Create("Grid", new GridScene());
+    SceneManager::Get()->Add("Grid");
 
 //    SceneManager::Get()->Create("ShadowScene", new ShadowScene());
 //    SceneManager::Get()->Add("ShadowScene");
@@ -62,8 +62,8 @@ GameManager::GameManager()
 //    SceneManager::Get()->Add("MapDesignScene");
 //      SceneManager::Get()->Create("Particle", new ParticleScene());
 //      SceneManager::Get()->Add("Particle");
-//    SceneManager::Get()->Create("ParticleConfig", new ParticleConfigScene());
-//    SceneManager::Get()->Add("ParticleConfig");    
+    SceneManager::Get()->Create("ParticleConfig", new ParticleConfigScene());
+    SceneManager::Get()->Add("ParticleConfig");    
 
 //    SceneManager::Get()->Create("ValphalkTestScene", new ValphalkTestScene());
 //    SceneManager::Get()->Add("ValphalkTestScene");
@@ -373,6 +373,13 @@ void GameManager::Create()
     sound->AddSound("em086_05_se_media_32", SoundPath + L"Valphalk/em086_05_se_media_32.mp3");
     // 날개 휘두르기
     sound->AddSound("em086_05_se_media_46", SoundPath + L"Valphalk/em086_05_se_media_46.mp3");
+
+    // 걷는 소리
+    sound->AddSound("em086_05_se_media_52", SoundPath + L"Valphalk/em086_05_se_media_52.mp3");
+    sound->AddSound("em086_05_se_media_62", SoundPath + L"Valphalk/em086_05_se_media_62.mp3");
+    // 쓰러지는 소리
+    sound->AddSound("em086_05_se_media_11", SoundPath + L"Valphalk/em086_05_se_media_11.mp3");
+    sound->AddSound("em086_05_se_media_18", SoundPath + L"Valphalk/em086_05_se_media_18.mp3");
 
 
     

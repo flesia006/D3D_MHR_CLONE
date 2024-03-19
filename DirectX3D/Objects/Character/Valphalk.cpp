@@ -1216,7 +1216,32 @@ void Valphalk::Patrol()
 {
 	static int whichPattern = 0;
 	static int loopCount = 0;
-
+	walkTime += DELTA;
+	int randWalkSounds = rand() % 2;
+	float distance = (target->GlobalPos() - Pos()).Length();
+	if (distance < 8000)
+	{
+		if (curState == E_0043 || curState == E_0044 || curState == E_0045 || curState == E_0055)
+		{
+			switch (randWalkSounds)
+			{
+			case 0:
+				if (walkTime > 0.85f)
+				{
+					Sounds::Get()->Play("em086_05_se_media_52", 0.4f);
+					walkTime = 0;
+				}
+				break;
+			case 1:
+				if (walkTime > 0.85f)
+				{
+					Sounds::Get()->Play("em086_05_se_media_62", 0.4f);
+					walkTime = 0;
+				}
+				break;
+			}
+		}
+	}
 	if (sequence == 0) // 방향을 정해
 	{
 		// 걸어가는 방향은 맵 중앙 주위로 랜덤이야
@@ -1342,6 +1367,12 @@ void Valphalk::Patrol()
 		case 5:		SetState(E_0098);  E0098(XM_PIDIV2);	break;
 		case 6:		SetState(E_0099);  E0099(XM_PI);		break;
 		}
+		if(RATIO<0.1f)
+			Sounds::Get()->Play("em086_05_se_media_52", 0.4f);
+		if(RATIO>0.3f&&RATIO<0.4f)
+			Sounds::Get()->Play("em086_05_se_media_52", 0.4f);
+		if(RATIO>0.5f&&RATIO<0.6f)
+			Sounds::Get()->Play("em086_05_se_media_52", 0.4f);
 	}
 
 	if (sequence == 7) // 포효를 해
@@ -5378,9 +5409,12 @@ void Valphalk::E2403()
 void Valphalk::E3001() // 작은 데미지 피격
 {
 	PLAY;
-
+		
 	if (RATIO > 0.10 && RATIO < 0.20)
-		Sounds::Get()->Play("em086_05_vo_media_29", 3.0f);
+	{
+		Sounds::Get()->Play("em086_05_se_media_18", 0.1f);
+		Sounds::Get()->Play("em086_05_vo_media_29", 0.75f);
+	}
 
 	if (RATIO > 0.96)
 		sequence++;
@@ -5396,9 +5430,15 @@ void Valphalk::E3015()
 
 	PLAY;
 
-	if (RATIO > 0.10 && RATIO < 0.20)
-		Sounds::Get()->Play("em086_05_vo_media_25", 4.5f);
-
+	//if (RATIO > 0.10 && RATIO < 0.20)
+	//{
+	//	Sounds::Get()->Play("em086_05_vo_media_25", 0.5f);
+	//}
+	if (RATIO > 0.2 && RATIO < 0.3)
+	{
+		Sounds::Get()->Play("em086_05_se_media_18", 0.4f);
+		Sounds::Get()->Play("em086_05_vo_media_25", 0.5f);
+	}
 	if (RATIO > 0.96)
 		sequence++;
 }
@@ -5406,9 +5446,6 @@ void Valphalk::E3015()
 void Valphalk::E3016()
 {
 	PLAY;
-
-	if (RATIO > 0.10 && RATIO < 0.20)
-		Sounds::Get()->Play("em086_05_vo_media_25", 4.5f);
 
 	if (RATIO > 0.96)
 		sequence++;
@@ -5436,7 +5473,7 @@ void Valphalk::E3023() // 사망
 	}
 
 	if (RATIO > 0.40 && RATIO < 0.44)
-		Sounds::Get()->Play("em086_05_vo_media_30", 3.0f);
+		Sounds::Get()->Play("em086_05_vo_media_30", 2.5f);
 	
 	if (RATIO > 0.96)
 	{
@@ -5450,7 +5487,10 @@ void Valphalk::E3101()
 	PLAY;
 
 	if (RATIO > 0.10 && RATIO < 0.20)
-		Sounds::Get()->Play("em086_05_vo_media_29", 3.0f);
+	{
+		Sounds::Get()->Play("em086_05_se_media_18", 0.4f);
+		Sounds::Get()->Play("em086_05_vo_media_29", 1.0f);
+	}
 
 	if (RATIO > 0.96)
 		sequence++;
@@ -5467,7 +5507,10 @@ void Valphalk::E3114()
 	PLAY;
 
 	if (RATIO > 0.10 && RATIO < 0.20)
-		Sounds::Get()->Play("em086_05_vo_media_25", 4.5f);
+	{
+		Sounds::Get()->Play("em086_05_se_media_18", 0.4f);
+		Sounds::Get()->Play("em086_05_vo_media_25", 0.5f);
+	}
 
 	if (RATIO > 0.96)
 	{
@@ -5487,7 +5530,7 @@ void Valphalk::E3118()
 	}
 
 	if (RATIO > 0.40 && RATIO < 0.50)
-		Sounds::Get()->Play("em086_05_vo_media_30", 3.0f);
+		Sounds::Get()->Play("em086_05_vo_media_30", 2.5f);
 
 	if (RATIO > 0.96)
 	{
@@ -5511,6 +5554,9 @@ void Valphalk::E4013() // 조우 포효
 	Vector3 campos;
 	campos = Pos() - CAM->Pos();
 	campos.GetNormalized();
+	if(RATIO<0.1f)
+		Sounds::Get()->Play("em086_05_se_media_52", 0.4f);
+
 	if (RATIO > 0.30 && RATIO < 0.315)
 	{
 		Sounds::Get()->Play("em086_05_vo_media_10", 0.5f);
