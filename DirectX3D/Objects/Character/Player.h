@@ -68,7 +68,6 @@ private:
 		float timer = 0.0f;
 	};
 
-
 public:
 	Player();
 	~Player();
@@ -467,5 +466,8 @@ private:
 	vector<CircleEft*> circle;
 	SliceEft* slice = nullptr;
 	headBreakAtk* tuguAtk = nullptr;
+	UseBug* usebug;
+	bool isbugeffect = false;
+	float bugtime = 0;
 };
 

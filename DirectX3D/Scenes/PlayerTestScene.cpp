@@ -2,7 +2,8 @@
 #include "PlayerTestScene.h"
 
 PlayerTestScene::PlayerTestScene()
-{
+{	
+
 	valphalk = new DummyValphalk();
 	valphalk->Pos().x = -1500.0f;
 	valphalk->Pos().z = -1500.0f;

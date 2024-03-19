@@ -45,6 +45,8 @@ Player::Player() : ModelAnimator("Player")
 	haloCollider = new CapsuleCollider();
 	wireBugParticle = new Wire_Bug();
 	sutdol = new Sutdol();
+	usebug = new UseBug();
+
 	FOR(4)
 	{
 		CircleEft* cir = new CircleEft();
@@ -262,6 +264,7 @@ void Player::Render()
 		isSetState = false;
 	}
 	isFirstRender = true;
+	usebug->Render();
 }
 
 
@@ -1036,6 +1039,40 @@ void Player::EffectUpdates()
 		else
 			circle[i]->Rot().y = atan2(Forward().x, Forward().z);
 		circle[i]->Update();
+	}
+	usebug->Update();
+	if (playerWireBug->Active())
+	{
+		isbugeffect = true;
+	}
+	if (isbugeffect)
+	{
+		bugtime += DELTA;
+		if (bugtime <= 0.1f && bugtime > 0.01f)
+			usebug->Play1(playerWireBug->Pos());
+		if (bugtime <= 0.2f && bugtime > 0.11f)
+			usebug->Play2(playerWireBug->Pos());
+		if (bugtime <= 0.3f && bugtime > 0.21f)
+			usebug->Play3(playerWireBug->Pos());
+		if (bugtime <= 0.4f && bugtime > 0.31f)
+			usebug->Play4(playerWireBug->Pos());
+		if (bugtime <= 0.5f && bugtime > 0.41f)
+			usebug->Play5(playerWireBug->Pos());
+		if (bugtime <= 0.6f && bugtime > 0.51f)
+			usebug->Play6(playerWireBug->Pos());
+		if (bugtime <= 0.7f && bugtime > 0.61f)
+			usebug->Play7(playerWireBug->Pos());
+		if (bugtime <= 0.8f && bugtime > 0.71f)
+			usebug->Play8(playerWireBug->Pos());
+		if (bugtime <= 0.9f && bugtime > 0.81f)
+			usebug->Play9(playerWireBug->Pos());
+		if (bugtime >= 0.8f && bugtime <= .9f)
+			usebug->Play10(playerWireBug->Pos());
+	}
+	if (bugtime > 3)
+	{
+		bugtime = 0;
+		isbugeffect = false;
 	}
 }
 
@@ -2309,7 +2346,6 @@ void Player::S122()   // 전력질주
 	if (KEY_DOWN('F')) callGaruk = true;
 	else if (UI->IsAbleBugSkill() && K_LBUG)	SetState(W_005);	// 사선 밧줄벌레 이동
 
-
 	if (K_LMB)		SetState(L_101);
 	else if (K_SPACE)	
 		Roll();	
@@ -2333,6 +2369,8 @@ void Player::L001() // 발도상태 대기
 	else if (UI->IsAbleBugSkill() && K_RBUG)		SetState(L_126);	// 수월의자세
 	else if (K_SPACE)	Roll();				// 010 구르기
 
+	if (KEY_DOWN('V'))
+		SetState(L_128);
 	UIManager::Get()->staminaActive = false;
 
 }
@@ -4325,7 +4363,7 @@ void Player::W006() // W005에서 이어지는 체공중 동작
 			{
 				SetState(F_073);
 				playerWireBug->SetActive(false);
-				playerWireBug->SetMove(Vector3::Zero(), false, Vector3::Zero());
+				playerWireBug->SetMove(Vector3::Zero(), false, Vector3::Zero());				
 			}
 			else
 			{

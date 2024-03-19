@@ -176,6 +176,14 @@ void ParticleSystem::SetVortex(Vector3 pos)
 
 }
 
+void ParticleSystem::CloserCam(Vector3 pos, Vector3 targetpos, float speed)
+{
+    //quad->Pos() = pos;
+    quad->SetActive(true);
+    quad->Pos() = pos;
+    quad->Pos() = Lerp(quad->Pos(), targetpos, speed);
+}
+
 //아래 두 함수 = 파티클 (개별 내부 데이터) 업데이트
 void ParticleSystem::UpdatePhysical()
 {

@@ -88,6 +88,7 @@ public:
     void SetPos(Vector3 pos) { quad->Pos() = pos; }
     void SetRot(Vector3 rot) { quad->Rot() = rot; }
     void SetVortex(Vector3 pos);
+    void CloserCam(Vector3 pos, Vector3 targetpos,float speed);
 
     Vector3 GetPos() { return quad->Pos(); }
 
