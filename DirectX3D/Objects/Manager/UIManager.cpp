@@ -628,7 +628,7 @@ UIManager::~UIManager()
 
 void UIManager::Update()
 {
-	if (isLoading == true) return;
+//	if (isLoading == true) return;
 
 	ItemManager::Get()->Update();
 	// 임시로 놓은거임
@@ -987,7 +987,7 @@ void UIManager::Update()
 
 void UIManager::PostRender()
 {
-	if (isLoading == true) return;
+//	if (isLoading == true) return;
 
 	if (!isRender)
 	{
@@ -996,11 +996,13 @@ void UIManager::PostRender()
 			questClearUI->Render();
 			return;
 		}
-		else
+		else if (questStart)
 		{
 			questStartUI->Render();
 			return;
 		}
+		else
+			return;
 	}
 
 	recover->Render();
@@ -1016,7 +1018,7 @@ void UIManager::PostRender()
 	lsGauge->Render();
 	lsGauge2->Render();
 
-	// 이건 한번 더 봐야 알듯
+
 	// 액션 슬롯 내임 스페이스
 	slotNames[0]->Render();
 	Font::Get()->RenderText("탑승한다", {slotNames[0]->Pos().x + 70 ,slotNames[0]->Pos().y + 18});
@@ -1242,22 +1244,22 @@ void UIManager::UIAlphaOn()
 
 void UIManager::StartUIAlphaOn()
 {
-	if (isRender || valDeath)
+	if (!questStart || valDeath)
 		return;
 
 	startUITimer += DELTA;
 	waitTimer += DELTA;
 
-	if (startUITimer > 0.01f && startCount < 11 && waitTimer < 3.0f)
+	if (startUITimer > 0.05f && startCount < 11 && waitTimer < 1.1f)
 	{
 		questStartUI->SetTexture(L"Textures/QuestStart/" + to_wstring(startCount) + L".png");
 		startCount++;
 		startUITimer = 0.0f;
 	}
 
-	if (waitTimer > 2.0f)
+	if (waitTimer > 1.1f)
 	{
-		if (startUITimer > 0.01f && startCount > 0)
+		if (startUITimer > 0.05f && startCount > 0)
 		{
 			questStartUI->SetTexture(L"Textures/QuestStart/" + to_wstring(startCount - 1) + L".png");
 			startCount--;
@@ -1492,23 +1494,6 @@ void UIManager::QuickSlot()
 			itemNumber_Q[11]->Render();
 			itemNumber_Q[10]->Render();
 		}
-
-		//if (useQuickSlot1)
-		//	useQuickSlot1 = false;
-		//if (useQuickSlot2)
-		//	useQuickSlot2 = false;
-		//if (useQuickSlot3)
-		//	useQuickSlot3 = false;
-		//if (useQuickSlot4)
-		//	useQuickSlot4 = false;
-		//if (useQuickSlot5)
-		//	useQuickSlot5 = false;
-		//if (useQuickSlot6)
-		//	useQuickSlot6 = false;
-		//if (useQuickSlot7)
-		//	useQuickSlot7 = false;
-		//if (useQuickSlot8)
-		//	useQuickSlot8 = false;
 	}
 }
 
@@ -2026,7 +2011,7 @@ void UIManager::NumberSlotBar()
 		useNumberBar = true;
 		Sounds::Get()->Play("Icon_on", 1.2f);
 	}
-	if (timer >= 3.0f || KEY_DOWN(VK_ESCAPE))
+	if (timer >= 3.0f || KEY_DOWN(VK_ESCAPE) && useNumberBar)
 	{
 		useNumberBar = false;
 		useNumberSlot1 = false;

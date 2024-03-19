@@ -68,8 +68,8 @@ GameManager::GameManager()
 //    SceneManager::Get()->Create("ValphalkTestScene", new ValphalkTestScene());
 //    SceneManager::Get()->Add("ValphalkTestScene");
 
-//    SceneManager::Get()->Create("PlayerTestScene", new PlayerTestScene());
-//    SceneManager::Get()->Add("PlayerTestScene");
+    SceneManager::Get()->Create("PlayerTestScene", new PlayerTestScene());
+    SceneManager::Get()->Add("PlayerTestScene");
 
 //   SceneManager::Get()->Create("FightTestScene", new FightTestScene());
 //   SceneManager::Get()->Add("FightTestScene");
@@ -84,6 +84,7 @@ GameManager::GameManager()
 //    SceneManager::Get()->Add("LoadingScene");
 
 //    SceneManager::Get()->Add("Terrain");
+//    CAM->isFreeCamTrue();
 
     // 씬만 재생하고 싶은 경우 : CAM->isFreeCamTrue() 지우고 isLoading = false;로 조정
     // 로딩씬 같이 재생이라면  : CAM->isFreeComTrue() 살리고 isLoading = true; 로 조정

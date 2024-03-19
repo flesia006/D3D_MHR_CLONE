@@ -10,6 +10,8 @@ PlayerTestScene::PlayerTestScene()
 
 	garuk = new Sample();
 	player = new Player();
+	player->Pos().x = -100.0f;
+	player->Pos().z = -100.0f;
 	terrain = new TerrainEditor();
 	garuk->SetTarget(player->GetRealPos());
 	garuk->SetTerrain(terrain);
@@ -24,8 +26,7 @@ PlayerTestScene::PlayerTestScene()
 	wireBug = new WireBug();
 	player->SetWireBug(wireBug);
 
-	CAM->SetTerrain(terrain);
-
+	//CAM->SetTerrain(terrain);
 }
 
 PlayerTestScene::~PlayerTestScene()
@@ -88,5 +89,6 @@ void PlayerTestScene::GUIRender()
 	player->GUIRender();
 	garuk->GUIRender();
 	wireBug->GUIRender();
+	CAM->GUIRender();
 	ItemManager::Get()->GUIRender();
 }
