@@ -1818,6 +1818,10 @@ void UIManager::NumberSlot()
 		timer += DELTA;
 		FOR(numberBoxs.size())
 		{
+			// 쿼드 알파 변환 할때 쓰는거
+			//Float4 color = numberBoxs[0]->GetMaterial()->GetData().diffuse;
+			//color.w -= 0.001f * timer; => 예가 알파
+			//numberBoxs[0]->GetMaterial()->SetDiffuseMapColor(color);
 			numberBoxs[i]->Render();
 		}
 		if (useNumberSlot1)
