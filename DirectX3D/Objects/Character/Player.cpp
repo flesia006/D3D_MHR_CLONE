@@ -2142,7 +2142,7 @@ void Player::S011() // 달리기 루프
 	}
 
 	// 101 내디뎌 베기
-	if (K_LMB)		SetState(L_101);
+	if (K_LMB && !ItemManager::Get()->useBlueBox)		SetState(L_101);
 	else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106);
 	else if (K_SPACE)	Roll();
 	else if (UI->IsAbleBugSkill() && K_LBUG)	SetState(W_005);	// 사선 밧줄벌레 이동
@@ -2350,7 +2350,8 @@ void Player::S122()   // 전력질주
 	if (KEY_DOWN('F')) callGaruk = true;
 	else if (UI->IsAbleBugSkill() && K_LBUG)	SetState(W_005);	// 사선 밧줄벌레 이동
 
-	if (K_LMB)		SetState(L_101);
+
+	if (K_LMB && !ItemManager::Get()->useBlueBox)		SetState(L_101);
 	else if (K_SPACE)	
 		Roll();	
 
@@ -2397,7 +2398,7 @@ void Player::L004() // 발도상태 걷기 중 // 루프
 	RandBreath();
 
 	if (KEY_PRESS(VK_LSHIFT))		SetState(L_009); // 납도	
-	else if (K_LMB)		SetState(L_101);	// 101 내디뎌 베기	
+	else if (K_LMB && !ItemManager::Get()->useBlueBox)		SetState(L_101);	// 101 내디뎌 베기	
 	else if (K_RMB)		SetState(L_104);	// 104 찌르기	
 	else if (K_LMBRMB)	SetState(L_103);	// 103 베어내리기
 	else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106);	// 106 기인 베기	
@@ -2419,7 +2420,7 @@ void Player::L005() // 발도상태 걷기 시작 (발돋움)
 	PLAY;
 
 	if (KEY_PRESS(VK_LSHIFT))		SetState(L_009); // 납도	
-	else if (K_LMB)		SetState(L_101);	// 101 내디뎌 베기	
+	else if (K_LMB && !ItemManager::Get()->useBlueBox)		SetState(L_101);	// 101 내디뎌 베기	
 	else if (K_RMB)		SetState(L_104);	// 104 찌르기	
 	else if (K_LMBRMB)	SetState(L_103);	// 103 베어내리기
 	else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106);	// 106 기인 베기	
@@ -2456,7 +2457,7 @@ void Player::L008() // 멈춤
 	PLAY;
 
 	if (KEY_PRESS(VK_LSHIFT))		SetState(L_009); // 납도	
-	else if (K_LMB)		SetState(L_101);	// 101 내디뎌 베기	
+	else if (K_LMB && !ItemManager::Get()->useBlueBox)		SetState(L_101);	// 101 내디뎌 베기	
 	else if (K_RMB)		SetState(L_104);	// 104 찌르기	
 	else if (K_LMBRMB)	SetState(L_103);	// 103 베어내리기
 	else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106);	// 106 기인 베기	

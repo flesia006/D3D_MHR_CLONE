@@ -1018,7 +1018,7 @@ void UIManager::PostRender()
 	lsGauge->Render();
 	lsGauge2->Render();
 
-	// 이건 한번 더 봐야 알듯
+
 	// 액션 슬롯 내임 스페이스
 	slotNames[0]->Render();
 	Font::Get()->RenderText("탑승한다", {slotNames[0]->Pos().x + 70 ,slotNames[0]->Pos().y + 18});
@@ -2011,7 +2011,7 @@ void UIManager::NumberSlotBar()
 		useNumberBar = true;
 		Sounds::Get()->Play("Icon_on", 1.2f);
 	}
-	if (timer >= 3.0f || KEY_DOWN(VK_ESCAPE))
+	if (timer >= 3.0f || KEY_DOWN(VK_ESCAPE) && useNumberBar)
 	{
 		useNumberBar = false;
 		useNumberSlot1 = false;

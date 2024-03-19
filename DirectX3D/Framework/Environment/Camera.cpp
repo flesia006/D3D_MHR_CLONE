@@ -456,7 +456,7 @@ void Camera::ThirdPresonViewMode()
         //prevMousePos = mousePos;
         if (lockOnTarget == Vector3(0, 0, 0))
         {
-            if (!KEY_PRESS('X') && !ItemManager::Get()->useBlueBox)
+            if (!KEY_PRESS('X') && !ItemManager::Get()->useBlueBox && ItemManager::Get()->camTimer > 0.1f)
             {
                 Vector3 delta = mousePos - prevMousePos;
                 prevMousePos = mousePos;

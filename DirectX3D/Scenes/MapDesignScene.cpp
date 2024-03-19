@@ -80,6 +80,8 @@ MapDesignScene::MapDesignScene()
     blendState[1]->Additive();
     blendState[2]->Alpha(true);
     rasterizerState[1]->CullMode(D3D11_CULL_NONE);
+
+    //ItemManager::Get();
 }
 
 MapDesignScene::~MapDesignScene()
@@ -110,6 +112,7 @@ void MapDesignScene::Update()
 
     //val->Update();
     utusi->Update();
+    //ItemManager::Get()->Update();
 }
 
 void MapDesignScene::PreRender()
@@ -138,6 +141,7 @@ void MapDesignScene::Render()
 
 
     cap->Render();
+    //ItemManager::Get()->Render();
 }
 
 void MapDesignScene::PostRender()
@@ -154,5 +158,6 @@ void MapDesignScene::GUIRender()
 //    
     cap->GUIRender();
     //utusi->GUIRender();
+    //ItemManager::Get()->GUIRender();
 }
 

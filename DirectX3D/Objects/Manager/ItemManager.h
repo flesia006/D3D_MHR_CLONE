@@ -25,6 +25,7 @@ public: // 임시로 놓은거임
 	bool lookBoxIcon = false;
 	bool useBlueBox = false;
 	bool mouseOn = false;
+	float camTimer = 1.0f;
 private:
 	vector<Quad*> inventoryList;
 	vector<Quad*> itemBoxBack;
@@ -41,8 +42,8 @@ private:
 	Quad* MouseIcon;
 	Quad* ThisIcon1;
 	Quad* ThisIcon2;
-
-	RasterizerState* rasterizerState[2];
+	Vector3 MousePos;
+	//RasterizerState* rasterizerState[2];
 	BlendState* blendState[2];
 	DepthStencilState* depthState[2];
 	bool isCursorOn = false;
