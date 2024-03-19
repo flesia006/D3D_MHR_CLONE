@@ -143,6 +143,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Objects\Landscape\M42Objects.h" />
+    <ClInclude Include="Objects\Particle\UseBug.h" />
+    <ClInclude Include="Objects\Particle\RoarEffect.h" />
     <ClInclude Include="Scenes\LoadingScene.h" />
     <ClInclude Include="Objects\Particle\headBreakAtk.h" />
     <ClInclude Include="Objects\Algorithm\AStar.h" />
@@ -321,6 +323,8 @@
     <ClCompile Include="Objects\Algorithm\AStar.cpp" />
     <ClCompile Include="Objects\Algorithm\Heap.cpp" />
     <ClCompile Include="Objects\Algorithm\Node.cpp" />
+    <ClCompile Include="Objects\Particle\UseBug.cpp" />
+    <ClCompile Include="Objects\Particle\RoarEffect.cpp" />
     <ClCompile Include="Scenes\LoadingScene.cpp" />
     <ClCompile Include="Objects\Basic\ModelQuad.cpp" />
     <ClCompile Include="Objects\Basic\Ring.cpp" />

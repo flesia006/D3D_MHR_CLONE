@@ -311,6 +311,7 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 	tempScale = Scale();
 	
 	stormScale = forwardBoom->Scale();
+	roarEffect = new RoarEffect();
 }
 
 Valphalk::~Valphalk()
@@ -344,6 +345,7 @@ Valphalk::~Valphalk()
 	delete storm_Start;
 	delete barrier;
 	delete trail;
+	delete roarEffect;
 }
 
 void Valphalk::Update()
@@ -468,10 +470,19 @@ void Valphalk::Update()
 	barrier->SetPos(head->GlobalPos());
 	barrier->Update();
 	trail->Update();
+	roarEffect->Update();
+	if(roarEffect->IsActive())
+	roarEffect->roarCloserCam(Pos(), CAM->Pos(), 0.013f);
 	ModelAnimator::Update();
 
 	////////////////////////
 	//디버그 확인용
+	if (KEY_DOWN('4'))
+	{
+		curState = E_4013;
+		SetState(E_4013);
+		E4013();
+	}
 	if (KEY_DOWN('5'))
 		colliders[HEAD]->partHp = -100;
 
@@ -556,6 +567,7 @@ void Valphalk::Render()
 		trail->Render();
 		stormBox->Render();
 	}
+	roarEffect->Render();
 
 	isFirstRender = true;
 }
@@ -5496,11 +5508,15 @@ void Valphalk::E4001()
 void Valphalk::E4013() // 조우 포효
 {
 	PLAY;
+	Vector3 campos;
+	campos = Pos() - CAM->Pos();
+	campos.GetNormalized();
 	if (RATIO > 0.30 && RATIO < 0.315)
 	{
 		Sounds::Get()->Play("em086_05_vo_media_10", 0.5f);
 		if (!playOncePerPattern)
-		{
+		{			
+			roarEffect->Play(head->Pos(),0);
 			colliders[ROAR]->SetActive(true);
 			SetColliderAttack(ROAR, 0.375f, 0, 3);
 			playOncePerPattern = true;
