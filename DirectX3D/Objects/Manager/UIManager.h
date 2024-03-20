@@ -293,6 +293,8 @@ public:
     float startUITimer = 0.0f;
     float waitTimer = 0.0f;
     UINT startCount = 0;
+    Float4 startUIColor;
+    Float4 clearUIColor;
 
     // 갈무리 아이콘 시간 체크용
     bool captureIcon1 = false;

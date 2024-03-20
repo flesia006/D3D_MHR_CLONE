@@ -203,7 +203,11 @@ void Player::Update()
 	if (KEY_DOWN('6'))
 		SetState(T_019);
 	if (KEY_DOWN('8'))
-		isEvaded = true;
+	{
+		UI->isRender = false;
+		UI->valDeath = true;
+	}
+
 	///////////////////////////////
 }
 
@@ -3492,10 +3496,10 @@ void Player::L147() // 간파베기
 		evadeCheckCollider->SetParent(realPos);
 		evadeCheckCollider->SetActive(true);
 		evadeCheckCollider->UpdateWorld();
+		spStartParticle->Play(Pos(), 0);
 		UI->curSpiritGauge = 0;
 	}
-	if (RATIO < 0.1)
-		spStartParticle->Play(Pos(), 0);
+
 	if (RATIO > 0.2 && RATIO < 0.3)
 		RandVoice();
 	UIManager::Get()->staminaActive = false;
@@ -3693,6 +3697,7 @@ void Player::L155() // 앉아발도 기인베기
 	{
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_25", .5f);
 		//Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_8", .5f);
+		spStartParticle->Play(Pos(), 0);
 	}
 	if (RATIO > 0.11 && RATIO < 0.15)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
@@ -3703,10 +3708,7 @@ void Player::L155() // 앉아발도 기인베기
 	}
 
 	if (RATIO < 0.1)
-	{
-		spStartParticle->Play(Pos(), 0);
 		LimitRotate(15);
-	}
 
 	static bool isHit = false;	// hit 하고 바로 3번 공격 들어가면 어색하니까 넣어주는 bool 
 

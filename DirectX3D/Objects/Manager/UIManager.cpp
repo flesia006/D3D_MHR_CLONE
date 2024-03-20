@@ -112,8 +112,15 @@ UIManager::UIManager()
 	orangeRightHalfCircle3 = new Quad(L"Textures/UI/orangeHalfCircle2.png");
 	orangeRightHalfCircle3->SetActive(false);
 
-	questClearUI = new Quad(L"Textures/Quest/0.png");
-	questStartUI = new Quad(L"Textures/QuestStart/0.png");
+	questClearUI = new Quad(L"Textures/Quest/10.png");
+	clearUIColor = questClearUI->GetMaterial()->GetData().diffuse;
+	clearUIColor.w = 0.0f;
+	questClearUI->GetMaterial()->SetDiffuseMapColor(clearUIColor);
+
+	questStartUI = new Quad(L"Textures/QuestStart/10.png");
+	startUIColor = questStartUI->GetMaterial()->GetData().diffuse;
+	startUIColor.w = 0.0f;
+	questStartUI->GetMaterial()->SetDiffuseMapColor(startUIColor);
 
 	// Äü½½·Ô UI Ãß°¡
 	quickSlot_Back = new Quad(L"Textures/UI/QickSlot_Back.png");
@@ -1234,10 +1241,17 @@ void UIManager::UIAlphaOn()
 		return;
 	clearUITimer += DELTA;
 
-	if (clearUITimer > 0.01f && clearCount < 11)
+	//if (clearUITimer > 0.01f && clearUIColor.w < 1)
+	//{
+	//	questClearUI->SetTexture(L"Textures/Quest/" + to_wstring(clearCount) + L".png");
+	//	clearCount++;
+	//	clearUITimer = 0.0f;
+	//}
+
+	if (clearUITimer > 0.01f && clearUIColor.w < 1)
 	{
-		questClearUI->SetTexture(L"Textures/Quest/" + to_wstring(clearCount) + L".png");
-		clearCount++;
+		clearUIColor.w += 1.5f * DELTA;
+		questClearUI->GetMaterial()->SetDiffuseMapColor(clearUIColor);
 		clearUITimer = 0.0f;
 	}
 }
@@ -1250,19 +1264,19 @@ void UIManager::StartUIAlphaOn()
 	startUITimer += DELTA;
 	waitTimer += DELTA;
 
-	if (startUITimer > 0.05f && startCount < 11 && waitTimer < 1.1f)
+	if (startUITimer > 0.01f && startUIColor.w < 1 && waitTimer < 1.15f)
 	{
-		questStartUI->SetTexture(L"Textures/QuestStart/" + to_wstring(startCount) + L".png");
-		startCount++;
+		startUIColor.w += 2.0f * DELTA;
+		questStartUI->GetMaterial()->SetDiffuseMapColor(startUIColor);
 		startUITimer = 0.0f;
 	}
 
-	if (waitTimer > 1.1f)
+	if (waitTimer > 1.15f)
 	{
-		if (startUITimer > 0.05f && startCount > 0)
+		if (startUITimer > 0.01f && startUIColor.w > 0)
 		{
-			questStartUI->SetTexture(L"Textures/QuestStart/" + to_wstring(startCount - 1) + L".png");
-			startCount--;
+			startUIColor.w -= 2.0f * DELTA;
+			questStartUI->GetMaterial()->SetDiffuseMapColor(startUIColor);
 			startUITimer = 0.0f;
 		}
 	}
