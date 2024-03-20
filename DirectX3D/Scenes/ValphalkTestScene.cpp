@@ -3,7 +3,7 @@
 
 ValphalkTestScene::ValphalkTestScene()
 {
-	objects = new M41Objects();
+//	objects = new M41Objects();
 
 	valphalk = new Valphalk();
 	valphalk->Pos() = Vector3(4000, 500, 4000);
@@ -43,7 +43,7 @@ void ValphalkTestScene::PreRender()
 void ValphalkTestScene::Render()
 {
 	rasterizer->SetState();
-	objects->Render();
+//	objects->Render();
 	valphalk->Render();
 	garuk->Render();
 	//	terrain->Render();

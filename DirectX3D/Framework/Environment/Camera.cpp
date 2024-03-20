@@ -7,6 +7,8 @@ Camera::Camera()
     viewBuffer = new ViewBuffer();
     viewBuffer->SetVS(1);
 
+    ground = new BoxCollider({ FLT_MAX, 0.1, FLT_MAX });
+    ground->UpdateWorld();
 
     camSphere = new SphereCollider(distance);
     camSphere->SetParent(this);
@@ -49,6 +51,18 @@ void Camera::Update()
     if (KEY_DP(VK_F4))        mode = FREE;
     if (KEY_DP(VK_F5))        mode = BASIC;
     if (KEY_DP(VK_F6))        SetOpeningCAM();
+
+    if (shakeCAM)
+    {
+        shakeTimer += DELTA;
+        if (shakeTimer >= 0.005f)
+            count++;
+
+        if (count % 2 == 0)
+            CAM->Pos().y += 10;
+        else
+            CAM->Pos().y -= 10;
+    }
 
 
     UpdateWorld();
@@ -117,6 +131,7 @@ void Camera::SetOpeningCAM()
     CAM->Rot() = sightRot->Rot();
     CAM->Pos() = target->GlobalPos() + sightRot->Back() * distance * 1.6;
     CAM->Pos().y += height;
+
 }
 
 
@@ -125,7 +140,8 @@ void Camera::OpeningCAM()
     timer += DELTA;
     if (timer < 1.5f)
     {
-
+        CAM->Rot() = sightRot->Rot();
+        CAM->Pos() = target->GlobalPos() + sightRot->Back() * distance * 1.6;
     }
     else if (timer < 6.0f)
     {
@@ -142,7 +158,8 @@ void Camera::OpeningCAM()
     }
     else
     {
-
+        sightRot->Rot().x = 0.2f;
+        sightRot->Rot().y = XM_PI;
         distance = 400.0f;
         height = 0.0f;
         timer = 0.0f;
@@ -155,7 +172,7 @@ void Camera::SetDeadCAM(Transform* target, Transform* target2)
 {
     this->target1 = target;
     mode = DEAD;
-    distance = 400.0f;    
+    distance = 400.0f;
     sightRot->Rot().x = 0.5;
     sightRot->Rot().y = target->Rot().y;
     sightRot->UpdateWorld();
@@ -171,10 +188,10 @@ void Camera::SetDeadCAM(Transform* target, Transform* target2)
 void Camera::DeadCAM()
 {
     timer += DELTA;
-    if(timer < 4)
+    if (timer < 4)
     {
         sightRot->Rot().x = 0.5f;
-        sightRot->Rot().y = Lerp(sightRot->Rot().y, sightRot->Rot().y + XM_PI, 0.1 * DELTA);      
+        sightRot->Rot().y = Lerp(sightRot->Rot().y, sightRot->Rot().y + XM_PI, 0.1 * DELTA);
     }
     else if (timer < 8)
     {
@@ -197,7 +214,7 @@ void Camera::DeadCAM()
             sightRot->Rot().y -= XM_PI;
             once = false;
         }
-        sightRot->Rot().x = Lerp(sightRot->Rot().x, 1.4, 1 * DELTA);        
+        sightRot->Rot().x = Lerp(sightRot->Rot().x, 1.4, 1 * DELTA);
     }
     else
     {
@@ -351,12 +368,12 @@ void Camera::ThirdPresonViewMode()
             {
                 Vector3 delta = mousePos - prevMousePos;
                 prevMousePos = mousePos;
-        
+
                 sightRot->Rot().x -= delta.y * rotSpeed * DELTA;
                 sightRot->Rot().x = Clamp(-XM_PIDIV2 + 0.5f, XM_PIDIV2 - 0.01f, sightRot->Rot().x);
                 sightRot->Rot().y += delta.x * rotSpeed * DELTA;
                 sightRot->UpdateWorld();
-        
+
                 CAM->Rot() = sightRot->Rot();
             }
             CAM->Pos() = target->GlobalPos() + sightRot->Back() * distance * 1.6;
@@ -368,12 +385,12 @@ void Camera::ThirdPresonViewMode()
             trgtToTrgt.y = 0;
             trgtToTrgt.z = (lockOnTarget.z - target->GlobalPos().z);
             trgtToTrgt = trgtToTrgt.GetNormalized();
-        
+
             sightRot->Rot().x = -0.1f;
             //sightRot->Rot().x = Clamp(-XM_PIDIV2 + 0.5f, XM_PIDIV2 - 0.01f, sightRot->Rot().x);
             sightRot->Rot().y = atan2(trgtToTrgt.x, trgtToTrgt.z);
             sightRot->UpdateWorld();
-        
+
             CAM->Rot() = Lerp(Rot(), sightRot->Rot(), 10 * DELTA);
             CAM->Pos() = target->GlobalPos() + Back() * distance * 1.6;
         }
@@ -398,6 +415,19 @@ void Camera::ThirdPresonViewMode()
             CAM->Pos() = pos - sight.dir.Back() * 20;
         }
     }
+    else
+    {
+        Contact contact;
+        bool hitGround = ground->IsRayCollision(sight, &contact);
+
+        if ((target->GlobalPos() - contact.hitPoint).Length() > distance || !hitGround)
+            return;
+
+        CAM->Pos() = contact.hitPoint - sightRot->Forward() * 65;
+    }
+    if (CAM->Pos().y < 40)
+        CAM->Pos().y = 40;
+
 }
 
 void Camera::Frustum()

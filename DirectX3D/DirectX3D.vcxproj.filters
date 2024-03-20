@@ -194,6 +194,7 @@
     <ClCompile Include="Objects\Particle\CircleEft.cpp" />
     <ClCompile Include="Scenes\SimpleTestScene.cpp" />
     <ClCompile Include="Objects\Landscape\M42Objects.cpp" />
+    <ClCompile Include="Objects\Particle\SkyFallEft.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Objects\Character\DummyValphalk.h" />
@@ -370,6 +371,7 @@
     <ClInclude Include="Objects\Landscape\M42Objects.h" />
     <ClInclude Include="Scenes\OpeningScene.h" />
     <ClInclude Include="Scenes\LoadingScene.h" />
+    <ClInclude Include="Objects\Particle\SkyFallEft.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DirectX3D.rc" />

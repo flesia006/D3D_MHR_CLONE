@@ -65,14 +65,14 @@ GameManager::GameManager()
 //    SceneManager::Get()->Create("ParticleConfig", new ParticleConfigScene());
 //    SceneManager::Get()->Add("ParticleConfig");    
 
-//    SceneManager::Get()->Create("ValphalkTestScene", new ValphalkTestScene());
-//    SceneManager::Get()->Add("ValphalkTestScene");
+    SceneManager::Get()->Create("ValphalkTestScene", new ValphalkTestScene());
+    SceneManager::Get()->Add("ValphalkTestScene");
 
 //    SceneManager::Get()->Create("PlayerTestScene", new PlayerTestScene());
 //    SceneManager::Get()->Add("PlayerTestScene");
 
-   SceneManager::Get()->Create("FightTestScene", new FightTestScene());
-   SceneManager::Get()->Add("FightTestScene");
+//   SceneManager::Get()->Create("FightTestScene", new FightTestScene());
+//   SceneManager::Get()->Add("FightTestScene");
 
 //    SceneManager::Get()->Create("SimpleTestScene", new SimpleTestScene());
 //    SceneManager::Get()->Add("SimpleTestScene");
@@ -81,7 +81,7 @@ GameManager::GameManager()
     SceneManager::Get()->Add("OpeningScene");
 
     SceneManager::Get()->Create("LoadingScene", new LoadingScene());
-    //SceneManager::Get()->Add("LoadingScene");
+   SceneManager::Get()->Add("LoadingScene");
 
 //    SceneManager::Get()->Add("Terrain");
     CAM->isFreeCamTrue();

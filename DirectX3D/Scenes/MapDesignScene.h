@@ -19,11 +19,15 @@ private:
 
     DummyValphalk* val = nullptr;
     ModelAnimator* utusi = nullptr;
+    Player* player = nullptr;
 
     HalfSphere* ball;
     HalfSphere* ball2;
     HalfSphere* fog;
     HalfSphere* fog2;
+    HalfSphere* fogRe;
+    HalfSphere* fog2Re;
+
     Model* fieldFog;
 
 

@@ -4,13 +4,14 @@
 M42Objects::M42Objects()
 {
 	ground = new Model("M42Ground");
-	ground->Pos().y -= 56890;
-	ground->UpdateWorld();
-	ground->GetMaterials()[15]->SetShader(L"Basic/Texture2.hlsl");
+	ground->Pos().y -= 56900;
+	ground->GetMaterials()[15]->SetShader(L"Basic/Texture3.hlsl");
 	ground->GetMaterials()[28]->SetShader(L"Basic/Texture2.hlsl");
 	ground->GetMaterials()[29]->SetShader(L"Basic/Texture2.hlsl");
 	ground->GetMaterials()[31]->SetShader(L"Basic/Texture2.hlsl");
 	ground->GetMaterials()[35]->SetShader(L"Basic/Texture2.hlsl");
+	ground->UpdateWorld();
+
 
 	castle = new Model("castle");
 	castle->SetTag("castle");
@@ -175,7 +176,7 @@ M42Objects::M42Objects()
 	tent->Rot().y = -153 * unitRad;
 	tent->UpdateWorld();
 
-	
+
 }
 
 M42Objects::~M42Objects()
@@ -184,6 +185,7 @@ M42Objects::~M42Objects()
 
 void M42Objects::Update()
 {
+
 }
 
 void M42Objects::Render()
@@ -209,23 +211,23 @@ void M42Objects::Render()
 
 void M42Objects::GUIRender()
 {
-//	tent->GUIRender();
-//	sm414_005_01->GUIRender();
-//	sm414_005_00->GUIRender();
-//	sm414_005_03->GUIRender();
-//	sm414_003_07->GUIRender();
-//	sm414_007_00->GUIRender();
-//	sm414_004_00->GUIRender();
-//	sm414_003_03->GUIRender();
-//	sm414_003_01->GUIRender();
-//	sm414_003_00->GUIRender();
-//	sm414_002_02->GUIRender();
-//	sm414_002_00->GUIRender();
-//	sm414_001_00->GUIRender();
-//	ground->GUIRender();
-//	sm414_000_00->GUIRender();
-//	castle->GUIRender();
-//	sm414_003_02->GUIRender();
+	//	tent->GUIRender();
+	//	sm414_005_01->GUIRender();
+	//	sm414_005_00->GUIRender();
+	//	sm414_005_03->GUIRender();
+	//	sm414_003_07->GUIRender();
+	//	sm414_007_00->GUIRender();
+	//	sm414_004_00->GUIRender();
+	//	sm414_003_03->GUIRender();
+	//	sm414_003_01->GUIRender();
+	//	sm414_003_00->GUIRender();
+	//	sm414_002_02->GUIRender();
+	//	sm414_002_00->GUIRender();
+	//	sm414_001_00->GUIRender();
+	//	ground->GUIRender();
+	//	sm414_000_00->GUIRender();
+	//	castle->GUIRender();
+	//	sm414_003_02->GUIRender();
 }
 
 void M42Objects::SetShader(wstring path)
