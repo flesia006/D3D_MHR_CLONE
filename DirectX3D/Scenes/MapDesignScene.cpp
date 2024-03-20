@@ -95,6 +95,8 @@ MapDesignScene::MapDesignScene()
     blendState[1]->Additive();
     blendState[2]->Alpha(true);
     rasterizerState[1]->CullMode(D3D11_CULL_NONE);
+
+    //ItemManager::Get();
 }
 
 MapDesignScene::~MapDesignScene()
@@ -160,6 +162,7 @@ void MapDesignScene::Render()
 
 
     cap->Render();
+    //ItemManager::Get()->Render();
 }
 
 void MapDesignScene::PostRender()

@@ -68,7 +68,6 @@ private:
 		float timer = 0.0f;
 	};
 
-
 public:
 	Player();
 	~Player();
@@ -90,6 +89,8 @@ public:
 	void SetValphalk(Valphalk* val) { this->val = val; }
 	void SetValphalk(DummyValphalk* val) { this->dumVal = val; }
 	void SetWireBug(WireBug* wireBug) { this->wireBug = wireBug; }
+	bool GetInBattleMap() { return inBattleMap; }
+	void NearMapChangeArea();
 
 private:
 	void Control();
@@ -146,7 +147,6 @@ private:
 	void Capture();
 	void UpdateCaptureUI();
 
-	void NearMapChangeArea();
 
 private:
 	void ReadClips();
@@ -307,6 +307,7 @@ private:
 	Transform* forwardPos = nullptr;
 
 	Transform* head = nullptr;
+	Transform* center = nullptr;
 
 	Transform* swordStart = nullptr;
 	Transform* swordEnd = nullptr;
@@ -343,8 +344,8 @@ private:
 	UINT lastHitPart = 0;
 	Vector3 lastSwordDir;
 
-	State curState = S_001;
-	State preState = S_001;
+	State curState = E_092;
+	State preState = E_092;
 
 	float moveSpeed = 4000 * DELTA;
 	float rotSpeed = 5.0f;
@@ -445,6 +446,7 @@ private:
 	bool isMapChangeUIActive = false;
 	bool soundOncePerUI2 = false;
 	bool mapChanged = false;
+	bool inBattleMap = false;
 	bool isFirstRender = false;
 	///////////////////////////////////////////
 	// Particle
@@ -464,5 +466,8 @@ private:
 	vector<CircleEft*> circle;
 	SliceEft* slice = nullptr;
 	headBreakAtk* tuguAtk = nullptr;
+	UseBug* usebug;
+	bool isbugeffect = false;
+	float bugtime = 0;
 };
 

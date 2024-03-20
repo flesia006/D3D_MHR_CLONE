@@ -48,7 +48,7 @@ GameManager::GameManager()
 {
     Create();
     srand(static_cast<unsigned int>(time(NULL)));
-    randN = (rand() % 3000) + 1000;
+    randN = (rand() % 100) + 500;
 
 //    SceneManager::Get()->Create("ModelExport", new ModelExportScene());
 //    SceneManager::Get()->Add("ModelExport");
@@ -56,8 +56,8 @@ GameManager::GameManager()
 //    SceneManager::Get()->Create("Grid", new GridScene());
 //    SceneManager::Get()->Add("Grid");
 
-//    SceneManager::Get()->Create("ShadowScene", new ShadowScene());
-//    SceneManager::Get()->Add("ShadowScene");
+    SceneManager::Get()->Create("ShadowScene", new ShadowScene());
+    SceneManager::Get()->Add("ShadowScene");
 //    SceneManager::Get()->Create("MapDesignScene", new MapDesignScene());
 //    SceneManager::Get()->Add("MapDesignScene");
 //      SceneManager::Get()->Create("Particle", new ParticleScene());
@@ -77,16 +77,19 @@ GameManager::GameManager()
 //    SceneManager::Get()->Create("SimpleTestScene", new SimpleTestScene());
 //    SceneManager::Get()->Add("SimpleTestScene");
 
-    SceneManager::Get()->Create("OpeningScene", new OpeningScene());    
-    SceneManager::Get()->Add("OpeningScene");
-
-    SceneManager::Get()->Create("LoadingScene", new LoadingScene());
-   SceneManager::Get()->Add("LoadingScene");
+//    SceneManager::Get()->Create("OpeningScene", new OpeningScene());    
+//    SceneManager::Get()->Add("OpeningScene");
+//
+//    SceneManager::Get()->Create("LoadingScene", new LoadingScene());
+//    SceneManager::Get()->Add("LoadingScene");
 
 //    SceneManager::Get()->Add("Terrain");
-    CAM->isFreeCamTrue();
+//    CAM->isFreeCamTrue();
 
-    UIManager::Get()->isLoading = true;
+    // 씬만 재생하고 싶은 경우 : CAM->isFreeCamTrue() 지우고 isLoading = false;로 조정
+    // 로딩씬 같이 재생이라면  : CAM->isFreeComTrue() 살리고 isLoading = true; 로 조정
+    //CAM->isFreeCamTrue();
+    UIManager::Get()->isLoading = false;
 }
 
 GameManager::~GameManager()
@@ -371,6 +374,13 @@ void GameManager::Create()
     sound->AddSound("em086_05_se_media_32", SoundPath + L"Valphalk/em086_05_se_media_32.mp3");
     // 날개 휘두르기
     sound->AddSound("em086_05_se_media_46", SoundPath + L"Valphalk/em086_05_se_media_46.mp3");
+
+    // 걷는 소리
+    sound->AddSound("em086_05_se_media_52", SoundPath + L"Valphalk/em086_05_se_media_52.mp3");
+    sound->AddSound("em086_05_se_media_62", SoundPath + L"Valphalk/em086_05_se_media_62.mp3");
+    // 쓰러지는 소리
+    sound->AddSound("em086_05_se_media_11", SoundPath + L"Valphalk/em086_05_se_media_11.mp3");
+    sound->AddSound("em086_05_se_media_18", SoundPath + L"Valphalk/em086_05_se_media_18.mp3");
 
 
     

@@ -75,7 +75,8 @@ ItemManager::ItemManager()
 	}
 
 	BlueBox = new Model("BlueBox");
-	BlueBox->Pos() = { -1000, 0 , 200 }; //TODO : 나중에 아이템 박스 위치 바꿔야함
+	BlueBox->Pos() = { 751, 45 , 3909 }; //TODO : 나중에 아이템 박스 위치 바꿔야함
+	BlueBox->Rot().y += 0.65f;
 
 	BoxIcon = new Quad(L"Textures/UI/BoxIcon.png");
 	BoxIcon->Scale() *= 1.5f;
@@ -92,13 +93,13 @@ ItemManager::ItemManager()
 	ThisIcon2->Pos() = BlueBox->Pos();
 	ThisIcon2->Pos().y += 200;
 
-	FOR(2) rasterizerState[i] = new RasterizerState();
+	//FOR(2) rasterizerState[i] = new RasterizerState();
 	FOR(2) blendState[i] = new BlendState();
 	blendState[1]->Alpha(true);
-	rasterizerState[1]->CullMode(D3D11_CULL_NONE);
-	//depthState[0] = new DepthStencilState();
-	//depthState[1] = new DepthStencilState();
-	//depthState[1]->DepthWriteMask(D3D11_DEPTH_WRITE_MASK_ZERO);
+	//rasterizerState[1]->CullMode(D3D11_CULL_NONE);
+	depthState[0] = new DepthStencilState();
+	depthState[1] = new DepthStencilState();
+	depthState[1]->DepthWriteMask(D3D11_DEPTH_WRITE_MASK_ZERO);
 }
 
 ItemManager::~ItemManager()
@@ -132,14 +133,18 @@ ItemManager::~ItemManager()
 
 	FOR(2)
 	{
-		delete rasterizerState[i];
+		//delete rasterizerState[i];
 		delete blendState[i];
-		//delete depthState[i];
+		delete depthState[i];
 	}
 }
 
 void ItemManager::Update()
 {
+	if (camTimer <= 1.0f)
+	{
+		camTimer += DELTA;
+	}
 	FOR(itemList.size())
 	{
 		if (useBlueBox)
@@ -196,14 +201,14 @@ void ItemManager::Render()
 	BlueBox->Render();
 	if (lookBoxIcon)
 	{
-		rasterizerState[1]->SetState();
+		//rasterizerState[1]->SetState();
 		blendState[1]->SetState();
-		//depthState[1]->SetState();
+		depthState[1]->SetState();
 		ThisIcon1->Render();
 		ThisIcon2->Render();
 		blendState[0]->SetState();
-		//depthState[0]->SetState();
-		rasterizerState[0]->SetState();
+		depthState[0]->SetState();
+		//rasterizerState[0]->SetState();
 	}
 
 }
@@ -246,6 +251,7 @@ void ItemManager::PostRender()
 void ItemManager::GUIRender()
 {
 	//BlueBox->GUIRender();
+	ImGui::DragFloat3("Box", (float*)&BlueBox->Pos());
 }
 
 void ItemManager::GetBoxItem(vector<Quad*> invenList) // 여기서 아이템을 클릭하면 발생하는 이벤트 실행
@@ -342,6 +348,7 @@ void ItemManager::UseBlueBox(Vector3 Pos)
 		}
 		if (KEY_DOWN('G') && !useBlueBox)
 		{
+			MousePos = mousePos;
 			Sounds::Get()->Play("Boxopen", 1.2f);
 			useBlueBox = true;
 			mouseOn = true;
@@ -352,6 +359,15 @@ void ItemManager::UseBlueBox(Vector3 Pos)
 		}
 		else if (KEY_DOWN(VK_ESCAPE))
 		{
+			if (MousePos.y > CENTER_Y)
+			{
+				SetCursorPos(MousePos.x + 8.0f, CENTER_Y - Distance(MousePos.y, CENTER_Y) + 31.0f);
+			}
+			else if (MousePos.y <= CENTER_Y)
+			{
+				SetCursorPos(MousePos.x + 8.0f, CENTER_Y + Distance(MousePos.y, CENTER_Y) + 31.0f);
+			}
+			camTimer = 0;
 			useBlueBox = false;
 			mouseOn = false;
 			lookBoxIcon = true;
@@ -362,6 +378,18 @@ void ItemManager::UseBlueBox(Vector3 Pos)
 	}
 	else
 	{
+		if (useBlueBox)
+		{
+			camTimer = 0;
+			if (MousePos.y > CENTER_Y)
+			{
+				SetCursorPos(MousePos.x + 8.0f, CENTER_Y - Distance(MousePos.y, CENTER_Y) + 31.0f);
+			}
+			else if (MousePos.y <= CENTER_Y)
+			{
+				SetCursorPos(MousePos.x + 8.0f, CENTER_Y + Distance(MousePos.y, CENTER_Y) + 31.0f);
+			}
+		}
 		mouseOn = false;
 		lookBoxIcon = false;
 		useBlueBox = false;

@@ -112,8 +112,15 @@ UIManager::UIManager()
 	orangeRightHalfCircle3 = new Quad(L"Textures/UI/orangeHalfCircle2.png");
 	orangeRightHalfCircle3->SetActive(false);
 
-	questClearUI = new Quad(L"Textures/Quest/0.png");
-	questStartUI = new Quad(L"Textures/QuestStart/0.png");
+	questClearUI = new Quad(L"Textures/Quest/10.png");
+	clearUIColor = questClearUI->GetMaterial()->GetData().diffuse;
+	clearUIColor.w = 0.0f;
+	questClearUI->GetMaterial()->SetDiffuseMapColor(clearUIColor);
+
+	questStartUI = new Quad(L"Textures/QuestStart/10.png");
+	startUIColor = questStartUI->GetMaterial()->GetData().diffuse;
+	startUIColor.w = 0.0f;
+	questStartUI->GetMaterial()->SetDiffuseMapColor(startUIColor);
 
 	// 퀵슬롯 UI 추가
 	quickSlot_Back = new Quad(L"Textures/UI/QickSlot_Back.png");
@@ -628,7 +635,7 @@ UIManager::~UIManager()
 
 void UIManager::Update()
 {
-	if (isLoading == true) return;
+//	if (isLoading == true) return;
 
 	ItemManager::Get()->Update();
 	// 임시로 놓은거임
@@ -987,7 +994,7 @@ void UIManager::Update()
 
 void UIManager::PostRender()
 {
-	if (isLoading == true) return;
+//	if (isLoading == true) return;
 
 	if (!isRender)
 	{
@@ -996,11 +1003,13 @@ void UIManager::PostRender()
 			questClearUI->Render();
 			return;
 		}
-		else
+		else if (questStart)
 		{
 			questStartUI->Render();
 			return;
 		}
+		else
+			return;
 	}
 
 	recover->Render();
@@ -1016,7 +1025,7 @@ void UIManager::PostRender()
 	lsGauge->Render();
 	lsGauge2->Render();
 
-	// 이건 한번 더 봐야 알듯
+
 	// 액션 슬롯 내임 스페이스
 	slotNames[0]->Render();
 	Font::Get()->RenderText("탑승한다", {slotNames[0]->Pos().x + 70 ,slotNames[0]->Pos().y + 18});
@@ -1232,35 +1241,42 @@ void UIManager::UIAlphaOn()
 		return;
 	clearUITimer += DELTA;
 
-	if (clearUITimer > 0.01f && clearCount < 11)
+	//if (clearUITimer > 0.01f && clearUIColor.w < 1)
+	//{
+	//	questClearUI->SetTexture(L"Textures/Quest/" + to_wstring(clearCount) + L".png");
+	//	clearCount++;
+	//	clearUITimer = 0.0f;
+	//}
+
+	if (clearUITimer > 0.01f && clearUIColor.w < 1)
 	{
-		questClearUI->SetTexture(L"Textures/Quest/" + to_wstring(clearCount) + L".png");
-		clearCount++;
+		clearUIColor.w += 1.5f * DELTA;
+		questClearUI->GetMaterial()->SetDiffuseMapColor(clearUIColor);
 		clearUITimer = 0.0f;
 	}
 }
 
 void UIManager::StartUIAlphaOn()
 {
-	if (isRender || valDeath)
+	if (!questStart || valDeath)
 		return;
 
 	startUITimer += DELTA;
 	waitTimer += DELTA;
 
-	if (startUITimer > 0.01f && startCount < 11 && waitTimer < 3.0f)
+	if (startUITimer > 0.01f && startUIColor.w < 1 && waitTimer < 1.15f)
 	{
-		questStartUI->SetTexture(L"Textures/QuestStart/" + to_wstring(startCount) + L".png");
-		startCount++;
+		startUIColor.w += 2.0f * DELTA;
+		questStartUI->GetMaterial()->SetDiffuseMapColor(startUIColor);
 		startUITimer = 0.0f;
 	}
 
-	if (waitTimer > 2.0f)
+	if (waitTimer > 1.15f)
 	{
-		if (startUITimer > 0.01f && startCount > 0)
+		if (startUITimer > 0.01f && startUIColor.w > 0)
 		{
-			questStartUI->SetTexture(L"Textures/QuestStart/" + to_wstring(startCount - 1) + L".png");
-			startCount--;
+			startUIColor.w -= 2.0f * DELTA;
+			questStartUI->GetMaterial()->SetDiffuseMapColor(startUIColor);
 			startUITimer = 0.0f;
 		}
 	}
@@ -1492,23 +1508,6 @@ void UIManager::QuickSlot()
 			itemNumber_Q[11]->Render();
 			itemNumber_Q[10]->Render();
 		}
-
-		//if (useQuickSlot1)
-		//	useQuickSlot1 = false;
-		//if (useQuickSlot2)
-		//	useQuickSlot2 = false;
-		//if (useQuickSlot3)
-		//	useQuickSlot3 = false;
-		//if (useQuickSlot4)
-		//	useQuickSlot4 = false;
-		//if (useQuickSlot5)
-		//	useQuickSlot5 = false;
-		//if (useQuickSlot6)
-		//	useQuickSlot6 = false;
-		//if (useQuickSlot7)
-		//	useQuickSlot7 = false;
-		//if (useQuickSlot8)
-		//	useQuickSlot8 = false;
 	}
 }
 
@@ -1833,6 +1832,10 @@ void UIManager::NumberSlot()
 		timer += DELTA;
 		FOR(numberBoxs.size())
 		{
+			// 쿼드 알파 변환 할때 쓰는거
+			//Float4 color = numberBoxs[0]->GetMaterial()->GetData().diffuse;
+			//color.w -= 1.0f * DELTA; => 예가 알파
+			//numberBoxs[0]->GetMaterial()->SetDiffuseMapColor(color);
 			numberBoxs[i]->Render();
 		}
 		if (useNumberSlot1)
@@ -2026,7 +2029,7 @@ void UIManager::NumberSlotBar()
 		useNumberBar = true;
 		Sounds::Get()->Play("Icon_on", 1.2f);
 	}
-	if (timer >= 3.0f || KEY_DOWN(VK_ESCAPE))
+	if (timer >= 3.0f || KEY_DOWN(VK_ESCAPE) && useNumberBar)
 	{
 		useNumberBar = false;
 		useNumberSlot1 = false;
@@ -2051,6 +2054,9 @@ void UIManager::StateIcon()
 		if (stateIconTimer > 4.0f)
 		{
 			valphalkStateIcon1->Pos().y += 30.0f * DELTA;
+			Float4 color = valphalkStateIcon1->GetMaterial()->GetData().diffuse;
+			color.w -= 1.0f * DELTA;
+			valphalkStateIcon1->GetMaterial()->SetDiffuseMapColor(color);
 			if (stateIconTimer > 5.0f)
 			{
 				partDestruct = false;
@@ -2063,10 +2069,12 @@ void UIManager::StateIcon()
 	if (partDestruct2 || specialMove2)
 	{
 		stateIconTimer2 += DELTA;
-
 		if (stateIconTimer2 > 4.0f)
 		{
 			valphalkStateIcon2->Pos().y += 30.0f * DELTA;
+			Float4 color = valphalkStateIcon2->GetMaterial()->GetData().diffuse;
+			color.w -= 1.0f * DELTA;
+			valphalkStateIcon2->GetMaterial()->SetDiffuseMapColor(color);
 			if (stateIconTimer2 > 5.0f)
 			{
 				partDestruct2 = false;
@@ -2084,6 +2092,9 @@ void UIManager::StateIcon()
 		if (stateIconTimer3 > 4.0f)
 		{
 			valphalkStateIcon3->Pos().y += 30.0f * DELTA;
+			Float4 color = valphalkStateIcon3->GetMaterial()->GetData().diffuse;
+			color.w -= 1.0f * DELTA;
+			valphalkStateIcon3->GetMaterial()->SetDiffuseMapColor(color);
 			if (stateIconTimer3 > 5.0f)
 			{
 				valDeath = false;
@@ -2102,6 +2113,9 @@ void UIManager::StateIcon()
 		if (capturingTimer1 > 4.0f)
 		{
 			materialIcon1->Pos().y += 30.0f * DELTA;
+			Float4 color = materialIcon1->GetMaterial()->GetData().diffuse;
+			color.w -= 1.0f * DELTA;
+			materialIcon1->GetMaterial()->SetDiffuseMapColor(color);
 			if (capturingTimer1 > 5.0f)
 			{
 				captureIcon1 = false;
@@ -2117,6 +2131,9 @@ void UIManager::StateIcon()
 		if (capturingTimer2 > 4.0f)
 		{
 			materialIcon2->Pos().y += 30.0f * DELTA;
+			Float4 color = materialIcon2->GetMaterial()->GetData().diffuse;
+			color.w -= 1.0f * DELTA;
+			materialIcon2->GetMaterial()->SetDiffuseMapColor(color);
 			if (capturingTimer2 > 5.0f)
 			{
 				captureIcon2 = false;
@@ -2132,6 +2149,9 @@ void UIManager::StateIcon()
 		if (capturingTimer3 > 4.0f)
 		{
 			materialIcon3->Pos().y += 30.0f * DELTA;
+			Float4 color = materialIcon3->GetMaterial()->GetData().diffuse;
+			color.w -= 1.0f * DELTA;
+			materialIcon3->GetMaterial()->SetDiffuseMapColor(color);
 			if (capturingTimer3 > 5.0f)
 			{
 				captureIcon3 = false;

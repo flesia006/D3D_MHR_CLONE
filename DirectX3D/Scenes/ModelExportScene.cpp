@@ -3,15 +3,15 @@
 
 ModelExportScene::ModelExportScene()
 {
-    string name = "";
+    string name = "valphalk";
     string file = "Models/FBX/" + name + ".fbx";
     ModelExporter* exporter;
     string clipName;
 
-    exporter = new ModelExporter(name, file);
-    exporter->ExportMaterial();
-    exporter->ExportMesh();
-    delete exporter;    
+    //exporter = new ModelExporter(name, file);
+    //exporter->ExportMaterial();
+    //exporter->ExportMesh();
+    //delete exporter;    
 
 // Å¬¸³µþ ¶§ ÀÌ°Å ¾²¼À
 //    ExportClip(name, "BattleIdle");
@@ -21,9 +21,9 @@ ModelExportScene::ModelExportScene()
 //    ExportClip(name, "fwdStep");
 //    ExportClip(name, "FLY");
 //    ExportClip(name, "E_2145a");
-//    ExportClip(name, "T_019");
-//    ExportClip(name, "T_020");
-//    ExportClip(name, "T_050");
+    ExportClip(name, "E_3015");
+    ExportClip(name, "E_3016");
+    ExportClip(name, "E_3017");
 //    ExportClip(name, "T_051");
 //    ExportClip(name, "T_052");
 //    ExportClip(name, "W_062");

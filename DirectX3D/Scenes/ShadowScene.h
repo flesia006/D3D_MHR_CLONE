@@ -17,14 +17,13 @@ public:
     TerrainEditor* GetTerrain() { return terrain; }
 
 private:
-    void AddSounds();
-private:
     Player* player;
     Valphalk* valphalk = nullptr;
 
     Shadow* shadow;
 
     M41Objects* objects;
+    M42Objects* objects2;
 
     HalfSphere* ball;
     Model* fog;
@@ -32,15 +31,18 @@ private:
 
     TerrainEditor* terrain;
 
+    WireBug* wireBug;
 
     LightBuffer::Light* light; //ºû »ç¿ëÇÏ±â
 
 private:
     //Terrain* terrain;
     //AStar* aStar;
-    Garuk* garuk;
+    Sample* garuk;
     RasterizerState* rasterizerState[2];
     BlendState* blendState[2];
+
+    bool firstRender = false;
 
 };
 

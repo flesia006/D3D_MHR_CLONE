@@ -3,21 +3,21 @@
 
 ValphalkTestScene::ValphalkTestScene()
 {
-//	objects = new M41Objects();
+	//objects = new M41Objects();
 
 	valphalk = new Valphalk();
 	valphalk->Pos() = Vector3(4000, 500, 4000);
 
 	garuk = new Sample();
 	garuk->Pos() = Vector3(4000, 500, 4000);
-	terrain = new TerrainEditor();
+	//terrain = new TerrainEditor();
 
 	valphalk->SetTarget(garuk);
-	valphalk->SetTerrain(terrain);
+	//valphalk->SetTerrain(terrain);
 
 	garuk->SetEnemy(valphalk);
 	garuk->SetTarget(valphalk->GetRealPos());
-	garuk->SetTerrain(terrain);
+	//garuk->SetTerrain(terrain);
 
 	rasterizer = new RasterizerState();
 	rasterizer->CullMode(D3D11_CULL_NONE);

@@ -601,4 +601,8 @@ private:
 
 	Vector3 tempScale;
 	Trail* trail;
+	RoarEffect* roarEffect;
+	float walkTime;
+
+
 };

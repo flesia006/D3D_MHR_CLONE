@@ -5,6 +5,11 @@ class Camera : public Transform
 private:
     enum CAMmode
     {
+        BASIC, 
+        OPENING, 
+        DEAD, 
+        MAPMOVE,
+        MAPARRIVE,
         BASIC,
         OPENING,
         DEAD,
@@ -26,9 +31,13 @@ public:
 
     void SetOpeningCAM();
     void SetDeadCAM(Transform* target, Transform* target2 = nullptr);
+    void SetMapMoveCAM(Transform* target);
+    void SetMapArriveCAM(Transform* target);
 
     void OpeningCAM();
     void DeadCAM();
+    void MapMoveCAM();
+    void MapArriveCAM();
 
     Vector3 ScreenToWorld(Vector3 screenPos);
     Vector3 WorldToScreen(Vector3 worldPos);

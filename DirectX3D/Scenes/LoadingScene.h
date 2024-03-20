@@ -25,4 +25,5 @@ private:
     Quad* loading;
     Quad* icon;
     Quad* nowloading;
+    float timer;
 };

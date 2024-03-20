@@ -27,7 +27,7 @@ OpeningScene::OpeningScene()
     select->Scale() = { .9f,.6f,1 };
     
     //select->GetMaterial()->SetDiffuseMap(L"Textures/Color/Black.png");
-    //CAM->Pos().y += 10000;
+    CAM->Pos().y += 10000;
     lobby->Pos().y += 10000;
     //select->Pos().y += 10000;
 
@@ -45,6 +45,24 @@ OpeningScene::~OpeningScene()
 
 void OpeningScene::Update()
 {
+    Float4 color = select->GetMaterial()->GetData().diffuse;
+    timer += DELTA;
+
+    if (timer <= 0.8f)
+    {
+        color.w -= 0.25f * DELTA; //=> 예가 알파                             
+    }
+    if (timer >= .8f)
+    {
+        color.w += 0.25f * DELTA;        
+    }
+    if (timer >= 1.6f)
+    {
+        timer = 0.0f;
+    }
+
+    select->GetMaterial()->SetDiffuseMapColor(color);
+
     CAM->Pos() = { 0,10000,0 };
     CAM->Rot() = 0;
     lobby->Pos() = CAM->GlobalPos() + CAM->Forward() * 1630;//CAM->Forward() * 1630;
@@ -143,12 +161,13 @@ void OpeningScene::PostRender()
     if (isEnd == true)
     {
         Font::Get()->SetColor("White");
-
         Font::Get()->RenderText("새 게임", { WIN_WIDTH - 398, WIN_HEIGHT / 2.3f - 1 });
+        Font::Get()->SetColor("RealGray");
         Font::Get()->RenderText("계속하기", { WIN_WIDTH - 401, WIN_HEIGHT / 2.3f - 51 });
         Font::Get()->RenderText("옵션", { WIN_WIDTH - 401, WIN_HEIGHT / 2.3f - 101 });        
         Font::Get()->RenderText("사용설명서", { WIN_WIDTH - 401, WIN_HEIGHT / 2.3f - 151 });
         Font::Get()->RenderText("크레디트", { WIN_WIDTH - 401, WIN_HEIGHT / 2.3f - 201 });
+        Font::Get()->SetColor("White");
         Font::Get()->RenderText("QUIT", { WIN_WIDTH - 410, WIN_HEIGHT / 2.3f - 251 });
     }
 

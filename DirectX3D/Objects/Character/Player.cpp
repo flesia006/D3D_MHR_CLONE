@@ -9,6 +9,7 @@
 Player::Player() : ModelAnimator("Player")
 {
 	head = new Transform();
+	center = new Transform();
 	realPos = new Transform();
 	backPos = new Transform();
 	forwardPos = new Transform();
@@ -44,6 +45,8 @@ Player::Player() : ModelAnimator("Player")
 	haloCollider = new CapsuleCollider();
 	wireBugParticle = new Wire_Bug();
 	sutdol = new Sutdol();
+	usebug = new UseBug();
+
 	FOR(4)
 	{
 		CircleEft* cir = new CircleEft();
@@ -144,6 +147,7 @@ Player::~Player()
 	delete backPos;
 	delete realPos;
 	delete head;
+	delete center;
 	delete playerWireBug;
 	delete wireBugTrail;
 	delete playerWireBugHead;
@@ -196,8 +200,14 @@ void Player::Update()
 	//디버그용
 	if (KEY_DOWN('5'))
 		UI->PlusCotingLevel();
+	if (KEY_DOWN('6'))
+		SetState(T_019);
 	if (KEY_DOWN('8'))
-		isEvaded = true;
+	{
+		UI->isRender = false;
+		UI->valDeath = true;
+	}
+
 	///////////////////////////////
 }
 
@@ -238,7 +248,6 @@ void Player::Render()
 	longSword->Render();
 	kalzip->Render();
 
-
 	if (playerWireBug->Active())
 		playerWireBug->Render();
 
@@ -259,6 +268,7 @@ void Player::Render()
 		isSetState = false;
 	}
 	isFirstRender = true;
+	usebug->Render();
 }
 
 
@@ -355,6 +365,10 @@ void Player::UpdateWorlds()
 	else
 		head->Pos().y = realPos->Pos().y + 200;
 	head->Pos().z = realPos->Pos().z;
+	center->Pos().x = realPos->Pos().x;
+	center->Pos().y = realPos->Pos().y + 100;
+	center->Pos().z = realPos->Pos().z;
+	center->Rot() = Rot();
 
 	lastSwordEnd = swordStart->Pos();
 
@@ -383,6 +397,7 @@ void Player::UpdateWorlds()
 	longSword->UpdateWorld();
 	kalzip->UpdateWorld();
 	head->UpdateWorld();
+	center->UpdateWorld();
 	tmpCollider->UpdateWorld();
 	tmpCollider2->UpdateWorld();
 	tmpCollider3->UpdateWorld();
@@ -489,13 +504,13 @@ void Player::GUIRender()
 		//	float y = atan2(CAMForward.x, CAMForward.z);
 		//	ImGui::DragFloat("CAM.y", &y);
 
-//	Vector3 realpos = realPos->Pos();
-//	ImGui::DragFloat3("Pos", (float*)&Pos());
+	Vector3 realpos = realPos->Pos();
+	ImGui::DragFloat3("Pos", (float*)&Pos());
 //
 //	ImGui::DragFloat3("RealPos", (float*)&realpos);
 //
-//	Vector3 rot = Rot();
-//	ImGui::DragFloat3("Rot", (float*)&rot);
+	Vector3 rot = Rot();
+	ImGui::DragFloat3("Rot", (float*)&rot);
 
 	Vector3 camRot = CAM->Rot();
 	camRot.y += XM_PI;
@@ -525,7 +540,7 @@ void Player::GUIRender()
 //	//ImGui::SliderInt("keyboard", &U, 0, 200);
 //	//
 //	//
-//	ImGui::SliderInt("node", &node, 1, 210);
+	ImGui::SliderInt("node", &node, 1, 210);
 //	float value = UI->GetSpritGauge();
 //	ImGui::DragFloat("SpiritGauge", &value);
 	//	ImGui::SliderFloat("temp", &temp, -10, 10);
@@ -1028,6 +1043,40 @@ void Player::EffectUpdates()
 		else
 			circle[i]->Rot().y = atan2(Forward().x, Forward().z);
 		circle[i]->Update();
+	}
+	usebug->Update();
+	if (playerWireBug->Active())
+	{
+		isbugeffect = true;
+	}
+	if (isbugeffect)
+	{
+		bugtime += DELTA;
+		if (bugtime <= 0.1f && bugtime > 0.01f)
+			usebug->Play1(playerWireBug->Pos());
+		if (bugtime <= 0.2f && bugtime > 0.11f)
+			usebug->Play2(playerWireBug->Pos());
+		if (bugtime <= 0.3f && bugtime > 0.21f)
+			usebug->Play3(playerWireBug->Pos());
+		if (bugtime <= 0.4f && bugtime > 0.31f)
+			usebug->Play4(playerWireBug->Pos());
+		if (bugtime <= 0.5f && bugtime > 0.41f)
+			usebug->Play5(playerWireBug->Pos());
+		if (bugtime <= 0.6f && bugtime > 0.51f)
+			usebug->Play6(playerWireBug->Pos());
+		if (bugtime <= 0.7f && bugtime > 0.61f)
+			usebug->Play7(playerWireBug->Pos());
+		if (bugtime <= 0.8f && bugtime > 0.71f)
+			usebug->Play8(playerWireBug->Pos());
+		if (bugtime <= 0.9f && bugtime > 0.81f)
+			usebug->Play9(playerWireBug->Pos());
+		if (bugtime >= 0.8f && bugtime <= .9f)
+			usebug->Play10(playerWireBug->Pos());
+	}
+	if (bugtime > 3)
+	{
+		bugtime = 0;
+		isbugeffect = false;
 	}
 }
 
@@ -1604,7 +1653,11 @@ void Player::Roll()
 		SetState(S_018);
 
 	else if (!State_S())
+	{
+		if (curState == L_152)
+			holdingSword = false;
 		SetState(L_010);
+	}
 
 	UIManager::Get()->staminaActive = true;
 
@@ -2093,7 +2146,7 @@ void Player::S011() // 달리기 루프
 	}
 
 	// 101 내디뎌 베기
-	if (K_LMB)		SetState(L_101);
+	if (K_LMB && !ItemManager::Get()->useBlueBox)		SetState(L_101);
 	else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106);
 	else if (K_SPACE)	Roll();
 	else if (UI->IsAbleBugSkill() && K_LBUG)	SetState(W_005);	// 사선 밧줄벌레 이동
@@ -2302,7 +2355,7 @@ void Player::S122()   // 전력질주
 	else if (UI->IsAbleBugSkill() && K_LBUG)	SetState(W_005);	// 사선 밧줄벌레 이동
 
 
-	if (K_LMB)		SetState(L_101);
+	if (K_LMB && !ItemManager::Get()->useBlueBox)		SetState(L_101);
 	else if (K_SPACE)	
 		Roll();	
 
@@ -2325,6 +2378,8 @@ void Player::L001() // 발도상태 대기
 	else if (UI->IsAbleBugSkill() && K_RBUG)		SetState(L_126);	// 수월의자세
 	else if (K_SPACE)	Roll();				// 010 구르기
 
+	if (KEY_DOWN('V'))
+		SetState(L_128);
 	UIManager::Get()->staminaActive = false;
 
 }
@@ -2347,7 +2402,7 @@ void Player::L004() // 발도상태 걷기 중 // 루프
 	RandBreath();
 
 	if (KEY_PRESS(VK_LSHIFT))		SetState(L_009); // 납도	
-	else if (K_LMB)		SetState(L_101);	// 101 내디뎌 베기	
+	else if (K_LMB && !ItemManager::Get()->useBlueBox)		SetState(L_101);	// 101 내디뎌 베기	
 	else if (K_RMB)		SetState(L_104);	// 104 찌르기	
 	else if (K_LMBRMB)	SetState(L_103);	// 103 베어내리기
 	else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106);	// 106 기인 베기	
@@ -2369,7 +2424,7 @@ void Player::L005() // 발도상태 걷기 시작 (발돋움)
 	PLAY;
 
 	if (KEY_PRESS(VK_LSHIFT))		SetState(L_009); // 납도	
-	else if (K_LMB)		SetState(L_101);	// 101 내디뎌 베기	
+	else if (K_LMB && !ItemManager::Get()->useBlueBox)		SetState(L_101);	// 101 내디뎌 베기	
 	else if (K_RMB)		SetState(L_104);	// 104 찌르기	
 	else if (K_LMBRMB)	SetState(L_103);	// 103 베어내리기
 	else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106);	// 106 기인 베기	
@@ -2406,7 +2461,7 @@ void Player::L008() // 멈춤
 	PLAY;
 
 	if (KEY_PRESS(VK_LSHIFT))		SetState(L_009); // 납도	
-	else if (K_LMB)		SetState(L_101);	// 101 내디뎌 베기	
+	else if (K_LMB && !ItemManager::Get()->useBlueBox)		SetState(L_101);	// 101 내디뎌 베기	
 	else if (K_RMB)		SetState(L_104);	// 104 찌르기	
 	else if (K_LMBRMB)	SetState(L_103);	// 103 베어내리기
 	else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106);	// 106 기인 베기	
@@ -3441,10 +3496,10 @@ void Player::L147() // 간파베기
 		evadeCheckCollider->SetParent(realPos);
 		evadeCheckCollider->SetActive(true);
 		evadeCheckCollider->UpdateWorld();
+		spStartParticle->Play(Pos(), 0);
 		UI->curSpiritGauge = 0;
 	}
-	if (RATIO < 0.1)
-		spStartParticle->Play(Pos(), 0);
+
 	if (RATIO > 0.2 && RATIO < 0.3)
 		RandVoice();
 	UIManager::Get()->staminaActive = false;
@@ -3642,6 +3697,7 @@ void Player::L155() // 앉아발도 기인베기
 	{
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_25", .5f);
 		//Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_8", .5f);
+		spStartParticle->Play(Pos(), 0);
 	}
 	if (RATIO > 0.11 && RATIO < 0.15)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
@@ -3652,10 +3708,7 @@ void Player::L155() // 앉아발도 기인베기
 	}
 
 	if (RATIO < 0.1)
-	{
-		spStartParticle->Play(Pos(), 0);
 		LimitRotate(15);
-	}
 
 	static bool isHit = false;	// hit 하고 바로 3번 공격 들어가면 어색하니까 넣어주는 bool 
 
@@ -3676,7 +3729,7 @@ void Player::L155() // 앉아발도 기인베기
 
 	// 카운터 성공 시 추가 공격 프레임
 	{
-		if (isHit && (RATIO > 0.385 && RATIO < 0.39))
+		if (isEvaded && isHit && (RATIO > 0.385 && RATIO < 0.39))
 		{
 			spSuccessParticle->Play(Pos(), 0);
 			if (isHitL155 == false)
@@ -4317,7 +4370,7 @@ void Player::W006() // W005에서 이어지는 체공중 동작
 			{
 				SetState(F_073);
 				playerWireBug->SetActive(false);
-				playerWireBug->SetMove(Vector3::Zero(), false, Vector3::Zero());
+				playerWireBug->SetMove(Vector3::Zero(), false, Vector3::Zero());				
 			}
 			else
 			{
@@ -4490,13 +4543,25 @@ void Player::F073() // 착지 후 앞으로 이동
 void Player::T019() // 맵 입장
 {
 	PLAY;
+	if (INIT)
+		UI->isRender = false;
+
+	if (RATIO > 0.1 && !playOncePerMotion)
+	{
+		CAM->SetMapMoveCAM(center);
+		playOncePerMotion = true;
+	}
 
 	if (RATIO > 0.03 && RATIO < 0.13)
 		Sounds::Get()->Play("mapchangestart", 1.0f);
 
 	if (RATIO > 0.96)
 	{
+		UI->isMapChange = true;
+
 		//ReturnIdle2(); 입장, 도착 따로 하려면 이거로 쓰고
+		inBattleMap = true;
+		playOncePerMotion = false;
 		SetState(T_020); // 합쳐서 쓰려면 그대로 쓰면 됨
 	}
 }
@@ -4505,11 +4570,19 @@ void Player::T020() // 맵 도착
 {
 	PLAY;
 
+	if (INIT)
+	{
+		CAM->SetMapArriveCAM(center);
+		Pos() = Vector3(940, 300, 6625); // TODO : 도착지점 지형좌표 넣어야함 y값 아닐수도 940, 500, 6625 // 2151,200,4921예비좌표
+		realPos->Pos() = Vector3(0, 0, -200);
+	}
+
 	if (RATIO > 0.05 && RATIO < 0.15)
 		Sounds::Get()->Play("mapchangeend", 1.0f);
 
 	if (RATIO > 0.96)
 	{
+		UI->isRender = true;
 		ReturnIdle2();
 	}
 }
@@ -4571,14 +4644,25 @@ void Player::T052() // 갈무리 끝
 
 void Player::E092()
 {
-	PLAY;
+	if (UI->isLoading == true) return;
 
+	PLAY;		
+			
+	if (INIT)
+	{
+		CAM->SetOpeningCAM();
+	}
+	
 	if (RATIO > 0.05 && RATIO < 0.15)
 		Sounds::Get()->Play("queststart", 2.0f);
+
+	if (RATIO > 0.5 && RATIO < 0.6)
+		UI->questStart = true;
 
 	if (RATIO > 0.96)
 	{
 		UI->isRender = true;
+		UI->questStart = false;
 		ReturnIdle2();
 	}
 }
@@ -4942,7 +5026,7 @@ void Player::NearMapChangeArea()
 	Vector3 playerPos = realPos->Pos();
 	playerPos.y = 0;
 
-	Vector3 mapChangeAreaPos = { 0,0,100 };// 여기서 맵 이동지점 정하기
+	Vector3 mapChangeAreaPos = { 313,10,4182 };// TODO : 여기서 맵 이동좌표 정해야함 350,0,3895
 	mapChangeAreaPos.y = 0;
 
 	float distance = (playerPos - mapChangeAreaPos).Length();
@@ -4959,6 +5043,7 @@ void Player::NearMapChangeArea()
 
 	mapChangeUI->UpdateWorld();
 
+
 	if (distance <= 150)
 	{
 		isMapChangeUIActive = true;
@@ -4973,6 +5058,7 @@ void Player::NearMapChangeArea()
 		{
 			isMapChangeUIActive = false;
 			mapChanged = true;
+
 			SetState(T_019);
 		}
 	}
