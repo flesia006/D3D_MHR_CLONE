@@ -523,7 +523,7 @@ void Valphalk::PreRender()
 
 void Valphalk::Render()
 {
-	//	if (UIManager::Get()->isLoading == true && isFirstRender == true) return;
+	//if (UIManager::Get()->isLoading == true && isFirstRender == true) return;
 
 	if (renderVal)
 		ModelAnimator::Render();

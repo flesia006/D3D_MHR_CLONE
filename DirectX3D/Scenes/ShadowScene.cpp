@@ -7,24 +7,11 @@ ShadowScene::ShadowScene()
     objects = new M41Objects();
     objects2 = new M42Objects();
     terrain = new TerrainEditor();
-    ball = new HalfSphere();
-    fog = new Model("skydom");
     fieldFog = new Model("fog");
     player = new Player();
     valphalk = new Valphalk();
     garuk = new Sample();
     wireBug = new WireBug();
-
-    ball->Scale() *= 150000;
-    ball->Pos().y -= 6000;
-    //ball->GetMaterial()->SetShader(L"Basic/Texture.hlsl");
-    ball->GetMaterial()->SetDiffuseMap(L"Textures/M41Sky/storm.tga");
-    ball->UpdateWorld();
-
-    fog->SetTag("fog");
-    fog->Scale() *= 100;
-    fog->Pos().y -= 10000;
-    fog->UpdateWorld();
 
     fieldFog->Pos() = Vector3(2062.1f, 220, 17653.896f);
     fieldFog->Rot().y = XM_PI;
@@ -34,8 +21,8 @@ ShadowScene::ShadowScene()
     //player->Pos() = Vector3(2237.314, 460, 6411.237);
     player->Pos() = Vector3(632, 10, 2000);
     player->Rot().y = XM_PIDIV2;
+    player->SetGaruk(garuk->GetRealPos());
     player->SetDog(garuk);
-    player->SetTerrain(terrain);
     player->SetValphalk(valphalk);
     player->SetWireBug(wireBug);
 
@@ -48,27 +35,84 @@ ShadowScene::ShadowScene()
 
     garuk->SetTarget(player);
     garuk->SetEnemy(valphalk);
-    garuk->SetTerrain(terrain);
 
     wireBug->Pos() = { 313,215.9f,4282 };
 
     shadow = new Shadow();
     UIManager::Get();
 
-    // 같이 알아보는 활용법 : 빛 호출 혹은 만들기 (<-빛 사용 방법)    
+    ball = new HalfSphere(1, 360, 5);
+    ball->Scale() *= 500000;
+    ball->Pos().y -= 6000;
+    ball->GetMaterial()->SetShader(L"Basic/Texture.hlsl");
+    ball->GetMaterial()->SetDiffuseMap(L"Textures/M41Sky/sky.tga");
+    ball->UpdateWorld();
+
+    ball2 = new HalfSphere(1, 360, 5);
+    ball2->Scale() *= 500000;
+    ball2->Rot().x += XM_PI;
+    ball2->Rot().y += XM_PI;
+    ball2->Pos().y -= 6000;
+    ball2->GetMaterial()->SetShader(L"Basic/Texture.hlsl");
+    ball2->GetMaterial()->SetDiffuseMap(L"Textures/M41Sky/sky.tga");
+    ball2->UpdateWorld();
+
+
+    fog = new HalfSphere(1, 360, 5);
+    fog->Scale() *= 50000;
+    fog->Pos().y -= 500;
+    fog->GetMaterial()->SetShader(L"Basic/Texture.hlsl");
+    fog->GetMaterial()->SetDiffuseMap(L"Textures/M41Sky/newcloud2.png");
+    fog->UpdateWorld();
+
+    fog2 = new HalfSphere(1, 360, 5);
+    fog2->Scale() *= 30000;
+    fog2->Pos().y -= 500;
+    fog2->GetMaterial()->SetShader(L"Basic/Texture.hlsl");
+    fog2->GetMaterial()->SetDiffuseMap(L"Textures/M41Sky/newcloud2.png");
+    fog2->UpdateWorld();
+
+    fogRe = new HalfSphere(1, 360, 5);
+    fogRe->Scale() *= 50000;
+    fogRe->Rot().x += XM_PI;
+    fogRe->Rot().y += XM_PI;
+    fogRe->Pos().y -= 500;
+    fogRe->GetMaterial()->SetShader(L"Basic/Texture.hlsl");
+    fogRe->GetMaterial()->SetDiffuseMap(L"Textures/M41Sky/newcloud2.png");
+    fogRe->UpdateWorld();
+
+    fog2Re = new HalfSphere(1, 360, 5);
+    fog2Re->Scale() *= 30000;
+    fog2Re->Rot().x += XM_PI;
+    fog2Re->Rot().y += XM_PI;
+    fog2Re->Pos().y -= 500;
+    fog2Re->GetMaterial()->SetShader(L"Basic/Texture.hlsl");
+    fog2Re->GetMaterial()->SetDiffuseMap(L"Textures/M41Sky/newcloud2.png");
+    fog2Re->UpdateWorld();
+
+
+    fieldFog = new Model("fog");
+    fieldFog->Pos() = Vector3(2062.1f, 230, 17653.896f);
+    fieldFog->Rot().y = XM_PI;
+    fieldFog->UpdateWorld();
+
+
     light = Environment::Get()->GetLight(0);
-
     light->type = 0;
-    light->pos = { 0, 3000, +3000 };
-    light->range = 3000;
-
-    light->direction = { -0.1, -1, 0.1 };
-//    light->color = { 0.57, 0.66, 0.88, 1 }; // 밤조명
+    light->direction = { -1, -0.3, -1 };
+    //    light->color = { 0.57, 0.66, 0.88, 1 }; // 밤조명
     light->color = { 1, 1, 1, 1 };        // 낮조명
 
-    light->length;
-    light->inner;   //조명 집중 범위 (빛이 집중되어 쏘이는 범위...의 비중)
-    light->outer;   //조명 외곽 범위 (빛이 흩어져서 비치는 범위...의 비중)
+    light2 = Environment::Get()->GetLight(1);
+    light2->type = 0;
+    light2->direction = { -1, -0.3, -1 };
+    light2->color = { 0.77, 0.73, 0.65, 1 };        // 낮조명
+
+    light3 = Environment::Get()->GetLight(2);
+    light3->type = 0;
+    light3->direction = { 1, -0.6, 1 };
+    light3->color = { 0.45, 0.45, 0.45, 1 };        // 낮조명
+
 
 
     //Sounds::Get()->AddSound("Valphalk_Thema", SoundPath + L"Valphalk_Thema.mp3",true);
@@ -101,35 +145,45 @@ void ShadowScene::Update()
     //if (KEY_DOWN('3')) light->type = 2;
     //if (KEY_DOWN('4')) light->type = 3;
     //terrain->Update();
+    static bool once = false;
     if (UI->isMapChange == false) // 시작맵
     {
-        player->Pos().y = 10;
-        garuk->Pos().y = 10;
         objects2->Update();
         wireBug->Update();
     }
     else // 전투맵
     {
+        if (!once)
+        {
+            garuk->SetTerrain(terrain);
+            player->SetTerrain(terrain);
+        }
         objects->Update();
         valphalk->Update();
     }
-    //valphalk->Update();
     player->Update();
     garuk->Update();
     fieldFog->UpdateWorld();
-    
+
     ball->Rot().y += 0.02 * DELTA;
     ball->UpdateWorld();
 
-    fog->Rot().y += 0.04 * DELTA;
+    ball2->Rot().y += 0.02 * DELTA;
+    ball2->UpdateWorld();
+    
+    fog->Rot().y -= 0.04 * DELTA;
     fog->UpdateWorld();
+
+    fog2->Rot().y += 0.06 * DELTA;
+    fog2->UpdateWorld();
+
+    fogRe->Rot().y -= 0.04 * DELTA;
+    fogRe->UpdateWorld();
+
+    fog2Re->Rot().y += 0.06 * DELTA;
+    fog2Re->UpdateWorld();
     
     UIManager::Get()->Update();
-
-    if (player->getCollider()->IsCapsuleCollision(valphalk->GetCollider()[Valphalk::HEAD]))
-    {
-        UIManager::Get()->Hit(valphalk->damage);
-    }
     if (KEY_PRESS('Z')) valphalk->curHP -= 1000;
 
     if (KEY_DOWN('P'))
@@ -165,27 +219,29 @@ void ShadowScene::Render()
     //skyBox->Render();
 
     //위 함수에서 만들어진 텍스처를 그림자에서 렌더 대상으로 세팅
-    shadow->SetRender();
     if (firstRender == false)
     {
         valphalk->Render();
-        objects->Render();
         firstRender = true;
     }
 
-    //그림자를 받기 위한 셰이더 세팅
-    objects->SetShader(L"Light/Shadow.hlsl");
-    objects2->SetShader(L"Light/Shadow.hlsl");
-    valphalk->SetShader(L"Light/Shadow.hlsl");
-    player->SetShader(L"Light/Shadow.hlsl");
-    garuk->SetShader(L"Light/Shadow.hlsl");
-    //셰이더가 세팅된 배경과 인간을 진짜 호출
+//    //그림자를 받기 위한 셰이더 세팅
+//    objects->SetShader(L"Light/Shadow.hlsl");
+//    objects2->SetShader(L"Light/Shadow.hlsl");
+//    valphalk->SetShader(L"Light/Shadow.hlsl");
+//    player->SetShader(L"Light/Shadow.hlsl");
+//    garuk->SetShader(L"Light/Shadow.hlsl");
+//    //셰이더가 세팅된 배경과 인간을 진짜 호출
 
     //terrain->Render();
 
     rasterizerState[1]->SetState(); // 후면도 그림
     {
-        ball->Render();        
+        // val->Render();
+        ball->Render();
+        ball2->Render();
+        player->Render();
+        garuk->Render();
         if (UI->isMapChange == false) // 시작맵
         {
             objects2->Render();
@@ -196,21 +252,17 @@ void ShadowScene::Render()
             valphalk->Render();
             objects->Render();
         }
+        blendState[1]->SetState(); // 반투명
+        {
+            fog->Render();
+            fogRe->Render();
+            fog2->Render();
+            fog2Re->Render();
+            //fieldFog->Render();
+        }
+        blendState[0]->SetState();
     }
     rasterizerState[0]->SetState();
-    
-    player->Render();
-    garuk->Render();
-
-    rasterizerState[1]->SetState();
-    blendState[1]->SetState(); // 반투명
-    {
-        fog->Render();
-        fieldFog->Render();
-    }
-    blendState[0]->SetState();
-    rasterizerState[0]->SetState();
-        
     ItemManager::Get()->Render();
 }
 

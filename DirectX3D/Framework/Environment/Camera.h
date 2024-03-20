@@ -10,9 +10,6 @@ private:
         DEAD, 
         MAPMOVE,
         MAPARRIVE,
-        BASIC,
-        OPENING,
-        DEAD,
         FREE
     };
 
