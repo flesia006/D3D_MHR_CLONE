@@ -1834,7 +1834,7 @@ void UIManager::NumberSlot()
 		{
 			// 쿼드 알파 변환 할때 쓰는거
 			//Float4 color = numberBoxs[0]->GetMaterial()->GetData().diffuse;
-			//color.w -= 0.001f * timer; => 예가 알파
+			//color.w -= 1.0f * DELTA; => 예가 알파
 			//numberBoxs[0]->GetMaterial()->SetDiffuseMapColor(color);
 			numberBoxs[i]->Render();
 		}
@@ -2054,6 +2054,9 @@ void UIManager::StateIcon()
 		if (stateIconTimer > 4.0f)
 		{
 			valphalkStateIcon1->Pos().y += 30.0f * DELTA;
+			Float4 color = valphalkStateIcon1->GetMaterial()->GetData().diffuse;
+			color.w -= 1.0f * DELTA;
+			valphalkStateIcon1->GetMaterial()->SetDiffuseMapColor(color);
 			if (stateIconTimer > 5.0f)
 			{
 				partDestruct = false;
@@ -2066,10 +2069,12 @@ void UIManager::StateIcon()
 	if (partDestruct2 || specialMove2)
 	{
 		stateIconTimer2 += DELTA;
-
 		if (stateIconTimer2 > 4.0f)
 		{
 			valphalkStateIcon2->Pos().y += 30.0f * DELTA;
+			Float4 color = valphalkStateIcon2->GetMaterial()->GetData().diffuse;
+			color.w -= 1.0f * DELTA;
+			valphalkStateIcon2->GetMaterial()->SetDiffuseMapColor(color);
 			if (stateIconTimer2 > 5.0f)
 			{
 				partDestruct2 = false;
@@ -2087,6 +2092,9 @@ void UIManager::StateIcon()
 		if (stateIconTimer3 > 4.0f)
 		{
 			valphalkStateIcon3->Pos().y += 30.0f * DELTA;
+			Float4 color = valphalkStateIcon3->GetMaterial()->GetData().diffuse;
+			color.w -= 1.0f * DELTA;
+			valphalkStateIcon3->GetMaterial()->SetDiffuseMapColor(color);
 			if (stateIconTimer3 > 5.0f)
 			{
 				valDeath = false;
@@ -2105,6 +2113,9 @@ void UIManager::StateIcon()
 		if (capturingTimer1 > 4.0f)
 		{
 			materialIcon1->Pos().y += 30.0f * DELTA;
+			Float4 color = materialIcon1->GetMaterial()->GetData().diffuse;
+			color.w -= 1.0f * DELTA;
+			materialIcon1->GetMaterial()->SetDiffuseMapColor(color);
 			if (capturingTimer1 > 5.0f)
 			{
 				captureIcon1 = false;
@@ -2120,6 +2131,9 @@ void UIManager::StateIcon()
 		if (capturingTimer2 > 4.0f)
 		{
 			materialIcon2->Pos().y += 30.0f * DELTA;
+			Float4 color = materialIcon2->GetMaterial()->GetData().diffuse;
+			color.w -= 1.0f * DELTA;
+			materialIcon2->GetMaterial()->SetDiffuseMapColor(color);
 			if (capturingTimer2 > 5.0f)
 			{
 				captureIcon2 = false;
@@ -2135,6 +2149,9 @@ void UIManager::StateIcon()
 		if (capturingTimer3 > 4.0f)
 		{
 			materialIcon3->Pos().y += 30.0f * DELTA;
+			Float4 color = materialIcon3->GetMaterial()->GetData().diffuse;
+			color.w -= 1.0f * DELTA;
+			materialIcon3->GetMaterial()->SetDiffuseMapColor(color);
 			if (capturingTimer3 > 5.0f)
 			{
 				captureIcon3 = false;
