@@ -309,5 +309,6 @@ public:
 
 public:
     bool isLoading = false;
+    bool isMapChange = false;
 };
 

@@ -55,6 +55,20 @@ void LoadingScene::Update()
     loading->Pos().x -= 100 * DELTA;
     icon->Rot().z -= 4 * DELTA;
 
+    timer += DELTA;
+    Float4 color = nowloading->GetMaterial()->GetData().diffuse;
+    if (timer <= 0.8f)
+    {
+        color.w -= 0.5f * DELTA;
+    }
+    else if (timer >= 0.8f)
+    {
+        color.w += 0.5f * DELTA;
+    }
+    nowloading->GetMaterial()->SetDiffuseMapColor(color);
+    if (timer >= 1.6f)
+        timer = 0;
+
     loading->UpdateWorld();
     icon->UpdateWorld();    
     nowloading->UpdateWorld();

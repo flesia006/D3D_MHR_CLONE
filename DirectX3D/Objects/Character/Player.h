@@ -90,6 +90,7 @@ public:
 	void SetValphalk(DummyValphalk* val) { this->dumVal = val; }
 	void SetWireBug(WireBug* wireBug) { this->wireBug = wireBug; }
 	bool GetInBattleMap() { return inBattleMap; }
+	void NearMapChangeArea();
 
 private:
 	void Control();
@@ -146,7 +147,6 @@ private:
 	void Capture();
 	void UpdateCaptureUI();
 
-	void NearMapChangeArea();
 
 private:
 	void ReadClips();

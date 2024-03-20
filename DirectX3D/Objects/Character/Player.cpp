@@ -158,7 +158,7 @@ Player::~Player()
 
 void Player::Update()
 {
-	//if (UIManager::Get()->isLoading == true) return;
+	if (UIManager::Get()->isLoading == true) return;
 
 	if (KEY_DOWN('B'))
 		SetState(L_001);
@@ -232,7 +232,7 @@ void Player::PreRender()
 
 void Player::Render()
 {
-	//if (UIManager::Get()->isLoading == true && isFirstRender == true) return;
+	if (UIManager::Get()->isLoading == true && isFirstRender == true) return;
 
 	ModelAnimator::Render();
 	tmpCollider->Render();
@@ -500,13 +500,13 @@ void Player::GUIRender()
 		//	float y = atan2(CAMForward.x, CAMForward.z);
 		//	ImGui::DragFloat("CAM.y", &y);
 
-//	Vector3 realpos = realPos->Pos();
-//	ImGui::DragFloat3("Pos", (float*)&Pos());
+	Vector3 realpos = realPos->Pos();
+	ImGui::DragFloat3("Pos", (float*)&Pos());
 //
 //	ImGui::DragFloat3("RealPos", (float*)&realpos);
 //
-//	Vector3 rot = Rot();
-//	ImGui::DragFloat3("Rot", (float*)&rot);
+	Vector3 rot = Rot();
+	ImGui::DragFloat3("Rot", (float*)&rot);
 
 	Vector3 camRot = CAM->Rot();
 	camRot.y += XM_PI;
@@ -4555,6 +4555,8 @@ void Player::T019() // 맵 입장
 
 	if (RATIO > 0.96)
 	{
+		UI->isMapChange = true;
+
 		//ReturnIdle2(); 입장, 도착 따로 하려면 이거로 쓰고
 		inBattleMap = true;
 		playOncePerMotion = false;
@@ -4569,7 +4571,7 @@ void Player::T020() // 맵 도착
 	if (INIT)
 	{
 		CAM->SetMapArriveCAM(center);
-		Pos() = Vector3(0, 0, -200); // TODO : 도착지점 지형좌표 넣어야함 y값 아닐수도 940, 500, 6625
+		Pos() = Vector3(940, 300, 6625); // TODO : 도착지점 지형좌표 넣어야함 y값 아닐수도 940, 500, 6625 // 2151,200,4921예비좌표
 		realPos->Pos() = Vector3(0, 0, -200);
 	}
 
@@ -4640,11 +4642,15 @@ void Player::T052() // 갈무리 끝
 
 void Player::E092()
 {
-	PLAY;
+	if (UI->isLoading == true) return;
 
+	PLAY;		
+			
 	if (INIT)
+	{
 		CAM->SetOpeningCAM();
-
+	}
+	
 	if (RATIO > 0.05 && RATIO < 0.15)
 		Sounds::Get()->Play("queststart", 2.0f);
 
@@ -4653,8 +4659,8 @@ void Player::E092()
 
 	if (RATIO > 0.96)
 	{
-		UI->questStart = false;
 		UI->isRender = true;
+		UI->questStart = false;
 		ReturnIdle2();
 	}
 }
@@ -5018,7 +5024,7 @@ void Player::NearMapChangeArea()
 	Vector3 playerPos = realPos->Pos();
 	playerPos.y = 0;
 
-	Vector3 mapChangeAreaPos = { 0,0,200 };// TODO : 여기서 맵 이동좌표 정해야함 350,0,3895
+	Vector3 mapChangeAreaPos = { 313,10,4182 };// TODO : 여기서 맵 이동좌표 정해야함 350,0,3895
 	mapChangeAreaPos.y = 0;
 
 	float distance = (playerPos - mapChangeAreaPos).Length();
@@ -5035,6 +5041,7 @@ void Player::NearMapChangeArea()
 
 	mapChangeUI->UpdateWorld();
 
+
 	if (distance <= 150)
 	{
 		isMapChangeUIActive = true;
@@ -5049,6 +5056,7 @@ void Player::NearMapChangeArea()
 		{
 			isMapChangeUIActive = false;
 			mapChanged = true;
+
 			SetState(T_019);
 		}
 	}

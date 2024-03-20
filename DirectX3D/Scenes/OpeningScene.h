@@ -34,6 +34,8 @@ private:
     bool isEnd = false;
     int sequence = 0;
     int selectNum = 0;
+    float timer = 0;
+    bool light = false;
 
 
 };

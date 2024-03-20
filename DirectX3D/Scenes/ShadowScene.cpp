@@ -30,7 +30,10 @@ ShadowScene::ShadowScene()
     fieldFog->Rot().y = XM_PI;
     fieldFog->UpdateWorld();
 
-    player->Pos() = Vector3(2237.314, 460, 6411.237);
+    
+    //player->Pos() = Vector3(2237.314, 460, 6411.237);
+    player->Pos() = Vector3(632, 10, 2000);
+    player->Rot().y = XM_PIDIV2;
     player->SetDog(garuk);
     player->SetTerrain(terrain);
     player->SetValphalk(valphalk);
@@ -46,6 +49,8 @@ ShadowScene::ShadowScene()
     garuk->SetTarget(player);
     garuk->SetEnemy(valphalk);
     garuk->SetTerrain(terrain);
+
+    wireBug->Pos() = { 313,215.9f,4282 };
 
     shadow = new Shadow();
     UIManager::Get();
@@ -86,6 +91,7 @@ ShadowScene::~ShadowScene()
     delete ball;
     delete fog;
     delete terrain;
+    delete wireBug;
 }
 
 void ShadowScene::Update()
@@ -95,10 +101,21 @@ void ShadowScene::Update()
     //if (KEY_DOWN('3')) light->type = 2;
     //if (KEY_DOWN('4')) light->type = 3;
     //terrain->Update();
-    garuk->Update();
-    //objects->Update();
-    valphalk->Update();
+    if (UI->isMapChange == false) // 시작맵
+    {
+        player->Pos().y = 10;
+        garuk->Pos().y = 10;
+        objects2->Update();
+        wireBug->Update();
+    }
+    else // 전투맵
+    {
+        objects->Update();
+        valphalk->Update();
+    }
+    //valphalk->Update();
     player->Update();
+    garuk->Update();
     fieldFog->UpdateWorld();
     
     ball->Rot().y += 0.02 * DELTA;
@@ -115,24 +132,32 @@ void ShadowScene::Update()
     }
     if (KEY_PRESS('Z')) valphalk->curHP -= 1000;
 
+    if (KEY_DOWN('P'))
+        UI->isMapChange = false;
+    if (KEY_DOWN('L'))
+        UI->isMapChange = true;
+
 }
 
 void ShadowScene::PreRender()
 {
     //그림자의 렌더 타겟 지정(및 준비)
-    shadow->SetRenderTarget();
+    //shadow->SetRenderTarget();
 
-    //인간한테 뎁스 셰이더를 적용 (조건에 따른 셰이더 변화...등을 가진 조건 함수)
-    objects->SetShader(L"Light/DepthMap.hlsl");
-    valphalk->SetShader(L"Light/DepthMap.hlsl");
-    player->SetShader(L"Light/DepthMap.hlsl");
-    garuk->SetShader(L"Light/DepthMap.hlsl");
-    //조건에 따라 픽셀이 바뀐 인간을 렌더...해서 텍스처를 준비
-    objects->Render();
-    valphalk->Render();
-    player->Render();
+    ////인간한테 뎁스 셰이더를 적용 (조건에 따른 셰이더 변화...등을 가진 조건 함수)
+    //objects->SetShader(L"Light/DepthMap.hlsl");
+    //valphalk->SetShader(L"Light/DepthMap.hlsl");
+    //player->SetShader(L"Light/DepthMap.hlsl");
+    //garuk->SetShader(L"Light/DepthMap.hlsl");
+    ////조건에 따라 픽셀이 바뀐 인간을 렌더...해서 텍스처를 준비
+    //objects->Render();
+    //objects2->Render();
+    //valphalk->Render();
+    ////player->Render();
+    //
+    //garuk->Render();    
+    player->PreRender();
     
-    garuk->Render();
 }
 
 void ShadowScene::Render()
@@ -141,7 +166,12 @@ void ShadowScene::Render()
 
     //위 함수에서 만들어진 텍스처를 그림자에서 렌더 대상으로 세팅
     shadow->SetRender();
-
+    if (firstRender == false)
+    {
+        valphalk->Render();
+        objects->Render();
+        firstRender = true;
+    }
 
     //그림자를 받기 위한 셰이더 세팅
     objects->SetShader(L"Light/Shadow.hlsl");
@@ -156,11 +186,16 @@ void ShadowScene::Render()
     rasterizerState[1]->SetState(); // 후면도 그림
     {
         ball->Render();        
-        valphalk->Render();
-        if (player->GetInBattleMap())
-            objects->Render();
-        else
+        if (UI->isMapChange == false) // 시작맵
+        {
             objects2->Render();
+            wireBug->Render();
+        }
+        else // 전투맵
+        {
+            valphalk->Render();
+            objects->Render();
+        }
     }
     rasterizerState[0]->SetState();
     
@@ -175,7 +210,7 @@ void ShadowScene::Render()
     }
     blendState[0]->SetState();
     rasterizerState[0]->SetState();
-
+        
     ItemManager::Get()->Render();
 }
 
@@ -183,6 +218,8 @@ void ShadowScene::PostRender()
 {
     //shadow->PostRender(); // 쿼드 출력용
     player->PostRender();
+    wireBug->PostRender();
+    garuk->PostRender();
     UIManager::Get()->PostRender();
 }
 
@@ -197,9 +234,13 @@ void ShadowScene::GUIRender()
 //    forest->GUIRender();
 //    terrain->GUIRender();
 //    valphalk->GUIRender();
-//    player->GUIRender(); // 디버그 조작용
+      
+    player->GUIRender(); // 디버그 조작용
     fieldFog->GUIRender();
     valphalk->GUIRender();
+    CAM->GUIRender();
+    UIManager::Get()->GUIRender();
+    ItemManager::Get()->GUIRender();
     //player->GUIRender(); // 디버그 조작용
     //UIManager::Get()->GUIRender();
 }

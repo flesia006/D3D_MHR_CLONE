@@ -58,6 +58,7 @@ void PlayerTestScene::Update()
 	//	garuk->Pos().y = garuk1Pos.y;
 	//	garuk2->Pos().y = garuk2Pos.y;
 
+	
 }
 
 void PlayerTestScene::PreRender()

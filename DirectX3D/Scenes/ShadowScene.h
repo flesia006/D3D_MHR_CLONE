@@ -42,5 +42,7 @@ private:
     RasterizerState* rasterizerState[2];
     BlendState* blendState[2];
 
+    bool firstRender = false;
+
 };
 
