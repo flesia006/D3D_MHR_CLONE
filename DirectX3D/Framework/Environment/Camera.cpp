@@ -129,6 +129,7 @@ void Camera::OpeningCAM()
     {
         CAM->Rot() = sightRot->Rot();
         CAM->Pos() = target->GlobalPos() + sightRot->Back() * distance * 1.6;
+        CAM->Pos().y += height;
     }
     else if (timer < 6.0f)
     {
@@ -265,6 +266,7 @@ void Camera::MapMoveCAM()
         distance = 400.0f;
         height = 0.0f;
         timer = 0.0f;
+        target1 = nullptr;
         prevMousePos = mousePos;
         mode = BASIC;
     }
@@ -317,6 +319,7 @@ void Camera::MapArriveCAM()
         distance = 400.0f;
         height = 0.0f;
         timer = 0.0f;
+        target1 = nullptr;
         prevMousePos = mousePos;
         mode = BASIC;
     }

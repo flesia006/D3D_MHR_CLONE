@@ -165,7 +165,7 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 	Sounds::Get()->Play("env_114", 0.5f);
 	ColliderAdd();
 	realPos = new CapsuleCollider(1, 0.1);
-	realPos->Pos() = Vector3(4000, 500, 4000);
+	realPos->Pos() = Vector3(4000, 0, 4000); // TODO : 발파루크 시작위치 4000 500 4000
 	realPos->Scale() *= 6.0f;
 	realPos->UpdateWorld();
 
@@ -982,6 +982,7 @@ void Valphalk::Hupgi()
 	if (sequence == 3)
 	{
 		isHupGi = true;
+		isSlashMode = true;
 		ChooseNextPattern();
 	}
 	if (sequence == 4)
@@ -1049,7 +1050,7 @@ void Valphalk::S_SmallStagger()
 {
 	if (sequence == 0)// 소경직
 	{
-		SetState(E_3001);	E3001();
+		SetState(E_3006);	E3006();
 	}
 
 	if (sequence == 1)
@@ -1066,6 +1067,8 @@ void Valphalk::S_SmallStagger()
 
 void Valphalk::S_HugeStagger()
 {
+	static int loopCount2 = 3;
+
 	if (sequence == 0)// 대경직 시작
 	{
 		SetState(E_3015);	E3015();
@@ -1073,7 +1076,24 @@ void Valphalk::S_HugeStagger()
 
 	if (sequence == 1)// 대경직 루프
 	{
-		SetState(E_3016);	E3016();
+		SetState(E_3016);
+		//E3016
+		PLAY;
+
+		if (RATIO > 0.10 && RATIO < 0.20)
+			Sounds::Get()->Play("em086_05_vo_media_25", 4.5f);
+
+		if (RATIO > 0.96)
+		{
+			Loop();
+			loopCount2 -= 1;
+
+			if (loopCount2 == 0)
+			{
+				loopCount2 = 2;
+				sequence++;
+			}
+		}
 	}
 
 	if (sequence == 2)// 대경직 회복
@@ -1657,7 +1677,7 @@ void Valphalk::ChooseNextPattern()
 	if (!needHupGi && !angerRoar90 && !angerRoar40 && !ult50)
 	{
 
-		if (distance < 2000)    // 근
+		if (distance < 1000)    // 근
 		{
 			if (isSlashMode)	   // 참
 			{
@@ -1715,7 +1735,7 @@ void Valphalk::ChooseNextPattern()
 
 		}
 
-		else if (distance >= 2000 && distance < 4000)  // 중
+		else if (distance >= 1000 && distance < 2000)  // 중
 		{
 			if (isSlashMode) // 참
 			{
@@ -2178,7 +2198,42 @@ void Valphalk::S_LegAtk()
 			Scale().x *= -1;
 		vecToTagt = { 0,0,0 };
 		Pos() = realPos->Pos();
-		sequence = 1;
+		sequence++;
+	}
+
+	if (sequence == 9) // 앞다리 찍기 각도 정하기
+	{
+		whichPattern = SetRadAndMirror(true);
+		sequence++;
+	}
+
+	if (sequence == 10) // 각도 정했으면 방향 전환함수
+	{
+		switch (whichPattern)
+		{
+		case 1:		SetState(E_2106);  E2106();  break;
+		case 2:		SetState(E_2107);  E2107(-XM_PIDIV2);  break;
+		case 3:		SetState(E_2108);  E2108(-XM_PI);	break;
+		case 4:		SetState(E_2106);  E2106();  break;
+		case 5:		SetState(E_2107);  E2107(XM_PIDIV2);  break;
+		case 6:		SetState(E_2108);  E2108(XM_PI);	break;
+		}
+	}
+
+	if (sequence == 11) // 공격 모션
+	{
+		SetState(E_2118);	E2118();
+	}
+
+	if (sequence == 12) // 앞다리 찍기 마무리 + 왼날개 찍기
+	{
+		SetState(E_2121);	E2121();
+	}
+
+	if (sequence == 13)
+	{
+		whichPattern = 0;
+		ChooseNextPattern();
 	}
 }
 
@@ -2269,8 +2324,64 @@ void Valphalk::S_StabAtk()
 	if (sequence == 8) // 백스탭마무리
 	{
 		vecToTagt = { 0,0,0 };
-		Pos() = realPos->Pos();
-		sequence = 1;
+		sequence++;
+	}
+
+	if (sequence == 9) // 날개찌르기 각도 정하기
+	{
+		whichPattern = SetRadAndMirror(false);
+		sequence++;
+	}
+
+	if (sequence == 10) // 각도 정했으면 방향 전환함수
+	{
+		switch (whichPattern)
+		{
+		case 1:		SetState(E_2040);  E2040();  break;
+		case 2:		SetState(E_2041);  E2041(-XM_PIDIV2);  break;
+		case 3:		SetState(E_2042);  E2042(-XM_PI);  break;
+		case 4:		SetState(E_2040);  E2040();  break;
+		case 5:		SetState(E_2044);  E2044(XM_PIDIV2);  break;
+		case 6:		SetState(E_2045);  E2045(XM_PI);  break;
+		}
+		if (RATIO > 0.18 && RATIO < 0.2)
+		{
+			if (randSound == 0)
+				Sounds::Get()->Play("em086_05_vo_media_1", 0.3f);
+			if (randSound == 1)
+				Sounds::Get()->Play("em086_05_vo_media_5", 0.3f);
+		}
+		if (RATIO < 0.8 && RATIO > 0.79)
+		{
+			Sounds::Get()->Play("em086_05_fx_media_25", 0.1f);
+			randSound = 0;
+		}
+	}
+
+	if (sequence == 11) // 공격 모션
+	{
+		if (!renderJetRight)
+			renderJetRight = true;
+		SetState(E_2038);	E2038();
+
+		if (RATIO > 0.18 && RATIO < 0.2)
+			Sounds::Get()->Play("em086_05_se_media_20", 0.4f);
+
+	}
+
+	if (sequence == 12) // 공격 모션2 - 휘두르기
+	{
+		SetState(E_2056);	E2056();
+		if (RATIO > 0.30 && RATIO < 0.31)
+			Sounds::Get()->Play("em086_05_se_media_32", 0.4f);
+	}
+
+	if (sequence == 13)
+	{
+		if (renderJetRight)
+			renderJetRight = false;
+		whichPattern = 0;
+		ChooseNextPattern();
 	}
 }
 
@@ -2498,7 +2609,39 @@ void Valphalk::S_Bite()
 			Scale().x *= -1;
 		vecToTagt = { 0,0,0 };
 		Pos() = realPos->Pos();
-		sequence = 1;
+		sequence++;
+	}
+
+	if (sequence == 8) // 꺠물기 각도 정하기
+	{
+		whichPattern = SetRadAndMirror(true);
+		sequence++;
+	}
+
+	if (sequence == 9) // 각도 정했으면 방향 전환함수
+	{
+		switch (whichPattern)
+		{
+		case 1:		SetState(E_2173);  E2173();  break;
+		case 2:		SetState(E_2174);  E2174(-XM_PIDIV2);  break;
+		case 3:		SetState(E_2175);  E2175(-XM_PI);	break;
+		case 4:		SetState(E_2173);  E2173();  break;
+		case 5:		SetState(E_2174);  E2174(XM_PIDIV2);  break;
+		case 6:		SetState(E_2175);  E2175(XM_PI);	break;
+		}
+	}
+
+	if (sequence == 10) // 공격 모션
+	{
+		SetState(E_2185);	E2185();
+	}
+
+	if (sequence == 11)
+	{
+		if (whichPattern == 4 || whichPattern == 5 || whichPattern == 6)
+			Scale().x *= -1;
+		whichPattern = 0;
+		ChooseNextPattern();
 	}
 }
 
@@ -5408,6 +5551,7 @@ void Valphalk::E2403()
 
 void Valphalk::E3001() // 작은 데미지 피격
 {
+	combo = false;
 	PLAY;
 		
 	if (RATIO > 0.10 && RATIO < 0.20)
@@ -5420,20 +5564,36 @@ void Valphalk::E3001() // 작은 데미지 피격
 		sequence++;
 }
 
-void Valphalk::E3006()
+void Valphalk::E3006() // 큰 데미지 피격
 {
+	combo = false;
+
+	PLAY;
+
+	if (INIT)
+	{
+		renderJet = false;
+		renderJetRight = false;
+	}
+
+	if (RATIO > 0.10 && RATIO < 0.20)
+		Sounds::Get()->Play("em086_05_vo_media_29", 3.0f);
+
+	if (RATIO > 0.96)
+		sequence++;
 }
 
 void Valphalk::E3015()
 {
-	combo = true;
+	combo = false;
 
 	PLAY;
 
-	//if (RATIO > 0.10 && RATIO < 0.20)
-	//{
-	//	Sounds::Get()->Play("em086_05_vo_media_25", 0.5f);
-	//}
+	if (INIT)
+	{
+		renderJet = false;
+		renderJetRight = false;
+	}
 	if (RATIO > 0.2 && RATIO < 0.3)
 	{
 		Sounds::Get()->Play("em086_05_se_media_18", 0.4f);
@@ -5456,14 +5616,12 @@ void Valphalk::E3017()
 	PLAY;
 
 	if (RATIO > 0.96)
-	{
-		combo = false;
 		sequence++;
-	}
 }
 
 void Valphalk::E3023() // 사망
 {
+	combo = false;
 	PLAY;
 
 	if (INIT)
@@ -5521,6 +5679,7 @@ void Valphalk::E3114()
 
 void Valphalk::E3118()
 {
+	combo = false;
 	PLAY;
 
 	if (INIT)
