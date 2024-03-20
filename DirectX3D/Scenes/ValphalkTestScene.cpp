@@ -43,7 +43,7 @@ void ValphalkTestScene::PreRender()
 void ValphalkTestScene::Render()
 {
 	rasterizer->SetState();
-	//objects->Render();
+//	objects->Render();
 	valphalk->Render();
 	garuk->Render();
 	//	terrain->Render();

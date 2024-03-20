@@ -42,13 +42,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -300,6 +300,7 @@
     <ClInclude Include="Objects\Particle\Suwol.h" />
     <ClInclude Include="Scenes\SimpleTestScene.h" />
     <ClInclude Include="Objects\Particle\SliceEft.h" />
+    <ClInclude Include="Objects\Particle\SkyFallEft.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Objects\Test\TestLight.h" />
     <ClInclude Include="Objects\Particle\Trail.h" />
@@ -484,6 +485,7 @@
     <ClCompile Include="Objects\Particle\Wire_Bug.cpp" />
     <ClCompile Include="Scenes\SimpleTestScene.cpp" />
     <ClCompile Include="Objects\Particle\SliceEft.cpp" />
+    <ClCompile Include="Objects\Particle\SkyFallEft.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DirectX3D.rc" />
