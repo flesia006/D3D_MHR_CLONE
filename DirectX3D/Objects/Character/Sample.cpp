@@ -127,7 +127,7 @@ void Sample::UpdateWorlds()
 	else if (KEY_DP('A'))						keyboardRot = camRot.y - XM_PIDIV2;
 	else if (KEY_DP('S'))						keyboardRot = camRot.y - XM_PI;
 	else if (KEY_DP('D'))						keyboardRot = camRot.y + XM_PIDIV2;
-	else										keyboardRot = 0.0f;
+	else										keyboardRot = Rot().y;
 
 	if (keyboardRot < -3.14)		keyboardRot += XM_2PI;
 	if (keyboardRot > 3.14)			keyboardRot -= XM_2PI;
@@ -229,8 +229,7 @@ void Sample::GroundCheck()
 
 void Sample::Rotate(float rotateSpeed)
 {
-	if (keyboardRot != 0.0f)
-	{
+
 		if (abs(Rot().y - keyboardRot) > 3.14)
 		{
 			if (keyboardRot < 0)	keyboardRot += XM_2PI;
@@ -241,14 +240,12 @@ void Sample::Rotate(float rotateSpeed)
 			RealRotate(rotateSpeed * DELTA);
 		else
 			RealRotate(-rotateSpeed * DELTA);
-	}
 
 }
 
 void Sample::LimitRotate(float limit)
 {
-	if (keyboardRot != 0.0f)
-	{
+
 		if (abs(Rot().y - keyboardRot) > 3.14)
 		{
 			if (keyboardRot < 0)	keyboardRot += XM_2PI;
@@ -272,7 +269,6 @@ void Sample::LimitRotate(float limit)
 				RealRotate(-5 * DELTA);
 			}
 		}
-	}
 
 }
 
@@ -617,9 +613,9 @@ void Sample::G0022_F()
 	// 2. 거리가 충분히 가까워져서 걸어도 됨
 
 	if (radBtwTarget < 0)
-		RealRotate(-2 * DELTA);
+		RealRotate(-3 * DELTA);
 	else
-		RealRotate(2 * DELTA);
+		RealRotate(3 * DELTA);
 
 	if (isCallDog)
 		SetState(G_0040);
@@ -643,10 +639,10 @@ void Sample::G0040_F()
 
 	// 1. 거리가 더 멀어져서 달려야 함
 
-	if (radBtwTarget < -1)
-		RealRotate(-3 * DELTA);
-	else if (radBtwTarget > 1)
-		RealRotate(3 * DELTA);
+	if (radBtwTarget < -unitRad)
+		RealRotate(-5 * DELTA);
+	else if (radBtwTarget > unitRad)
+		RealRotate(5 * DELTA);
 
 	if (!isCallDog)
 	{

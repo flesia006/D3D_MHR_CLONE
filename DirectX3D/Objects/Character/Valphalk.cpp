@@ -181,6 +181,9 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 	realPosition = new Transform();
 	realPosition->UpdateWorld();
 
+	FOR(2) rasterizerState[i] = new RasterizerState();
+	rasterizerState[1]->CullMode(D3D11_CULL_NONE);
+
 	/////////////////////////////////////////////
 	// 공격 콜라이더 (투사체, 폭발 등)	
 	bullets.resize(6);
@@ -519,26 +522,7 @@ void Valphalk::Update()
 
 void Valphalk::PreRender()
 {
-}
 
-void Valphalk::Render()
-{
-	//if (UIManager::Get()->isLoading == true && isFirstRender == true) return;
-
-	if (renderVal)
-		ModelAnimator::Render();
-
-	for (CapsuleCollider* capsulCollider : colliders)
-	{
-		if (capsulCollider->isAttack)
-			capsulCollider->Render();
-	}
-
-	for (BoxCollider* boxCollider : wings)
-	{
-		if (boxCollider->isAttack)
-			boxCollider->Render();
-	}
 	for (int i = 0; i < bullets.size(); ++i)
 		bullets[i]->Render();
 	forwardBoom->Render();
@@ -577,6 +561,26 @@ void Valphalk::Render()
 		stormBox->Render();
 	}
 	roarEffect->Render();
+}
+
+void Valphalk::Render()
+{
+	//if (UIManager::Get()->isLoading == true && isFirstRender == true) return;
+	rasterizerState[1]->SetState();
+	if (renderVal)
+		ModelAnimator::Render();
+	rasterizerState[0]->SetState();
+	for (CapsuleCollider* capsulCollider : colliders)
+	{
+		if (capsulCollider->isAttack)
+			capsulCollider->Render();
+	}
+
+	for (BoxCollider* boxCollider : wings)
+	{
+		if (boxCollider->isAttack)
+			boxCollider->Render();
+	}
 
 	isFirstRender = true;
 
@@ -906,22 +910,25 @@ void Valphalk::EnergyBullets()
 			Scale().x *= -1;
 		sequence++;
 	}
-	Vector3 fire1 = GetTranslationByNode(61) - GetTranslationByNode(60);
-	Vector3 fire2 = GetTranslationByNode(64) - GetTranslationByNode(63);
-	Vector3 fire3 = GetTranslationByNode(67) - GetTranslationByNode(66);
-	Vector3 fire4 = GetTranslationByNode(81) - GetTranslationByNode(80);
-	Vector3 fire5 = GetTranslationByNode(84) - GetTranslationByNode(83);
-	Vector3 fire6 = GetTranslationByNode(87) - GetTranslationByNode(86);
-	fire1.GetNormalized();
-	fire2.GetNormalized();
-	fire3.GetNormalized();
-	fire4.GetNormalized();
-	fire5.GetNormalized();
-	fire6.GetNormalized();
+
 
 	if (sequence == 3) // 탄의 포지션 잡아주기
 	{
-		Sounds::Get()->Play("em086_05_fx_media_32", .3f);
+		Vector3 fire1, fire2, fire3, fire4, fire5, fire6;
+
+		if (!playOncePerPattern)
+		{
+			fire1 = GetTranslationByNode(61) - GetTranslationByNode(60);
+			fire2 = GetTranslationByNode(64) - GetTranslationByNode(63);
+			fire3 = GetTranslationByNode(67) - GetTranslationByNode(66);
+			fire4 = GetTranslationByNode(81) - GetTranslationByNode(80);
+			fire5 = GetTranslationByNode(84) - GetTranslationByNode(83);
+			fire6 = GetTranslationByNode(87) - GetTranslationByNode(86);
+			Sounds::Get()->Play("em086_05_fx_media_32", .3f);
+			playOncePerPattern = true;
+		}
+
+
 		bullets[0]->Pos() = GetTranslationByNode(61) + fire1 * .81f;
 		bullets[1]->Pos() = GetTranslationByNode(64) + fire2 * .81f;
 		bullets[2]->Pos() = GetTranslationByNode(67) + fire3 * .81f;
@@ -4229,7 +4236,7 @@ void Valphalk::E2079()
 			bullets[i]->Pos().y -= 420 * DELTA;
 		}
 
-		else if (bullets[i]->Pos().y < 0)
+		else if (bullets[i]->Pos().y < 0) 
 		{
 			FOR(6) fireParticle[i]->PlayExplosion();
 			bullets[i]->SetActive(false);

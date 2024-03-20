@@ -19,8 +19,10 @@ ShadowScene::ShadowScene()
 
     
     //player->Pos() = Vector3(2237.314, 460, 6411.237);
-    player->Pos() = Vector3(632, 10, 2000);
-    player->Rot().y = XM_PIDIV2;
+    player->Pos() = Vector3(532, 10, 2900);
+    player->GetMaterials()[7]->SetShader(L"Model/ModelAnimation2.hlsl");
+    player->GetMaterials()[9]->SetShader(L"Model/ModelAnimation2.hlsl");
+    player->Rot().y = XM_PI;
     player->SetGaruk(garuk->GetRealPos());
     player->SetDog(garuk);
     player->SetValphalk(valphalk);
@@ -211,7 +213,7 @@ void ShadowScene::PreRender()
     //
     //garuk->Render();    
     player->PreRender();
-    
+    valphalk->PreRender();
 }
 
 void ShadowScene::Render()
@@ -277,7 +279,7 @@ void ShadowScene::PostRender()
 
 void ShadowScene::GUIRender()
 {
-      ball->GUIRender();
+//    ball->GUIRender();
 //    fog->GUIRender();
 //    cloud->GUIRender();
 //    cloud2->GUIRender();
@@ -288,11 +290,11 @@ void ShadowScene::GUIRender()
 //    valphalk->GUIRender();
       
     player->GUIRender(); // 디버그 조작용
-    fieldFog->GUIRender();
-    valphalk->GUIRender();
-    CAM->GUIRender();
-    UIManager::Get()->GUIRender();
-    ItemManager::Get()->GUIRender();
+//    fieldFog->GUIRender();
+//    valphalk->GUIRender();
+//    CAM->GUIRender();
+//    UIManager::Get()->GUIRender();
+//    ItemManager::Get()->GUIRender();
     //player->GUIRender(); // 디버그 조작용
     //UIManager::Get()->GUIRender();
 }
