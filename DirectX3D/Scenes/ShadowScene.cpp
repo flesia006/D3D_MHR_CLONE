@@ -15,6 +15,7 @@ ShadowScene::ShadowScene()
     garuk = new Sample();
     wireBug = new WireBug();
 
+
     ball->Scale() *= 150000;
     ball->Pos().y -= 6000;
     //ball->GetMaterial()->SetShader(L"Basic/Texture.hlsl");
@@ -50,7 +51,7 @@ ShadowScene::ShadowScene()
     garuk->SetEnemy(valphalk);
     garuk->SetTerrain(terrain);
 
-    wireBug->Pos() = { 313,215.9f,4282 };
+    wireBug->Pos() = { 2010,390,4900 };
 
     shadow = new Shadow();
     UIManager::Get();
@@ -106,10 +107,10 @@ void ShadowScene::Update()
         player->Pos().y = 10;
         garuk->Pos().y = 10;
         objects2->Update();
-        wireBug->Update();
     }
     else // ÀüÅõ¸Ê
     {
+        wireBug->Update();
         objects->Update();
         valphalk->Update();
     }
@@ -189,10 +190,10 @@ void ShadowScene::Render()
         if (UI->isMapChange == false) // ½ÃÀÛ¸Ê
         {
             objects2->Render();
-            wireBug->Render();
         }
         else // ÀüÅõ¸Ê
         {
+            wireBug->Render();
             valphalk->Render();
             objects->Render();
         }
