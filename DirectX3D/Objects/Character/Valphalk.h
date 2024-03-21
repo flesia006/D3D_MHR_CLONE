@@ -456,6 +456,9 @@ private:
 	CapsuleCollider* tempCollider = nullptr;
 	TerrainEditor* terrain = nullptr;
 
+	RasterizerState* rasterizerState[2];
+
+
 	// »ùÇÃ ¹«Á¶°Ç ¹Ù²ñ
 	//float speed = 50; //¼Ó·Â : ±âº» ½ºÅÈ
 	//float maxHP = 5000;
