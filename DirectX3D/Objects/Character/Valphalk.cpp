@@ -3283,7 +3283,7 @@ void Valphalk::HS_FlyFallAtk()
 	{
 		if (renderJet)
 			renderJet = false;
-		Pos().y = 0;
+		Pos().y = height;
 		EX2278();
 	}
 
@@ -3348,7 +3348,7 @@ void Valphalk::HS_FlyFallAtk()
 
 	if (sequence == 12) // 내려와서 폭발시작
 	{
-		Pos().y = 0;
+		Pos().y = height;
 		EX2376();
 	}
 
@@ -4043,7 +4043,7 @@ void Valphalk::E2015()//돌진중 Loop
 
 void Valphalk::E2017()//돌진 브레이크
 {
-	Pos().y = 0;
+	Pos().y = height;
 
 	SetColliderAttack(HEAD, 0.263, 45, 2);
 	SetColliderAttack(LWING, 0.263, 45, 2);
@@ -4060,7 +4060,7 @@ void Valphalk::E2017()//돌진 브레이크
 
 void Valphalk::E2019()//브레이크 후 바닥 착지 완료
 {
-	Pos().y = 0;
+	Pos().y = height;
 
 	PLAY;
 
@@ -4082,7 +4082,7 @@ void Valphalk::E2020()//2017 동작을 하고 뒤를 쳐다봄
 
 void Valphalk::E2022()//2020 후 브레이크하고 뒤를 쳐다봄
 {
-	Pos().y = 0;
+	Pos().y = height;
 
 	PLAY;
 
@@ -4908,7 +4908,7 @@ void Valphalk::E2267()
 
 	if (RATIO < 0.16f)
 	{
-		Pos().y = Lerp(Pos().y, 600, 10 * DELTA);
+		Pos().y = Lerp(Pos().y, height + 600, 10 * DELTA);
 	}
 
 	if (RATIO > 0.96f)
@@ -5155,7 +5155,7 @@ void Valphalk::E2277()
 	else
 	{
 		SetState(E_2278);
-		Pos().y = 0.0f;
+		Pos().y = height;
 	}
 }
 
@@ -5526,7 +5526,7 @@ void Valphalk::E2375()
 	}
 	else
 	{
-		Pos().y = 0.0f;
+		Pos().y = height;
 		SetState(E_2376);
 	}
 }
