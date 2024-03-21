@@ -29,6 +29,8 @@ private:
 	string basicTexPath = "Textures/M41";
 	Vector3 basicPos = Vector3(2062.1f, 180, 17653.896f);
 
+	RasterizerState* rasterizerState[2];
+
 	const float unitRad = XM_PI / 180.0f;
 	int num = 0;
 };

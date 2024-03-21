@@ -61,6 +61,8 @@ public:
     bool isFreeCamFalse() { return freeCam = false; }
 
     Transform* sightRot;
+    bool shakeCAM = false;
+
 private:
     void FreeMode();
     void FollowMode();
@@ -78,6 +80,7 @@ private:
 
     float moveSpeed = 5000.0f;
     float rotSpeed = 2.0f;
+
 
     Vector3 prevMousePos;
 
@@ -112,9 +115,12 @@ private:
     char file[128] = {};
 
     SphereCollider* camSphere = nullptr;
+    BoxCollider* ground = nullptr;
     Ray sight;
     TerrainEditor* terrain = nullptr;
 
     CAMmode mode = BASIC;
     float timer = 0.0f;
+    float shakeTimer = 0.0f;
+    UINT count = 0;
 };

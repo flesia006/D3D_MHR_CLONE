@@ -347,7 +347,7 @@ void Player::UpdateWorlds()
 	else if (KEY_DP('A'))						keyboardRot = camRot.y - XM_PIDIV2;
 	else if (KEY_DP('S'))						keyboardRot = camRot.y - XM_PI;
 	else if (KEY_DP('D'))						keyboardRot = camRot.y + XM_PIDIV2;
-	else										keyboardRot = 0.0f;
+	else										keyboardRot = Rot().y;
 
 	if (keyboardRot < -3.14)		keyboardRot += XM_2PI;
 	if (keyboardRot > 3.14)			keyboardRot -= XM_2PI;
@@ -1082,8 +1082,7 @@ void Player::EffectUpdates()
 
 void Player::Rotate(float rotateSpeed)
 {
-	if (keyboardRot != 0.0f)
-	{
+
 		if (abs(Rot().y - keyboardRot) > 3.14)
 		{
 			if (keyboardRot < 0)	keyboardRot += XM_2PI;
@@ -1094,14 +1093,12 @@ void Player::Rotate(float rotateSpeed)
 			RealRotate(rotateSpeed * DELTA);
 		else if (keyboardRot < Rot().y - unitRad)
 			RealRotate(-rotateSpeed * DELTA);
-	}
 
 }
 
 void Player::LimitRotate(float limit, float rotSpeed)
 {
-	if (keyboardRot != 0.0f)
-	{
+
 		if (abs(Rot().y - keyboardRot) > 3.14)
 		{
 			if (keyboardRot < 0)	keyboardRot += XM_2PI;
@@ -1109,7 +1106,7 @@ void Player::LimitRotate(float limit, float rotSpeed)
 		}
 
 
-		if (keyboardRot > Rot().y)
+		if (keyboardRot > Rot().y + unitRad)
 		{
 			sumRot += rotSpeed * DELTA;
 			if (sumRot < unitRad * limit)
@@ -1117,7 +1114,7 @@ void Player::LimitRotate(float limit, float rotSpeed)
 				RealRotate(rotSpeed * DELTA);
 			}
 		}
-		else
+		else if (keyboardRot < Rot().y - unitRad)
 		{
 			sumRot += rotSpeed * DELTA;
 			if (sumRot < unitRad * limit)
@@ -1125,7 +1122,6 @@ void Player::LimitRotate(float limit, float rotSpeed)
 				RealRotate(-rotSpeed * DELTA);
 			}
 		}
-	}
 }
 
 bool Player::Attack(float power, bool push, UINT useOtherCollider) // 충돌판정 함수
@@ -4128,7 +4124,7 @@ void Player::D015() // 쳐맞고 덤블링 날라가기
 	}
 	//if (INIT)
 	//	RandHurtVoice();
-	if (Jump(300))
+	if (Jump(300, 1.0f))
 	{
 		Pos() += Back() * temp4 * DELTA;
 
@@ -4136,9 +4132,7 @@ void Player::D015() // 쳐맞고 덤블링 날라가기
 		{
 			playOncePerMotion = false;
 
-			Vector3 camRot = CAM->Rot();
-			camRot.y += XM_PI;
-			Rot().y = camRot.y;
+			Rot().y = keyboardRot;
 			SetState(W_009);
 		}
 	}
@@ -4165,9 +4159,17 @@ void Player::D021() // 앞보고 앞으로 날라가기
 	PLAY;
 	//if (INIT)
 	//	RandHurtVoice();
-	if (Jump(300))
+	if (Jump(300, 1.0f))
 	{
 		Pos() += Forward() * temp4 * DELTA;
+
+		if (UI->IsAbleBugSkill() && K_LBUG)
+		{
+			playOncePerMotion = false;
+
+			Rot().y = keyboardRot;
+			SetState(W_009);
+		}
 	}
 	else
 	{
@@ -4794,6 +4796,7 @@ bool Player::Jump(float moveSpeed, float jumpSpeed)
 	Pos() -= Forward() * moveSpeed * DELTA;
 	Pos().y += jumpVelocity;
 
+
 	if (realPos->Pos().y >= height || jumpVelocity > 0) // 상승 중일때나 y 값이 헤이트 이상이라면
 	{
 		isJump = true;
@@ -4954,9 +4957,9 @@ void Player::RandHitSounds()
 	int i = rand() % 3;
 	switch (i)
 	{
-	case 0:		Sounds::Get()->Play("hit_pl_media.bnk.2_14", 1.1f);		break;
-	case 1:		Sounds::Get()->Play("hit_pl_media.bnk.2_20", 1.1f);		break;
-	case 2:		Sounds::Get()->Play("hit_pl_media.bnk.2_35", 1.1f);		break;
+	case 0:		Sounds::Get()->Play("hit_pl_media.bnk.2_14", 0.9f);		break;
+	case 1:		Sounds::Get()->Play("hit_pl_media.bnk.2_20", 0.9f);		break;
+	case 2:		Sounds::Get()->Play("hit_pl_media.bnk.2_35", 0.9f);		break;
 	default:
 		break;
 	}

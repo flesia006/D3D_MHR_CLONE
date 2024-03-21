@@ -174,6 +174,10 @@ M41Objects::M41Objects()
         }
         sm414_009_00->Update();
     }
+
+    FOR(2) rasterizerState[i] = new RasterizerState();
+    rasterizerState[1]->CullMode(D3D11_CULL_NONE);
+
 }
 
 M41Objects::~M41Objects()
@@ -186,7 +190,7 @@ void M41Objects::Update()
 
 void M41Objects::Render()
 {
-
+    rasterizerState[1]->SetState();
     sm415_000_01->Render();
     sm414_007_00->Render();
     sm414_005_04->Render();
@@ -195,7 +199,7 @@ void M41Objects::Render()
     sm414_005_02->Render();
     sm414_009_00->Render();
     M42A01->Render();
-
+    rasterizerState[0]->SetState();
 //    grass->Render();
 
 }

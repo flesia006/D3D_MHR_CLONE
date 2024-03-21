@@ -230,6 +230,7 @@ using namespace GameMath;
 #include "Objects/Particle/Sutdol.h"
 #include "Objects/Particle/FullBurstParticle.h"
 #include "Objects/Particle/FullBurstParticle2.h"
+#include "Objects/Particle/SkyFallEft.h"
 #include "Objects/Particle/UseBug.h"
 #include "Objects/Particle/RoarEffect.h"
 

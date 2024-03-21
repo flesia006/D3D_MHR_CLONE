@@ -25,15 +25,23 @@ private:
     M41Objects* objects;
     M42Objects* objects2;
 
-    HalfSphere* ball;
-    Model* fog;
     Model* fieldFog;
+
+    HalfSphere* ball;
+    HalfSphere* ball2;
+    HalfSphere* fog;
+    HalfSphere* fog2;
+    HalfSphere* fogRe;
+    HalfSphere* fog2Re;
+
 
     TerrainEditor* terrain;
 
     WireBug* wireBug;
 
     LightBuffer::Light* light; //빛 사용하기
+    LightBuffer::Light* light2; //빛 사용하기
+    LightBuffer::Light* light3; //빛 사용하기
 
 private:
     //Terrain* terrain;

@@ -11,7 +11,7 @@ public:
 		E_0147, E_0151, E_0152, E_0153, E_0164,
 		E_0165, E_0166, E_0171, E_0172, E_0173,
 		E_0178, E_0179, E_0180, E_0186, E_0187, E_0188,
-		E_1151, E_1155, E_1163, E_1164,		//습격		
+		E_1151, E_1155, E_1157, E_1158, E_1160, E_1163, E_1164,		//습격		
 		E_2001, E_2002, E_2003,				// 공격및 피격자세
 		E_2013, E_2015, E_2017, E_2019, E_2020, E_2022,
 		E_2027, E_2032, E_2033,
@@ -124,7 +124,8 @@ public:
 		B_DEAD,
 		B_SMALLSTAGGER,
 		B_HUGESTAGGER,
-		PATROL
+		PATROL,
+		SKYFALL
 	};
 
 
@@ -185,6 +186,7 @@ private:
 	void AngerRoar();
 
 	void Storm();
+	void SkyFall();
 	void EnergyBullets();
 	void ForwardBoom();
 	void FullBurst();
@@ -213,6 +215,8 @@ private:
 	void ChooseNextPattern();
 	void ConditionCheck();
 	void PartDestroyCheck();
+
+	void RealRotate(float rad);
 
 	void PlayPattern();
 	void PushPlayer();
@@ -264,8 +268,16 @@ private:
 	void E0188();
 	void E1151();
 	void E1155();
+	void EX1155();
+	void EX1157();
+	void EX1158();
+	void EX1163();
+	void EX1164();
+
 	void E1163();
 	void E1164();
+
+
 	void E2001();
 	void E2002(float degree = 0);
 	void E2003(float degree = 0);
@@ -444,6 +456,9 @@ private:
 	CapsuleCollider* tempCollider = nullptr;
 	TerrainEditor* terrain = nullptr;
 
+	RasterizerState* rasterizerState[2];
+
+
 	// 샘플 무조건 바뀜
 	//float speed = 50; //속력 : 기본 스탯
 	//float maxHP = 5000;
@@ -530,6 +545,8 @@ private:
 	float initialRad = 0.0f;
 	float initRotY = 0.0f;
 	float height = 0.0f;
+	float fallSpeed = 50000.0f;
+	float acceleration = 200000.0f;
 
 	bool isJump = false;
 
@@ -550,6 +567,7 @@ private:
 	bool isStorming = false;
 
 	bool isFirstRender = false;
+	bool renderVal = true;
 
 public:
 	float maxHP = 25000;
@@ -576,10 +594,14 @@ private:
 
 	vector<Transform*> zetPos;
 	vector<ValZet*> valZets;
+
 	FullBurstParticle* fullburstParticle;
 	FullBurstParticle2* fullburstParticle2;
 	ParticleSystem* storm_Start;
 	ParticleSystem* barrier;
+
+	SkyFallEft* skyfallEft = nullptr;
+
 	Vector3 tempScale;
 	Trail* trail;
 	RoarEffect* roarEffect;

@@ -3,22 +3,18 @@
 
 MapDesignScene::MapDesignScene()
 {
-    objects = new M41Objects();
-    objects->Update();
+    //objects = new M41Objects();
     objects_M42 = new M42Objects();
 
-//    val = new DummyValphalk();
-//    val->Pos() = Vector3(3000, 153.3, 3000);
-//    val->Rot().y += XM_PI;
+    //    val = new DummyValphalk();
+    //    val->Pos() = Vector3(3000, 153.3, 3000);
+    //    val->Rot().y += XM_PI;
 
-    utusi = new ModelAnimator("player");
-    utusi->ReadClip("L_001");
-    utusi->Pos().z += 4000;
-    utusi->Pos().x += 250;
-    utusi->GetMaterials()[7]->SetShader(L"Model/ModelAnimation2.hlsl");
-    utusi->GetMaterials()[9]->SetShader(L"Model/ModelAnimation2.hlsl");
-    utusi->Rot().y += XM_PI;
-    utusi->UpdateWorld();
+    player = new Player();
+    player->GetMaterials()[7]->SetShader(L"Model/ModelAnimation2.hlsl");
+    player->GetMaterials()[9]->SetShader(L"Model/ModelAnimation2.hlsl");
+    player->Rot().y += XM_PI;
+    player->Pos() = Vector3(250, 0, 3000);
 
     cap = new CapsuleCollider(5, 6000);
     ball = new HalfSphere(1, 360, 5);
@@ -52,6 +48,25 @@ MapDesignScene::MapDesignScene()
     fog2->GetMaterial()->SetDiffuseMap(L"Textures/M41Sky/newcloud2.png");
     fog2->UpdateWorld();
 
+    fogRe = new HalfSphere(1, 360, 5);
+    fogRe->Scale() *= 50000;
+    fogRe->Rot().x += XM_PI;
+    fogRe->Rot().y += XM_PI;
+    fogRe->Pos().y -= 500;
+    fogRe->GetMaterial()->SetShader(L"Basic/Texture.hlsl");
+    fogRe->GetMaterial()->SetDiffuseMap(L"Textures/M41Sky/newcloud2.png");
+    fogRe->UpdateWorld();
+
+    fog2Re = new HalfSphere(1, 360, 5);
+    fog2Re->Scale() *= 30000;
+    fog2Re->Rot().x += XM_PI;
+    fog2Re->Rot().y += XM_PI;
+    fog2Re->Pos().y -= 500;
+    fog2Re->GetMaterial()->SetShader(L"Basic/Texture.hlsl");
+    fog2Re->GetMaterial()->SetDiffuseMap(L"Textures/M41Sky/newcloud2.png");
+    fog2Re->UpdateWorld();
+
+
     fieldFog = new Model("fog");
     fieldFog->Pos() = Vector3(2062.1f, 230, 17653.896f);
     fieldFog->Rot().y = XM_PI;
@@ -69,10 +84,10 @@ MapDesignScene::MapDesignScene()
     light2->direction = { -1, -0.3, -1 };
     light2->color = { 0.77, 0.73, 0.65, 1 };        // 낮조명
 
-    light2 = Environment::Get()->GetLight(2);
-    light2->type = 0;
-    light2->direction = { 1, -0.6, 1 };
-    light2->color = { 0.45, 0.45, 0.45, 1 };        // 낮조명
+    light3 = Environment::Get()->GetLight(2);
+    light3->type = 0;
+    light3->direction = { 1, -0.6, 1 };
+    light3->color = { 0.45, 0.45, 0.45, 1 };        // 낮조명
 
 
     FOR(2) rasterizerState[i] = new RasterizerState();
@@ -91,7 +106,6 @@ MapDesignScene::~MapDesignScene()
 
 void MapDesignScene::Update()
 {
-        objects_M42->Update();
     ball->Rot().y += 0.02 * DELTA;
     ball->UpdateWorld();
 
@@ -110,9 +124,14 @@ void MapDesignScene::Update()
     fog2->Rot().y += 0.06 * DELTA;
     fog2->UpdateWorld();
 
+    fogRe->Rot().y -= 0.04 * DELTA;
+    fogRe->UpdateWorld();
+
+    fog2Re->Rot().y += 0.06 * DELTA;
+    fog2Re->UpdateWorld();
+
     //val->Update();
-    utusi->Update();
-    //ItemManager::Get()->Update();
+    player->Update();
 }
 
 void MapDesignScene::PreRender()
@@ -123,16 +142,18 @@ void MapDesignScene::Render()
 {
     rasterizerState[1]->SetState(); // 후면도 그림
     {
-        utusi->Render();
-       // val->Render();
+        // val->Render();
         ball->Render();
         ball2->Render();
         //objects->Render();
-                objects_M42->Render();
+        objects_M42->Render();
+        player->Render();
         blendState[1]->SetState(); // 반투명
         {
             fog->Render();
+            fogRe->Render();
             fog2->Render();
+            fog2Re->Render();
             //fieldFog->Render();
         }
         blendState[0]->SetState();
@@ -151,13 +172,12 @@ void MapDesignScene::PostRender()
 void MapDesignScene::GUIRender()
 {
     //    objects_M42->GUIRender();
-    //ball2->GUIRender();
-//    val->GUIRender();
-//      ball->GUIRender();
-//    fog->GUIRender();
-//    
-    cap->GUIRender();
-    utusi->GUIRender();
-    //ItemManager::Get()->GUIRender();
+        //ball2->GUIRender();
+    //    val->GUIRender();
+    //      ball->GUIRender();
+    //    fog->GUIRender();
+    //    
+       // cap->GUIRender();
+        //utusi->GUIRender();
 }
 
