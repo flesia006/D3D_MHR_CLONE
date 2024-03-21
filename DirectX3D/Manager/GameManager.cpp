@@ -56,8 +56,8 @@ GameManager::GameManager()
 //    SceneManager::Get()->Create("Grid", new GridScene());
 //    SceneManager::Get()->Add("Grid");
 
-//    SceneManager::Get()->Create("ShadowScene", new ShadowScene());
-//    SceneManager::Get()->Add("ShadowScene");
+    SceneManager::Get()->Create("ShadowScene", new ShadowScene());
+    SceneManager::Get()->Add("ShadowScene");
 //    SceneManager::Get()->Create("MapDesignScene", new MapDesignScene());
 //    SceneManager::Get()->Add("MapDesignScene");
 //      SceneManager::Get()->Create("Particle", new ParticleScene());
@@ -71,8 +71,8 @@ GameManager::GameManager()
 //    SceneManager::Get()->Create("PlayerTestScene", new PlayerTestScene());
 //    SceneManager::Get()->Add("PlayerTestScene");
 
-   SceneManager::Get()->Create("FightTestScene", new FightTestScene());
-   SceneManager::Get()->Add("FightTestScene");
+//   SceneManager::Get()->Create("FightTestScene", new FightTestScene());
+//   SceneManager::Get()->Add("FightTestScene");
 
 //    SceneManager::Get()->Create("SimpleTestScene", new SimpleTestScene());
 //    SceneManager::Get()->Add("SimpleTestScene");

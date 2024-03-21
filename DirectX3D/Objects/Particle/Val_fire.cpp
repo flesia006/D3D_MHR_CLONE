@@ -95,6 +95,7 @@ void Val_fire::PlaySpark(Vector3 pos)
 
 void Val_fire::Stop()
 {
+	bulletSparkExplosion->Stop();
 	explosionParticle->Stop();
 	sprite->Stop();
 	particle->Stop();
