@@ -471,8 +471,8 @@ void Valphalk::Update()
 				Sounds::Get()->Play("em086_05_se_media_10_2", 0.5f);
 
 			fireParticle[i]->PlayExplosion();
-			bullets[i]->SetActive(false);
 			fireParticle[i]->Stop();
+			bullets[i]->SetActive(false);
 		}
 	}
 
@@ -4242,12 +4242,12 @@ void Valphalk::E2079()
 			bullets[i]->Pos().y -= 450 * DELTA;
 		}
 
-		if (bullets[i]->Pos().y <= height)
-		{
-			FOR(6) fireParticle[i]->PlayExplosion();
+		/*if (bullets[i]->Pos().y <= height)
+		{			
 			bullets[i]->SetActive(false);
-			FOR(6) fireParticle[i]->Stop();
-		}
+			fireParticle[i]->PlayExplosion();
+			fireParticle[i]->Stop();			
+		}*/
 	}
 
 	if (RATIO > 0.96)
@@ -5219,7 +5219,7 @@ void Valphalk::E2286()
 	PLAY;
 	for (int i = 0; i < bullets.size(); ++i)
 	{
-		if (bullets[i]->Pos().y < height)
+		if (bullets[i]->Pos().y <= height)
 		{
 			bullets[i]->SetActive(false);
 			LookatPlayer = false;
