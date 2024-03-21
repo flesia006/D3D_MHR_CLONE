@@ -2211,7 +2211,7 @@ void Player::S018() // 납도상태 구르기
 		SetState(S_020);
 	}
 
-	if (GetClip(S_017)->GetRatio() > 0.96)
+	if (GetClip(S_018)->GetRatio() > 0.96)
 	{
 		SetState(S_001);
 	}

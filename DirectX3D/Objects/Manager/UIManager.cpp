@@ -1264,18 +1264,18 @@ void UIManager::StartUIAlphaOn()
 	startUITimer += DELTA;
 	waitTimer += DELTA;
 
-	if (startUITimer > 0.01f && startUIColor.w < 1 && waitTimer < 1.15f)
+	if (startUITimer > 0.01f && startUIColor.w < 1 && waitTimer < 1.2f)
 	{
-		startUIColor.w += 2.0f * DELTA;
+		startUIColor.w += 6.0f * DELTA;
 		questStartUI->GetMaterial()->SetDiffuseMapColor(startUIColor);
 		startUITimer = 0.0f;
 	}
 
-	if (waitTimer > 1.15f)
+	if (waitTimer > 1.2f)
 	{
 		if (startUITimer > 0.01f && startUIColor.w > 0)
 		{
-			startUIColor.w -= 2.0f * DELTA;
+			startUIColor.w -= 6.0f * DELTA;
 			questStartUI->GetMaterial()->SetDiffuseMapColor(startUIColor);
 			startUITimer = 0.0f;
 		}

@@ -491,6 +491,10 @@ void Valphalk::Update()
 
 	if (KEY_DOWN('8'))
 		curHP -= 1000;
+
+	if (KEY_DOWN('9'))
+		curPattern = S_SRUSH;
+	
 	//if (isStorm)
 	//	stormEffect->SetPos(realPos->GlobalPos());
 	//////////////////////////
@@ -964,19 +968,19 @@ void Valphalk::Hupgi()
 	if (sequence == 0)
 	{
 		static float timer = 0.0f;
-		curState = E_4071;
+		SetState(E_4071);
 		E4071();
 		checkHp = curHP;
 	}
 	if (sequence == 1)
 	{
 		timer += DELTA;
-		curState = E_4073;
+		SetState(E_4073);
 		E4073(timer, checkHp);
 	}
 	if (sequence == 2)
 	{
-		curState = E_4074;
+		SetState(E_4074);
 		E4074();
 	}
 	if (sequence == 3)
