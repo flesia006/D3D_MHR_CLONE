@@ -12,7 +12,7 @@ WireBug::WireBug()
 	bugLightParticle2 = new ParticleSystem("TextData/Particles/wire_bug_light2.fx");
 	bugParticle->SetScale(2);
 	bugLightParticle->SetScale(0.4f);
-	bugLightParticle->Play({ Pos().x,Pos().y + 10,Pos().z }, 0);
+	bugLightParticle->Play({ Pos().x,Pos().y - 280,Pos().z }, 0);
 	//bugLightParticle2->Play({ Pos().x,Pos().y + 10,Pos().z }, 0);
 	
 

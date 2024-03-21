@@ -145,7 +145,6 @@ void ItemManager::Update()
 	{
 		camTimer += DELTA;
 	}
-
 	FOR(itemList.size())
 	{
 		if (useBlueBox)
@@ -187,6 +186,7 @@ void ItemManager::Update()
 		MouseIcon->Pos() = { mousePos.x + 2, mousePos.y - 15 };
 		MouseIcon->UpdateWorld();
 	}
+
 	
 	BlueBox->UpdateWorld();
 	BoxIcon->UpdateWorld();
@@ -340,6 +340,8 @@ bool ItemManager::UseItem(Quad* quad)
 
 void ItemManager::UseBlueBox(Vector3 Pos)
 {
+	if (UI->isMapChange == true) return;// 시작맵에서만 박스 업데이트
+
 	float distance = (Pos - BlueBox->Pos()).Length();
 
 	if (distance <= 250)

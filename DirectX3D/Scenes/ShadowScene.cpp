@@ -252,17 +252,16 @@ void ShadowScene::Render()
         // val->Render();
         ball->Render();
         ball2->Render();
-        player->Render();
-        garuk->Render();
+       
         if (UI->isMapChange == false) // ½ÃÀÛ¸Ê
         {
             objects2->Render();
         }
         else // ÀüÅõ¸Ê
         {
-            wireBug->Render();
-            valphalk->Render();
             objects->Render();
+            valphalk->Render();
+            wireBug->Render();
         }
         blendState[1]->SetState(); // ¹İÅõ¸í
         {
@@ -273,6 +272,9 @@ void ShadowScene::Render()
             //fieldFog->Render();
         }
         blendState[0]->SetState();
+
+        player->Render();
+        garuk->Render();
     }
     rasterizerState[0]->SetState();
     ItemManager::Get()->Render();
