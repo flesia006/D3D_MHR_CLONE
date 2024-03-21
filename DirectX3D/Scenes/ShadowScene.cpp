@@ -277,7 +277,8 @@ void ShadowScene::Render()
         garuk->Render();
     }
     rasterizerState[0]->SetState();
-    ItemManager::Get()->Render();
+    if (UI->isMapChange == false)
+        ItemManager::Get()->Render();
 }
 
 void ShadowScene::PostRender()

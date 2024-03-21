@@ -2207,7 +2207,7 @@ void Player::S018() // 납도상태 구르기
 		SetState(S_020);
 	}
 
-	if (GetClip(S_017)->GetRatio() > 0.96)
+	if (GetClip(S_018)->GetRatio() > 0.96)
 	{
 		SetState(S_001);
 	}
@@ -4957,9 +4957,9 @@ void Player::RandHitSounds()
 	int i = rand() % 3;
 	switch (i)
 	{
-	case 0:		Sounds::Get()->Play("hit_pl_media.bnk.2_14", 1.1f);		break;
-	case 1:		Sounds::Get()->Play("hit_pl_media.bnk.2_20", 1.1f);		break;
-	case 2:		Sounds::Get()->Play("hit_pl_media.bnk.2_35", 1.1f);		break;
+	case 0:		Sounds::Get()->Play("hit_pl_media.bnk.2_14", 0.9f);		break;
+	case 1:		Sounds::Get()->Play("hit_pl_media.bnk.2_20", 0.9f);		break;
+	case 2:		Sounds::Get()->Play("hit_pl_media.bnk.2_35", 0.9f);		break;
 	default:
 		break;
 	}

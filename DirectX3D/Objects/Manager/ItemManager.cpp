@@ -178,12 +178,12 @@ void ItemManager::Update()
 
 		itemBoxFrame[i]->UpdateWorld();
 	}
-	MouseIcon->Pos() = { mousePos.x + 2, mousePos.y - 15 };
+	MouseIcon->Pos() = { mousePos.x + 3, mousePos.y - 10 };
 	MouseIcon->UpdateWorld();
 
 	if (mouseOn)
 	{
-		MouseIcon->Pos() = { mousePos.x + 2, mousePos.y - 15 };
+		MouseIcon->Pos() = { mousePos.x + 3, mousePos.y - 10 };
 		MouseIcon->UpdateWorld();
 	}
 
@@ -366,11 +366,13 @@ void ItemManager::UseBlueBox(Vector3 Pos)
 		{
 			if (MousePos.y > CENTER_Y)
 			{
-				SetCursorPos(MousePos.x + 8.0f, CENTER_Y - Distance(MousePos.y, CENTER_Y) + 31.0f);
+				//SetCursorPos(MousePos.x + 8.0f, CENTER_Y - Distance(MousePos.y, CENTER_Y) + 31.0f);
+				SetCursorPos(MousePos.x, CENTER_Y - Distance(MousePos.y, CENTER_Y) + 22.0f);
 			}
 			else if (MousePos.y <= CENTER_Y)
 			{
-				SetCursorPos(MousePos.x + 8.0f, CENTER_Y + Distance(MousePos.y, CENTER_Y) + 31.0f);
+				//SetCursorPos(MousePos.x + 8.0f, CENTER_Y + Distance(MousePos.y, CENTER_Y) + 31.0f);
+				SetCursorPos(MousePos.x, CENTER_Y + Distance(MousePos.y, CENTER_Y) + 22.0f);
 			}
 			camTimer = 0;
 			useBlueBox = false;
@@ -388,11 +390,13 @@ void ItemManager::UseBlueBox(Vector3 Pos)
 			camTimer = 0;
 			if (MousePos.y > CENTER_Y)
 			{
-				SetCursorPos(MousePos.x + 8.0f, CENTER_Y - Distance(MousePos.y, CENTER_Y) + 31.0f);
+				//SetCursorPos(MousePos.x + 8.0f, CENTER_Y - Distance(MousePos.y, CENTER_Y) + 31.0f);
+				SetCursorPos(MousePos.x, CENTER_Y - Distance(MousePos.y, CENTER_Y) + 22.0f);
 			}
 			else if (MousePos.y <= CENTER_Y)
 			{
-				SetCursorPos(MousePos.x + 8.0f, CENTER_Y + Distance(MousePos.y, CENTER_Y) + 31.0f);
+				//SetCursorPos(MousePos.x + 8.0f, CENTER_Y + Distance(MousePos.y, CENTER_Y) + 31.0f);
+				SetCursorPos(MousePos.x, CENTER_Y + Distance(MousePos.y, CENTER_Y) + 22.0f);
 			}
 		}
 		mouseOn = false;

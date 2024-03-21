@@ -1264,18 +1264,18 @@ void UIManager::StartUIAlphaOn()
 	startUITimer += DELTA;
 	waitTimer += DELTA;
 
-	if (startUITimer > 0.01f && startUIColor.w < 1 && waitTimer < 1.15f)
+	if (startUITimer > 0.01f && startUIColor.w < 1 && waitTimer < 1.2f)
 	{
-		startUIColor.w += 2.0f * DELTA;
+		startUIColor.w += 6.0f * DELTA;
 		questStartUI->GetMaterial()->SetDiffuseMapColor(startUIColor);
 		startUITimer = 0.0f;
 	}
 
-	if (waitTimer > 1.15f)
+	if (waitTimer > 1.2f)
 	{
 		if (startUITimer > 0.01f && startUIColor.w > 0)
 		{
-			startUIColor.w -= 2.0f * DELTA;
+			startUIColor.w -= 6.0f * DELTA;
 			questStartUI->GetMaterial()->SetDiffuseMapColor(startUIColor);
 			startUITimer = 0.0f;
 		}
@@ -1535,11 +1535,13 @@ void UIManager::QuickSlotBar()
 
 		if (MousePos.y > CENTER_Y)
 		{
-			SetCursorPos(MousePos.x + 8.0f, CENTER_Y - Distance(MousePos.y, CENTER_Y) + 31.0f);
+			//SetCursorPos(MousePos.x + 8.0f, CENTER_Y - Distance(MousePos.y, CENTER_Y) + 31.0f);
+			SetCursorPos(MousePos.x, CENTER_Y - Distance(MousePos.y, CENTER_Y) + 22.0f);
 		}
 		else if (MousePos.y <= CENTER_Y)
 		{
-			SetCursorPos(MousePos.x + 8.0f, CENTER_Y + Distance(MousePos.y, CENTER_Y) + 31.0f);
+			//SetCursorPos(MousePos.x + 8.0f, CENTER_Y + Distance(MousePos.y, CENTER_Y) + 31.0f);
+			SetCursorPos(MousePos.x, CENTER_Y + Distance(MousePos.y, CENTER_Y) + 22.0f);
 		}
 	}
 
@@ -1552,11 +1554,13 @@ void UIManager::QuickSlotBar()
 		}
 		if (MousePos.y > CENTER_Y && !KEY_PRESS(VK_MBUTTON))// C 누르기 에서 마우스 휠 버튼 누르기로
 		{
-			SetCursorPos(MousePos.x + 8.0f, CENTER_Y - Distance(MousePos.y, CENTER_Y) + 31.0f);
+			//SetCursorPos(MousePos.x + 8.0f, CENTER_Y - Distance(MousePos.y, CENTER_Y) + 31.0f);
+			SetCursorPos(MousePos.x, CENTER_Y - Distance(MousePos.y, CENTER_Y) + 22.0f);
 		}
 		else if (MousePos.y <= CENTER_Y && !KEY_PRESS(VK_MBUTTON))// C 누르기 에서 마우스 휠 버튼 누르기로
 		{
-			SetCursorPos(MousePos.x + 8.0f, CENTER_Y + Distance(MousePos.y, CENTER_Y) + 31.0f);
+			//SetCursorPos(MousePos.x + 8.0f, CENTER_Y + Distance(MousePos.y, CENTER_Y) + 31.0f);
+			SetCursorPos(MousePos.x, CENTER_Y + Distance(MousePos.y, CENTER_Y) + 22.0f);
 		}
 		if (KEY_PRESS(VK_MBUTTON)) // 마우스 휠 버튼 을 누른다면 Bar 활성화
 		{
@@ -1574,13 +1578,15 @@ void UIManager::QuickSlotBar()
 		//Vector3 pos = mousePos - Vector3(quickSlot_Back->Pos().x, quickSlot_Back->Pos().y);
 		if (MousePos.y > CENTER_Y)
 		{
-			SetCursorPos(MousePos.x + 8.0f, CENTER_Y - Distance(MousePos.y, CENTER_Y) + 31.0f);
+			//SetCursorPos(MousePos.x + 8.0f, CENTER_Y - Distance(MousePos.y, CENTER_Y) + 31.0f);
+			SetCursorPos(MousePos.x, CENTER_Y - Distance(MousePos.y, CENTER_Y) + 22.0f);
 		}
 		else if (MousePos.y <= CENTER_Y)
 		{
-			SetCursorPos(MousePos.x + 8.0f, CENTER_Y + Distance(MousePos.y, CENTER_Y) + 31.0f);
+			//SetCursorPos(MousePos.x + 8.0f, CENTER_Y + Distance(MousePos.y, CENTER_Y) + 31.0f);
+			SetCursorPos(MousePos.x, CENTER_Y + Distance(MousePos.y, CENTER_Y) + 22.0f);
 		}
-		Vector3 pos = mousePos - Vector3(MousePos.x , CENTER_Y - Distance(MousePos.y, CENTER_Y));
+		Vector3 pos = mousePos - MousePos.x; //Vector3(MousePos.x , CENTER_Y - Distance(MousePos.y, CENTER_Y));
 		quickSlot_Select->Rot().z -= pos.x * 0.4f * DELTA;
 
 		if (0.01f <= quickSlot_Select->Rot().z)

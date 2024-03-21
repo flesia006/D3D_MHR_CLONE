@@ -505,6 +505,10 @@ void Valphalk::Update()
 
 	if (KEY_DOWN('8'))
 		curHP -= 1000;
+
+	if (KEY_DOWN('9'))
+		curPattern = S_SRUSH;
+	
 	//if (isStorm)
 	//	stormEffect->SetPos(realPos->GlobalPos());
 	//////////////////////////
@@ -1103,19 +1107,19 @@ void Valphalk::Hupgi()
 	if (sequence == 0)
 	{
 		static float timer = 0.0f;
-		curState = E_4071;
+		SetState(E_4071);
 		E4071();
 		checkHp = curHP;
 	}
 	if (sequence == 1)
 	{
 		timer += DELTA;
-		curState = E_4073;
+		SetState(E_4073);
 		E4073(timer, checkHp);
 	}
 	if (sequence == 2)
 	{
-		curState = E_4074;
+		SetState(E_4074);
 		E4074();
 	}
 	if (sequence == 3)
@@ -3115,13 +3119,13 @@ void Valphalk::HS_FlyBlast()
 	if (sequence == 0)
 	{
 		SetState(E_2265);
-		E2265();
+		EX2265();
 	}
 
 	if (sequence == 1)
 	{
 		SetState(E_2267);
-		E2267();
+		EX2267();
 	}
 
 	if (sequence == 2)
@@ -4893,7 +4897,6 @@ void Valphalk::E2265()
 	if (RATIO > 0.96f)
 	{
 		sequence++;
-		Count = 1;
 	}
 }
 
@@ -4910,7 +4913,6 @@ void Valphalk::E2267()
 	{
 		Rot().y -= 2.0933f;
 		sequence++;
-		Count = 1;
 	}
 }
 
@@ -5109,7 +5111,6 @@ void Valphalk::E2270()
 	{
 		Pos() = GetTranslationByNode(1);
 		SetState(E_2276);
-		Count = 1;
 	}
 }
 
@@ -5137,7 +5138,6 @@ void Valphalk::E2276()
 	{
 		Pos() = GetTranslationByNode(1);
 		SetState(E_2277);
-		Count = 1;
 	}
 }
 
@@ -5154,7 +5154,6 @@ void Valphalk::E2277()
 	{
 		SetState(E_2278);
 		Pos().y = 0.0f;
-		Count = 1;
 	}
 }
 
@@ -5180,7 +5179,6 @@ void Valphalk::E2280()
 	if (RATIO > 0.96f)
 	{
 		sequence++;
-		Count = 1;
 	}
 }
 
@@ -5196,7 +5194,6 @@ void Valphalk::E2281(float degree)
 	{
 		Rot().y += degree;
 		sequence++;
-		Count = 1;
 	}
 }
 
@@ -5211,7 +5208,6 @@ void Valphalk::E2282(float degree)
 	if (RATIO > 0.96f)
 	{
 		Rot().y += degree;
-		Count = 1;
 		sequence++;
 	}
 }
@@ -5221,7 +5217,7 @@ void Valphalk::E2286()
 	PLAY;
 	for (int i = 0; i < bullets.size(); ++i)
 	{
-		if (bullets[i]->Pos().y < 0)
+		if (bullets[i]->Pos().y < height)
 		{
 			bullets[i]->SetActive(false);
 			LookatPlayer = false;
@@ -5239,11 +5235,9 @@ void Valphalk::E2288()
 {
 	PLAY;
 
-
-	if (realPos->Pos().y < 0.0f)
+	if (realPos->Pos().y < height)
 	{
-		Pos().y = 0.0f;
-
+		Pos().y = height;
 		sequence++;
 		return;
 	}
@@ -5450,17 +5444,15 @@ void Valphalk::E2253(Vector3 destVec)//왼쪽 보면서 오른쪽으로 백스탭
 
 void Valphalk::E2371()
 {
-	if (Count == 1)
-	{
-		Rot().y = Rot().y - 1.9f;
-		Count = 2;
-	}
+	//if (Count == 1)
+	//{
+	//	Rot().y = Rot().y - 1.9f;
+	//}
 
 	if (RATIO > 0.96f)
 	{
 		Pos() = GetTranslationByNode(1);
 		SetState(E_2374);
-		Count = 1;
 	}
 }
 
@@ -5520,7 +5512,6 @@ void Valphalk::E2374()
 		Pos() = GetTranslationByNode(1);
 
 		SetState(E_2375);
-		Count = 1;
 	}
 }
 
@@ -5529,15 +5520,12 @@ void Valphalk::E2375()
 	if (Pos().y > 0.96f)
 	{
 		Pos().y = GetTranslationByNode(1).y;
-		Count = 1;
 
 	}
 	else
 	{
 		Pos().y = 0.0f;
 		SetState(E_2376);
-		Count = 1;
-
 	}
 }
 
@@ -5547,7 +5535,6 @@ void Valphalk::E2376()
 	{
 		SetState(E_4013);
 		combo = false;
-		Count = 1;
 	}
 }
 
@@ -5741,7 +5728,6 @@ void Valphalk::E2403()
 	{
 		sequence++;
 		combo = false;
-		Count = 1;
 	}
 }
 
