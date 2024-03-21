@@ -4487,17 +4487,17 @@ void Valphalk::E2145a() // 2145, 2146 합친거
 	if (RATIO > 0.05f && RATIO < 0.06f)
 	{
 		Sounds::Get()->Play("em086_05_fx_media_32", 0.5f);
-		explosionParticle[0]->PlaySpark({ forwardBoom->GlobalPos().x,forwardBoom->GlobalPos().y + 250,forwardBoom->GlobalPos().z }, 0);
+		explosionParticle[0]->PlaySpark({ forwardBoom->GlobalPos().x,height,forwardBoom->GlobalPos().z }, 0);
 	}
 	if (RATIO > 0.08f && RATIO < 0.09)
 	{
-		explosionParticle[0]->Play1(forwardBoom->GlobalPos(), 0);
+		explosionParticle[0]->Play1({ forwardBoom->GlobalPos().x,height,forwardBoom->GlobalPos().z }, 0);
 		Sounds::Get()->Play("em086_05_fx_media_35", 0.5f);
 	}
 	if (RATIO > 0.11f && RATIO < 0.12)
-		explosionParticle[0]->Play2(forwardBoom->GlobalPos(), 0);
+		explosionParticle[0]->Play2({ forwardBoom->GlobalPos().x,height,forwardBoom->GlobalPos().z }, 0);
 	if (RATIO > 0.13f && RATIO < 0.14)
-		explosionParticle[0]->Play3(forwardBoom->GlobalPos(), 0);
+		explosionParticle[0]->Play3({ forwardBoom->GlobalPos().x,height,forwardBoom->GlobalPos().z }, 0);
 	if (RATIO < 0.11f && RATIO>0.05f)
 		forwardBoom->SetActive(true);
 	if (RATIO > 0.11f)
@@ -5660,15 +5660,15 @@ void Valphalk::E2082() // 측면 폭격 파티클 포함
 
 	if (RATIO > 0.0001 && RATIO < 0.02)
 	{
-		explosionParticle[0]->PlaySpark(Pos() + Left() * 800, 0);
-		explosionParticle[1]->PlaySpark(Pos(), 0);
-		explosionParticle[2]->PlaySpark(Pos() + Right() * 800, 0);
+		explosionParticle[0]->PlaySpark(Pos() + Left() * 800 + (Up() + height), 0);
+		explosionParticle[1]->PlaySpark(Pos() + (Up() + height), 0);
+		explosionParticle[2]->PlaySpark(Pos() + Right() * 800 + (Up() + height), 0);
 	}
 	if (RATIO > 0.2 && RATIO < 0.21)
 	{
-		explosionParticle[0]->Play1(Pos() + Left() * 800, 0);
-		explosionParticle[1]->PlaySmall(Pos(), 0);
-		explosionParticle[2]->Play1(Pos() + Right() * 800, 0);
+		explosionParticle[0]->Play1(Pos() + Left() * 800 + (Up() + height), 0);
+		explosionParticle[1]->PlaySmall(Pos() + (Up() + height), 0);
+		explosionParticle[2]->Play1(Pos() + Right() * 800 + (Up() + height), 0);
 		//explosionParticle[3]->Play1(Pos() + Right() * 1000, 0);
 		//explosionParticle[3]->Play1({ forwardBoom->GlobalPos().x + 1000,forwardBoom->GlobalPos().y,forwardBoom->GlobalPos().z }, 0);
 		forwardBoom->SetActive(true);
@@ -5676,17 +5676,17 @@ void Valphalk::E2082() // 측면 폭격 파티클 포함
 	}
 	if (RATIO > 0.22 && RATIO < 0.23)
 	{
-		explosionParticle[0]->Play2(Pos() + Left() * 800, 0);
-		explosionParticle[1]->PlaySmall(Pos(), 0);
-		explosionParticle[2]->Play3(Pos() + Right() * 800, 0);
+		explosionParticle[0]->Play2(Pos() + Left() * 800 + (Up() + height), 0);
+		explosionParticle[1]->PlaySmall(Pos() + (Up() + height), 0);
+		explosionParticle[2]->Play3(Pos() + Right() * 800 + (Up() + height), 0);
 		//explosionParticle[3]->Play2(Pos() + Right() * 1000, 0);
 		Sounds::Get()->Play("em086_05_se_media_10_2", 0.5f);
 	}
 	if (RATIO > 0.25 && RATIO < 0.26)
 	{
-		explosionParticle[0]->Play3(Pos() + Left() * 800, 0);
-		explosionParticle[1]->PlaySmall(Pos(), 0);
-		explosionParticle[2]->Play2(Pos() + Right() * 800, 0);
+		explosionParticle[0]->Play3(Pos() + Left() * 800 + (Up() + height), 0);
+		explosionParticle[1]->PlaySmall(Pos() + (Up() + height), 0);
+		explosionParticle[2]->Play2(Pos() + Right() * 800 + (Up() + height), 0);
 		//explosionParticle[3]->Play3(Pos() + Right() * 1000, 0);
 	}
 	if (RATIO > 0.4 && RATIO < 0.41)
