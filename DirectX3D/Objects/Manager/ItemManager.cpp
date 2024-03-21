@@ -145,6 +145,7 @@ void ItemManager::Update()
 	{
 		camTimer += DELTA;
 	}
+
 	FOR(itemList.size())
 	{
 		if (useBlueBox)
@@ -198,7 +199,9 @@ void ItemManager::Update()
 
 void ItemManager::Render()
 {
-	BlueBox->Render();
+	if (UI->isMapChange == false) // ½ÃÀÛ¸Ê¿¡¼­¸¸ ¹Ú½º ·»´õ
+		BlueBox->Render();
+
 	if (lookBoxIcon)
 	{
 		//rasterizerState[1]->SetState();

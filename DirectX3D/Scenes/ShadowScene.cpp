@@ -48,7 +48,7 @@ ShadowScene::ShadowScene()
     garuk->SetTarget(player);
     garuk->SetEnemy(valphalk);
 
-    wireBug->Pos() = { 2010,390,4900 };
+    wireBug->Pos() = { 2010,310,4900 };
 
     shadow = new Shadow();
     UIManager::Get();
@@ -124,8 +124,6 @@ ShadowScene::ShadowScene()
     light3->type = 0;
     light3->direction = { 1, -0.6, 1 };
     light3->color = { 0.45, 0.45, 0.45, 1 };        // ³·Á¶¸í
-
-
 
     //Sounds::Get()->AddSound("Valphalk_Thema", SoundPath + L"Valphalk_Thema.mp3",true);
     //Sounds::Get()->Play("Valphalk_Thema", 0.03f);
