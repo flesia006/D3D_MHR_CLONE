@@ -159,11 +159,13 @@ void ShadowScene::Update()
             garuk->SetTerrain(terrain);
             player->SetTerrain(terrain);
             CAM->SetTerrain(terrain);
+            once = true;
         }
         valphalk->Update();
     }
     player->Update();
     garuk->Update();
+
     fieldFog->UpdateWorld();
 
     ball->Rot().y += 0.02 * DELTA;
@@ -252,7 +254,7 @@ void ShadowScene::Render()
         {
             valphalk->Render();
             objects->Render();
-            terrain->Render();
+//            terrain->Render();
         }
         blendState[1]->SetState(); // π›≈ı∏Ì
         {
