@@ -28,7 +28,7 @@ private:
 		L_155, L_156,
 		S_001, S_003, S_005, S_008, S_009, S_011,
 		S_014, S_017, S_018, S_019, S_020, S_026, S_029,
-		S_038, S_118, S_119, S_120, S_122,
+		S_038, S_118, S_119, S_120, S_122, S_123, S_124, S_126,
 
 		// 가루크 모션들
 		R_001, R_013, R_024, R_031, R_041, R_104,
@@ -181,6 +181,10 @@ private:
 	void S119();
 	void S120();
 	void S122();
+	void S123();
+	void S124();
+	void S126();
+
 
 
 	void L001();
@@ -400,6 +404,7 @@ private:
 
 	bool cure = false;
 	bool Lcure = false;
+	bool lockOn = false;
 
 	bool attackOnlyOncePerMotion = false;
 	bool isDoubleStrikeMotion = false;
@@ -440,6 +445,7 @@ private:
 	bool isCaptureUIActive = false;
 	bool isCaptured = false;
 	bool soundOncePerUI = false;
+	bool soundPlay = false;
 
 	Quad* mapChangeUI;
 	Vector3 UIPos2;

@@ -159,6 +159,8 @@ public:
 	bool GetIsHupgi() { return isHupGi; }
 	bool GetIsDead() { return isDead; }
 
+	bool IsDamaged() { return curHP != maxHP; }
+
 	//ColliderName GetName() { return colliderName; }
 	float damage = 0.1f;
 

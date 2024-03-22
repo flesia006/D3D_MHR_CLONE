@@ -43,6 +43,8 @@ private:
     LightBuffer::Light* light2; //빛 사용하기
     LightBuffer::Light* light3; //빛 사용하기
 
+    vector<BoxCollider*> walls;
+
 private:
     //Terrain* terrain;
     //AStar* aStar;
