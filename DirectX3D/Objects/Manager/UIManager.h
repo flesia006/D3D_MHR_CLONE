@@ -224,7 +224,8 @@ public:
     float curCoting = 100;
     float maxCoting = 100;
 
-
+    float clockTimer = 0.0f;
+    const float clockLimit = 3000.0f;
 
     bool isCoolTime1 = false;
     bool isCoolTime2 = false;

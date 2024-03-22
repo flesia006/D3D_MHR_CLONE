@@ -10,6 +10,17 @@ Camera::Camera()
     ground = new BoxCollider({ FLT_MAX, 0.1, FLT_MAX });
     ground->UpdateWorld();
 
+    FOR(4) walls.push_back(new BoxCollider({ 10000, 5000, 1000 }));
+
+    walls[0]->Pos() = { 3000 , 0, 160 };
+    walls[1]->Pos() = { 3000 , 0, 7660 };
+    walls[2]->Rot().y = XM_PIDIV2;
+    walls[3]->Rot().y = XM_PIDIV2;
+    walls[2]->Pos() = { 300 , 0, 3900 };
+    walls[3]->Pos() = { 5600 , 0, 3900 };
+
+    FOR(4)    walls[i]->UpdateWorld();
+
     camSphere = new SphereCollider(distance);
     camSphere->SetParent(this);
     camSphere->UpdateWorld();
@@ -126,7 +137,7 @@ void Camera::SetOpeningCAM()
     mode = OPENING;
     distance = 120.0f;
     height = -30;
-    sightRot->Rot().x = -0.1 ;
+    sightRot->Rot().x = -0.1;
     sightRot->Rot().y = -2.7f;
     sightRot->UpdateWorld();
 
@@ -146,7 +157,7 @@ void Camera::OpeningCAM()
         CAM->Pos() = target->GlobalPos() + sightRot->Back() * distance * 1.6;
         CAM->Pos().y += height;
     }
-    else if (timer < 4.0f)
+    else if (timer < 3.5f)
     {
         sightRot->Rot().x = Lerp(sightRot->Rot().x, 0.2, 1.5 * DELTA);
         sightRot->Rot().y = Lerp(sightRot->Rot().y, 0, 1.5 * DELTA);
@@ -269,9 +280,9 @@ void Camera::MapMoveCAM()
         sightRot->Rot().y = Lerp(sightRot->Rot().y, sightRot->Rot().y - 0.15f, 0.3 * DELTA);
         distance = Lerp(distance, 220, 0.3 * DELTA);
         height = Lerp(height, 0, 1 * DELTA);
-        
+
         sightRot->UpdateWorld();
-        
+
         CAM->Rot() = sightRot->Rot();
         CAM->Pos() = target->GlobalPos() + sightRot->Back() * distance * 1.6;
         CAM->Pos().y += height;
@@ -316,7 +327,7 @@ void Camera::MapArriveCAM()
         CAM->Pos() = target->GlobalPos() + sightRot->Back() * distance * 1.6;
         CAM->Pos().y += height;
     }
-    else if (timer < 5.0f)
+    else if (timer < 2.5f)
     {
         sightRot->Rot().x = Lerp(sightRot->Rot().x, 0.2, 1.5 * DELTA);
         sightRot->Rot().y = Lerp(sightRot->Rot().y, XM_PI, 1.5 * DELTA);
@@ -501,7 +512,8 @@ void Camera::ThirdPresonViewMode()
             sightRot->Rot().y = atan2(trgtToTrgt.x, trgtToTrgt.z);
             sightRot->UpdateWorld();
 
-            CAM->Rot() = Lerp(Rot(), sightRot->Rot(), 10 * DELTA);
+            //CAM->Rot() = Lerp(Rot(), sightRot->Rot(), 10 * DELTA);
+            CAM->Rot() = sightRot->Rot();
             CAM->Pos() = target->GlobalPos() + Back() * distance * 1.6;
         }
     }
@@ -517,12 +529,20 @@ void Camera::ThirdPresonViewMode()
     {
         Vector3 pos = {};
         bool hitGround = false;
-        if (sightRot->Rot().x < -0.4f)
+        if (sightRot->Rot().x < 0)
         {
             hitGround = terrain->ComputePicking(pos, sight.pos, sight.dir);
-            if ((target->GlobalPos() - pos).Length() > distance || !hitGround)
-                return;
-            CAM->Pos() = pos - sight.dir.Back() * 20;
+            if ((target->GlobalPos() - pos).Length() < distance && hitGround)
+                CAM->Pos() = target->GlobalPos() + (pos - target->GlobalPos()) * 0.8f;
+        }
+
+        Contact contact;
+        FOR(4)
+        {
+            bool hitGround = walls[i]->IsRayCollision(sight, &contact);
+
+            if ((target->GlobalPos() - contact.hitPoint).Length() < distance && hitGround)
+                CAM->Pos() = contact.hitPoint;
         }
     }
     else
@@ -535,9 +555,6 @@ void Camera::ThirdPresonViewMode()
 
         CAM->Pos() = contact.hitPoint - sightRot->Forward() * 65;
     }
-    if (CAM->Pos().y < 40)
-        CAM->Pos().y = 40;
-
 }
 
 void Camera::Frustum()

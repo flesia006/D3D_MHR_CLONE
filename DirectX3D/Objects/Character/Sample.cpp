@@ -44,8 +44,9 @@ void Sample::Update()
 {
 	UpdateWorlds();
 
-	if (KEY_DP('3'))
+	if (enemy->IsDamaged() && !isCallDog && mode != BATTLE && mode != RIDING)
 		SetFight();
+
 	switch (mode)
 	{
 	case Sample::RIDING:		Control();		break;
@@ -110,7 +111,7 @@ void Sample::GUIRender()
 
 void Sample::SetEnemy(Valphalk* target)
 {
-	this->enemy = target->GetRealPos();
+	this->enemy = target;
 	ARROW->SetEnemy(target);
 }
 
@@ -142,7 +143,7 @@ void Sample::UpdateWorlds()
 	}
 	if (enemy != nullptr)
 	{
-		lengToEnemy = (enemy->GlobalPos() - realPos->Pos()).Length();
+		lengToEnemy = (enemy->GetRealPos()->Pos() - realPos->Pos()).Length();
 		GetRadBtwEnemy();
 	}
 	realPos->Pos() = GetTranslationByNode(1);
@@ -230,45 +231,45 @@ void Sample::GroundCheck()
 void Sample::Rotate(float rotateSpeed)
 {
 
-		if (abs(Rot().y - keyboardRot) > 3.14)
-		{
-			if (keyboardRot < 0)	keyboardRot += XM_2PI;
-			else					keyboardRot -= XM_2PI;
-		}
+	if (abs(Rot().y - keyboardRot) > 3.14)
+	{
+		if (keyboardRot < 0)	keyboardRot += XM_2PI;
+		else					keyboardRot -= XM_2PI;
+	}
 
-		if (keyboardRot > Rot().y)
-			RealRotate(rotateSpeed * DELTA);
-		else
-			RealRotate(-rotateSpeed * DELTA);
+	if (keyboardRot > Rot().y)
+		RealRotate(rotateSpeed * DELTA);
+	else
+		RealRotate(-rotateSpeed * DELTA);
 
 }
 
 void Sample::LimitRotate(float limit)
 {
 
-		if (abs(Rot().y - keyboardRot) > 3.14)
-		{
-			if (keyboardRot < 0)	keyboardRot += XM_2PI;
-			else					keyboardRot -= XM_2PI;
-		}
+	if (abs(Rot().y - keyboardRot) > 3.14)
+	{
+		if (keyboardRot < 0)	keyboardRot += XM_2PI;
+		else					keyboardRot -= XM_2PI;
+	}
 
 
-		if (keyboardRot > Rot().y)
+	if (keyboardRot > Rot().y)
+	{
+		sumRot += 5 * DELTA;
+		if (sumRot < unitRad * limit)
 		{
-			sumRot += 5 * DELTA;
-			if (sumRot < unitRad * limit)
-			{
-				RealRotate(5 * DELTA);
-			}
+			RealRotate(5 * DELTA);
 		}
-		else
+	}
+	else
+	{
+		sumRot += 5 * DELTA;
+		if (sumRot < unitRad * limit)
 		{
-			sumRot += 5 * DELTA;
-			if (sumRot < unitRad * limit)
-			{
-				RealRotate(-5 * DELTA);
-			}
+			RealRotate(-5 * DELTA);
 		}
+	}
 
 }
 
@@ -344,7 +345,7 @@ float Sample::GetRadBtwEnemy()
 {
 	UpdateWorld();
 	Vector3 fwd = Forward();
-	Vector3 VtoP = (realPos->Pos() - enemy->GlobalPos()).GetNormalized();
+	Vector3 VtoP = (realPos->Pos() - enemy->GetRealPos()->Pos()).GetNormalized();
 	Vector3 rad = XMVector3AngleBetweenVectors(fwd, VtoP);
 	Vector3 cross = Cross(fwd, VtoP);
 	radBtwEnemy = rad.x;
@@ -468,7 +469,7 @@ void Sample::Fire_B()
 	{
 		if (!playOncePerMotion)
 		{
-			KunaiManager::Get()->Throw(bowGun->GlobalPos(), ((enemy->GlobalPos() + Vector3::Up() * 200) - bowGun->GlobalPos()).GetNormalized());
+			KunaiManager::Get()->Throw(bowGun->GlobalPos(), ((enemy->GetRealPos()->Pos() + Vector3::Up() * 200) - bowGun->GlobalPos()).GetNormalized());
 			playOncePerMotion = true;
 		}
 	}
@@ -654,7 +655,7 @@ void Sample::G0040_F()
 
 	if (isCallDog)
 	{
-		if (lengToTrgt < 70)
+		if (lengToTrgt < 100)
 			readyToRide = true;
 	}
 

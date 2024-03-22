@@ -25,7 +25,6 @@ private:
     M41Objects* objects;
     M42Objects* objects2;
 
-    Model* fieldFog;
 
     HalfSphere* ball;
     HalfSphere* ball2;
@@ -42,6 +41,8 @@ private:
     LightBuffer::Light* light; //빛 사용하기
     LightBuffer::Light* light2; //빛 사용하기
     LightBuffer::Light* light3; //빛 사용하기
+
+    vector<BoxCollider*> walls;
 
 private:
     //Terrain* terrain;

@@ -328,7 +328,7 @@ UIManager::UIManager()
 	//캐릭터용 UI 추가
 	hp = new ProgressBar(
 		L"Textures/Color/Hp.png",
-		L"Textures/UI/HpBar_noColor1.png"
+		L"Textures/UI/noColor.png"
 	);
 	recover = new ProgressBar(
 		L"Textures/Color/Damaged.png",
@@ -336,12 +336,12 @@ UIManager::UIManager()
 	);
 	stamina = new ProgressBar(
 		L"Textures/Color/Staminar.png",
-		L"Textures/UI/StaminaBar_noColor.png"
+		L"Textures/UI/noColor.png"
 	);
 
 	durability_gauge = new ProgressBar(
 		L"Textures/Color/Durability.png",
-		L"Textures/UI/StaminaBar_noColor.png"
+		L"Textures/UI/noColor.png"
 	);
 	lsGauge2 = new ProgressBar(
 		L"Textures/UI/LSGauge2.png",
@@ -482,7 +482,7 @@ UIManager::UIManager()
 	}
 
 	// hp bar ui
-	hp->Scale() = { 2.625f,0.03f,0 };
+	hp->Scale() = { 2.625f,0.028f,0 };
 	hp->Pos() = hpBar->Pos();
 	hp->Pos().x -= 0.1f;
 	curHP = maxHP;
@@ -490,7 +490,7 @@ UIManager::UIManager()
 	recover->Pos() = hp->Pos();
 
 	// stamina bar ui
-	stamina->Scale() = { 2.625f,0.03f,0 };
+	stamina->Scale() = { 2.625f,0.028f,0 };
 	stamina->Pos() = staminarBar->Pos();
 	stamina->Pos().x -= 0.1f;
 	curStamina = maxStamina;
@@ -836,7 +836,7 @@ void UIManager::Update()
 
 	if (cotingLevel <= 3 && cotingLevel > 0) // 코팅레벨이 1이상이라면 게이지 주기적 감소
 	{
-		curCoting -= .3f * DELTA;
+		curCoting -= 0.6f * DELTA;
 	}
 	////////////////////////////////
 
@@ -862,8 +862,17 @@ void UIManager::Update()
 
 	//시곗바늘 부분 : 목표 : 5분당 30도 돌아가게 해야함
 	//밑의 샘플은 빠르게 돌아가는걸 보여주는 예시
+
+
 	if (clockHand->Rot().z > -XM_PIDIV2 * 10 / 3)
-		clockHand->Rot().z -= XM_PIDIV2 * 1 / 720;
+	{
+		clockTimer += DELTA;
+		if (clockTimer > 1.0f)
+		{
+			clockHand->Rot().z -= XM_PI * 1 / 1800;
+			clockTimer = 0.0f;
+		}
+	}
 
 	//밧줄벌레 쿨타임 부분 - 회복속도는 샘플, 조정 필요
 	if (bugCount == 2)
@@ -1146,6 +1155,8 @@ void UIManager::GUIRender()
 	//ImGui::Text("CamRot_X: %f", CamRot);
 	//ImGui::Text("CAM_Rot_Y: %f", CAM->Rot().y);
 	//ImGui::Text("CamRot_Y: %f", CamRot.y);
+	ImGui::SliderFloat3("clockHand->Rot()", (float*)&clockHand->Rot(), -XM_PIDIV2 * 10 / 3, 0);
+	//ImGui::Text("clockHand->Rot().z: %f", clockHand->Rot().z);
 }
 
 void UIManager::Hit(float damage)
