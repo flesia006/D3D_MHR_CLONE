@@ -3535,6 +3535,7 @@ void Valphalk::E0060(float degree)//¾ÕÀ¸·Î ¶Ù´Ù°¡ ÁÂÈ¸Àü
 		if (RATIO > playRatioForE0071)
 		{
 			sequence += 2;
+			Rot().y += degree;
 			playRatioForE0071 = 0.0f;
 			playOncePerPattern = false;
 		}
@@ -3569,6 +3570,7 @@ void Valphalk::E0061(float degree)//¾ÕÀ¸·Î ¶Ù´Ù°¡ µÚµ¹±â(ÁÂÈ¸Àü)
 		if (RATIO > playRatioForE0071)
 		{
 			sequence += 2;
+			Rot().y += degree;
 			playRatioForE0071 = 0.0f;
 			playOncePerPattern = false;
 		}
