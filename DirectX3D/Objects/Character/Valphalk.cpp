@@ -4410,15 +4410,27 @@ void Valphalk::E2079()
 	{
 		if (playOncePerPattern)
 		{
-			Sounds::Get()->Play("em086_05_fx_media_50", 0.3f); // 미확인
+			Sounds::Get()->Play("em086_05_fx_media_50_2", 0.3f); // 미확인
 			playOncePerPattern = false;
 		}
 	}
-		Sounds::Get()->Play("em086_05_fx_media_50_2", 0.3f);
 	if (RATIO < 0.2f && RATIO > 0.19f)
-		Sounds::Get()->Play("em086_05_fx_media_50", 0.3f);
+	{
+		if (!playOncePerPattern)
+		{
+			Sounds::Get()->Play("em086_05_fx_media_50", 0.3f); // 미확인
+			playOncePerPattern = true;
+		}
+	}
+
 	if (RATIO < 0.22f && RATIO > 0.21f)
-		Sounds::Get()->Play("em086_05_fx_media_50_2", 0.3f);
+	{
+		if (playOncePerPattern)
+		{
+			Sounds::Get()->Play("em086_05_fx_media_50_2", 0.3f); // 미확인
+			playOncePerPattern = false;
+		}
+	}
 
 	for (int i = 0; i < bullets.size(); ++i)
 	{
