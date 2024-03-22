@@ -836,7 +836,7 @@ void UIManager::Update()
 
 	if (cotingLevel <= 3 && cotingLevel > 0) // 코팅레벨이 1이상이라면 게이지 주기적 감소
 	{
-		curCoting -= .3f * DELTA;
+		curCoting -= 0.6f * DELTA;
 	}
 	////////////////////////////////
 

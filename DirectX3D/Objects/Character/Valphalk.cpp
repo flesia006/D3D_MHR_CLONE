@@ -451,7 +451,7 @@ void Valphalk::Update()
 	fullburstParticle->Rot() = fullBurst->Rot();
 	fullburstParticle->Pos() = fullBurst->Pos();
 	//stormEffect->Update();
-	if (isHupGi == true)
+	if (isHupGi == true && isDead == false)
 		FlameOn();
 	else
 		FlameOff();

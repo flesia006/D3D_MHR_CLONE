@@ -4322,6 +4322,7 @@ void Player::W005() // 사선으로 쏘는 밧줄벌레 전 동작
 		Sounds::Get()->Play("wirebug", 3.5f);
 		playerWireBug->SetActive(true);
 		playOncePerMotion = true;
+		bodyCollider->SetActive(false);
 	}
 
 	if (RATIO > 0.5 && !playOncePerMotion2)
@@ -4370,15 +4371,17 @@ void Player::W006() // W005에서 이어지는 체공중 동작
 		{
 			if (KEY_DP('W'))
 			{
-				SetState(F_073);
 				playerWireBug->SetActive(false);
-				playerWireBug->SetMove(Vector3::Zero(), false, Vector3::Zero());				
+				playerWireBug->SetMove(Vector3::Zero(), false, Vector3::Zero());
+				bodyCollider->SetActive(true);
+				SetState(F_073);
 			}
 			else
 			{
-				SetState(F_072);
 				playerWireBug->SetActive(false);
 				playerWireBug->SetMove(Vector3::Zero(), false, Vector3::Zero());
+				bodyCollider->SetActive(true);
+				SetState(F_072);
 			}
 		}
 	}
@@ -4386,15 +4389,17 @@ void Player::W006() // W005에서 이어지는 체공중 동작
 	{
 		if (KEY_DP('W'))
 		{
-			SetState(F_073);
 			playerWireBug->SetActive(false);
 			playerWireBug->SetMove(Vector3::Zero(), false, Vector3::Zero());
+			bodyCollider->SetActive(true);
+			SetState(F_073);
 		}
 		else
 		{
-			SetState(F_072);
 			playerWireBug->SetActive(false);
 			playerWireBug->SetMove(Vector3::Zero(), false, Vector3::Zero());
+			bodyCollider->SetActive(true);
+			SetState(F_072);
 		}
 	}
 }
@@ -4465,15 +4470,17 @@ void Player::W020() // 밧줄벌레 발사 후 공중 체공중 구르기 눌렀을 때
 		{
 			if (K_MOVE)
 			{
-				SetState(F_073);
 				playerWireBug->SetActive(false);
 				playerWireBug->SetMove(Vector3::Zero(), false, Vector3::Zero());
+				bodyCollider->SetActive(true);
+				SetState(F_073);
 			}
 			else
 			{
-				SetState(F_072);
 				playerWireBug->SetActive(false);
 				playerWireBug->SetMove(Vector3::Zero(), false, Vector3::Zero());
+				bodyCollider->SetActive(true);
+				SetState(F_072);
 			}
 		}
 	}
@@ -4481,15 +4488,17 @@ void Player::W020() // 밧줄벌레 발사 후 공중 체공중 구르기 눌렀을 때
 	{
 		if (K_MOVE)
 		{
-			SetState(F_073);
 			playerWireBug->SetActive(false);
 			playerWireBug->SetMove(Vector3::Zero(), false, Vector3::Zero());
+			bodyCollider->SetActive(true);
+			SetState(F_073);
 		}
 		else
 		{
-			SetState(F_072);
 			playerWireBug->SetActive(false);
 			playerWireBug->SetMove(Vector3::Zero(), false, Vector3::Zero());
+			bodyCollider->SetActive(true);
+			SetState(F_072);
 		}
 	}
 }
