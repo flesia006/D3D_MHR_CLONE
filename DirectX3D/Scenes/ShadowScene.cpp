@@ -4,7 +4,7 @@
 
 ShadowScene::ShadowScene()
 {    
-    //objects = new M41Objects();
+    objects = new M41Objects();
     objects2 = new M42Objects();
     terrain = new TerrainEditor();
     player = new Player();
@@ -134,11 +134,7 @@ void ShadowScene::Update()
     //if (KEY_DOWN('4')) light->type = 3;
     //terrain->Update();
     static bool once = false;
-    if (UI->isMapChange == false) // ½ÃÀÛ¸Ê
-    {
-        objects2->Update();
-    }
-    else // ÀüÅõ¸Ê
+    if (UI->isMapChange) // ½ÃÀÛ¸Ê
     {
         wireBug->Update();
         if (!once)
@@ -235,7 +231,7 @@ void ShadowScene::Render()
         }
         else // ÀüÅõ¸Ê
         {
-            objects->Render();
+            //objects->Render(); Àá±ñ ÁÖ¼®ÇØµÒ
 //          terrain->Render();
             valphalk->Render();
             objects->Render();
