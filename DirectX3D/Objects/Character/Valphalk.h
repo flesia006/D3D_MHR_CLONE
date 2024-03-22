@@ -541,6 +541,8 @@ private:
 	bool ult50Threshold = false;
 
 	bool playOncePerPattern = false;
+	bool playOncePerPattern2 = false;
+	bool playOncePerPattern3 = false;
 	bool isSetState = false;
 
 	float radBtwTarget = 0.0f;
