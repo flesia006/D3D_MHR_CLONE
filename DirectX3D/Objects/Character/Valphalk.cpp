@@ -485,7 +485,7 @@ void Valphalk::Update()
 	trail->Update();
 	roarEffect->Update();
 	if(roarEffect->IsActive())
-	roarEffect->roarCloserCam(Pos(), CAM->Pos(), 0.013f);
+		roarEffect->roarCloserCam(Pos(), CAM->Pos(), 0.013f);
 	skyfallEft->Update();
 	ModelAnimator::Update();
 
@@ -583,7 +583,6 @@ void Valphalk::Update()
 	//		stormBox->SetActive(false);
 	//	}
 	//	stormBox->UpdateWorld();
-}
 
 	if (KEY_DOWN('6'))
 		colliders[LLEG1]->partHp = -100;

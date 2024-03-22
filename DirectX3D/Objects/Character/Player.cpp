@@ -163,11 +163,11 @@ void Player::Update()
 	if (KEY_DOWN('B'))
 		SetState(L_001);
 
-	if (KEY_DOWN('G'))
+	if (KEY_DOWN('Y'))
 		lockOn = !lockOn;
 
 	if (lockOn)
-		CAM->SetLockOnTarget(val->GetRealPos()->Pos() + Vector3::Up() * 50);
+		CAM->SetLockOnTarget(val->GetRealPos()->Pos());
 	else
 		CAM->SetLockOnTarget(Vector3::Zero());
 

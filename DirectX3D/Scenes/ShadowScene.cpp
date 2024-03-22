@@ -7,28 +7,10 @@ ShadowScene::ShadowScene()
     objects = new M41Objects();
     objects2 = new M42Objects();
     terrain = new TerrainEditor();
-    fieldFog = new Model("fog");
     player = new Player();
     valphalk = new Valphalk();
     garuk = new Sample();
     wireBug = new WireBug();
-
-
-    //ball->Scale() *= 150000;
-    //ball->Pos().y -= 6000;
-    ////ball->GetMaterial()->SetShader(L"Basic/Texture.hlsl");
-    //ball->GetMaterial()->SetDiffuseMap(L"Textures/M41Sky/storm.tga");
-    //ball->UpdateWorld();
-    //
-    //fog->SetTag("fog");
-    //fog->Scale() *= 100;
-    //fog->Pos().y -= 10000;
-    //fog->UpdateWorld();
-
-    fieldFog->Pos() = Vector3(2062.1f, 220, 17653.896f);
-    fieldFog->Rot().y = XM_PI;
-    fieldFog->UpdateWorld();
-
 
     //player->Pos() = Vector3(2237.314, 460, 6411.237);
     player->Pos() = Vector3(532, 10, 2900);
@@ -105,12 +87,6 @@ ShadowScene::ShadowScene()
     fog2Re->UpdateWorld();
 
 
-    fieldFog = new Model("fog");
-    fieldFog->Pos() = Vector3(2062.1f, 230, 17653.896f);
-    fieldFog->Rot().y = XM_PI;
-    fieldFog->UpdateWorld();
-
-
     light = Environment::Get()->GetLight(0);
     light->type = 0;
     light->direction = { -1, -0.3, -1 };
@@ -176,8 +152,6 @@ void ShadowScene::Update()
     }
     player->Update();
     garuk->Update();
-
-    fieldFog->UpdateWorld();
 
     ball->Rot().y += 0.02 * DELTA;
     ball->UpdateWorld();
@@ -257,15 +231,14 @@ void ShadowScene::Render()
        
         if (UI->isMapChange == false) // ½ÃÀÛ¸Ê
         {
-            //objects2->Render();
+            objects2->Render();
         }
         else // ÀüÅõ¸Ê
         {
-            //objects->Render();
-            terrain->Render();
+            objects->Render();
+//          terrain->Render();
             valphalk->Render();
             objects->Render();
-//            terrain->Render();
             wireBug->Render();
         }
         blendState[1]->SetState(); // ¹İÅõ¸í
@@ -274,7 +247,6 @@ void ShadowScene::Render()
             fogRe->Render();
             fog2->Render();
             fog2Re->Render();
-            //fieldFog->Render();
         }
         blendState[0]->SetState();
 

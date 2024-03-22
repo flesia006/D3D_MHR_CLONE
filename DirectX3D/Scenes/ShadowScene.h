@@ -25,7 +25,6 @@ private:
     M41Objects* objects;
     M42Objects* objects2;
 
-    Model* fieldFog;
 
     HalfSphere* ball;
     HalfSphere* ball2;
