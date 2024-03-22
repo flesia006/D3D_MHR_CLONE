@@ -205,13 +205,13 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 	forwardBoom->SetActive(false);
 	forwardBoom->atkDmg = 35;
 
-	stormBox = new BoxCollider();
-	stormBox->Scale() *= 2000;
+	stormBox = new SphereCollider();
+	stormBox->Scale() *= 1;
 	stormBox->Pos() = Pos();
 	stormBox->SetColor(1, 0, 0);
 	stormBox->atkDmg = 50;
-	stormBox->SetParent(realPos);
-	stormBox->SetActive(false);
+	stormBox->SetParent(head);
+
 	{//fullBurst
 		fullBurst = new BoxCollider();
 		fullBurst->Scale() *= 500;
@@ -503,23 +503,23 @@ void Valphalk::Update()
 	if (KEY_DOWN('6'))
 		colliders[LLEG1]->partHp = -100;
 
-	if (KEY_DOWN('M'))
+	if (KEY_DOWN('8'))
 		curHP -= 1000;
 
 	if (KEY_DOWN('9'))
 		curPattern = S_SRUSH;
 	
-	//if (isStorm)
+	if (isStorm)
+		stormBox->SetActive(true);
 	//	stormEffect->SetPos(realPos->GlobalPos());
 	//////////////////////////
 	stormBox->GlobalPos() = Pos();
 	if (stormTime > 2.f)
 	{
-		stormBox->SetActive(true);
 	}
 	else
 	{
-		stormBox->SetActive(false);
+		//stormBox->SetActive(false);
 	}
 	stormBox->UpdateWorld();
 }
@@ -788,6 +788,10 @@ void Valphalk::SkyFall()
 		Pos() += Back() * 10000 * DELTA;
 		Pos().y += 35000 * DELTA;
 
+		if (RATIO > 0.98f)
+			forwardBoom->SetActive(false);
+			
+
 		if (realPos->Pos().y > 50000)
 		{
 			Sounds::Get()->Play("em086_05_fx_media_22", 0.05f);
@@ -857,9 +861,11 @@ void Valphalk::SkyFall()
 
 		fallSpeed += acceleration * DELTA;
 		Pos() += dir * fallSpeed * DELTA;
-
+		if(realPos->Pos().y < height + 500)
+			forwardBoom->SetActive(true);
 		if (realPos->Pos().y < height)
 		{
+			forwardBoom->SetActive(false);
 			skyfallEft->active = false;
 			Pos().y = height;
 			isJump = false;
@@ -3871,10 +3877,11 @@ void Valphalk::EX1157() // »ó½Â Àü ¸öÇ®±â
 		CAM->shakeCAM = true;
 	}
 
-
-
 	if (RATIO > 0.96)
 	{
+		forwardBoom->SetActive(true);
+		forwardBoom->Scale() *= 5;
+		isStorm = true;
 		Sounds::Get()->Play("em086_05_fx_media_22", 0.5f);
 		renderJet = true;
 		isJump = true;
