@@ -503,7 +503,7 @@ void Valphalk::Update()
 	if (KEY_DOWN('6'))
 		colliders[LLEG1]->partHp = -100;
 
-	if (KEY_DOWN('8'))
+	if (KEY_DOWN('M'))
 		curHP -= 1000;
 
 	if (KEY_DOWN('9'))
