@@ -2244,7 +2244,7 @@ void Player::S018() // 납도상태 구르기
 		SetState(S_020);
 	}
 
-	if (GetClip(S_017)->GetRatio() > 0.96)
+	if (GetClip(S_018)->GetRatio() > 0.96)
 	{
 		SetState(S_001);
 	}
@@ -3583,9 +3583,13 @@ void Player::L147() // 간파베기
 		{
 			CAM->Zoom(650);
 			EvadeCheck(); // 성공하면 띵 소리 나야함
+			bodyCollider->SetActive(false);
 		}
 		if (RATIO > 0.30)
+		{
 			evadeCheckCollider->SetActive(false);
+			bodyCollider->SetActive(true);
+		}
 	}
 
 	// 특납 캔슬 가능 타이밍
@@ -3595,6 +3599,7 @@ void Player::L147() // 간파베기
 			if (isEvaded)
 				isEvaded = false;
 			evadeCheckCollider->SetActive(false);
+			bodyCollider->SetActive(true);
 			SetState(L_151);	// 특수 납도
 		}
 	}
@@ -4398,6 +4403,7 @@ void Player::W005() // 사선으로 쏘는 밧줄벌레 전 동작
 		Sounds::Get()->Play("wirebug", 3.5f);
 		playerWireBug->SetActive(true);
 		playOncePerMotion = true;
+		bodyCollider->SetActive(false);
 	}
 
 	if (RATIO > 0.5 && !playOncePerMotion2)
@@ -4446,15 +4452,17 @@ void Player::W006() // W005에서 이어지는 체공중 동작
 		{
 			if (KEY_DP('W'))
 			{
-				SetState(F_073);
 				playerWireBug->SetActive(false);
 				playerWireBug->SetMove(Vector3::Zero(), false, Vector3::Zero());
+				bodyCollider->SetActive(true);
+				SetState(F_073);
 			}
 			else
 			{
-				SetState(F_072);
 				playerWireBug->SetActive(false);
 				playerWireBug->SetMove(Vector3::Zero(), false, Vector3::Zero());
+				bodyCollider->SetActive(true);
+				SetState(F_072);
 			}
 		}
 	}
@@ -4462,15 +4470,17 @@ void Player::W006() // W005에서 이어지는 체공중 동작
 	{
 		if (KEY_DP('W'))
 		{
-			SetState(F_073);
 			playerWireBug->SetActive(false);
 			playerWireBug->SetMove(Vector3::Zero(), false, Vector3::Zero());
+			bodyCollider->SetActive(true);
+			SetState(F_073);
 		}
 		else
 		{
-			SetState(F_072);
 			playerWireBug->SetActive(false);
 			playerWireBug->SetMove(Vector3::Zero(), false, Vector3::Zero());
+			bodyCollider->SetActive(true);
+			SetState(F_072);
 		}
 	}
 }
@@ -4541,15 +4551,17 @@ void Player::W020() // 밧줄벌레 발사 후 공중 체공중 구르기 눌렀을 때
 		{
 			if (K_MOVE)
 			{
-				SetState(F_073);
 				playerWireBug->SetActive(false);
 				playerWireBug->SetMove(Vector3::Zero(), false, Vector3::Zero());
+				bodyCollider->SetActive(true);
+				SetState(F_073);
 			}
 			else
 			{
-				SetState(F_072);
 				playerWireBug->SetActive(false);
 				playerWireBug->SetMove(Vector3::Zero(), false, Vector3::Zero());
+				bodyCollider->SetActive(true);
+				SetState(F_072);
 			}
 		}
 	}
@@ -4557,15 +4569,17 @@ void Player::W020() // 밧줄벌레 발사 후 공중 체공중 구르기 눌렀을 때
 	{
 		if (K_MOVE)
 		{
-			SetState(F_073);
 			playerWireBug->SetActive(false);
 			playerWireBug->SetMove(Vector3::Zero(), false, Vector3::Zero());
+			bodyCollider->SetActive(true);
+			SetState(F_073);
 		}
 		else
 		{
-			SetState(F_072);
 			playerWireBug->SetActive(false);
 			playerWireBug->SetMove(Vector3::Zero(), false, Vector3::Zero());
+			bodyCollider->SetActive(true);
+			SetState(F_072);
 		}
 	}
 }
@@ -5045,9 +5059,9 @@ void Player::RandHitSounds()
 	int i = rand() % 3;
 	switch (i)
 	{
-	case 0:		Sounds::Get()->Play("hit_pl_media.bnk.2_14", 1.1f);		break;
-	case 1:		Sounds::Get()->Play("hit_pl_media.bnk.2_20", 1.1f);		break;
-	case 2:		Sounds::Get()->Play("hit_pl_media.bnk.2_35", 1.1f);		break;
+	case 0:		Sounds::Get()->Play("hit_pl_media.bnk.2_14", 0.9f);		break;
+	case 1:		Sounds::Get()->Play("hit_pl_media.bnk.2_20", 0.9f);		break;
+	case 2:		Sounds::Get()->Play("hit_pl_media.bnk.2_35", 0.9f);		break;
 	default:
 		break;
 	}

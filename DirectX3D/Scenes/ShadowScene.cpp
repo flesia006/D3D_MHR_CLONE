@@ -13,6 +13,18 @@ ShadowScene::ShadowScene()
     garuk = new Sample();
     wireBug = new WireBug();
 
+
+    //ball->Scale() *= 150000;
+    //ball->Pos().y -= 6000;
+    ////ball->GetMaterial()->SetShader(L"Basic/Texture.hlsl");
+    //ball->GetMaterial()->SetDiffuseMap(L"Textures/M41Sky/storm.tga");
+    //ball->UpdateWorld();
+    //
+    //fog->SetTag("fog");
+    //fog->Scale() *= 100;
+    //fog->Pos().y -= 10000;
+    //fog->UpdateWorld();
+
     fieldFog->Pos() = Vector3(2062.1f, 220, 17653.896f);
     fieldFog->Rot().y = XM_PI;
     fieldFog->UpdateWorld();
@@ -38,7 +50,7 @@ ShadowScene::ShadowScene()
     garuk->SetTarget(player);
     garuk->SetEnemy(valphalk);
 
-    wireBug->Pos() = { 313,215.9f,4282 };
+    wireBug->Pos() = { 2010,310,4900 };
 
     shadow = new Shadow();
     UIManager::Get();
@@ -115,8 +127,6 @@ ShadowScene::ShadowScene()
     light3->direction = { 1, -0.6, 1 };
     light3->color = { 0.45, 0.45, 0.45, 1 };        // ³·Á¶¸í
 
-
-
     //Sounds::Get()->AddSound("Valphalk_Thema", SoundPath + L"Valphalk_Thema.mp3",true);
     //Sounds::Get()->Play("Valphalk_Thema", 0.03f);
     Sounds::Get()->AddSound("health_potion", SoundPath + L"health_potion.mp3");
@@ -129,8 +139,8 @@ ShadowScene::ShadowScene()
 ShadowScene::~ShadowScene()
 {
     delete garuk;
-    delete objects;
-    delete objects2;
+    //delete objects;
+    //delete objects2;
     delete player;
     delete shadow;
     delete valphalk;
@@ -150,10 +160,11 @@ void ShadowScene::Update()
     static bool once = false;
     if (UI->isMapChange == false) // ½ÃÀÛ¸Ê
     {
-        wireBug->Update();
+        //objects2->Update();
     }
     else // ÀüÅõ¸Ê
     {
+        wireBug->Update();
         if (!once)
         {
             garuk->SetTerrain(terrain);
@@ -243,18 +254,19 @@ void ShadowScene::Render()
         // val->Render();
         ball->Render();
         ball2->Render();
-        player->Render();
-        garuk->Render();
+       
         if (UI->isMapChange == false) // ½ÃÀÛ¸Ê
         {
-            objects2->Render();
-            wireBug->Render();
+            //objects2->Render();
         }
         else // ÀüÅõ¸Ê
         {
+            //objects->Render();
+            terrain->Render();
             valphalk->Render();
             objects->Render();
 //            terrain->Render();
+            wireBug->Render();
         }
         blendState[1]->SetState(); // ¹ÝÅõ¸í
         {
@@ -265,9 +277,13 @@ void ShadowScene::Render()
             //fieldFog->Render();
         }
         blendState[0]->SetState();
+
+        player->Render();
+        garuk->Render();
     }
     rasterizerState[0]->SetState();
-    ItemManager::Get()->Render();
+    if (UI->isMapChange == false)
+        ItemManager::Get()->Render();
 }
 
 void ShadowScene::PostRender()

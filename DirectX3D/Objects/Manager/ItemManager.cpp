@@ -178,14 +178,15 @@ void ItemManager::Update()
 
 		itemBoxFrame[i]->UpdateWorld();
 	}
-	MouseIcon->Pos() = { mousePos.x + 2, mousePos.y - 15 };
+	MouseIcon->Pos() = { mousePos.x + 3, mousePos.y - 10 };
 	MouseIcon->UpdateWorld();
 
 	if (mouseOn)
 	{
-		MouseIcon->Pos() = { mousePos.x + 2, mousePos.y - 15 };
+		MouseIcon->Pos() = { mousePos.x + 3, mousePos.y - 10 };
 		MouseIcon->UpdateWorld();
 	}
+
 	
 	BlueBox->UpdateWorld();
 	BoxIcon->UpdateWorld();
@@ -198,7 +199,9 @@ void ItemManager::Update()
 
 void ItemManager::Render()
 {
-	BlueBox->Render();
+	if (UI->isMapChange == false) // 시작맵에서만 박스 렌더
+		BlueBox->Render();
+
 	if (lookBoxIcon)
 	{
 		//rasterizerState[1]->SetState();
@@ -337,6 +340,8 @@ bool ItemManager::UseItem(Quad* quad)
 
 void ItemManager::UseBlueBox(Vector3 Pos)
 {
+	if (UI->isMapChange == true) return;// 시작맵에서만 박스 업데이트
+
 	float distance = (Pos - BlueBox->Pos()).Length();
 
 	if (distance <= 250)
@@ -361,11 +366,13 @@ void ItemManager::UseBlueBox(Vector3 Pos)
 		{
 			if (MousePos.y > CENTER_Y)
 			{
-				SetCursorPos(MousePos.x + 8.0f, CENTER_Y - Distance(MousePos.y, CENTER_Y) + 31.0f);
+				//SetCursorPos(MousePos.x + 8.0f, CENTER_Y - Distance(MousePos.y, CENTER_Y) + 31.0f);
+				SetCursorPos(MousePos.x, CENTER_Y - Distance(MousePos.y, CENTER_Y) + 22.0f);
 			}
 			else if (MousePos.y <= CENTER_Y)
 			{
-				SetCursorPos(MousePos.x + 8.0f, CENTER_Y + Distance(MousePos.y, CENTER_Y) + 31.0f);
+				//SetCursorPos(MousePos.x + 8.0f, CENTER_Y + Distance(MousePos.y, CENTER_Y) + 31.0f);
+				SetCursorPos(MousePos.x, CENTER_Y + Distance(MousePos.y, CENTER_Y) + 22.0f);
 			}
 			camTimer = 0;
 			useBlueBox = false;
@@ -383,11 +390,13 @@ void ItemManager::UseBlueBox(Vector3 Pos)
 			camTimer = 0;
 			if (MousePos.y > CENTER_Y)
 			{
-				SetCursorPos(MousePos.x + 8.0f, CENTER_Y - Distance(MousePos.y, CENTER_Y) + 31.0f);
+				//SetCursorPos(MousePos.x + 8.0f, CENTER_Y - Distance(MousePos.y, CENTER_Y) + 31.0f);
+				SetCursorPos(MousePos.x, CENTER_Y - Distance(MousePos.y, CENTER_Y) + 22.0f);
 			}
 			else if (MousePos.y <= CENTER_Y)
 			{
-				SetCursorPos(MousePos.x + 8.0f, CENTER_Y + Distance(MousePos.y, CENTER_Y) + 31.0f);
+				//SetCursorPos(MousePos.x + 8.0f, CENTER_Y + Distance(MousePos.y, CENTER_Y) + 31.0f);
+				SetCursorPos(MousePos.x, CENTER_Y + Distance(MousePos.y, CENTER_Y) + 22.0f);
 			}
 		}
 		mouseOn = false;

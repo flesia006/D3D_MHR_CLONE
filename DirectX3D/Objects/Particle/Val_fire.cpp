@@ -3,7 +3,7 @@
 Val_fire::Val_fire()
 {
 	explosionParticle = new ParticleSystem("TextData/Particles/explosion_Particle.fx");
-	explosionParticle->SetScale(3);
+	
 	particle = new ParticleSystem("TextData/Particles/val_energy.fx");
 	particle2 = new ParticleSystem("TextData/Particles/val_energy2.fx");
 	sprite = new Sprite(L"Textures/Effect/val_spark.png", 750, 750, 8, 4, true);	
@@ -95,7 +95,8 @@ void Val_fire::PlaySpark(Vector3 pos)
 
 void Val_fire::Stop()
 {
-	explosionParticle->Stop();
+	//bulletSparkExplosion->Stop();
+	//explosionParticle->Stop();
 	sprite->Stop();
 	particle->Stop();
 	particle2->Stop();
