@@ -107,7 +107,7 @@ private:
 	Transform* realPos = nullptr;
 	Transform* camTrgt = nullptr;
 	Transform* target;
-	Transform* enemy;
+	Valphalk* enemy;
 	Transform* waist;
 
 	Model* bowGun;

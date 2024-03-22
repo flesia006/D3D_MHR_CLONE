@@ -5,9 +5,9 @@ class Camera : public Transform
 private:
     enum CAMmode
     {
-        BASIC, 
-        OPENING, 
-        DEAD, 
+        BASIC,
+        OPENING,
+        DEAD,
         MAPMOVE,
         MAPARRIVE,
         FREE
@@ -25,6 +25,7 @@ public:
     void SetTarget(Transform* target) { this->target = target; }
     void SetLockOnTarget(Vector3 target) { this->lockOnTarget = target; }
     void SetTerrain(TerrainEditor* terrain) { this->terrain = terrain; }
+    bool IsLockOn() { return lockOnTarget == Vector3::Zero(); }
 
     void SetOpeningCAM();
     void SetDeadCAM(Transform* target, Transform* target2 = nullptr);
@@ -116,6 +117,8 @@ private:
 
     SphereCollider* camSphere = nullptr;
     BoxCollider* ground = nullptr;
+    vector<BoxCollider*> walls;
+
     Ray sight;
     TerrainEditor* terrain = nullptr;
 

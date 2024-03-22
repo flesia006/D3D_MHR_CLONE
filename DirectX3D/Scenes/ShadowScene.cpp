@@ -7,29 +7,11 @@ ShadowScene::ShadowScene()
     //objects = new M41Objects();
     objects2 = new M42Objects();
     terrain = new TerrainEditor();
-    fieldFog = new Model("fog");
     player = new Player();
     valphalk = new Valphalk();
     garuk = new Sample();
     wireBug = new WireBug();
 
-
-    //ball->Scale() *= 150000;
-    //ball->Pos().y -= 6000;
-    ////ball->GetMaterial()->SetShader(L"Basic/Texture.hlsl");
-    //ball->GetMaterial()->SetDiffuseMap(L"Textures/M41Sky/storm.tga");
-    //ball->UpdateWorld();
-    //
-    //fog->SetTag("fog");
-    //fog->Scale() *= 100;
-    //fog->Pos().y -= 10000;
-    //fog->UpdateWorld();
-
-    fieldFog->Pos() = Vector3(2062.1f, 220, 17653.896f);
-    fieldFog->Rot().y = XM_PI;
-    fieldFog->UpdateWorld();
-
-    
     //player->Pos() = Vector3(2237.314, 460, 6411.237);
     player->Pos() = Vector3(532, 10, 2900);
     player->GetMaterials()[7]->SetShader(L"Model/ModelAnimation2.hlsl");
@@ -105,12 +87,6 @@ ShadowScene::ShadowScene()
     fog2Re->UpdateWorld();
 
 
-    fieldFog = new Model("fog");
-    fieldFog->Pos() = Vector3(2062.1f, 230, 17653.896f);
-    fieldFog->Rot().y = XM_PI;
-    fieldFog->UpdateWorld();
-
-
     light = Environment::Get()->GetLight(0);
     light->type = 0;
     light->direction = { -1, -0.3, -1 };
@@ -169,20 +145,20 @@ void ShadowScene::Update()
         {
             garuk->SetTerrain(terrain);
             player->SetTerrain(terrain);
+            CAM->SetTerrain(terrain);
+            once = true;
         }
-        //objects->Update();
         valphalk->Update();
     }
     player->Update();
     garuk->Update();
-    fieldFog->UpdateWorld();
 
     ball->Rot().y += 0.02 * DELTA;
     ball->UpdateWorld();
 
     ball2->Rot().y += 0.02 * DELTA;
     ball2->UpdateWorld();
-    
+
     fog->Rot().y -= 0.04 * DELTA;
     fog->UpdateWorld();
 
@@ -194,7 +170,7 @@ void ShadowScene::Update()
 
     fog2Re->Rot().y += 0.06 * DELTA;
     fog2Re->UpdateWorld();
-    
+
     UIManager::Get()->Update();
     if (KEY_PRESS('Z')) valphalk->curHP -= 1000;
 
@@ -237,15 +213,15 @@ void ShadowScene::Render()
         firstRender = true;
     }
 
-//    //그림자를 받기 위한 셰이더 세팅
-//    objects->SetShader(L"Light/Shadow.hlsl");
-//    objects2->SetShader(L"Light/Shadow.hlsl");
-//    valphalk->SetShader(L"Light/Shadow.hlsl");
-//    player->SetShader(L"Light/Shadow.hlsl");
-//    garuk->SetShader(L"Light/Shadow.hlsl");
-//    //셰이더가 세팅된 배경과 인간을 진짜 호출
+    //    //그림자를 받기 위한 셰이더 세팅
+    //    objects->SetShader(L"Light/Shadow.hlsl");
+    //    objects2->SetShader(L"Light/Shadow.hlsl");
+    //    valphalk->SetShader(L"Light/Shadow.hlsl");
+    //    player->SetShader(L"Light/Shadow.hlsl");
+    //    garuk->SetShader(L"Light/Shadow.hlsl");
+    //    //셰이더가 세팅된 배경과 인간을 진짜 호출
 
-    //terrain->Render();
+        //terrain->Render();
 
     rasterizerState[1]->SetState(); // 후면도 그림
     {
@@ -259,9 +235,10 @@ void ShadowScene::Render()
         }
         else // 전투맵
         {
-            //objects->Render();
-            terrain->Render();
+            objects->Render();
+//          terrain->Render();
             valphalk->Render();
+            objects->Render();
             wireBug->Render();
         }
         blendState[1]->SetState(); // 반투명
@@ -270,7 +247,6 @@ void ShadowScene::Render()
             fogRe->Render();
             fog2->Render();
             fog2Re->Render();
-            //fieldFog->Render();
         }
         blendState[0]->SetState();
 
@@ -293,22 +269,22 @@ void ShadowScene::PostRender()
 
 void ShadowScene::GUIRender()
 {
-//    ball->GUIRender();
-//    fog->GUIRender();
-//    cloud->GUIRender();
-//    cloud2->GUIRender();
-//    cloud3->GUIRender();
-//    cloud4->GUIRender();
-//    forest->GUIRender();
-//    terrain->GUIRender();
-//    valphalk->GUIRender();
-      
+    //    ball->GUIRender();
+    //    fog->GUIRender();
+    //    cloud->GUIRender();
+    //    cloud2->GUIRender();
+    //    cloud3->GUIRender();
+    //    cloud4->GUIRender();
+    //    forest->GUIRender();
+    //    terrain->GUIRender();
+    //    valphalk->GUIRender();
+
     player->GUIRender(); // 디버그 조작용
-//    fieldFog->GUIRender();
-//    valphalk->GUIRender();
-//    CAM->GUIRender();
-    UIManager::Get()->GUIRender();
-//    ItemManager::Get()->GUIRender();
-    //player->GUIRender(); // 디버그 조작용
-    //UIManager::Get()->GUIRender();
+    //    fieldFog->GUIRender();
+    //    valphalk->GUIRender();
+    //    CAM->GUIRender();
+    //    UIManager::Get()->GUIRender();
+    //    ItemManager::Get()->GUIRender();
+        //player->GUIRender(); // 디버그 조작용
+        //UIManager::Get()->GUIRender();
 }
