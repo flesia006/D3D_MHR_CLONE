@@ -960,6 +960,7 @@ void Valphalk::SkyFall()
 
 	if (sequence == 4) // 착지 끝
 	{
+		// 렌더해줘서
 		SetState(E_1164);
 		EX1164();
 	}
@@ -1637,8 +1638,7 @@ void Valphalk::Patrol()
 		case 5:		SetState(E_0098);  E0098(XM_PIDIV2);	break;
 		case 6:		SetState(E_0099);  E0099(XM_PI);		break;
 		}
-		//if(RATIO < 0.1f)
-		if(RATIO > 0.008f && RATIO < 0.01f)
+		if(RATIO > 0.008f && RATIO < 0.01f) // init 해도됨
 			Sounds::Get()->Play("em086_05_se_media_52", 0.4f); // 사운드 중복 고침 (숫자로 해서 다시해도됨)
 		if(RATIO > 0.398f && RATIO < 0.4f)
 			Sounds::Get()->Play("em086_05_se_media_52", 0.4f); // 사운드 중복 고침 (숫자로 해서 다시해도됨)
@@ -2559,10 +2559,12 @@ void Valphalk::S_StabAtk()
 
 	if (sequence == 4) // 공격 모션2 - 휘두르기
 	{
+		SetState(E_2056);
+		E2056();
+
 		SetState(E_2056);	E2056();
 		if (RATIO > 0.30 && !playOncePerPattern3)
 		{
-			Sounds::Get()->Play("em086_05_se_media_32", 0.4f);
 			playOncePerPattern3 = true;
 		}
 	}
@@ -4060,6 +4062,7 @@ void Valphalk::EX1164()
 	{
 		renderJet = false;
 		sequence++;
+		// false
 	}
 }
 
@@ -4384,9 +4387,22 @@ void Valphalk::E2054() // 찌르기 날개 회수
 void Valphalk::E2079()
 {
 	PLAY;
-	if (RATIO < 0.14f && RATIO > 0.13f) // TODO: 보류
-		Sounds::Get()->Play("em086_05_fx_media_50", 0.3f);
+	if (RATIO < 0.14f && RATIO > 0.13f)
+	{
+		if (!playOncePerPattern)
+		{
+			Sounds::Get()->Play("em086_05_fx_media_50", 0.3f); // 미확인
+			playOncePerPattern = true;
+		}
+	}
 	if (RATIO < 0.17 && RATIO > 0.16f)
+	{
+		if (playOncePerPattern)
+		{
+			Sounds::Get()->Play("em086_05_fx_media_50", 0.3f); // 미확인
+			playOncePerPattern = false;
+		}
+	}
 		Sounds::Get()->Play("em086_05_fx_media_50_2", 0.3f);
 	if (RATIO < 0.2f && RATIO > 0.19f)
 		Sounds::Get()->Play("em086_05_fx_media_50", 0.3f);
@@ -5612,7 +5628,6 @@ void Valphalk::E2367() // 풀버스트 발사
 			explosionParticle[1]->Play3(fullBurst->GlobalPos() + Forward() * 1200 + Down() * 120, 0);
 			playOncePerPattern = true;
 		}
-
 	}
 	if (RATIO > 0.59 && RATIO < 0.7)
 	{
@@ -6107,7 +6122,7 @@ void Valphalk::E3023() // 사망
 	if (RATIO < 0.44 && !playOncePerPattern)
 	{
 		Sounds::Get()->Play("em086_05_vo_media_30", 2.5f); // 미확인
-		playOncePerPattern = 0;
+		playOncePerPattern = true;
 	}
 	
 	if (RATIO > 0.96)
@@ -6201,7 +6216,8 @@ void Valphalk::E4013() // 조우 포효
 	Vector3 campos;
 	campos = Pos() - CAM->Pos();
 	campos.GetNormalized();
-	if(RATIO > 0.009f && RATIO < 0.01f)
+
+	if(RATIO > 0.009f && RATIO < 0.01f) // init 써도 될듯?
 		Sounds::Get()->Play("em086_05_se_media_52", 0.4f); // 사운드 중복 고침 (숫자로 고쳐서 불로 바꿔도 됨)
 
 	if (RATIO > 0.332f && RATIO < 0.333f)
