@@ -56,8 +56,8 @@ GameManager::GameManager()
 //    SceneManager::Get()->Create("Grid", new GridScene());
 //    SceneManager::Get()->Add("Grid");
 
-    SceneManager::Get()->Create("ShadowScene", new ShadowScene());
-    SceneManager::Get()->Add("ShadowScene");
+   SceneManager::Get()->Create("ShadowScene", new ShadowScene());
+   SceneManager::Get()->Add("ShadowScene");
 //    SceneManager::Get()->Create("MapDesignScene", new MapDesignScene());
 //    SceneManager::Get()->Add("MapDesignScene");
 //      SceneManager::Get()->Create("Particle", new ParticleScene());
@@ -434,7 +434,7 @@ void LoadPlayScene(std::shared_future<void> play)
 void LoadScene() // 게임 시작시 오프닝씬 -> 로딩씬으로 전환
 {
     SceneManager::Get()->Remove("OpeningScene");
-    Sounds::Get()->Pause("lobbyBGM");
+    Sounds::Get()->Stop("lobbyBGM");
     SceneManager::Get()->Add("LoadingScene");
     UIManager::Get()->choice = 100;
 }
@@ -443,7 +443,8 @@ void PlayScene(std::shared_future<void> play)
 {
     play.get();
     SceneManager::Get()->Remove("LoadingScene");
-    SceneManager::Get()->Add("FightTestScene");
+    //Sounds::Get()->Play("env_114", 0.5f);
+    //SceneManager::Get()->Add("FightTestScene");
     CAM->isFreeCamFalse();
 
     std::this_thread::sleep_for(std::chrono::seconds(3));
@@ -452,7 +453,13 @@ void PlayScene(std::shared_future<void> play)
 void PlayScene() // 로딩씬을 지우고 원하는 씬으로 진입한다.
 {
     SceneManager::Get()->Remove("LoadingScene");
+    if (UI->isLoading)
+    {
+        Sounds::Get()->Play("env_114", 0.5f);
+        UIManager::Get()->isLoading = false;
+    }
+   
     //SceneManager::Get()->Add("PlayerTestScene");
     CAM->isFreeCamFalse();
-    UIManager::Get()->isLoading = false;
+    
 }

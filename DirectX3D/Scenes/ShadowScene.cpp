@@ -105,7 +105,7 @@ ShadowScene::ShadowScene()
 
     //Sounds::Get()->AddSound("Valphalk_Thema", SoundPath + L"Valphalk_Thema.mp3",true);
     //Sounds::Get()->Play("Valphalk_Thema", 0.03f);
-    Sounds::Get()->AddSound("health_potion", SoundPath + L"health_potion.mp3");
+    //Sounds::Get()->AddSound("health_potion", SoundPath + L"health_potion.mp3");
     FOR(2) rasterizerState[i] = new RasterizerState();
     FOR(2) blendState[i] = new BlendState();
     blendState[1]->Additive();
