@@ -435,7 +435,7 @@ private: // 이벤트 혹은 함수에서 조건이 필요할거 같을때
 	int Count = 0;
 	float timer = 0.0f;
 	int randX[6], randZ[6];
-	bool isStorm = false;
+	bool isStorm = true;
 
 private:
 	vector<Transform*> transforms;
@@ -484,7 +484,7 @@ private:
 	// 공격 콜라이더 (투사체, 폭발 등)	
 	vector<SphereCollider*> bullets;
 	BoxCollider* forwardBoom;
-	BoxCollider* stormBox;
+	SphereCollider* stormBox;
 	BoxCollider* fullBurst;
 	BoxCollider* effectBox1;
 	BoxCollider* effectBox2;
