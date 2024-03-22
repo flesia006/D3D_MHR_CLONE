@@ -869,7 +869,7 @@ void UIManager::Update()
 		clockTimer += DELTA;
 		if (clockTimer > 1.0f)
 		{
-			clockHand->Rot().z -= XM_PI * 1 / 18000;
+			clockHand->Rot().z -= XM_PI * 1 / 1800;
 			clockTimer = 0.0f;
 		}
 	}
@@ -1155,7 +1155,8 @@ void UIManager::GUIRender()
 	//ImGui::Text("CamRot_X: %f", CamRot);
 	//ImGui::Text("CAM_Rot_Y: %f", CAM->Rot().y);
 	//ImGui::Text("CamRot_Y: %f", CamRot.y);
-	ImGui::Text("clockHand->Rot().z: %f", clockHand->Rot().z);
+	ImGui::SliderFloat3("clockHand->Rot()", (float*)&clockHand->Rot(), -XM_PIDIV2 * 10 / 3, 0);
+	//ImGui::Text("clockHand->Rot().z: %f", clockHand->Rot().z);
 }
 
 void UIManager::Hit(float damage)
