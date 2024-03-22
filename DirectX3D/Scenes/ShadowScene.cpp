@@ -307,7 +307,7 @@ void ShadowScene::GUIRender()
 //    fieldFog->GUIRender();
 //    valphalk->GUIRender();
 //    CAM->GUIRender();
-//    UIManager::Get()->GUIRender();
+    UIManager::Get()->GUIRender();
 //    ItemManager::Get()->GUIRender();
     //player->GUIRender(); // 디버그 조작용
     //UIManager::Get()->GUIRender();

@@ -5900,7 +5900,7 @@ void Valphalk::E4013() // 조우 포효
 	if(RATIO<0.1f)
 		Sounds::Get()->Play("em086_05_se_media_52", 0.4f);
 
-	if (RATIO > 0.30 && RATIO < 0.315)
+	if (RATIO > 0.332 && RATIO < 0.352)
 	{
 		Sounds::Get()->Play("em086_05_vo_media_10", 0.5f);
 		if (!playOncePerPattern)

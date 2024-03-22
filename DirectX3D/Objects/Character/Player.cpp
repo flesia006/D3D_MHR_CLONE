@@ -3505,9 +3505,13 @@ void Player::L147() // 간파베기
 		{
 			CAM->Zoom(650);
 			EvadeCheck(); // 성공하면 띵 소리 나야함
+			bodyCollider->SetActive(false);
 		}
 		if (RATIO > 0.30)
+		{
 			evadeCheckCollider->SetActive(false);
+			bodyCollider->SetActive(true);
+		}
 	}
 
 	// 특납 캔슬 가능 타이밍
@@ -3517,6 +3521,7 @@ void Player::L147() // 간파베기
 			if (isEvaded)
 				isEvaded = false;
 			evadeCheckCollider->SetActive(false);
+			bodyCollider->SetActive(true);
 			SetState(L_151);	// 특수 납도
 		}
 	}
@@ -3714,10 +3719,7 @@ void Player::L155() // 앉아발도 기인베기
 		{
 			holdingSword = false;
 			if (Attack(35))
-			{
 				isHit = true;
-				CAM->SetLockOnTarget(damages.back().pos);
-			}
 		}
 		else
 			EndEffect();
@@ -3731,6 +3733,7 @@ void Player::L155() // 앉아발도 기인베기
 			if (isHitL155 == false)
 				UIManager::Get()->PlusCotingLevel();
 
+			CAM->SetLockOnTarget(damages.back().pos);
 
 			isHitL155 = true;
 			Sounds::Get()->Play("pl_wp_l_swd_epv_media.bnk.2_8", .5f);
