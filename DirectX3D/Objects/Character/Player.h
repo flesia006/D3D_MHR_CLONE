@@ -405,6 +405,8 @@ private:
 	bool isDoubleStrikeMotion = false;
 	bool playOncePerMotion = false;
 	bool playOncePerMotion2 = false;
+	bool playOncePerMotion3 = false;
+	bool playOncePerMotion4 = false;
 	bool playOncePerTerm = false;
 	bool playOncePerTerm2 = false;
 

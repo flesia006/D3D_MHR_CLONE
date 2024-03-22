@@ -1471,6 +1471,11 @@ void Player::HurtCheck()
 
 				int str = collider->atkStrength;
 				holdingSword = false;
+
+				if(str == 1 && (curState == L_128 || curState == L_130 || curState == L_131
+					|| curState == 133 || curState == 136))
+					return; // 작은 경직 일으키는 공격만 무시
+
 				if (rad.x > XM_PIDIV2)
 				{
 					Rot().y = atan2(reDir.x, reDir.z);
@@ -1844,6 +1849,9 @@ void Player::SetState(State state)
 	curState = state;
 	attackOnlyOncePerMotion = false;
 	playOncePerMotion = false;
+	playOncePerMotion2 = false;
+	playOncePerMotion3 = false;
+	playOncePerMotion4 = false;
 	//	PlayClip(state);
 }
 
@@ -2096,8 +2104,11 @@ void Player::S008() // 서서 납도
 {
 	PLAY;
 
-	if (RATIO > 0.6)
+	if (RATIO > 0.6 && playOncePerMotion)
+	{
+		playOncePerMotion = true;
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_9", .5f);
+	}
 
 	if (RATIO > 0.95 && K_MOVE)
 		SetState(S_005);
@@ -2180,21 +2191,17 @@ void Player::S017()
 void Player::S018() // 납도상태 구르기
 {
 	PLAY;
-	if (RATIO < 0.1)
+	if (RATIO > 0.1 && !playOncePerMotion)
 	{
 		switch (randVoice)
 		{
-		case 0: Sounds::Get()->Play("roll1", 2.f); break;
-		case 1: Sounds::Get()->Play("roll2", 2.f); break;
-		case 2: Sounds::Get()->Play("roll3", 2.f); break;
-		case 3: Sounds::Get()->Play("roll2", 2.f); break;
-		case 4: Sounds::Get()->Play("roll3", 2.f); break;
+		case 0: Sounds::Get()->Play("roll1", 2.f); playOncePerMotion = true; break;
+		case 1: Sounds::Get()->Play("roll2", 2.f); playOncePerMotion = true; break;
+		case 2: Sounds::Get()->Play("roll3", 2.f); playOncePerMotion = true; break;
+		case 3: Sounds::Get()->Play("roll2", 2.f); playOncePerMotion = true; break;
+		case 4: Sounds::Get()->Play("roll3", 2.f); playOncePerMotion = true; break;
 		default: break;
 		}
-	}
-	if (!playOncePerMotion)
-	{
-
 	}
 
 	if (RATIO < 0.40)
@@ -2305,11 +2312,17 @@ void Player::S038() // 전력질주
 void Player::S118() // 탈진 시작
 {
 	PLAY;
-	if (RATIO < 0.1)
+	if (RATIO > 0.1 && !playOncePerMotion)
+	{
 		Sounds::Get()->Play("exhausted", 2.f);
+		playOncePerMotion = true;
+	}
 	UIManager::Get()->curStamina += 2.0f * DELTA;
 	if (RATIO > 0.96f)
+	{
+		playOncePerMotion = false;
 		SetState(S_120);
+	}
 }
 
 void Player::S119() // 탈진 끝
@@ -2382,7 +2395,6 @@ void Player::L001() // 발도상태 대기
 
 void Player::L002() // 발도
 {
-	Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_5", .5f);
 	PLAY;
 }
 
@@ -2485,11 +2497,15 @@ void Player::L009() // 걸으면서 납도
 	PLAY;
 	Rotate();
 
-	if (RATIO > 0.4)
+	if (RATIO > 0.4 && !playOncePerMotion)
+	{
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_9", .5f);
+		playOncePerMotion = true;
+	}
 
 	if (RATIO > 0.95 && (KEY_PRESS('W') || KEY_PRESS('S') || KEY_PRESS('A') || KEY_PRESS('D')))
 	{
+		playOncePerMotion = false;
 		SetState(S_011);
 	}
 
@@ -2502,17 +2518,18 @@ void Player::L009() // 걸으면서 납도
 void Player::L010() // 구르기
 {
 	PLAY;
-	if (RATIO < 0.1)
+	if (RATIO > 0.1 && !playOncePerMotion)
 	{
 		switch (randVoice)
 		{
-		case 0: Sounds::Get()->Play("roll1", 2.f); break;
-		case 1: Sounds::Get()->Play("roll2", 2.f); break;
-		case 2: Sounds::Get()->Play("roll3", 2.f); break;
-		case 3: Sounds::Get()->Play("roll2", 2.f); break;
-		case 4: Sounds::Get()->Play("roll3", 2.f); break;
+		case 0: Sounds::Get()->Play("roll1", 2.f);  playOncePerMotion = true; break;
+		case 1: Sounds::Get()->Play("roll2", 2.f);  playOncePerMotion = true; break;
+		case 2: Sounds::Get()->Play("roll3", 2.f);  playOncePerMotion = true; break;
+		case 3: Sounds::Get()->Play("roll2", 2.f);  playOncePerMotion = true; break;
+		case 4: Sounds::Get()->Play("roll3", 2.f);  playOncePerMotion = true; break;
 		default: break;
 		}
+
 	}
 	if (RATIO < 0.40)
 		bodyCollider->SetActive(false);
@@ -2580,8 +2597,11 @@ void Player::L101() // 내디뎌베기
 		initRotY = Rot().y;
 		isEvaded = false;
 	}
-	if (RATIO > 0.3 && RATIO < 0.35)
+	if (RATIO > 0.35 && !playOncePerMotion)
+	{
+		playOncePerMotion = true;
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
+	}
 	if (RATIO > 0.34 && RATIO < 0.35)
 		RandVoice();
 
@@ -2610,7 +2630,6 @@ void Player::L101() // 내디뎌베기
 	// 캔슬 가능 프레임
 	if (RATIO > 0.6 && RATIO < 0.96)
 	{
-
 		if (K_LMB)				SetState(L_102);	// 세로베기		
 		else if (K_RMB)				SetState(L_104);	// 찌르기
 		else if (K_LMBRMB)			SetState(L_103);	// 베어내리기
@@ -2638,8 +2657,11 @@ void Player::L102() // 세로베기
 		PlayClip(L_102);
 		initRotY = Rot().y;
 	}
-	if (RATIO > 0.25 && RATIO < 0.28)
+	if (RATIO > 0.28 && !playOncePerMotion)
+	{
+		playOncePerMotion = true;
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
+	}
 	// 방향 조정 가능 프레임
 	{
 		if (RATIO < 0.3)
@@ -2684,8 +2706,12 @@ void Player::L103() // 베어내리기
 		isEvaded = false;
 	}
 
-	if (RATIO > 0.2 && RATIO < 0.25)
+	if (RATIO > 0.25 && !playOncePerMotion)
+	{
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
+		playOncePerMotion = true;
+	}
+
 	if (RATIO < 0.272)
 		LimitRotate(15);
 
@@ -2723,8 +2749,11 @@ void Player::L104() // 찌르기
 		isEvaded = false;
 	}
 
-	if (RATIO > 0.1 && RATIO < 0.15)
+	if (RATIO > 0.15 && !playOncePerMotion)
+	{
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
+		playOncePerMotion = true;
+	}
 
 	if (RATIO < 0.1)
 		LimitRotate(15);
@@ -2741,6 +2770,8 @@ void Player::L104() // 찌르기
 
 	if (RATIO > 0.40 && RATIO < 0.96)
 	{
+		playOncePerMotion = false;
+
 		if (K_LMB || K_RMB)	SetState(L_105);	// 베어올리기
 		else if (K_LMBRMB)			SetState(L_103);	// 베어내리기
 		else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106);	// 기인베기1		
@@ -2759,15 +2790,14 @@ void Player::L104() // 찌르기
 void Player::L105() // 베어 올리기
 {
 	PLAY;
-	if (INIT)
-		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_5", .5f);
 
 	if (RATIO < 0.1)
 		LimitRotate(15);
 
-	if (RATIO > 0.1 && RATIO < 0.12)
+	if (RATIO > 0.12 && !playOncePerMotion)
 	{
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
+		playOncePerMotion = true;
 	}
 
 	// 공격판정 프레임
@@ -2811,8 +2841,11 @@ void Player::L106() // 기인 베기 1
 		playOncePerMotion = true;
 	}
 
-	if (RATIO > 0.3 && RATIO < 0.31)
+	if (RATIO > 0.31 && !playOncePerMotion)
+	{
+		playOncePerMotion = true;
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
+	}
 	UIManager::Get()->staminaActive = false;
 
 	// 방향전환 함수
@@ -2861,8 +2894,11 @@ void Player::L107() // 기인베기 2
 		playOncePerMotion = true;
 	}
 
-	if (RATIO > 0.25 && RATIO < 0.26)
+	if (RATIO > 0.26 && !playOncePerMotion2)
+	{
+		playOncePerMotion2 = true;
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
+	}
 
 	// 방향전환 함수
 	{
@@ -2914,12 +2950,21 @@ void Player::L108() // 기인베기 3
 		playOncePerMotion = true;
 	}
 
-	if (RATIO > 0.1 && RATIO < 0.11)
+	if (RATIO > 0.11 && !playOncePerMotion2)
+	{
+		playOncePerMotion2 = true;
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
-	if (RATIO > 0.2 && RATIO < 0.21)
+	}
+	if (RATIO > 0.21 && !playOncePerMotion3)
+	{
+		playOncePerMotion3 = true;
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
-	if (RATIO > 0.4 && RATIO < 0.46)
+	}
+	if (RATIO > 0.46 && !playOncePerMotion4)
+	{
+		playOncePerMotion4 = true;
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
+	}
 	// 줌 정상화 (앉아 기인 회전 베기에서 넘어온 경우)
 	{
 		if (RATIO > 0 && RATIO < 0.45)
@@ -2991,12 +3036,21 @@ void Player::L109() // 기인 큰회전베기
 		playOncePerMotion = true;
 	}
 
-	if (RATIO > 0.2 && RATIO < 0.21)
+	if (RATIO > 0.21 && !playOncePerMotion2)
+	{
+		playOncePerMotion2 = true;
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
-	if (RATIO > 0.1 && RATIO < 0.15)
+	}
+	if (RATIO > 0.15 && !playOncePerMotion3)
+	{
+		playOncePerMotion3 = true;
 		RandVoice();
-	if (RATIO > 0.7 && RATIO < 0.75)
+	}
+	if (RATIO > 0.75 && !playOncePerMotion4)
+	{
+		playOncePerMotion4 = true;
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_9", .5f);
+	}
 
 
 
@@ -3055,10 +3109,16 @@ void Player::L110() // 기인 내디뎌베기
 		playOncePerMotion = true;
 	}
 
-	if (RATIO > 0.3 && RATIO < 0.31)
+	if (RATIO > 0.31 && !playOncePerMotion2)
+	{
+		playOncePerMotion2 = true;
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
-	if (RATIO > 0.2 && RATIO < 0.3)
+	}
+	if (RATIO > 0.3 && !playOncePerMotion3)
+	{
+		playOncePerMotion3 = true;
 		RandVoice();
+	}
 
 	if (RATIO < 0.30)
 		LimitRotate(15);
@@ -3109,10 +3169,13 @@ void Player::L116()
 void Player::L119()
 {
 	PLAY;
-	if (RATIO > 0.001 && RATIO < 0.002)
+	if (INIT)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
-	if (RATIO > 0.2 && RATIO < 0.3)
+	if (RATIO > 0.3 && !playOncePerMotion)
+	{
+		playOncePerMotion = true;
 		RandVoice();
+	}
 
 
 
@@ -3176,8 +3239,11 @@ void Player::L126() // 수월의 자세
 
 	if (RATIO < 0.2)
 		LimitRotate(180, 50);
-	if(RATIO<0.1)
-	Sounds::Get()->Play("suwolstart",0.5f);
+	if (RATIO > 0.1 && !playOncePerMotion)
+	{
+		playOncePerMotion = true;
+		Sounds::Get()->Play("suwolstart",0.5f);
+	}
 
 	if (RATIO > 0.01 && RATIO < 0.8)
 	{
@@ -3203,8 +3269,11 @@ void Player::L127() // 수월의 자세 카운터
 {
 	PLAY;
 
-	if (RATIO < 0.1)
+	if (RATIO > 0.1 && !playOncePerMotion2)
+	{
+		playOncePerMotion2 = true;
 		Sounds::Get()->Play("suwolattack", 0.5f);
+	}
 	if (RATIO > 0.10)
 	{
 		suwol->effect = false;
@@ -3244,11 +3313,11 @@ void Player::L128()	// 날라차기 시작
 {
 	PLAY;
 
-	wireBugParticle->Play(GetTranslationByNode(108), GetRotationByNode(129));
 	if (!playOncePerMotion)
 	{
 		UI->UseBugSkill();
 		Sounds::Get()->Play("wirebug", 3.5f);
+		wireBugParticle->Play(GetTranslationByNode(108), GetRotationByNode(129));
 		isEvaded = false;
 		playerWireBug->SetActive(true);
 		playOncePerMotion = true;
@@ -3377,8 +3446,11 @@ void Player::L133()	// 투구깨기
 		}
 	}
 
-	if (RATIO > 0.4 && RATIO < 0.44)
+	if (RATIO > 0.44 && !playOncePerMotion)
+	{
+		playOncePerMotion = true;
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
+	}
 
 	if (RATIO < 0.35)
 		LimitRotate(180);
@@ -3442,10 +3514,16 @@ void Player::L136() // 낙하찌르기
 	if (INIT)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_5", .5f);
 
-	if (RATIO > 0.2 && RATIO < 0.3)
+	if (RATIO > 0.3 && !playOncePerMotion)
+	{
+		playOncePerMotion = true;
 		RandVoice();
-	if (RATIO > 0.5 && RATIO < 0.54)
+	}
+	if (RATIO > 0.54 && !playOncePerMotion2)
+	{
+		playOncePerMotion2 = true;
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
+	}
 
 	// 체공중
 	{
@@ -3496,8 +3574,11 @@ void Player::L147() // 간파베기
 		UI->curSpiritGauge = 0;
 	}
 
-	if (RATIO > 0.2 && RATIO < 0.3)
+	if (RATIO > 0.3 && !playOncePerMotion)
+	{
+		playOncePerMotion = true;
 		RandVoice();
+	}
 	UIManager::Get()->staminaActive = false;
 	// 줌아웃 && 회피 판정 프레임
 	{
@@ -3574,11 +3655,17 @@ void Player::L151() // 특수 납도
 	//if (RATIO > 0.2 && RATIO < 0.3)
 	//	RandVoice();
 
-	if (RATIO > 0.5 && RATIO < 0.6)
+	if (RATIO > 0.6 && !playOncePerMotion)
+	{
+		playOncePerMotion = true;
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_9", .5f);
+	}
 
-	if (RATIO > 0.56 && RATIO < 0.57)
+	if (RATIO > 0.57 && !playOncePerMotion2)
+	{
+		playOncePerMotion2 = true;
 		spAtkParticle->Play(haloCollider->Pos() + Right() * 1.0f, { 0,1,0 });
+	}
 
 	if (RATIO < 0.2)
 		LimitRotate(180, 15);
@@ -3638,12 +3725,21 @@ void Player::L154() // 앉아발도 베기
 	PLAY;
 	if (INIT)
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_5", .5f);
-	if (RATIO > 0.01 && RATIO < 0.05)
+	if (RATIO > 0.05 && !playOncePerMotion)
+	{
+		playOncePerMotion = true;
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
-	if (RATIO > 0.17 && RATIO < 0.18)
+	}
+	if (RATIO > 0.18 && !playOncePerMotion2)
+	{
+		playOncePerMotion2 = true;
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
-	if (RATIO > 0.2 && RATIO < 0.3)
+	}
+	if (RATIO > 0.3 && !playOncePerMotion3)
+	{
+		playOncePerMotion3 = true;
 		RandVoice();
+	}
 
 	if (RATIO < 0.1)
 		LimitRotate(30);
@@ -3700,8 +3796,11 @@ void Player::L155() // 앉아발도 기인베기
 		//Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_8", .5f);
 		spStartParticle->Play(Pos(), 0);
 	}
-	if (RATIO > 0.11 && RATIO < 0.15)
+	if (RATIO > 0.15 && !playOncePerMotion)
+	{
+		playOncePerMotion = true;
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
+	}
 	// 줌아웃 && 회피 판정 프레임
 	{
 		if (RATIO > 0.1 && RATIO < 0.18)
@@ -3910,8 +4009,11 @@ void Player::R400() //물약 먹기 시작
 void Player::R401() // 물약 빠는중
 {
 	PLAY;
-	if (RATIO < 0.1)
+	if (RATIO > 0.1 && !playOncePerMotion)
+	{
+		playOncePerMotion = true;
 		Sounds::Get()->Play("eatting", 2.3f);
+	}
 	if (RATIO > 0.96)
 		SetState(R_402);
 }
@@ -3919,8 +4021,9 @@ void Player::R401() // 물약 빠는중
 void Player::R402() // 물약 다먹은
 {
 	PLAY;
-	if (RATIO < 0.1f)
+	if (RATIO > 0.1f && !playOncePerMotion)
 	{
+		playOncePerMotion = true;
 		Sounds::Get()->Play("health_potion", 0.3f);
 		potionParticle->Play(Pos() + Back() * 10, { 0,0,0 });
 	}
@@ -3938,12 +4041,13 @@ void Player::R402() // 물약 다먹은
 void Player::R600() // 숫돌질
 {
 	PLAY;
-	Vector3 r = GetTranslationByNode(rightHandNode) - GetTranslationByNode(145);
-	r.GetNormalized();
-	sutdol->SetPos(GetTranslationByNode(rightHandNode));
 
-	if (RATIO < 0.8 && RATIO > 0.79)
+	if (RATIO > 0.8 && !playOncePerMotion)
 	{
+		Vector3 r = GetTranslationByNode(rightHandNode) - GetTranslationByNode(145);
+		sutdol->SetPos(GetTranslationByNode(rightHandNode));
+
+		playOncePerMotion = true;
 		sutdol->Play(GetTranslationByNode(rightHandNode), r);
 		Sounds::Get()->Play("wheatstone1", 0.3f);
 	}
@@ -3955,12 +4059,13 @@ void Player::R600() // 숫돌질
 void Player::R601() // 숫돌질
 {
 	PLAY;
-	Vector3 r = GetTranslationByNode(rightHandNode) - GetTranslationByNode(145);
-	r.GetNormalized();
-	sutdol->SetPos(GetTranslationByNode(rightHandNode));
 
-	if (RATIO < 0.35 && RATIO > 0.31)
+	if (RATIO > 0.35 && !playOncePerMotion)
 	{
+		Vector3 r = GetTranslationByNode(rightHandNode) - GetTranslationByNode(145);
+		sutdol->SetPos(GetTranslationByNode(rightHandNode));
+
+		playOncePerMotion = true;
 		sutdol->Play(GetTranslationByNode(rightHandNode), r);
 		Sounds::Get()->Play("wheatstone1", 0.3f);
 	}
@@ -3973,21 +4078,23 @@ void Player::R601() // 숫돌질
 void Player::R602() // 숫돌 마무리
 {
 	PLAY;
-	Vector3 r = GetTranslationByNode(rightHandNode) - GetTranslationByNode(145);
-	r.GetNormalized();
-	sutdol->SetPos(GetTranslationByNode(rightHandNode));
 
-	if (RATIO < 0.1 && RATIO > 0.09)
+	if (RATIO > 0.1 && !playOncePerMotion)
 	{
+		Vector3 r = GetTranslationByNode(rightHandNode) - GetTranslationByNode(145);
+		sutdol->SetPos(GetTranslationByNode(rightHandNode));
+
+		playOncePerMotion = true;
 		sutdol->Play(GetTranslationByNode(rightHandNode), r);
 		Sounds::Get()->Play("wheatstone1", 0.3f);
 	}
 	if (RATIO > 0.59)
 		sutdol->SetPos(longSword->GlobalPos() + longSword->Back() * 120.0f);
-	if (RATIO < 0.6 && RATIO>0.59)
+	if (RATIO > 0.6 && !playOncePerMotion2)
 	{
 		sutdol->PlayHalo(longSword->GlobalPos() + longSword->Back() * 120.0f);
 		Sounds::Get()->Play("wheatstone2", 0.3f);
+		playOncePerMotion2 = true;
 		UI->SharpeningStone();
 	}
 	if (RATIO > 0.96)
@@ -4566,8 +4673,11 @@ void Player::T019() // 맵 입장
 		playOncePerMotion = true;
 	}
 
-	if (RATIO > 0.03 && RATIO < 0.13)
+	if (RATIO > 0.13 && !playOncePerMotion2)
+	{
+		playOncePerMotion2 = true;
 		Sounds::Get()->Play("mapchangestart", 1.0f);
+	}
 
 	if (RATIO > 0.96)
 	{
@@ -4575,7 +4685,6 @@ void Player::T019() // 맵 입장
 
 		//ReturnIdle2(); 입장, 도착 따로 하려면 이거로 쓰고
 		inBattleMap = true;
-		playOncePerMotion = false;
 		SetState(T_020); // 합쳐서 쓰려면 그대로 쓰면 됨
 	}
 }
@@ -4591,8 +4700,11 @@ void Player::T020() // 맵 도착
 		realPos->Pos() = Vector3(0, 0, -200);
 	}
 
-	if (RATIO > 0.05 && RATIO < 0.15)
+	if (RATIO > 0.15 && !playOncePerMotion)
+	{
+		playOncePerMotion = true;
 		Sounds::Get()->Play("mapchangeend", 1.0f);
+	}
 
 	if (RATIO > 0.96)
 	{
@@ -4605,11 +4717,17 @@ void Player::T050() // 갈무리 시작
 {
 	PLAY;
 
-	if (RATIO > 0.083 && RATIO < 0.183)
+	if (RATIO > 0.183 && !playOncePerMotion)
+	{
+		playOncePerMotion = true;
 		Sounds::Get()->Play("capturing", 0.2f);
+	}
 
-	if (RATIO > 0.226 && RATIO < 0.326)
+	if (RATIO > 0.326 && !playOncePerMotion2)
+	{
+		playOncePerMotion2 = true;
 		Sounds::Get()->Play("capturing2", 3.0f);
+	}
 
 
 	if (RATIO > 0.96)
@@ -4623,11 +4741,17 @@ void Player::T051() // 갈무리 중간
 {
 	PLAY;
 
-	if (RATIO > 0.043 && RATIO < 0.143)
+	if (RATIO > 0.143 && !playOncePerMotion)
+	{
+		playOncePerMotion = true;
 		Sounds::Get()->Play("capturing", 0.2f);
+	}
 
-	if (RATIO > 0.191 && RATIO < 0.291)
+	if (RATIO > 0.291 && !playOncePerMotion2)
+	{
+		playOncePerMotion2 = true;
 		Sounds::Get()->Play("capturing2", 3.0f);
+	}
 
 	if (RATIO > 0.96)
 	{
@@ -4640,11 +4764,17 @@ void Player::T052() // 갈무리 끝
 {
 	PLAY;
 
-	if (RATIO > 0.001 && RATIO < 0.101)
+	if (RATIO > 0.101 && !playOncePerMotion)
+	{
+		playOncePerMotion = true;
 		Sounds::Get()->Play("capturing", 0.2f);
+	}
 
-	if (RATIO > 0.139 && RATIO < 0.239)
+	if (RATIO > 0.239 && !playOncePerMotion2)
+	{
+		playOncePerMotion2 = true;
 		Sounds::Get()->Play("capturing2", 3.0f);
+	}
 
 
 	if (RATIO > 0.96)
@@ -4667,8 +4797,11 @@ void Player::E092()
 		CAM->SetOpeningCAM();
 	}
 	
-	if (RATIO > 0.05 && RATIO < 0.15)
+	if (RATIO > 0.15 && !playOncePerMotion)
+	{
+		playOncePerMotion = true;
 		Sounds::Get()->Play("queststart", 2.0f);
+	}
 
 	if (RATIO > 0.5 && RATIO < 0.6)
 		UI->questStart = true;

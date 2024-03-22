@@ -5,7 +5,7 @@
 ShadowScene::ShadowScene()
 {    
     //objects = new M41Objects();
-    //objects2 = new M42Objects();
+    objects2 = new M42Objects();
     terrain = new TerrainEditor();
     fieldFog = new Model("fog");
     player = new Player();
@@ -140,7 +140,7 @@ ShadowScene::~ShadowScene()
 {
     delete garuk;
     //delete objects;
-    //delete objects2;
+    delete objects2;
     delete player;
     delete shadow;
     delete valphalk;
@@ -160,7 +160,7 @@ void ShadowScene::Update()
     static bool once = false;
     if (UI->isMapChange == false) // ½ÃÀÛ¸Ê
     {
-        //objects2->Update();
+        objects2->Update();
     }
     else // ÀüÅõ¸Ê
     {
@@ -255,7 +255,7 @@ void ShadowScene::Render()
        
         if (UI->isMapChange == false) // ½ÃÀÛ¸Ê
         {
-            //objects2->Render();
+            objects2->Render();
         }
         else // ÀüÅõ¸Ê
         {
