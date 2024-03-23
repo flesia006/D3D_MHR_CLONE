@@ -88,7 +88,7 @@ GameManager::GameManager()
 
     // 씬만 재생하고 싶은 경우 : CAM->isFreeCamTrue() 지우고 isLoading = false;로 조정
     // 로딩씬 같이 재생이라면  : CAM->isFreeComTrue() 살리고 isLoading = true; 로 조정
-    //CAM->isFreeCamTrue();
+//    CAM->isFreeCamTrue();
     UIManager::Get()->isLoading = false;
 }
 

@@ -931,6 +931,7 @@ void Valphalk::SkyFall()
 
 			if (flyTime > 10)
 			{
+				playOncePerPattern = false;
 				sequence++;
 				flyTime = 0;
 			}
@@ -1346,7 +1347,7 @@ void Valphalk::S_HugeStagger()
 
 		if (RATIO > 0.20 && !playOncePerPattern)
 		{
-			Sounds::Get()->Play("em086_05_vo_media_25", 4.5f); // 미확인
+			Sounds::Get()->Play("em086_05_vo_media_25", 4.5f);
 			playOncePerPattern = true;
 		}
 
@@ -1354,6 +1355,7 @@ void Valphalk::S_HugeStagger()
 		{
 			Loop();
 			loopCount2 -= 1;
+			playOncePerPattern = false;
 
 			if (loopCount2 == 0)
 			{
@@ -1484,12 +1486,12 @@ void Valphalk::DeathCheck()
 	{
 		if (!once)
 		{
-			Sounds::Get()->Play("hit_pl_media.bnk.2_38", 1.f); // 안고침
+			Sounds::Get()->Play("hit_pl_media.bnk.2_38", 1.f);
 			if (isSlashMode)
 				curPattern = S_DEAD;
 			else
 				curPattern = B_DEAD;
-			Sounds::Get()->Stop("Valphalk_Thema"); // 안고침
+			Sounds::Get()->Stop("Valphalk_Thema");
 			renderJet = false;
 			renderJetRight = false;
 
@@ -1515,14 +1517,14 @@ void Valphalk::Patrol()
 			case 0:
 				if (walkTime > 0.85f)
 				{
-					Sounds::Get()->Play("em086_05_se_media_52", 0.4f); // 안고침
+					Sounds::Get()->Play("em086_05_se_media_52", 0.4f);
 					walkTime = 0;
 				}
 				break;
 			case 1:
 				if (walkTime > 0.85f)
 				{
-					Sounds::Get()->Play("em086_05_se_media_62", 0.4f); // 안고침
+					Sounds::Get()->Play("em086_05_se_media_62", 0.4f);
 					walkTime = 0;
 				}
 				break;
@@ -1654,16 +1656,23 @@ void Valphalk::Patrol()
 		case 5:		SetState(E_0098);  E0098(XM_PIDIV2);	break;
 		case 6:		SetState(E_0099);  E0099(XM_PI);		break;
 		}
-		if(RATIO > 0.008f && RATIO < 0.01f) // init 해도됨
+		if (INIT)
+			Sounds::Get()->Play("em086_05_se_media_52", 0.4f);
+		if (RATIO > 0.4f && !playOncePerPattern)
+		{
+			Sounds::Get()->Play("em086_05_se_media_52", 0.4f);
+			playOncePerPattern = true;
+		}
+		if (RATIO > 0.6f && !playOncePerPattern2)
+		{
+			playOncePerPattern = true;
 			Sounds::Get()->Play("em086_05_se_media_52", 0.4f); // 사운드 중복 고침 (숫자로 해서 다시해도됨)
-		if(RATIO > 0.398f && RATIO < 0.4f)
-			Sounds::Get()->Play("em086_05_se_media_52", 0.4f); // 사운드 중복 고침 (숫자로 해서 다시해도됨)
-		if(RATIO > 0.598f && RATIO < 0.6f)
-			Sounds::Get()->Play("em086_05_se_media_52", 0.4f); // 사운드 중복 고침 (숫자로 해서 다시해도됨)
+		}
 	}
 
 	if (sequence == 7) // 포효를 해
 	{
+		playOncePerPattern = false;
 		if (Scale().x == -1)
 			Scale().x = 1;
 
@@ -1675,8 +1684,6 @@ void Valphalk::Patrol()
 	{
 		ChooseNextPattern();
 	}
-
-
 }
 
 void Valphalk::ConditionCheck()
@@ -1895,6 +1902,7 @@ void Valphalk::ChooseNextPattern()
 	playOncePerPattern = false;
 	playOncePerPattern2 = false;
 	playOncePerPattern3 = false;
+	playOncePerPattern4 = false;
 	preState = curState;
 	sequence = 0;
 	radDifference = 0;
@@ -2540,15 +2548,22 @@ void Valphalk::S_StabAtk()
 		case 5:		SetState(E_2044);  E2044(XM_PIDIV2);  break;
 		case 6:		SetState(E_2045);  E2045(XM_PI);  break;
 		}
-		if (RATIO > 0.18 && RATIO < 0.2) // TODO: 보류
+		if (RATIO > 0.2 && !playOncePerPattern)
 		{
 			if (randSound == 0)
+			{
 				Sounds::Get()->Play("em086_05_vo_media_1", 0.3f);
+				playOncePerPattern = true;
+			}
 			if (randSound == 1)
+			{
 				Sounds::Get()->Play("em086_05_vo_media_5", 0.3f);
+				playOncePerPattern = true;
+			}
 		}
-		if (RATIO < 0.8 && RATIO > 0.79)
+		if (RATIO > 0.8 && !playOncePerPattern2)
 		{
+			playOncePerPattern2 = true;
 			Sounds::Get()->Play("em086_05_fx_media_25", 0.1f);
 			randSound = 0;
 		}
@@ -2556,15 +2571,18 @@ void Valphalk::S_StabAtk()
 
 	if (sequence == 3) // 공격 모션
 	{
+		playOncePerPattern = false;
+		playOncePerPattern2 = false;
+
 		if (!renderJetRight)
 			renderJetRight = true;
 		SetState(E_2038);
 		E2038();
 
-		if (RATIO > 0.18 && !playOncePerPattern2)
+		if (RATIO > 0.18 && !playOncePerPattern3)
 		{
 			Sounds::Get()->Play("em086_05_se_media_20", 0.4f);
-			playOncePerPattern2 = true;
+			playOncePerPattern3 = true;
 		}
 	}
 
@@ -2574,15 +2592,18 @@ void Valphalk::S_StabAtk()
 		E2056();
 
 		//SetState(E_2056);	E2056();
-		if (RATIO > 0.30 && !playOncePerPattern3)
+		if (RATIO > 0.30 && !playOncePerPattern4)
 		{
 			Sounds::Get()->Play("em086_05_se_media_32", 0.4f);
-			playOncePerPattern3 = true;
+			playOncePerPattern4 = true;
 		}
 	}
 
 	if (sequence == 5)
 	{
+		playOncePerPattern3 = false;
+		playOncePerPattern4 = false;
+
 		if (renderJetRight)
 			renderJetRight = false;
 		whichPattern = 0;
@@ -2627,31 +2648,40 @@ void Valphalk::S_StabAtk()
 		case 5:		SetState(E_2044);  E2044(XM_PIDIV2);  break;
 		case 6:		SetState(E_2045);  E2045(XM_PI);  break;
 		}
-		if (RATIO > 0.18 && RATIO < 0.2) // TODO: 보류
+		if (RATIO > 0.2 && !playOncePerPattern)
 		{
 			if (randSound == 0)
+			{
 				Sounds::Get()->Play("em086_05_vo_media_1", 0.3f);
+				playOncePerPattern = true;
+			}
 			if (randSound == 1)
+			{
 				Sounds::Get()->Play("em086_05_vo_media_5", 0.3f);
+				playOncePerPattern = true;
+			}
 		}
-		if (RATIO < 0.8 && RATIO > 0.79 && !playOncePerPattern)
+		if (RATIO > 0.8 && !playOncePerPattern2)
 		{
-			Sounds::Get()->Play("em086_05_fx_media_25", 0.1f);
-			playOncePerPattern = true;
+			playOncePerPattern2 = true;
+			Sounds::Get()->Play("em086_05_fx_media_25", 0.1f);			
 			randSound = 0;
 		}
 	}
 
 	if (sequence == 11) // 공격 모션
 	{
+		playOncePerPattern = false;
+		playOncePerPattern2 = false;
+
 		if (!renderJetRight)
 			renderJetRight = true;
 		SetState(E_2038);	E2038();
 
-		if (RATIO > 0.18 && !playOncePerPattern2)
+		if (RATIO > 0.18 && !playOncePerPattern3)
 		{
-			Sounds::Get()->Play("em086_05_se_media_20", 0.4f); // 미확인
-			playOncePerPattern2 = true;
+			Sounds::Get()->Play("em086_05_se_media_20", 0.4f);
+			playOncePerPattern3 = true;
 		}
 
 	}
@@ -2659,15 +2689,18 @@ void Valphalk::S_StabAtk()
 	if (sequence == 12) // 공격 모션2 - 휘두르기
 	{
 		SetState(E_2056);	E2056();
-		if (RATIO > 0.30 && !playOncePerPattern3)
+		if (RATIO > 0.30 && !playOncePerPattern4)
 		{
-			Sounds::Get()->Play("em086_05_se_media_32", 0.4f); // 미확인
-			playOncePerPattern3 = true;
+			Sounds::Get()->Play("em086_05_se_media_32", 0.4f);
+			playOncePerPattern4 = true;
 		}
 	}
 
 	if (sequence == 13)
 	{
+		playOncePerPattern3 = false;
+		playOncePerPattern4 = false;
+
 		if (renderJetRight)
 			renderJetRight = false;
 		whichPattern = 0;
@@ -3160,14 +3193,14 @@ void Valphalk::B_DownBlast() // 옆으로 돌아 측면 폭격
 		case 5:	SetState(E_2381); E2381();  break;
 		case 6:	SetState(E_2382); E2382();  break;
 		}
-		if (RATIO < 0.15 && !playOncePerPattern)
+		if (RATIO > 0.15 && !playOncePerPattern)
 		{
-			Sounds::Get()->Play("em086_05_vo_media_14", 0.3f); // 미확인
+			Sounds::Get()->Play("em086_05_vo_media_14", 0.3f);
 			playOncePerPattern = true;
 		}
 		if (RATIO > 0.63 && !playOncePerPattern2)
 		{
-			Sounds::Get()->Play("em086_05_fx_media_32", 0.3f); // 미확인
+			Sounds::Get()->Play("em086_05_fx_media_32", 0.3f);
 			playOncePerPattern2 = true;
 		}
 	}
@@ -3972,7 +4005,7 @@ void Valphalk::E0188()//포격형->참격형 변환하면서 앞으로 뛰다가 뒤돌기
 		SetState(E_0003);
 }
 
-void Valphalk::E1151() // 습격준비
+void Valphalk::E1151() // 습격준비 (안쓰는 함수)
 {
 	PLAY;
 	if (RATIO < 0.1)
@@ -3993,7 +4026,7 @@ void Valphalk::E1151() // 습격준비
 	}
 }
 
-void Valphalk::E1155() // 비상
+void Valphalk::E1155() // 비상 (안쓰는 함수)
 {
 	isJump = true;
 	Vector3 StormDir = Pos() + Forward() * 500 + Up() * 800;
@@ -4021,7 +4054,7 @@ void Valphalk::E1155() // 비상
 		}
 		if (!playOncePerPattern)
 		{
-			Sounds::Get()->Play("em086_05_fx_media_22", 0.5f); // 미확인
+			Sounds::Get()->Play("em086_05_fx_media_22", 0.5f);
 			playOncePerPattern = true;
 		}
 	}
@@ -4055,7 +4088,7 @@ void Valphalk::EX1157() // 상승 전 몸풀기
 	if (RATIO > 0.96 && !isJump)
 	if (RATIO > 0.96)
 	{
-		Sounds::Get()->Play("em086_05_fx_media_22", 0.5f); // 미확인
+		Sounds::Get()->Play("em086_05_fx_media_22", 0.5f);
 		forwardBoom->SetActive(true);
 		forwardBoom->Scale() *= 5;
 		isStorm = true;
@@ -4205,9 +4238,9 @@ void Valphalk::E2003(float degree)//2001를 왼쪽 180도로 방향틀고 실행
 void Valphalk::E2013()//돌진 시작
 {
 	PLAY;
-	if (RATIO < 0.1f && !playOncePerPattern)
+	if (RATIO > 0.1f && !playOncePerPattern)
 	{
-		Sounds::Get()->Play("em086_05_fx_media_24", 0.4f); // 미확인
+		Sounds::Get()->Play("em086_05_fx_media_24", 0.4f);
 		playOncePerPattern = true;
 	}
 
@@ -4543,9 +4576,9 @@ void Valphalk::E2108(float degree)//오른발 들고 정면에서 뒤쪽 보고 찍기 준비 자�
 void Valphalk::E2118()//앞다리 찍기 공격
 {
 	PLAY;
-	if (RATIO < 0.01f && !playOncePerPattern)
+	if (RATIO > 0.01f && !playOncePerPattern)
 	{
-		Sounds::Get()->Play("em086_05_vo_media_12", 0.3f); // 미확인
+		Sounds::Get()->Play("em086_05_vo_media_12", 0.3f);
 		playOncePerPattern = true;
 	}
 	if (RATIO > 0.167 && RATIO < 0.367)
@@ -4669,7 +4702,7 @@ void Valphalk::E2144() // 전방 폭격 시작
 	PLAY;
 	if (RATIO > 0.2 && !playOncePerPattern)
 	{
-		Sounds::Get()->Play("em086_05_vo_media_14", 0.5f); // 미확인
+		Sounds::Get()->Play("em086_05_vo_media_14", 0.5f);
 		playOncePerPattern = true;
 	}
 
@@ -4683,20 +4716,28 @@ void Valphalk::E2144() // 전방 폭격 시작
 void Valphalk::E2145() // 전방 폭격 시전 후 백스텝
 {
 	PLAY;
-	if (RATIO > 0.2f && RATIO < 0.21f)
+	if (RATIO > 0.21f && !playOncePerPattern)
 	{
-		Sounds::Get()->Play("em086_05_fx_media_32", 0.5f); // TODO: 보류0.1
+		Sounds::Get()->Play("em086_05_fx_media_32", 0.5f);
 		explosionParticle[0]->PlaySpark({ forwardBoom->GlobalPos().x,forwardBoom->GlobalPos().y + 250,forwardBoom->GlobalPos().z }, 0);
+		playOncePerPattern = true;
 	}
-	if (RATIO > 0.24f && RATIO < 0.25)
+	if (RATIO > 0.25f && !playOncePerPattern2)
 	{
 		explosionParticle[0]->Play1(forwardBoom->GlobalPos(), 0);
-		Sounds::Get()->Play("em086_05_fx_media_35", 0.5f); // TODO: 보류0.1
+		Sounds::Get()->Play("em086_05_fx_media_35", 0.5f);
+		playOncePerPattern2 = true;
 	}
-	if (RATIO > 0.30f && RATIO < 0.31)
+	if (RATIO > 0.31 && !playOncePerPattern3)
+	{
 		explosionParticle[0]->Play2(forwardBoom->GlobalPos(), 0);
-	if (RATIO > 0.35f && RATIO < 0.36)
+		playOncePerPattern3 = true;
+	}
+	if (RATIO > 0.36 && !playOncePerPattern4)
+	{
 		explosionParticle[0]->Play3(forwardBoom->GlobalPos(), 0);
+		playOncePerPattern4 = true;
+	}
 	if (RATIO < 0.3f && RATIO>0.2f)
 		forwardBoom->SetActive(true);
 	if (RATIO > 0.3f)
@@ -4723,20 +4764,28 @@ void Valphalk::E2146() // 전방 폭격 후 날개 접으면서 착지
 void Valphalk::E2145a() // 2145, 2146 합친거
 {
 	PLAY;
-	if (RATIO > 0.05f && RATIO < 0.06f)
+	if (RATIO > 0.06f && !playOncePerPattern)
 	{
 		Sounds::Get()->Play("em086_05_fx_media_32", 0.5f);
-		explosionParticle[0]->PlaySpark({ forwardBoom->GlobalPos().x,height,forwardBoom->GlobalPos().z }, 0); // TODO: 보류0.1
+		explosionParticle[0]->PlaySpark({ forwardBoom->GlobalPos().x,height,forwardBoom->GlobalPos().z }, 0);
+		playOncePerPattern = true;
 	}
-	if (RATIO > 0.08f && RATIO < 0.09)
+	if (RATIO > 0.09 && !playOncePerPattern2)
 	{
 		explosionParticle[0]->Play1({ forwardBoom->GlobalPos().x,height,forwardBoom->GlobalPos().z }, 0);
-		Sounds::Get()->Play("em086_05_fx_media_35", 0.5f); // TODO: 보류0.1
+		Sounds::Get()->Play("em086_05_fx_media_35", 0.5f);
+		playOncePerPattern2 = true;
 	}
-	if (RATIO > 0.11f && RATIO < 0.12)
+	if (RATIO > 0.12 && !playOncePerPattern3)
+	{
 		explosionParticle[0]->Play2({ forwardBoom->GlobalPos().x,height,forwardBoom->GlobalPos().z }, 0);
-	if (RATIO > 0.13f && RATIO < 0.14)
+		playOncePerPattern3 = true;
+	}
+	if (RATIO > 0.14&&!playOncePerPattern4)
+	{
 		explosionParticle[0]->Play3({ forwardBoom->GlobalPos().x,height,forwardBoom->GlobalPos().z }, 0);
+		playOncePerPattern4 = true;
+	}
 	if (RATIO < 0.11f && RATIO>0.05f)
 		forwardBoom->SetActive(true);
 	if (RATIO > 0.11f)
@@ -4752,9 +4801,9 @@ void Valphalk::E2145a() // 2145, 2146 합친거
 void Valphalk::E2171()
 {
 	PLAY;
-	if (RATIO < 0.1 && !playOncePerPattern)
+	if (RATIO > 0.1 && !playOncePerPattern)
 	{
-		Sounds::Get()->Play("em086_05_vo_media_7", 0.5f); // 미확인
+		Sounds::Get()->Play("em086_05_vo_media_7", 0.5f);
 		playOncePerPattern = true;
 	}
 
@@ -4847,22 +4896,27 @@ void Valphalk::E2141()
 {
 	PLAY;
 
-	if (RATIO > 0.056 && RATIO < 0.09 && !playOncePerPattern)
-	{
+	if (RATIO > 0.056 && RATIO < 0.09)
 		SetColliderAttack(RLEG1_FOOT, 0.09, 25, 1);
-		Sounds::Get()->Play("em086_05_vo_media_21", 0.5f); //TODO: 보류
+
+	if (RATIO > 0.09 && !playOncePerPattern)
+	{
+		Sounds::Get()->Play("em086_05_vo_media_21", 0.5f);
 		playOncePerPattern = true;
 	}
 
-	if (RATIO < 2.0f && RATIO>1.9f && !playOncePerPattern2)
+	if (RATIO>0.19f && !playOncePerPattern2)
 	{
-		Sounds::Get()->Play("em086_05_vo_media_16", 0.5f); //TODO: 보류
+		Sounds::Get()->Play("em086_05_vo_media_16", 0.5f);
 		playOncePerPattern2 = true;
 	}
-	if (RATIO > 0.256 && RATIO < 0.296 && !playOncePerPattern3)
-	{
-		Sounds::Get()->Play("em086_05_se_media_10", 0.3f); //TODO: 보류
+
+	if (RATIO > 0.256 && RATIO < 0.296)
 		SetColliderAttack(RWING, 0.296, 40, 2);
+
+	if (RATIO > 0.296 && !playOncePerPattern3)
+	{
+		Sounds::Get()->Play("em086_05_se_media_10", 0.3f);
 		playOncePerPattern3 = true;
 	}
 
@@ -4877,7 +4931,7 @@ void Valphalk::E2141()
 void Valphalk::E2151()
 {
 	PLAY;
-	if (RATIO < 0.2 && !playOncePerPattern)
+	if (RATIO > 0.2 && !playOncePerPattern)
 	{
 		Sounds::Get()->Play("em086_05_vo_media_14", 0.5f); // 미확인
 		playOncePerPattern = true;
@@ -4892,20 +4946,28 @@ void Valphalk::E2151()
 void Valphalk::E2152()
 {
 	PLAY;
-	if (RATIO > 0.001 && RATIO < 0.05)
+	if (RATIO > 0.05 && !playOncePerPattern)
 	{
 		explosionParticle[0]->PlaySpark(Pos() + Back() * 500, 0);
-		Sounds::Get()->Play("em086_05_fx_media_32", 0.5f); // TODO: 보류
+		Sounds::Get()->Play("em086_05_fx_media_32", 0.5f);
+		playOncePerPattern = true;
 	}
-	if (RATIO > 0.5 && RATIO < 0.51)
+	if (RATIO > 0.51 && !playOncePerPattern2)
 	{
 		explosionParticle[0]->Play1(forwardBoom->GlobalPos(), 0);
-		Sounds::Get()->Play("em086_05_fx_media_35", 0.5f); // TODO: 보류
+		Sounds::Get()->Play("em086_05_fx_media_35", 0.5f);
+		playOncePerPattern2 = true;
 	}
-	if (RATIO > 0.55 && RATIO < 0.56)
+	if (RATIO > 0.56 && !playOncePerPattern3)
+	{
 		explosionParticle[0]->Play2(forwardBoom->GlobalPos(), 0);
-	if (RATIO > 0.6 && RATIO < 0.61)
+		playOncePerPattern3 = true;
+	}
+	if (RATIO > 0.61 && !playOncePerPattern4)
+	{
 		explosionParticle[0]->Play3(forwardBoom->GlobalPos(), 0);
+		playOncePerPattern4 = true;
+	}
 
 	if (RATIO > 0.5 && RATIO < 0.6)
 		forwardBoom->SetActive(true);
@@ -4979,9 +5041,9 @@ void Valphalk::E2175(float degree)// 정면 보다가 오른쪽 보고 오른발 들기
 void Valphalk::E2185()// 들었던 발을 내려찍으며 깨물기
 {
 	PLAY;
-	if (RATIO < 0.1 && !playOncePerPattern)
+	if (RATIO > 0.1 && !playOncePerPattern)
 	{
-		Sounds::Get()->Play("em086_05_vo_media_7", 0.3f); // 미확인
+		Sounds::Get()->Play("em086_05_vo_media_7", 0.3f);
 		playOncePerPattern = true;
 	}
 	if (RATIO > 0.121 && RATIO > 0.331)
@@ -5006,7 +5068,7 @@ void Valphalk::E2188()//정면 보고 왼발 들기
 
 	if (RATIO > 0.8 && !playOncePerPattern)
 	{
-		Sounds::Get()->Play("em086_05_vo_media_5", 0.3f); // 미확인
+		Sounds::Get()->Play("em086_05_vo_media_5", 0.3f);
 		playOncePerPattern = true;
 	}
 
@@ -5026,7 +5088,7 @@ void Valphalk::E2189()//정면에서 왼쪽 보고 왼발 들기
 
 	if (RATIO > 0.8 && !playOncePerPattern)
 	{
-		Sounds::Get()->Play("em086_05_vo_media_5", 0.3f); // 미확인
+		Sounds::Get()->Play("em086_05_vo_media_5", 0.3f);
 		playOncePerPattern = true;
 	}
 
@@ -5047,7 +5109,7 @@ void Valphalk::E2190()//정면에서 왼쪽으로 돌면서 뒤보고 왼발 들기
 
 	if (RATIO > 0.8 && !playOncePerPattern)
 	{
-		Sounds::Get()->Play("em086_05_vo_media_5", 0.3f); // 미확인
+		Sounds::Get()->Play("em086_05_vo_media_5", 0.3f);
 		playOncePerPattern = true;
 	}
 
@@ -5068,7 +5130,7 @@ void Valphalk::E2192()//정면에서 오른쪽 보고 왼발 들기
 
 	if (RATIO > 0.8 && !playOncePerPattern)
 	{
-		Sounds::Get()->Play("em086_05_vo_media_5", 0.3f); // 미확인
+		Sounds::Get()->Play("em086_05_vo_media_5", 0.3f);
 		playOncePerPattern = true;
 	}
 
@@ -5089,7 +5151,7 @@ void Valphalk::E2193()//정면에서 오른쪽으로 돌면서 뒤보고 왼발 들기
 
 	if (RATIO > 0.8 && !playOncePerPattern)
 	{
-		Sounds::Get()->Play("em086_05_vo_media_5", 0.3f); // 미확인
+		Sounds::Get()->Play("em086_05_vo_media_5", 0.3f);
 		playOncePerPattern = true;
 	}
 
@@ -5137,7 +5199,7 @@ void Valphalk::E2210()//왼쪽 90도 날개찍기 준비동작
 	}
 	if (RATIO > 0.81 && !playOncePerPattern)
 	{
-		Sounds::Get()->Play("em086_05_vo_media_23", 0.5f); // 미확인
+		Sounds::Get()->Play("em086_05_vo_media_23", 0.5f);
 		playOncePerPattern = true;
 	}
 
@@ -5207,7 +5269,7 @@ void Valphalk::EX2265()
 
 	if (RATIO > 0.1 && !playOncePerPattern)
 	{
-		Sounds::Get()->Play("em086_05_fx_media_15", 0.3f); // 미확인
+		Sounds::Get()->Play("em086_05_fx_media_15", 0.3f);
 		playOncePerPattern = true;
 	}
 	if (RATIO > 0.96)
@@ -5308,9 +5370,9 @@ void Valphalk::EX2276()
 {
 	PLAY;
 
-	if (RATIO < 0.1 && !playOncePerPattern)
+	if (RATIO > 0.1 && !playOncePerPattern)
 	{
-		Sounds::Get()->Play("em086_05_vo_media_14", 0.3f); // 미확인
+		Sounds::Get()->Play("em086_05_vo_media_14", 0.3f);
 		Sounds::Get()->Play("em086_05_fx_media_5", 0.3f);
 		playOncePerPattern = true;
 	}
@@ -5338,7 +5400,7 @@ void Valphalk::EX2277(float y)
 
 	if (realPos->Pos().y < height)
 	{
-		Sounds::Get()->Play("em086_05_fx_media_30", 0.5f); // 미확인
+		Sounds::Get()->Play("em086_05_fx_media_30", 0.5f);
 		Sounds::Get()->Play("em086_05_fx_media_32", 0.5f);
 		preState = curState;
 		curState = E_2278;
@@ -5374,14 +5436,15 @@ void Valphalk::EX2278()
 		effectSphere2->Scale() = { 400, 400, 400 };
 		effectSphere2->Pos() = explosionPos2;
 	}
-	if (RATIO > 0.43f && RATIO < 0.44f)
+	if (RATIO > 0.44f && !playOncePerPattern)
 	{
 		explosionParticle[0]->Play(explosionPos, 0);
 		explosionParticle[1]->Play(explosionPos2, 0);
-		Sounds::Get()->Play("em086_05_fx_media_35", 0.5f); //TODO: 보류0.1
+		Sounds::Get()->Play("em086_05_fx_media_35", 0.5f);
 		Sounds::Get()->Play("em086_05_fx_media_35", 0.5f);
 		effectSphere1->SetActive(true);
 		effectSphere2->SetActive(true);
+		playOncePerPattern = true;
 	}
 
 	if (RATIO > 0.5f)
@@ -5391,7 +5454,10 @@ void Valphalk::EX2278()
 	}
 
 	if (RATIO > 0.96)
+	{
+		playOncePerPattern = false;
 		sequence++;
+	}
 }
 
 void Valphalk::E2270()
@@ -5558,7 +5624,7 @@ void Valphalk::E2354(float degree) // 풀버스트 전방
 	PLAY;
 	if (RATIO > 0.0176f && RATIO < 0.876f)
 		RotateToTarget(0.0176f, 0.876f);
-	if (RATIO < 0.1f && !playOncePerPattern)
+	if (RATIO > 0.1f && !playOncePerPattern)
 	{
 		Sounds::Get()->Play("em086_05_vo_media_24", 0.5f);
 		playOncePerPattern = true;
@@ -5872,9 +5938,9 @@ void Valphalk::EX2374()
 {
 	PLAY;
 
-	if (RATIO < 0.1 && !playOncePerPattern)
+	if (RATIO > 0.1 && !playOncePerPattern)
 	{
-		Sounds::Get()->Play("em086_05_vo_media_18", 0.3f); //미확인
+		Sounds::Get()->Play("em086_05_vo_media_18", 0.3f);
 		playOncePerPattern = true;
 	}
 
@@ -6002,7 +6068,7 @@ void Valphalk::E2082() // 측면 폭격 파티클 포함
 		//explosionParticle[3]->Play1(Pos() + Right() * 1000, 0);
 		//explosionParticle[3]->Play1({ forwardBoom->GlobalPos().x + 1000,forwardBoom->GlobalPos().y,forwardBoom->GlobalPos().z }, 0);
 		forwardBoom->SetActive(true);
-		Sounds::Get()->Play("em086_05_se_media_10", 0.5f); // 미확인 (파티클 있음)
+		Sounds::Get()->Play("em086_05_se_media_10", 0.5f);
 		playOncePerPattern = true;
 	}
 	if (RATIO > 0.22 && !playOncePerPattern2)
@@ -6024,9 +6090,9 @@ void Valphalk::E2082() // 측면 폭격 파티클 포함
 	if (RATIO > 0.4 && RATIO < 0.41)
 		forwardBoom->SetActive(false);
 
-	if (RATIO < 0.2 && !playOncePerPattern3)
+	if (RATIO > 0.2 && !playOncePerPattern3)
 	{
-		Sounds::Get()->Play("em086_05_vo_media_1", 0.3f); // 미확인
+		Sounds::Get()->Play("em086_05_vo_media_1", 0.3f);
 		playOncePerPattern3 = true;
 	}
 
@@ -6087,9 +6153,9 @@ void Valphalk::E3001() // 작은 데미지 피격
 	combo = false;
 	PLAY;
 		
-	if (RATIO < 0.20 && !playOncePerPattern)
+	if (RATIO > 0.20 && !playOncePerPattern)
 	{
-		Sounds::Get()->Play("em086_05_se_media_18", 0.1f); // 미확인
+		Sounds::Get()->Play("em086_05_se_media_18", 0.1f);
 		Sounds::Get()->Play("em086_05_vo_media_29", 0.75f);
 		playOncePerPattern = true;
 	}
@@ -6110,9 +6176,9 @@ void Valphalk::E3006() // 큰 데미지 피격
 		renderJetRight = false;
 	}
 
-	if (RATIO < 0.20 && !playOncePerPattern)
+	if (RATIO > 0.20 && !playOncePerPattern)
 	{
-		Sounds::Get()->Play("em086_05_vo_media_29", 3.0f); // 미확인
+		Sounds::Get()->Play("em086_05_vo_media_29", 3.0f);
 		playOncePerPattern = true;
 	}
 
@@ -6134,9 +6200,9 @@ void Valphalk::E3015()
 		renderJet = false;
 		renderJetRight = false;
 	}
-	if (RATIO < 0.3 && !playOncePerPattern)
+	if (RATIO > 0.3 && !playOncePerPattern)
 	{
-		Sounds::Get()->Play("em086_05_se_media_18", 0.4f); // 미확인
+		Sounds::Get()->Play("em086_05_se_media_18", 0.4f);
 		Sounds::Get()->Play("em086_05_vo_media_25", 0.5f);
 		playOncePerPattern = true;
 	}
@@ -6172,7 +6238,7 @@ void Valphalk::E3023() // 사망
 	{
 	}
 
-	if (RATIO < 0.44 && !playOncePerPattern)
+	if (RATIO > 0.44 && !playOncePerPattern)
 	{
 		Sounds::Get()->Play("questClear", 0.1f);
 		UI->valDeath = true;
@@ -6192,9 +6258,9 @@ void Valphalk::E3101()
 {
 	PLAY;
 
-	if (RATIO < 0.20 && !playOncePerPattern)
+	if (RATIO > 0.20 && !playOncePerPattern)
 	{
-		Sounds::Get()->Play("em086_05_se_media_18", 0.4f); // 미확인
+		Sounds::Get()->Play("em086_05_se_media_18", 0.4f);
 		Sounds::Get()->Play("em086_05_vo_media_29", 1.0f);
 		playOncePerPattern = true;
 	}
@@ -6216,9 +6282,9 @@ void Valphalk::E3114()
 
 	PLAY;
 
-	if (RATIO < 0.20 && !playOncePerPattern)
+	if (RATIO > 0.20 && !playOncePerPattern)
 	{
-		Sounds::Get()->Play("em086_05_se_media_18", 0.4f); // 미확인
+		Sounds::Get()->Play("em086_05_se_media_18", 0.4f);
 		Sounds::Get()->Play("em086_05_vo_media_25", 0.5f);
 		playOncePerPattern = true;
 	}
@@ -6240,7 +6306,7 @@ void Valphalk::E3118()
 	{
 	}
 
-	if (RATIO < 0.50 && !playOncePerPattern)
+	if (RATIO > 0.50 && !playOncePerPattern)
 	{
 		Sounds::Get()->Play("questClear", 0.1f);
 		UI->valDeath = true;
@@ -6272,19 +6338,19 @@ void Valphalk::E4013() // 조우 포효
 	campos = Pos() - CAM->Pos();
 	campos.GetNormalized();
 
-	if(RATIO > 0.009f && RATIO < 0.01f) // init 써도 될듯?
-		Sounds::Get()->Play("em086_05_se_media_52", 0.4f); // 사운드 중복 고침 (숫자로 고쳐서 불로 바꿔도 됨)
+	if (RATIO > 0.01f && !playOncePerPattern)
+	{
+		Sounds::Get()->Play("em086_05_se_media_52", 0.4f);
+		playOncePerPattern = true;
+	}
 
-	if (RATIO > 0.332f && RATIO < 0.333f)
+	if (RATIO > 0.333f && !playOncePerPattern2)
 	{
 		Sounds::Get()->Play("em086_05_vo_media_10", 0.5f); // 사운드 중복 고침 (숫자로 고쳐서 불로 바꿔도 됨)
-		if (!playOncePerPattern)
-		{
-			roarEffect->Play(head->Pos(), 0);
-			colliders[ROAR]->SetActive(true);
-			SetColliderAttack(ROAR, 0.375f, 0, 3);
-			playOncePerPattern = true;
-		}
+		roarEffect->Play(head->Pos(), 0);
+		colliders[ROAR]->SetActive(true);
+		SetColliderAttack(ROAR, 0.375f, 0, 3);
+		playOncePerPattern2 = true;
 	}
 
 	if (RATIO > 0.375)
@@ -6293,6 +6359,7 @@ void Valphalk::E4013() // 조우 포효
 	if (RATIO > 0.96)
 	{
 		playOncePerPattern = false;
+		playOncePerPattern2 = false;
 		sequence++;
 		isFindTrgt = true;
 	}
@@ -6301,9 +6368,8 @@ void Valphalk::E4013() // 조우 포효
 void Valphalk::E4071()
 {
 	PLAY;
-	if (RATIO < 0.75f && !playOncePerPattern)
+	if (RATIO > 0.75f && !playOncePerPattern)
 	{
-		// 미확인
 		Sounds::Get()->Play("em086_05_vo_media_20", 0.5f); // 흡기 시작 voice
 		Sounds::Get()->Play("em086_05_fx_media_40", 0.5f); // 흡기 시작 sfx
 		playOncePerPattern = true;
@@ -6340,9 +6406,8 @@ void Valphalk::E4073(float timer, float checkHp)
 void Valphalk::E4074()
 {
 	PLAY;
-	if (RATIO < 0.1f && !playOncePerPattern)
+	if (RATIO > 0.1f && !playOncePerPattern)
 	{
-		// 미확인
 		Sounds::Get()->Play("em086_05_fx_media_51", 0.5f); // 흡기 끝 
 		playOncePerPattern = true;
 	}
@@ -6358,9 +6423,9 @@ void Valphalk::E4074()
 void Valphalk::E22005() // 포효
 {
 	PLAY;
-	if (RATIO > 0.5 && RATIO < 0.58 && !playOncePerPattern)
+	if (RATIO > 0.58 && !playOncePerPattern)
 	{
-		Sounds::Get()->Play("em086_05_vo_media_10", 0.5f); // 미확인
+		Sounds::Get()->Play("em086_05_vo_media_10", 0.5f);
 		playOncePerPattern = true;
 	}
 	if (RATIO > 0.96)
