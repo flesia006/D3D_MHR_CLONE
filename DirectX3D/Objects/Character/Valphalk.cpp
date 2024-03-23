@@ -5012,7 +5012,7 @@ void Valphalk::E2185()// 들었던 발을 내려찍으며 깨물기
 		Sounds::Get()->Play("em086_05_vo_media_7", 0.3f);
 		playOncePerPattern = true;
 	}
-	if (RATIO > 0.121 && RATIO > 0.331)
+	if (RATIO > 0.121 && RATIO < 0.331)
 	{
 		SetColliderAttack(HEAD, 0.331, 25, 1);
 	}

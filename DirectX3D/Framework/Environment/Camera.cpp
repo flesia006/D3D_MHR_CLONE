@@ -159,8 +159,8 @@ void Camera::OpeningCAM()
     }
     else if (timer < 3.5f)
     {
-        sightRot->Rot().x = Lerp(sightRot->Rot().x, 0.2, 1.5 * DELTA);
-        sightRot->Rot().y = Lerp(sightRot->Rot().y, 0, 1.5 * DELTA);
+        sightRot->Rot().x = Lerp(sightRot->Rot().x, 0.2, 2.5 * DELTA);
+        sightRot->Rot().y = Lerp(sightRot->Rot().y, 0, 2.5 * DELTA);
         distance = Lerp(distance, 400, 2 * DELTA);
         height = Lerp(height, 0, 1 * DELTA);
 
@@ -274,7 +274,7 @@ void Camera::MapMoveCAM()
         CAM->Pos() = target->GlobalPos() + sightRot->Back() * distance * 1.6;
         CAM->Pos().y += height;
     }
-    else if (timer < 2.3f)
+    else if (timer < 3.0f)
     {
         sightRot->Rot().x = Lerp(sightRot->Rot().x, sightRot->Rot().x - 0.4, 1.0 * DELTA);
         sightRot->Rot().y = Lerp(sightRot->Rot().y, sightRot->Rot().y - 0.15f, 0.3 * DELTA);
