@@ -3514,14 +3514,13 @@ void Player::L133()	// Åõ±¸±ú±â
 		if (isInitVoice == false)
 		{
 			RandSpecialVoice();
-			isInitVoice = true;
 		}
 	}
 
 	if (RATIO > 0.44 && !playOncePerMotion)
 	{
-		playOncePerMotion = true;
 		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
+		playOncePerMotion = true;
 	}
 
 	if (RATIO < 0.35)
@@ -3544,6 +3543,7 @@ void Player::L133()	// Åõ±¸±ú±â
 
 		if (RATIO > 0.38 && realPos->Pos().y < height)
 		{
+			isInitVoice = false;
 			Pos().y = height;
 			tuguAtk->active = true;
 			jumpVelocity = originJumpVelocity;
@@ -5086,6 +5086,8 @@ void Player::RandSpecialVoice()
 	default:
 		break;
 	}
+	isInitVoice = true;
+
 }
 
 void Player::RandHurtVoice()

@@ -590,6 +590,7 @@ private:
 	vector<HupgiFire*> hupgiFire;
 	vector<Explosion*> explosionParticle;
 	ParticleSystem2* hupgiCharge;
+	ParticleSystem2* hupgiCharge2;
 	//StormEffect* stormEffect;
 	//Vector3 jetpos2;
 

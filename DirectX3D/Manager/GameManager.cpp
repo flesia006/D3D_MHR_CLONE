@@ -60,8 +60,8 @@ GameManager::GameManager()
    SceneManager::Get()->Add("ShadowScene");
 //    SceneManager::Get()->Create("MapDesignScene", new MapDesignScene());
 //    SceneManager::Get()->Add("MapDesignScene");
-//      SceneManager::Get()->Create("Particle", new ParticleScene());
-//      SceneManager::Get()->Add("Particle");
+      //SceneManager::Get()->Create("Particle", new ParticleScene());
+      //SceneManager::Get()->Add("Particle");
 //    SceneManager::Get()->Create("ParticleConfig", new ParticleConfigScene());
 //    SceneManager::Get()->Add("ParticleConfig");    
 
