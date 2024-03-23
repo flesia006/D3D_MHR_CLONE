@@ -512,8 +512,7 @@ void Camera::ThirdPresonViewMode()
             sightRot->Rot().y = atan2(trgtToTrgt.x, trgtToTrgt.z);
             sightRot->UpdateWorld();
 
-            //CAM->Rot() = Lerp(Rot(), sightRot->Rot(), 10 * DELTA);
-            CAM->Rot() = sightRot->Rot();
+            CAM->Rot() = Lerp(Rot(), sightRot->Rot(), 10 * DELTA);
             CAM->Pos() = target->GlobalPos() + Back() * distance * 1.6;
         }
     }
