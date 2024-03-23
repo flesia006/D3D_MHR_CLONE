@@ -3870,7 +3870,7 @@ void Player::L155() // 앉아발도 기인베기
 			if (isHitL155 == false)
 				UIManager::Get()->PlusCotingLevel();
 
-			CAM->SetLockOnTarget(damages.back().pos);
+			//CAM->SetLockOnTarget(damages.back().pos);
 
 			isHitL155 = true;
 			Sounds::Get()->Play("pl_wp_l_swd_epv_media.bnk.2_8", .5f);
