@@ -2903,12 +2903,17 @@ void Valphalk::S_JetRush()
 		SetState(E_2013);    E2013();
 	}
 
-	if (sequence == 3) // 바닥에 착지 모션
+	if (sequence == 3)
+	{
+		SetState(E_2017); E2017();
+	}
+
+	if (sequence == 4) // 바닥에 착지 모션
 	{
 		SetState(E_2019);    E2019();
 	}
 
-	if (sequence == 4) // 마무리
+	if (sequence == 5) // 마무리
 	{
 		if (renderJet)
 			renderJet = false;
