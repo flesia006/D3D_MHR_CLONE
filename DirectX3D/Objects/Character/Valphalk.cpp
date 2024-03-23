@@ -1129,13 +1129,13 @@ void Valphalk::ForwardBoom()
 void Valphalk::FullBurst()
 {
 	static int whichPattern = 0;
-
-	fireParticle[0]->SetPos(GetTranslationByNode(61));
-	fireParticle[1]->SetPos(GetTranslationByNode(64));
-	fireParticle[2]->SetPos(GetTranslationByNode(67));
-	fireParticle[3]->SetPos(GetTranslationByNode(81));
-	fireParticle[4]->SetPos(GetTranslationByNode(84));
-	fireParticle[5]->SetPos(GetTranslationByNode(87));
+	// 풀 버스트 전용 으로 포지션 하나 했음
+	fireParticle[0]->SetBurstPos(GetTranslationByNode(61));
+	fireParticle[1]->SetBurstPos(GetTranslationByNode(64));
+	fireParticle[2]->SetBurstPos(GetTranslationByNode(67));
+	fireParticle[3]->SetBurstPos(GetTranslationByNode(81));
+	fireParticle[4]->SetBurstPos(GetTranslationByNode(84));
+	fireParticle[5]->SetBurstPos(GetTranslationByNode(87));
 	if (sequence == 0) // 각도 정하기
 	{
 		whichPattern = SetRadAndMirror(true);
@@ -1950,12 +1950,12 @@ void Valphalk::ChooseNextPattern()
 		return;
 	}
 
-	//int i = rand() % 2;
-	//switch (0)
+	int i = rand() % 2;
+	//switch (i)
 	//{
 	//case 0:	curPattern = S_JETRUSH;	 break;
-	//case 1:	curPattern = HS_FLYBLAST;		 break;
-	//case 2:	curPattern = HS_FLYBLAST;		 break;
+	//case 1:	curPattern = B_SWINGATK;		 break;
+	//case 2:	curPattern = FULLBURST;		 break;
 	//}
 
 	if (!needHupGi && !angerRoar90 && !angerRoar40 && !ult50)
@@ -2845,28 +2845,18 @@ void Valphalk::S_JetRush()
 
 	if (sequence == 2) // 돌진모션
 	{
-		playOncePerPattern = false;
-		sequence++;
-	}
-
-	if (sequence == 3) // 돌진모션
-	{
 		if (!renderJet)
 			renderJet = true;
 		SetState(E_2015);	E2015();
 	}
 
-	if (sequence == 4) // 돌진 브레이크 모션
+	if (sequence == 3) // 바닥에 착지 모션
 	{
-		SetState(E_2017);	E2017();
-	}
-
-	if (sequence == 5) // 바닥에 착지 모션
 	{
 		SetState(E_2019);	E2019();
 	}
-
-	if (sequence == 6) // 마무리
+	if (sequence == 4) // 마무리
+	if (sequence == 5) // 마무리
 	{
 		if (renderJet)
 			renderJet = false;
@@ -3073,12 +3063,6 @@ void Valphalk::B_SwingAtk() /////////////////// 백스텝 이후 과정 수정 필요
 
 	if (sequence == 2) // 공격 모션
 	{
-		playOncePerPattern = false;
-		sequence++;
-	}
-
-	if (sequence == 3) // 공격 모션
-	{
 		SetState(E_2103);
 		if (whichPattern == 4 || whichPattern == 5 || whichPattern == 6)
 			E2103(XM_PIDIV2);
@@ -3206,18 +3190,13 @@ void Valphalk::B_DownBlast() // 옆으로 돌아 측면 폭격
 		}
 	}
 
-	if (sequence == 2)
-	{
-		sequence++;
-	}
-
-	if (sequence == 3) // 공격 모션
+	if (sequence == 2) // 공격 모션
 	{
 		SetState(E_2082);
 		E2082();
 	}
 
-	if (sequence == 4) // 마무리
+	if (sequence == 3) // 마무리
 	{
 		forwardBoom->Pos() = forwardBoomPosInit;
 		forwardBoom->Scale().x = 700;
