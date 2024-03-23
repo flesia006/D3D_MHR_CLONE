@@ -4065,10 +4065,7 @@ void Valphalk::EX1157() // »ó½Â Àü ¸öÇ®±â
 		CAM->shakeCAM = true;
 	}
 
-
-
 	if (RATIO > 0.96 && !isJump)
-	if (RATIO > 0.96)
 	{
 		Sounds::Get()->Play("em086_05_fx_media_22", 0.5f);
 		forwardBoom->SetActive(true);
