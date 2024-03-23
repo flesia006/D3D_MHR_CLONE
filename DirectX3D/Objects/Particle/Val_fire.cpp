@@ -17,9 +17,9 @@ Val_fire::Val_fire()
 	//particle2->SetScale(3.0f);	
 
 	burstparticle1 = new ParticleSystem("TextData/Particles/val_energy.fx");
-	burstparticle2 = new ParticleSystem("TextData/Particles/val_energy2.fx");
+	//burstparticle2 = new ParticleSystem("TextData/Particles/val_energy2.fx");
 	burstparticle1->SetScale(4.f);
-	burstparticle2->SetScale(4.f);
+	//burstparticle2->SetScale(4.f);
 
 }
 
@@ -29,7 +29,7 @@ Val_fire::~Val_fire()
 	delete particle;
 	//delete particle2;
 	delete burstparticle1;
-	delete burstparticle2;
+	//delete burstparticle2;
 	delete sprite;
 	delete bulletExplosion1;
 	delete bulletExplosion2;
@@ -45,7 +45,7 @@ void Val_fire::Update()
 	particle->Update();
 	//particle2->Update();
 	burstparticle1->Update();
-	burstparticle2->Update();
+	//burstparticle2->Update();
 	bulletExplosion1->Update();
 	bulletExplosion2->Update();
 	bulletExplosion3->Update();
@@ -101,7 +101,7 @@ void Val_fire::Stop()
 	particle->Stop();
 	//particle2->Stop();
 	burstparticle1->Stop();
-	burstparticle2->Stop();
+	//burstparticle2->Stop();
 }
 
 void Val_fire::ParticleRotate()
@@ -113,8 +113,13 @@ void Val_fire::SetPos(Vector3 pos)
 	particle->SetPos(pos);
 	//particle2->SetPos(pos);
 
+}
+
+void Val_fire::SetBurstPos(Vector3 pos)
+{
 	burstparticle1->SetPos(pos);
-	burstparticle2->SetPos(pos);
+	//burstparticle2->SetPos(pos);
+
 }
 
 void Val_fire::SetVortex(Vector3 pos)
@@ -144,7 +149,7 @@ void Val_fire::PlaySpark()
 void Val_fire::FullBurstScale(Vector3 pos)
 {
 	burstparticle1->Play(pos);
-	burstparticle2->Play(pos);
+	//burstparticle2->Play(pos);
 
 }
 

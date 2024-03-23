@@ -18,6 +18,7 @@ public:
 	bool IsActive() { return particle->IsActive(); }
 	void SetParent(Transform* transform) { parent = transform; }
 	void SetPos(Vector3 pos);
+	void SetBurstPos(Vector3 pos);
 	void SetVortex(Vector3 pos);
 	void PlayExplosion();
 	void PlaySpark();

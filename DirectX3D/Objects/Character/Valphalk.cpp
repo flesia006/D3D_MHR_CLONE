@@ -2573,12 +2573,6 @@ void Valphalk::S_StabAtk()
 	}
 	if (sequence == 3)
 	{
-		playOncePerPattern = false;
-		playOncePerPattern2 = false;
-		sequence++;
-	}
-	if (sequence == 4) // 공격 모션
-	{
 		if (!renderJetRight)
 			renderJetRight = true;
 		SetState(E_2038);
@@ -2591,7 +2585,7 @@ void Valphalk::S_StabAtk()
 		}
 	}
 
-	if (sequence == 5) // 공격 모션2 - 휘두르기
+	if (sequence == 4) // 공격 모션2 - 휘두르기
 	{
 		SetState(E_2056);
 		E2056();
@@ -2604,7 +2598,7 @@ void Valphalk::S_StabAtk()
 		}
 	}
 
-	if (sequence == 6)
+	if (sequence == 5)
 	{
 		playOncePerPattern3 = false;
 		playOncePerPattern4 = false;
@@ -2615,7 +2609,7 @@ void Valphalk::S_StabAtk()
 		ChooseNextPattern();
 	}
 
-	if (sequence == 7) // 백스탭 위치 계산
+	if (sequence == 6) // 백스탭 위치 계산
 	{
 		Vector3 dir = (realPos->Back() + realPos->Right()).GetNormalized();
 		vecToTagt = target->GlobalPos() - dir * 2500 + realPos->Right() * 1106 + realPos->Forward() * 120;
@@ -2624,25 +2618,25 @@ void Valphalk::S_StabAtk()
 		sequence++;
 	}
 
-	if (sequence == 8) // 백스탭
+	if (sequence == 7) // 백스탭
 	{
 		SetState(E_2124);
 		E2124(vecToTagt);
 	}
 
-	if (sequence == 9) // 백스탭마무리
+	if (sequence == 8) // 백스탭마무리
 	{
 		vecToTagt = { 0,0,0 };
 		sequence++;
 	}
 
-	if (sequence == 10) // 날개찌르기 각도 정하기
+	if (sequence == 9) // 날개찌르기 각도 정하기
 	{
 		whichPattern = SetRadAndMirror(false);
 		sequence++;
 	}
 
-	if (sequence == 11) // 각도 정했으면 방향 전환함수
+	if (sequence == 10) // 각도 정했으면 방향 전환함수
 	{
 		switch (whichPattern)
 		{
@@ -2669,12 +2663,12 @@ void Valphalk::S_StabAtk()
 		if (RATIO > 0.8 && !playOncePerPattern2)
 		{
 			playOncePerPattern2 = true;
-			Sounds::Get()->Play("em086_05_fx_media_25", 0.1f);			
+			Sounds::Get()->Play("em086_05_fx_media_25", 0.1f);
 			randSound = 0;
 		}
 	}
 
-	if (sequence == 12) // 공격 모션
+	if (sequence == 11) // 공격 모션
 	{
 		if (!renderJetRight)
 			renderJetRight = true;
@@ -2688,7 +2682,7 @@ void Valphalk::S_StabAtk()
 
 	}
 
-	if (sequence == 13) // 공격 모션2 - 휘두르기
+	if (sequence == 12) // 공격 모션2 - 휘두르기
 	{
 		SetState(E_2056);	E2056();
 		if (RATIO > 0.30 && !playOncePerPattern4)
@@ -2698,7 +2692,7 @@ void Valphalk::S_StabAtk()
 		}
 	}
 
-	if (sequence == 14)
+	if (sequence == 13)
 	{
 		playOncePerPattern3 = false;
 		playOncePerPattern4 = false;
@@ -2844,12 +2838,6 @@ void Valphalk::S_JetRush()
 	}
 
 	if (sequence == 2) // 돌진모션
-	{
-		playOncePerPattern = false;
-		sequence++;
-	}
-
-	if (sequence == 3) // 돌진모션
 	{
 		if (!renderJet)
 			renderJet = true;
@@ -5644,6 +5632,13 @@ void Valphalk::E2359(float degree) // 풀버스트 우회전 뒤로 돌기
 void Valphalk::E2361() // 풀버스트 준비
 {
 	PLAY;
+
+	fireParticle[0]->SetBurstPos(GetTranslationByNode(61));
+	fireParticle[1]->SetBurstPos(GetTranslationByNode(64));
+	fireParticle[2]->SetBurstPos(GetTranslationByNode(67));
+	fireParticle[3]->SetBurstPos(GetTranslationByNode(81));
+	fireParticle[4]->SetBurstPos(GetTranslationByNode(84));
+	fireParticle[5]->SetBurstPos(GetTranslationByNode(87));
 
 	if (INIT)
 	{
