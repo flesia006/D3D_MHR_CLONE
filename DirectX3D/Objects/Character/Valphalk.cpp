@@ -594,11 +594,8 @@ void Valphalk::Update()
 	if (KEY_DOWN('6'))
 		colliders[LLEG1]->partHp = -100;
 
-	if (KEY_DOWN('8'))
-		curHP -= 1000;
-
 	if (KEY_DOWN('9'))
-		curPattern = S_SRUSH;
+		curHP -= 1000;
 	
 	if (isStorm)
 		stormBox->SetActive(true);
@@ -973,7 +970,6 @@ void Valphalk::SkyFall()
 
 	if (sequence == 4) // ÂøÁö ³¡
 	{
-		// ·»´õÇØÁà¼­
 		SetState(E_1164);
 		EX1164();
 	}
@@ -1950,12 +1946,12 @@ void Valphalk::ChooseNextPattern()
 		return;
 	}
 
-	int i = rand() % 2;
+	//int i = rand() % 2;
 	//switch (i)
 	//{
 	//case 0:	curPattern = S_JETRUSH;	 break;
 	//case 1:	curPattern = B_SWINGATK;		 break;
-	//case 2:	curPattern = FULLBURST;		 break;
+	//case 2:	curPattern = SKYFALL;		 break;
 	//}
 
 	if (!needHupGi && !angerRoar90 && !angerRoar40 && !ult50)
@@ -4054,10 +4050,7 @@ void Valphalk::EX1157() // »ó½Â Àü ¸öÇ®±â
 		CAM->shakeCAM = true;
 	}
 
-
-
 	if (RATIO > 0.96 && !isJump)
-	if (RATIO > 0.96)
 	{
 		Sounds::Get()->Play("em086_05_fx_media_22", 0.5f);
 		forwardBoom->SetActive(true);
@@ -4091,7 +4084,6 @@ void Valphalk::EX1164()
 	{
 		renderJet = false;
 		sequence++;
-		// false
 	}
 }
 
@@ -6324,8 +6316,13 @@ void Valphalk::E4073(float timer, float checkHp)
 	PLAY;
 	if (timer < 0.1f)
 	{
-		hupgiCharge->Play(GetTranslationByNode(3) + Back() * 300, 0);
-		hupgiCharge2->Play(GetTranslationByNode(3) + Back() * 300, 0);
+		if (!playOncePerPattern2)
+		{
+			hupgiCharge->Play(GetTranslationByNode(3) + Back() * 300, 0);
+			hupgiCharge2->Play(GetTranslationByNode(3) + Back() * 300, 0);
+			playOncePerPattern2 = true;
+		}
+		
 	}
 	if (timer <= 3.2f && curHP <= checkHp - 300.0f)
 	{
