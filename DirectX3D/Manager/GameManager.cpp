@@ -53,17 +53,17 @@ GameManager::GameManager()
 //    SceneManager::Get()->Create("ModelExport", new ModelExportScene());
 //    SceneManager::Get()->Add("ModelExport");
 //
-//    SceneManager::Get()->Create("Grid", new GridScene());
-//    SceneManager::Get()->Add("Grid");
+    SceneManager::Get()->Create("Grid", new GridScene());
+    SceneManager::Get()->Add("Grid");
 
-   SceneManager::Get()->Create("ShadowScene", new ShadowScene());
-   SceneManager::Get()->Add("ShadowScene");
+//   SceneManager::Get()->Create("ShadowScene", new ShadowScene());
+//   SceneManager::Get()->Add("ShadowScene");
 //    SceneManager::Get()->Create("MapDesignScene", new MapDesignScene());
 //    SceneManager::Get()->Add("MapDesignScene");
 //      SceneManager::Get()->Create("Particle", new ParticleScene());
 //      SceneManager::Get()->Add("Particle");
-//    SceneManager::Get()->Create("ParticleConfig", new ParticleConfigScene());
-//    SceneManager::Get()->Add("ParticleConfig");    
+    SceneManager::Get()->Create("ParticleConfig", new ParticleConfigScene());
+    SceneManager::Get()->Add("ParticleConfig");    
 
 //    SceneManager::Get()->Create("ValphalkTestScene", new ValphalkTestScene());
 //    SceneManager::Get()->Add("ValphalkTestScene");
@@ -77,10 +77,10 @@ GameManager::GameManager()
 //    SceneManager::Get()->Create("SimpleTestScene", new SimpleTestScene());
 //    SceneManager::Get()->Add("SimpleTestScene");
 
-    SceneManager::Get()->Create("OpeningScene", new OpeningScene());    
-    SceneManager::Get()->Add("OpeningScene");
-
-    SceneManager::Get()->Create("LoadingScene", new LoadingScene());
+//    SceneManager::Get()->Create("OpeningScene", new OpeningScene());    
+//    SceneManager::Get()->Add("OpeningScene");
+//
+//    SceneManager::Get()->Create("LoadingScene", new LoadingScene());
 //    SceneManager::Get()->Add("LoadingScene");
 
 //    SceneManager::Get()->Add("Terrain");
@@ -218,6 +218,7 @@ void GameManager::Create()
     sound->AddSound("uisound", SoundPath + L"UIsound.mp3", false);
     sound->AddSound("mapchangestart", SoundPath + L"mapchangestart.mp3", false);
     sound->AddSound("mapchangeend", SoundPath + L"mapchangeend.mp3", false);
+    Sounds::Get()->AddSound("lobbyBGM", SoundPath + L"lobbyBGM.mp3", true);
 
     /////////////////////////////////////////////////////////////
     // UI

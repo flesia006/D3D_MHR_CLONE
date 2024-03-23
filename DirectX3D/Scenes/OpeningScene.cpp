@@ -7,7 +7,6 @@ OpeningScene::OpeningScene()
     lobby->Scale() *= 2;
     //lobby->Scale().x = WIN_WIDTH;
     //lobby->Scale().z = WIN_HEIGHT;
-    Sounds::Get()->AddSound("lobbyBGM", SoundPath + L"lobbyBGM.mp3", true);
     Sounds::Get()->Play("lobbyBGM", 0.1f);
     select = new Quad(L"Textures/UI/SelectBar.png");
     FOR(6)menuBar.push_back(new Quad(L"Textures/UI/menuBar.png"));
