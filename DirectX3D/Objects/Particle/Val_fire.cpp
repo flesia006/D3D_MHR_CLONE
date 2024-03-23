@@ -63,7 +63,6 @@ void Val_fire::Update()
 void Val_fire::Render()
 {
 	//explosionParticle->Render();
-	bulletSparkExplosion->Render();
 	bulletExplosion1->Render();
 	bulletExplosion2->Render();
 	bulletExplosion3->Render();
@@ -73,6 +72,7 @@ void Val_fire::Render()
 	//particle2->Render();
 	burstparticle1->Render();
 	burstparticle2->Render();
+	bulletSparkExplosion->Render();
 }
 
 void Val_fire::GUIRender()

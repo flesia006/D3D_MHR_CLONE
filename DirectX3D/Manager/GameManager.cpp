@@ -77,10 +77,10 @@ GameManager::GameManager()
 //    SceneManager::Get()->Create("SimpleTestScene", new SimpleTestScene());
 //    SceneManager::Get()->Add("SimpleTestScene");
 
-    SceneManager::Get()->Create("OpeningScene", new OpeningScene());    
-    SceneManager::Get()->Add("OpeningScene");
-
-    SceneManager::Get()->Create("LoadingScene", new LoadingScene());
+//    SceneManager::Get()->Create("OpeningScene", new OpeningScene());    
+//    SceneManager::Get()->Add("OpeningScene");
+//
+//    SceneManager::Get()->Create("LoadingScene", new LoadingScene());
 //    SceneManager::Get()->Add("LoadingScene");
 
 //    SceneManager::Get()->Add("Terrain");
