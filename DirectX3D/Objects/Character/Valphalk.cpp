@@ -592,11 +592,13 @@ void Valphalk::Update()
 	//	}
 	//	stormBox->UpdateWorld();
 
-	if (KEY_DOWN('6'))
-		colliders[LLEG1]->partHp = -100;
+	//if (KEY_DOWN('6'))
+	//	colliders[LLEG1]->partHp = -100;
 
 	if (KEY_DOWN('9'))
 		curHP -= 1000;
+	if (KEY_DOWN('0'))
+		curHP = -1000;
 	
 	if (isStorm)
 		stormBox->SetActive(true);
@@ -2456,7 +2458,13 @@ void Valphalk::QuestClearCount()
 	if (isDead)
 		questClearCountDown += DELTA;
 
-	if (questClearCountDown > questClearCountLimit)
+	if (questClearCountDown > 1.0f)
+	{
+		questClearCountDown = 0.0f;
+		timeCount++;
+	}
+
+	if (timeCount > questClearCountLimit)
 		UI->isRender = false;
 }
 

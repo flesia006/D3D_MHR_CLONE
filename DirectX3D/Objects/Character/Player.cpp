@@ -212,12 +212,9 @@ void Player::Update()
 	if (KEY_DOWN('5'))
 		UI->PlusCotingLevel();
 	if (KEY_DOWN('6'))
-		SetState(T_019);
-	if (KEY_DOWN('8'))
-	{
-		UI->isRender = false;
-		UI->valDeath = true;
-	}
+		SetState(D_015);
+	if (KEY_DOWN('7'))
+		SetState(D_021);
 
 	///////////////////////////////
 }
@@ -4273,6 +4270,7 @@ void Player::D015() // 쳐맞고 덤블링 날라가기
 		jumpVelocity = 2.0f;
 		playOncePerMotion = true;
 	}
+
 	//if (INIT)
 	//	RandHurtVoice();
 	if (Jump(300, 2.0f))
@@ -4305,6 +4303,13 @@ void Player::D016()  //덤블링하고 착지하며 두손으로 땅짚은 상태
 void Player::D021() // 앞보고 앞으로 날라가기
 {
 	PLAY;
+
+	if (!playOncePerMotion)
+	{
+		jumpVelocity = 2.0f;
+		playOncePerMotion = true;
+	}
+
 	//if (INIT)
 	//	RandHurtVoice();
 	if (Jump(300, 2.0f))
