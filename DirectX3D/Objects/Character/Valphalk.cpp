@@ -2526,7 +2526,7 @@ void Valphalk::S_StabAtk()
 	if (sequence == 0) // 사이드스탭 할지 앞다리 찍기 할지 판단
 	{
 		if ((realPos->Pos() - target->GlobalPos()).Length() < 1000)
-			sequence = 6;
+			sequence = 7;
 		else
 			sequence++;
 	}
@@ -2568,12 +2568,14 @@ void Valphalk::S_StabAtk()
 			randSound = 0;
 		}
 	}
-
-	if (sequence == 3) // 공격 모션
+	if (sequence == 3)
 	{
 		playOncePerPattern = false;
 		playOncePerPattern2 = false;
-
+		sequence++;
+	}
+	if (sequence == 4) // 공격 모션
+	{
 		if (!renderJetRight)
 			renderJetRight = true;
 		SetState(E_2038);
@@ -2586,7 +2588,7 @@ void Valphalk::S_StabAtk()
 		}
 	}
 
-	if (sequence == 4) // 공격 모션2 - 휘두르기
+	if (sequence == 5) // 공격 모션2 - 휘두르기
 	{
 		SetState(E_2056);
 		E2056();
@@ -2599,7 +2601,7 @@ void Valphalk::S_StabAtk()
 		}
 	}
 
-	if (sequence == 5)
+	if (sequence == 6)
 	{
 		playOncePerPattern3 = false;
 		playOncePerPattern4 = false;
@@ -2610,7 +2612,7 @@ void Valphalk::S_StabAtk()
 		ChooseNextPattern();
 	}
 
-	if (sequence == 6) // 백스탭 위치 계산
+	if (sequence == 7) // 백스탭 위치 계산
 	{
 		Vector3 dir = (realPos->Back() + realPos->Right()).GetNormalized();
 		vecToTagt = target->GlobalPos() - dir * 2500 + realPos->Right() * 1106 + realPos->Forward() * 120;
@@ -2619,25 +2621,25 @@ void Valphalk::S_StabAtk()
 		sequence++;
 	}
 
-	if (sequence == 7) // 백스탭
+	if (sequence == 8) // 백스탭
 	{
 		SetState(E_2124);
 		E2124(vecToTagt);
 	}
 
-	if (sequence == 8) // 백스탭마무리
+	if (sequence == 9) // 백스탭마무리
 	{
 		vecToTagt = { 0,0,0 };
 		sequence++;
 	}
 
-	if (sequence == 9) // 날개찌르기 각도 정하기
+	if (sequence == 10) // 날개찌르기 각도 정하기
 	{
 		whichPattern = SetRadAndMirror(false);
 		sequence++;
 	}
 
-	if (sequence == 10) // 각도 정했으면 방향 전환함수
+	if (sequence == 11) // 각도 정했으면 방향 전환함수
 	{
 		switch (whichPattern)
 		{
@@ -2669,7 +2671,7 @@ void Valphalk::S_StabAtk()
 		}
 	}
 
-	if (sequence == 11) // 공격 모션
+	if (sequence == 12) // 공격 모션
 	{
 		playOncePerPattern = false;
 		playOncePerPattern2 = false;
@@ -2686,7 +2688,7 @@ void Valphalk::S_StabAtk()
 
 	}
 
-	if (sequence == 12) // 공격 모션2 - 휘두르기
+	if (sequence == 13) // 공격 모션2 - 휘두르기
 	{
 		SetState(E_2056);	E2056();
 		if (RATIO > 0.30 && !playOncePerPattern4)
@@ -2696,7 +2698,7 @@ void Valphalk::S_StabAtk()
 		}
 	}
 
-	if (sequence == 13)
+	if (sequence == 14)
 	{
 		playOncePerPattern3 = false;
 		playOncePerPattern4 = false;
