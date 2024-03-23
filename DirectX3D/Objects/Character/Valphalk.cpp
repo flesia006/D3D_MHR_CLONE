@@ -594,7 +594,7 @@ void Valphalk::Update()
 	if (KEY_DOWN('6'))
 		colliders[LLEG1]->partHp = -100;
 
-	if (KEY_DOWN('8'))
+	if (KEY_DOWN('Y'))
 		curHP -= 1000;
 
 	if (KEY_DOWN('9'))
@@ -892,6 +892,7 @@ void Valphalk::SkyFall()
 
 		if (RATIO > 0.9)
 		{
+			sequence++;
 			GetClip(curState)->ResetPlayTime();
 			Pos() = realPos->Pos();
 			renderVal = false;
@@ -2850,13 +2851,12 @@ void Valphalk::S_JetRush()
 		SetState(E_2015);	E2015();
 	}
 
-	if (sequence == 3) // 바닥에 착지 모션
-	{
+	if (sequence == 3) // 바닥에 착지 모션	
 	{
 		SetState(E_2019);	E2019();
 	}
+	
 	if (sequence == 4) // 마무리
-	if (sequence == 5) // 마무리
 	{
 		if (renderJet)
 			renderJet = false;
