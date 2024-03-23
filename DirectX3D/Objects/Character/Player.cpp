@@ -2113,7 +2113,7 @@ void Player::S008() // 서서 납도
 	if (RATIO > 0.6 && playOncePerMotion)
 	{
 		playOncePerMotion = true;
-		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_9", .5f);
+		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_9_1", .5f);
 	}
 
 	if (RATIO > 0.95 && K_MOVE)
@@ -2537,7 +2537,7 @@ void Player::L009() // 걸으면서 납도
 
 	if (RATIO > 0.4 && !playOncePerMotion)
 	{
-		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_9", .5f);
+		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_9_1", .5f);
 		playOncePerMotion = true;
 	}
 
@@ -2637,7 +2637,7 @@ void Player::L101() // 내디뎌베기
 	if (RATIO > 0.35 && !playOncePerMotion)
 	{
 		playOncePerMotion = true;
-		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
+		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .8f);
 	}
 	if (RATIO > 0.34 && RATIO < 0.35)
 		RandVoice();
@@ -2697,7 +2697,7 @@ void Player::L102() // 세로베기
 	if (RATIO > 0.28 && !playOncePerMotion)
 	{
 		playOncePerMotion = true;
-		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
+		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .8f);
 	}
 	// 방향 조정 가능 프레임
 	{
@@ -2745,7 +2745,7 @@ void Player::L103() // 베어내리기
 
 	if (RATIO > 0.25 && !playOncePerMotion)
 	{
-		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
+		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .8f);
 		playOncePerMotion = true;
 	}
 
@@ -2788,7 +2788,7 @@ void Player::L104() // 찌르기
 
 	if (RATIO > 0.15 && !playOncePerMotion)
 	{
-		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
+		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .8f);
 		playOncePerMotion = true;
 	}
 
@@ -2831,7 +2831,7 @@ void Player::L105() // 베어 올리기
 
 	if (RATIO > 0.12 && !playOncePerMotion)
 	{
-		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
+		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .8f);
 		playOncePerMotion = true;
 	}
 
@@ -2879,7 +2879,7 @@ void Player::L106() // 기인 베기 1
 	if (RATIO > 0.31 && !playOncePerMotion)
 	{
 		playOncePerMotion = true;
-		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
+		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .8f);
 	}
 	UIManager::Get()->staminaActive = false;
 
@@ -2932,7 +2932,7 @@ void Player::L107() // 기인베기 2
 	if (RATIO > 0.26 && !playOncePerMotion2)
 	{
 		playOncePerMotion2 = true;
-		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
+		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .8f);
 	}
 
 	// 방향전환 함수
@@ -2988,17 +2988,17 @@ void Player::L108() // 기인베기 3
 	if (RATIO > 0.11 && !playOncePerMotion2)
 	{
 		playOncePerMotion2 = true;
-		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
+		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .8f);
 	}
 	if (RATIO > 0.21 && !playOncePerMotion3)
 	{
 		playOncePerMotion3 = true;
-		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
+		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .8f);
 	}
 	if (RATIO > 0.46 && !playOncePerMotion4)
 	{
 		playOncePerMotion4 = true;
-		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
+		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .8f);
 	}
 	// 줌 정상화 (앉아 기인 회전 베기에서 넘어온 경우)
 	{
@@ -3074,7 +3074,7 @@ void Player::L109() // 기인 큰회전베기
 	if (RATIO > 0.21 && !playOncePerMotion2)
 	{
 		playOncePerMotion2 = true;
-		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
+		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .8f);
 	}
 	if (RATIO > 0.15 && !playOncePerMotion3)
 	{
@@ -3084,7 +3084,7 @@ void Player::L109() // 기인 큰회전베기
 	if (RATIO > 0.75 && !playOncePerMotion4)
 	{
 		playOncePerMotion4 = true;
-		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_9", .5f);
+		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_9_1", .5f);
 	}
 
 
@@ -3147,7 +3147,7 @@ void Player::L110() // 기인 내디뎌베기
 	if (RATIO > 0.31 && !playOncePerMotion2)
 	{
 		playOncePerMotion2 = true;
-		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
+		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .8f);
 	}
 	if (RATIO > 0.3 && !playOncePerMotion3)
 	{
@@ -3205,7 +3205,7 @@ void Player::L119()
 {
 	PLAY;
 	if (INIT)
-		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
+		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .8f);
 	if (RATIO > 0.3 && !playOncePerMotion)
 	{
 		playOncePerMotion = true;
@@ -3494,7 +3494,7 @@ void Player::L133()	// 투구깨기
 
 	if (RATIO > 0.44 && !playOncePerMotion)
 	{
-		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
+		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .8f);
 		playOncePerMotion = true;
 	}
 
@@ -3568,7 +3568,7 @@ void Player::L136() // 낙하찌르기
 	if (RATIO > 0.54 && !playOncePerMotion2)
 	{
 		playOncePerMotion2 = true;
-		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
+		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .8f);
 	}
 
 	// 체공중
@@ -3697,19 +3697,14 @@ void Player::L151() // 특수 납도
 		EndEffect();
 		UIManager::Get()->staminaActive = false;
 		isEvaded = false;
+		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_9", .8f);
 	}
 	//if (RATIO > 0.2 && RATIO < 0.3)
 	//	RandVoice();
 
-	if (RATIO > 0.6 && !playOncePerMotion)
+	if (RATIO > 0.57 && !playOncePerMotion)
 	{
 		playOncePerMotion = true;
-		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_9", .5f);
-	}
-
-	if (RATIO > 0.57 && !playOncePerMotion2)
-	{
-		playOncePerMotion2 = true;
 		spAtkParticle->Play(haloCollider->Pos() + Right() * 1.0f, { 0,1,0 });
 	}
 
@@ -3774,12 +3769,12 @@ void Player::L154() // 앉아발도 베기
 	if (RATIO > 0.05 && !playOncePerMotion)
 	{
 		playOncePerMotion = true;
-		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
+		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .8f);
 	}
 	if (RATIO > 0.18 && !playOncePerMotion2)
 	{
 		playOncePerMotion2 = true;
-		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
+		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .8f);
 	}
 	if (RATIO > 0.3 && !playOncePerMotion3)
 	{
@@ -3845,7 +3840,7 @@ void Player::L155() // 앉아발도 기인베기
 	if (RATIO > 0.15 && !playOncePerMotion)
 	{
 		playOncePerMotion = true;
-		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .5f);
+		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_7", .8f);
 	}
 	// 줌아웃 && 회피 판정 프레임
 	{

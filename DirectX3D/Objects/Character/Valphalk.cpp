@@ -595,11 +595,8 @@ void Valphalk::Update()
 	if (KEY_DOWN('6'))
 		colliders[LLEG1]->partHp = -100;
 
-	if (KEY_DOWN('8'))
-		curHP -= 1000;
-
 	if (KEY_DOWN('9'))
-		curPattern = S_SRUSH;
+		curHP -= 1000;
 	
 	if (isStorm)
 		stormBox->SetActive(true);
@@ -1997,12 +1994,12 @@ void Valphalk::ChooseNextPattern()
 		return;
 	}
 
-	int i = rand() % 2;
+	//int i = rand() % 2;
 	//switch (i)
 	//{
 	//case 0:	curPattern = S_JETRUSH;	 break;
 	//case 1:	curPattern = B_SWINGATK;		 break;
-	//case 2:	curPattern = FULLBURST;		 break;
+	//case 2:	curPattern = SKYFALL;		 break;
 	//}
 
 	if (!needHupGi && !angerRoar90 && !angerRoar40 && !ult50)
@@ -4116,7 +4113,6 @@ void Valphalk::EX1164()
 	{
 		renderJet = false;
 		sequence++;
-		// false
 	}
 }
 
@@ -5035,7 +5031,7 @@ void Valphalk::E2185()// 들었던 발을 내려찍으며 깨물기
 		Sounds::Get()->Play("em086_05_vo_media_7", 0.3f);
 		playOncePerPattern = true;
 	}
-	if (RATIO > 0.121 && RATIO > 0.331)
+	if (RATIO > 0.121 && RATIO < 0.331)
 	{
 		SetColliderAttack(HEAD, 0.331, 25, 1);
 	}
@@ -6349,8 +6345,13 @@ void Valphalk::E4073(float timer, float checkHp)
 	PLAY;
 	if (timer < 0.1f)
 	{
-		hupgiCharge->Play(GetTranslationByNode(3) + Back() * 300, 0);
-		hupgiCharge2->Play(GetTranslationByNode(3) + Back() * 300, 0);
+		if (!playOncePerPattern2)
+		{
+			hupgiCharge->Play(GetTranslationByNode(3) + Back() * 300, 0);
+			hupgiCharge2->Play(GetTranslationByNode(3) + Back() * 300, 0);
+			playOncePerPattern2 = true;
+		}
+		
 	}
 	if (timer <= 3.2f && curHP <= checkHp - 300.0f)
 	{
