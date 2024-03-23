@@ -1670,7 +1670,7 @@ void Valphalk::Patrol()
 		}
 		if (RATIO > 0.6f && !playOncePerPattern2)
 		{
-			playOncePerPattern = true;
+			playOncePerPattern2 = true;
 			Sounds::Get()->Play("em086_05_se_media_52", 0.4f); // 사운드 중복 고침 (숫자로 해서 다시해도됨)
 		}
 	}
@@ -2830,12 +2830,12 @@ void Valphalk::S_JetRush()
 	{
 		switch (whichPattern)
 		{
-		case 1:		SetState(E_2001);	E2001();  break;
-		case 2:		SetState(E_2002);	E2002(-XM_PIDIV2);  break;
-		case 3:		SetState(E_2003);	E2003(-XM_PI);  break;
-		case 4:		SetState(E_2001);	E2001();  break;
-		case 5:		SetState(E_2002);	E2002(XM_PIDIV2);  break;
-		case 6:		SetState(E_2003);	E2003(XM_PI);  break;
+		case 1:        SetState(E_2001);    E2001();  break;
+		case 2:        SetState(E_2002);    E2002(-XM_PIDIV2);  break;
+		case 3:        SetState(E_2003);    E2003(-XM_PI);  break;
+		case 4:        SetState(E_2001);    E2001();  break;
+		case 5:        SetState(E_2002);    E2002(XM_PIDIV2);  break;
+		case 6:        SetState(E_2003);    E2003(XM_PI);  break;
 		}
 		if (RATIO > 0.38 && !playOncePerPattern)
 		{
@@ -2843,27 +2843,24 @@ void Valphalk::S_JetRush()
 			playOncePerPattern = true;
 		}
 	}
-	if (sequence == 2)
+
+	if (sequence == 2) // 돌진모션
 	{
 		if (!renderJet)
 			renderJet = true;
-		SetState(E_2013); E2013();
-	}
-	if (sequence == 3) // 돌진모션
-	{
-		SetState(E_2015);	E2015();
+		SetState(E_2013);    E2013();
 	}
 
-	if (sequence == 4) // 바닥에 착지 모션	
+	if (sequence == 3) // 바닥에 착지 모션
 	{
-		SetState(E_2019);	E2019();
+		SetState(E_2019);    E2019();
 	}
-	
-	if (sequence == 5) // 마무리
+
+	if (sequence == 4) // 마무리
 	{
 		if (renderJet)
 			renderJet = false;
-		if (whichPattern == 4 || whichPattern == 5 || whichPattern == 6)
+		if (whichPattern == 4 && whichPattern == 5 && whichPattern == 6)
 			Scale().x *= -1;
 		whichPattern = 0;
 		ChooseNextPattern();
@@ -3038,7 +3035,7 @@ void Valphalk::B_SwingAtk() /////////////////// 백스텝 이후 과정 수정 필요
 	if (sequence == 0) // 각도 정하기
 	{
 		if ((realPos->Pos() - target->GlobalPos()).Length() < 900) // 지나치게 가까운 경우
-			sequence = 5;
+			sequence = 4;
 		else
 		{
 			whichPattern = SetRadAndMirror(true);
@@ -3294,6 +3291,7 @@ void Valphalk::B_Trnasform()
 void Valphalk::HS_FlyBlast()
 {
 	static int whichPattern = 0;
+	
 	//FOR(6) fireParticle[i]->SetVortex(bullets[i]->Pos());
 	FOR(fireParticle.size())
 	{
