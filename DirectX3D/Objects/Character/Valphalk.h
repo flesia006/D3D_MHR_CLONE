@@ -541,6 +541,7 @@ private:
 	bool playOncePerPattern = false;
 	bool playOncePerPattern2 = false;
 	bool playOncePerPattern3 = false;
+	bool playOncePerPattern4 = false;
 	bool isSetState = false;
 
 	float radBtwTarget = 0.0f;
