@@ -430,8 +430,6 @@ private:
 
 private: // 이벤트 혹은 함수에서 조건이 필요할거 같을때
 	bool LookatPlayer = false;
-	bool OtherPlay = false;
-	bool OtherPlay2 = false;
 	int Count = 0;
 	float timer = 0.0f;
 	int randX[6], randZ[6];
@@ -484,7 +482,7 @@ private:
 	// 공격 콜라이더 (투사체, 폭발 등)	
 	vector<SphereCollider*> bullets;
 	BoxCollider* forwardBoom;
-	BoxCollider* stormBox;
+	SphereCollider* stormBox;
 	BoxCollider* fullBurst;
 	BoxCollider* effectBox1;
 	BoxCollider* effectBox2;
@@ -541,6 +539,9 @@ private:
 	bool ult50Threshold = false;
 
 	bool playOncePerPattern = false;
+	bool playOncePerPattern2 = false;
+	bool playOncePerPattern3 = false;
+	bool playOncePerPattern4 = false;
 	bool isSetState = false;
 
 	float radBtwTarget = 0.0f;
@@ -590,6 +591,7 @@ private:
 	vector<HupgiFire*> hupgiFire;
 	vector<Explosion*> explosionParticle;
 	ParticleSystem2* hupgiCharge;
+	ParticleSystem2* hupgiCharge2;
 	//StormEffect* stormEffect;
 	//Vector3 jetpos2;
 
@@ -607,6 +609,5 @@ private:
 	Trail* trail;
 	RoarEffect* roarEffect;
 	float walkTime;
-
 
 };

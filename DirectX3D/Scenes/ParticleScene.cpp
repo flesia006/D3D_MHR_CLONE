@@ -8,7 +8,10 @@ ParticleScene::ParticleScene()
     //particle = new Sprite(L"Textures/Effect/explosion.png", 30, 30, 5, 3, true);
     //particle = new Sprite(L"Textures/Effect/fire_8x2.png", 5, 30, 8, 2, true);
     particle = new ParticleSystem2("TextData/Particles/hupgi_charge.fx");
-    particle->Play({ 0, 0, 0 }, {0, 1, 0});
+    particle2 = new ParticleSystem2("TextData/Particles/hupgi_charge.fx");
+    particle2->SetRot({ 0,XM_PIDIV4,0 });
+    particle->Play({ 0, 0, 0 }, { 0, 1, 0 });
+    particle2->Play({ 0, 0, 0 }, {0, 1, 0});
     //sprite = new Sprite(L"Textures/Effect/temp5.png", 500, 500, 5, 4, false);
     //sprite2 = new Sprite(L"Textures/Effect/temp5.png", 500, 500, 5, 4, false);
     //sprite3 = new Sprite(L"Textures/Effect/temp5.png", 500, 500, 5, 4, false);
@@ -43,7 +46,8 @@ void ParticleScene::Update()
 
         if (collider->IsRayCollision(ray, &contact))
         {
-            particle->Play(contact.hitPoint, {0, 0, 0});
+            particle->Play(contact.hitPoint, { 0, 0, 0 });
+            particle2->Play(contact.hitPoint, {0, 0, 0});
             //sprite->Play(contact.hitPoint);
             //sprite3->Play(contact.hitPoint);
             //timer++;
@@ -87,7 +91,8 @@ void ParticleScene::Update()
     //sprite4->Update();
     //sprite5->Update();
     //sprite6->Update();
-    particle->Update();
+            particle->Update();
+            particle2->Update();
     //wind->Update();
     barrier->Update();
 }
@@ -101,6 +106,7 @@ void ParticleScene::Render()
     barrier->Render();
     //sprite6->Render();
     particle->Render();
+    particle2->Render();
     collider->Render();
     //sprite->Render();
     //sprite2->Render();

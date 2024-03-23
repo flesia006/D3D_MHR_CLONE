@@ -123,7 +123,7 @@ ShadowScene::ShadowScene()
 
     //Sounds::Get()->AddSound("Valphalk_Thema", SoundPath + L"Valphalk_Thema.mp3",true);
     //Sounds::Get()->Play("Valphalk_Thema", 0.03f);
-    Sounds::Get()->AddSound("health_potion", SoundPath + L"health_potion.mp3");
+    //Sounds::Get()->AddSound("health_potion", SoundPath + L"health_potion.mp3");
     FOR(2) rasterizerState[i] = new RasterizerState();
     FOR(2) blendState[i] = new BlendState();
     blendState[1]->Additive();
@@ -134,7 +134,7 @@ ShadowScene::~ShadowScene()
 {
     delete garuk;
     //delete objects;
-    //delete objects2;
+    delete objects2;
     delete player;
     delete shadow;
     delete valphalk;
@@ -152,11 +152,7 @@ void ShadowScene::Update()
     //if (KEY_DOWN('4')) light->type = 3;
     //terrain->Update();
     static bool once = false;
-    if (UI->isMapChange == false) // ½ÃÀÛ¸Ê
-    {
-        //objects2->Update();
-    }
-    else // ÀüÅõ¸Ê
+    if (UI->isMapChange) // ½ÃÀÛ¸Ê
     {
         wireBug->Update();
         if (!once)
@@ -255,7 +251,7 @@ void ShadowScene::Render()
         }
         else // ÀüÅõ¸Ê
         {
-            objects->Render();
+            //objects->Render(); Àá±ñ ÁÖ¼®ÇØµÒ
 //          terrain->Render();
             valphalk->Render();
             objects->Render();

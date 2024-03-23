@@ -56,12 +56,12 @@ GameManager::GameManager()
 //    SceneManager::Get()->Create("Grid", new GridScene());
 //    SceneManager::Get()->Add("Grid");
 
-    SceneManager::Get()->Create("ShadowScene", new ShadowScene());
-    SceneManager::Get()->Add("ShadowScene");
+   SceneManager::Get()->Create("ShadowScene", new ShadowScene());
+   SceneManager::Get()->Add("ShadowScene");
 //    SceneManager::Get()->Create("MapDesignScene", new MapDesignScene());
 //    SceneManager::Get()->Add("MapDesignScene");
-//      SceneManager::Get()->Create("Particle", new ParticleScene());
-//      SceneManager::Get()->Add("Particle");
+      //SceneManager::Get()->Create("Particle", new ParticleScene());
+      //SceneManager::Get()->Add("Particle");
 //    SceneManager::Get()->Create("ParticleConfig", new ParticleConfigScene());
 //    SceneManager::Get()->Add("ParticleConfig");    
 
@@ -88,7 +88,7 @@ GameManager::GameManager()
 
     // 씬만 재생하고 싶은 경우 : CAM->isFreeCamTrue() 지우고 isLoading = false;로 조정
     // 로딩씬 같이 재생이라면  : CAM->isFreeComTrue() 살리고 isLoading = true; 로 조정
-    //CAM->isFreeCamTrue();
+//    CAM->isFreeCamTrue();
     UIManager::Get()->isLoading = false;
 }
 
@@ -218,6 +218,7 @@ void GameManager::Create()
     sound->AddSound("uisound", SoundPath + L"UIsound.mp3", false);
     sound->AddSound("mapchangestart", SoundPath + L"mapchangestart.mp3", false);
     sound->AddSound("mapchangeend", SoundPath + L"mapchangeend.mp3", false);
+    Sounds::Get()->AddSound("lobbyBGM", SoundPath + L"lobbyBGM.mp3", true);
 
     /////////////////////////////////////////////////////////////
     // UI
@@ -434,7 +435,7 @@ void LoadPlayScene(std::shared_future<void> play)
 void LoadScene() // 게임 시작시 오프닝씬 -> 로딩씬으로 전환
 {
     SceneManager::Get()->Remove("OpeningScene");
-    Sounds::Get()->Pause("lobbyBGM");
+    Sounds::Get()->Stop("lobbyBGM");
     SceneManager::Get()->Add("LoadingScene");
     UIManager::Get()->choice = 100;
 }
@@ -443,7 +444,8 @@ void PlayScene(std::shared_future<void> play)
 {
     play.get();
     SceneManager::Get()->Remove("LoadingScene");
-    SceneManager::Get()->Add("FightTestScene");
+    //Sounds::Get()->Play("env_114", 0.5f);
+    //SceneManager::Get()->Add("FightTestScene");
     CAM->isFreeCamFalse();
 
     std::this_thread::sleep_for(std::chrono::seconds(3));
@@ -452,7 +454,13 @@ void PlayScene(std::shared_future<void> play)
 void PlayScene() // 로딩씬을 지우고 원하는 씬으로 진입한다.
 {
     SceneManager::Get()->Remove("LoadingScene");
+    if (UI->isLoading)
+    {
+        Sounds::Get()->Play("env_114", 0.5f);
+        UIManager::Get()->isLoading = false;
+    }
+   
     //SceneManager::Get()->Add("PlayerTestScene");
     CAM->isFreeCamFalse();
-    UIManager::Get()->isLoading = false;
+    
 }
