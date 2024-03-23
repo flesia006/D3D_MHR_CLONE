@@ -50,14 +50,14 @@ GameManager::GameManager()
     srand(static_cast<unsigned int>(time(NULL)));
     randN = (rand() % 100) + 500;
 
-//    SceneManager::Get()->Create("ModelExport", new ModelExportScene());
-//    SceneManager::Get()->Add("ModelExport");
+    SceneManager::Get()->Create("ModelExport", new ModelExportScene());
+    SceneManager::Get()->Add("ModelExport");
 //
 //    SceneManager::Get()->Create("Grid", new GridScene());
 //    SceneManager::Get()->Add("Grid");
 
-   SceneManager::Get()->Create("ShadowScene", new ShadowScene());
-   SceneManager::Get()->Add("ShadowScene");
+//   SceneManager::Get()->Create("ShadowScene", new ShadowScene());
+//   SceneManager::Get()->Add("ShadowScene");
 //    SceneManager::Get()->Create("MapDesignScene", new MapDesignScene());
 //    SceneManager::Get()->Add("MapDesignScene");
       //SceneManager::Get()->Create("Particle", new ParticleScene());
