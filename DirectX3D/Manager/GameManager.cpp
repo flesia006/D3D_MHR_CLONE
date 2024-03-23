@@ -276,6 +276,7 @@ void GameManager::Create()
     sound->AddSound("pl_wp_l_swd_com_media.bnk.2_8", SoundPath + L"pl_wp_l_swd_com_media.bnk.2_8.mp3");
     // 납도사운드
     sound->AddSound("pl_wp_l_swd_com_media.bnk.2_9", SoundPath + L"pl_wp_l_swd_com_media.bnk.2_9.mp3");
+    sound->AddSound("pl_wp_l_swd_com_media.bnk.2_9_1", SoundPath + L"pl_wp_l_swd_com_media.bnk.2_9_1.mp3");
     // 공격시 검뽑는소리2
     sound->AddSound("pl_wp_l_swd_com_media.bnk.2_25", SoundPath + L"pl_wp_l_swd_com_media.bnk.2_25.mp3");
     // 앉아발도기인베기 회피추가타

@@ -71,7 +71,7 @@ void Val_fire::Render()
 	particle->Render();
 	//particle2->Render();
 	burstparticle1->Render();
-	burstparticle2->Render();
+	//burstparticle2->Render();
 	bulletSparkExplosion->Render();
 }
 
