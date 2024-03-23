@@ -369,7 +369,6 @@ Valphalk::~Valphalk()
 void Valphalk::Update()
 {
 	//	if (UIManager::Get()->isLoading == true) return;
-	ult50 = true;
 	UpdateWorld();
 	if (preState != curState)
 		GetClip(preState)->ResetPlayTime();
