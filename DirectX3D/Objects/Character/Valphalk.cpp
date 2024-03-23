@@ -2843,20 +2843,23 @@ void Valphalk::S_JetRush()
 			playOncePerPattern = true;
 		}
 	}
-
-	if (sequence == 2) // 돌진모션
+	if (sequence == 2)
 	{
 		if (!renderJet)
 			renderJet = true;
+		SetState(E_2013); E2013();
+	}
+	if (sequence == 3) // 돌진모션
+	{
 		SetState(E_2015);	E2015();
 	}
 
-	if (sequence == 3) // 바닥에 착지 모션	
+	if (sequence == 4) // 바닥에 착지 모션	
 	{
 		SetState(E_2019);	E2019();
 	}
 	
-	if (sequence == 4) // 마무리
+	if (sequence == 5) // 마무리
 	{
 		if (renderJet)
 			renderJet = false;
@@ -4230,9 +4233,8 @@ void Valphalk::E2013()//돌진 시작
 void Valphalk::E2015()//돌진중 Loop
 {
 	PLAY;
-	if (RATIO > 0.96)
-		sequence++;
-		//SetState(E_2017);
+	if (RATIO > 0.96)		
+		SetState(E_2017);
 }
 
 void Valphalk::E2017()//돌진 브레이크
