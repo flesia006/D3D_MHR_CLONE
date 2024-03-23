@@ -459,20 +459,23 @@ void Valphalk::Update()
 	FOR(explosionParticle.size()) explosionParticle[i]->Update();
 	FOR(bullets.size())
 	{
-		if (bullets[i]->Pos().y <= height + 100 && bullets[i]->Active())
+		//if (bullets[i]->Pos().y <= height + 100 && bullets[i]->Active())
+		//{
+		//	fireParticle[i]->PlaySpark();
+		//}
+		if (bullets[i]->Pos().y <= height + 10 && bullets[i]->Active())
 		{
-			fireParticle[i]->PlaySpark();
-		}
-		if (bullets[i]->Pos().y <= height && bullets[i]->Active())
-		{
-			if (i % 2 == 0)
-				Sounds::Get()->Play("em086_05_se_media_10", 0.5f); // º¸·ù
-			if (i % 2 == 1)
-				Sounds::Get()->Play("em086_05_se_media_10_2", 0.5f);
-
-			fireParticle[i]->PlayExplosion();
-			fireParticle[i]->Stop();
-			bullets[i]->SetActive(false);
+			if (bullets[i]->Active())
+			{
+				if (i % 2 == 0)
+					Sounds::Get()->Play("em086_05_se_media_10", 0.5f); // ¹ÌÈ®ÀÎ
+				if (i % 2 == 1)
+					Sounds::Get()->Play("em086_05_se_media_10_2", 0.5f); // ¹ÌÈ®ÀÎ
+				fireParticle[i]->PlayExplosion();
+				fireParticle[i]->Stop();
+				fireParticle[i]->PlaySpark();
+				bullets[i]->SetActive(false);
+			}
 		}
 	}
 
@@ -610,45 +613,44 @@ void Valphalk::Update()
 
 void Valphalk::PreRender()
 {
-
-	//	for (int i = 0; i < bullets.size(); ++i)
-	//		bullets[i]->Render();
-	//	forwardBoom->Render();
-	//	fullBurst->Render();
-	//	effectBox1->Render();
-	//	effectBox2->Render();
-	//	effectBox3->Render();
-	//	effectSphere1->Render();
-	//	effectSphere2->Render();
-	//	realPos->Render();
-	//	skyfallEft->Render();
-	//
-	//	if (renderJet)
-	//		FOR(6) valZets[i]->Render();
-	//	if (renderJetRight)
-	//		FOR(3) valZets[i + 3]->Render();
-	//
-	//	if (renderFullBurst)
-	//		fullburstParticle->Render();
-	//
-	//	fullburstParticle2->Render();
-	//
-	//	//if (isStorm)
-	//		//stormEffect->Render();
-	//	FOR(jetParticle.size()) jetParticle[i]->Render();
-	//	FOR(fireParticle.size()) fireParticle[i]->Render();
-	//	FOR(hupgiFire.size()) hupgiFire[i]->Render();
-	//	FOR(explosionParticle.size()) explosionParticle[i]->Render();
-	//
-	//	hupgiCharge->Render();
-	//	storm_Start->Render();
-	//	barrier->Render();
-	//	if (isStorm)
-	//	{
-	//		trail->Render();
-	//		stormBox->Render();
-	//	}
-	//	roarEffect->Render();
+	for (int i = 0; i < bullets.size(); ++i)
+		bullets[i]->Render();
+	forwardBoom->Render();
+	fullBurst->Render();
+	effectBox1->Render();
+	effectBox2->Render();
+	effectBox3->Render();
+	effectSphere1->Render();
+	effectSphere2->Render();
+	realPos->Render();
+	skyfallEft->Render();
+	
+	if (renderJet)
+		FOR(6) valZets[i]->Render();
+	if (renderJetRight)
+		FOR(3) valZets[i + 3]->Render();
+	
+	if (renderFullBurst)
+		fullburstParticle->Render();
+	
+	fullburstParticle2->Render();
+	
+	//if (isStorm)
+		//stormEffect->Render();
+	FOR(jetParticle.size()) jetParticle[i]->Render();
+	FOR(fireParticle.size()) fireParticle[i]->Render();
+	FOR(hupgiFire.size()) hupgiFire[i]->Render();
+	FOR(explosionParticle.size()) explosionParticle[i]->Render();
+	
+	hupgiCharge->Render();
+	storm_Start->Render();
+	barrier->Render();
+	if (isStorm)
+	{
+		trail->Render();
+		stormBox->Render();
+	}
+	roarEffect->Render();
 }
 
 void Valphalk::Render()
@@ -1019,12 +1021,6 @@ void Valphalk::EnergyBullets()
 		fire5 = GetTranslationByNode(84) - GetTranslationByNode(83);
 		fire6 = GetTranslationByNode(87) - GetTranslationByNode(86);
 		Sounds::Get()->Play("em086_05_fx_media_32", .3f);
-		FOR(6)
-		{
-			fireParticle[i]->Play(bullets[i]->Pos(), bullets[i]->Rot());
-			fireParticle[i]->PlaySpark(bullets[i]->Pos());
-		}
-
 
 		bullets[0]->Pos() = GetTranslationByNode(61) + fire1 * .81f;
 		bullets[1]->Pos() = GetTranslationByNode(64) + fire2 * .81f;
@@ -1047,6 +1043,11 @@ void Valphalk::EnergyBullets()
 		{
 			randX[i] = Random(target->Pos().x - 450, target->Pos().x + 450);
 			randZ[i] = Random(target->Pos().z - 450, target->Pos().z + 450);
+		}
+		FOR(6)
+		{
+			fireParticle[i]->Play(bullets[i]->Pos(), bullets[i]->Rot());
+			fireParticle[i]->PlaySpark(bullets[i]->Pos());
 		}
 		sequence++;
 	}
@@ -1891,11 +1892,6 @@ void Valphalk::ChooseNextPattern()
 	initialRad = Rot().y;
 	float distance = (target->GlobalPos() - Pos()).Length();
 
-	//switch (0)
-	//{
-	//case 0: curPattern = HS_FLYBLAST; break;
-	//}
-
 	// Èí±â : ÀÎ½Ä Æ÷È¿·ÎºÎÅÍ  1ºÐ ÈÄ
 	// ºÐ³ë : 90 ¤·¤ÓÇÏ    40 ÀÏ¶§ ÇÑ¹ø
 	// ÇÊ»ì±â : Ã¼·Â 50 ¾ð´õ¶ó¸é
@@ -1934,204 +1930,204 @@ void Valphalk::ChooseNextPattern()
 		return;
 	}
 
-	//int i = rand() % 3;
+	//int i = rand() % 2;
 	//switch (0)
 	//{
-	//case 0:	curPattern = B_ENERGYBLAST;	 break;
-	//case 1:	curPattern = B_DOWNBLAST;		 break;
-	//case 2:	curPattern = B_ENERGYBLAST;		 break;
+	//case 0:	curPattern = HS_FLYBLAST;	 break;
+	//case 1:	curPattern = HS_FLYBLAST;		 break;
+	//case 2:	curPattern = HS_FLYBLAST;		 break;
 	//}
 
-	if (!needHupGi && !angerRoar90 && !angerRoar40 && !ult50)
-	{
-
-		if (distance < 1000)    // ±Ù
-		{
-			if (isSlashMode)	   // Âü
-			{
-				if (isHupGi)    // Èí
-				{
-					int i = rand() % 4;
-					switch (i)
-					{
-					case 0:	curPattern = S_LEGATK;		 break;
-					case 1:	curPattern = S_STABATK;		 break;
-					case 2:	curPattern = S_BACKWINGATK;  break;
-					case 3:	curPattern = HS_FLYFALLATK;  break;  // È£¹ö¸µ
-					}
-				}
-				else           // ¤¤Èí
-				{
-					int i = rand() % 4;
-					switch (i)
-					{
-					case 0:	curPattern = S_LEGATK;	  break;
-					case 1:	curPattern = S_STABATK;	  break;
-					case 2:	curPattern = S_BACKWINGATK;  break;
-					case 3:	curPattern = S_BITE;		break;
-					}
-				}
-			}
-			else               // Æ÷
-			{
-				if (isHupGi)   // Èí
-				{
-					int i = rand() % 6;
-					switch (i)
-					{
-					case 0:	curPattern = HB_WINGATK;	  break;
-					case 1:	curPattern = B_DOWNBLAST;	  break;
-					case 2:	curPattern = FORWARDBOOM;	break;
-					case 3:	curPattern = HS_FLYFALLATK;	break;
-					case 4:	curPattern = FULLBURST;	break;
-					case 5: curPattern = HS_FLYBLAST; break;
-
-					}
-				}
-				else           // ¤¤Èí
-				{
-					int i = rand() % 4;
-					switch (i)
-					{
-					case 0:	curPattern = B_SWINGATK;	  break;
-					case 1:	curPattern = B_WINGATK;	  break;
-					case 2:	curPattern = B_DOWNBLAST;  break;
-					case 3:	curPattern = FORWARDBOOM;  break;
-					}
-				}
-			}
-
-		}
-
-		else if (distance >= 1000 && distance < 2000)  // Áß
-		{
-			if (isSlashMode) // Âü
-			{
-				if (isHupGi) // Èí
-				{
-					int i = rand() % 4;
-					switch (i)
-					{
-					case 0:	curPattern = S_STABATK;	  break;
-					case 1:	curPattern = S_SRUSH;  break;
-					case 2:	curPattern = HS_FLYFALLATK;	  break;
-					case 3:
-						if (curPattern != B_TRANSFORM)
-							curPattern = S_TRANSFORM;
-						else curPattern = HS_FLYFALLATK;
-						break;
-					}
-				}
-				else		// Èí¤¤
-				{
-					int i = rand() % 3;
-					switch (i)
-					{
-					case 0:	curPattern = S_STABATK;	  break;
-					case 1:	curPattern = S_SRUSH;	  break;
-					case 2:
-						if (curPattern != B_TRANSFORM)
-							curPattern = S_TRANSFORM;
-						else curPattern = S_STABATK;
-						break;
-					}
-				}
-			}
-			else			  // Æ÷
-			{
-				if (isHupGi)  // Èí
-				{
-					int i = rand() % 6;
-					switch (i)
-					{
-					case 0:	curPattern = B_DOWNBLAST;	  break;
-					case 1:	curPattern = FORWARDBOOM;	  break;
-					case 2:	curPattern = HS_FLYFALLATK;	  break;
-					case 3:	curPattern = FULLBURST;	break;
-					case 4:	curPattern = B_DUMBLING;  break;
-					case 5: curPattern = HS_FLYBLAST; break;
-					}
-				}
-				else		  // Èí ¤¤
-				{
-					int i = rand() % 5;
-					switch (i)
-					{
-					case 0:	curPattern = B_SWINGATK;	  break;
-					case 1:	curPattern = FORWARDBOOM;	  break;
-					case 2:	curPattern = B_ENERGYBLAST;  break;
-					case 3:	curPattern = B_DUMBLING;  break;
-					case 4:
-						if (curPattern != S_TRANSFORM)
-							curPattern = B_TRANSFORM;
-						else curPattern = B_SWINGATK;
-						break;
-					}
-				}
-			}
-
-		}
-
-		else if (distance > 2000)   // ¿ø
-		{
-			if (isSlashMode)        // Âü
-			{
-				if (isHupGi)        // Èí
-				{
-					int i = rand() % 2;
-					switch (i)
-					{
-					case 0:	curPattern = S_JETRUSH;	  break;
-					case 1:	curPattern = HS_FLYFALLATK;	  break;
-					}
-				}
-				else                // Èí¤¤
-				{
-					int i = rand() % 3;
-					switch (i)
-					{
-					case 0:	curPattern = S_JETRUSH;	  break;
-					case 1:	curPattern = S_RUNANDBITE;	  break;
-						//case 2:	curPattern = S_RUNTOTRGT;  break; //TODO
-					case 2:
-						if (curPattern != B_TRANSFORM)
-							curPattern = S_TRANSFORM;
-						else curPattern = S_STABATK;
-						break;
-					}
-				}
-			}
-			else                   //Æ÷
-			{
-				if (isHupGi)       // Èí
-				{
-					int i = rand() % 3;
-					switch (i)
-					{
-					case 0:	curPattern = FULLBURST;		break;
-					case 1:	curPattern = HS_FLYFALLATK;  break; // Æ®·£½ºÆû ÇÏ°í ³¯°Ô ¼öÁ¤
-					case 2: curPattern = HS_FLYBLAST; break;
-						//case 1:	curPattern = B_DUMBLING;  break;
-					}
-				}
-				else              // Èí¤¤
-				{
-					int i = rand() % 2;
-					switch (i)
-					{
-					case 0:	curPattern = B_ENERGYBLAST;		break;
-					case 1:
-						if (curPattern != S_TRANSFORM)
-							curPattern = B_TRANSFORM;
-						else curPattern = B_SWINGATK;
-						//case 1:	curPattern = B_DUMBLING;		break;
-						break;
-					}
-				}
-			}
-
-		}
-	}
+	//if (!needHupGi && !angerRoar90 && !angerRoar40 && !ult50)
+	//{
+	//
+	//	if (distance < 1000)    // ±Ù
+	//	{
+	//		if (isSlashMode)	   // Âü
+	//		{
+	//			if (isHupGi)    // Èí
+	//			{
+	//				int i = rand() % 4;
+	//				switch (i)
+	//				{
+	//				case 0:	curPattern = S_LEGATK;		 break;
+	//				case 1:	curPattern = S_STABATK;		 break;
+	//				case 2:	curPattern = S_BACKWINGATK;  break;
+	//				case 3:	curPattern = HS_FLYFALLATK;  break;  // È£¹ö¸µ
+	//				}
+	//			}
+	//			else           // ¤¤Èí
+	//			{
+	//				int i = rand() % 4;
+	//				switch (i)
+	//				{
+	//				case 0:	curPattern = S_LEGATK;	  break;
+	//				case 1:	curPattern = S_STABATK;	  break;
+	//				case 2:	curPattern = S_BACKWINGATK;  break;
+	//				case 3:	curPattern = S_BITE;		break;
+	//				}
+	//			}
+	//		}
+	//		else               // Æ÷
+	//		{
+	//			if (isHupGi)   // Èí
+	//			{
+	//				int i = rand() % 6;
+	//				switch (i)
+	//				{
+	//				case 0:	curPattern = HB_WINGATK;	  break;
+	//				case 1:	curPattern = B_DOWNBLAST;	  break;
+	//				case 2:	curPattern = FORWARDBOOM;	break;
+	//				case 3:	curPattern = HS_FLYFALLATK;	break;
+	//				case 4:	curPattern = FULLBURST;	break;
+	//				case 5: curPattern = HS_FLYBLAST; break;
+	//
+	//				}
+	//			}
+	//			else           // ¤¤Èí
+	//			{
+	//				int i = rand() % 4;
+	//				switch (i)
+	//				{
+	//				case 0:	curPattern = B_SWINGATK;	  break;
+	//				case 1:	curPattern = B_WINGATK;	  break;
+	//				case 2:	curPattern = B_DOWNBLAST;  break;
+	//				case 3:	curPattern = FORWARDBOOM;  break;
+	//				}
+	//			}
+	//		}
+	//
+	//	}
+	//
+	//	else if (distance >= 1000 && distance < 2000)  // Áß
+	//	{
+	//		if (isSlashMode) // Âü
+	//		{
+	//			if (isHupGi) // Èí
+	//			{
+	//				int i = rand() % 4;
+	//				switch (i)
+	//				{
+	//				case 0:	curPattern = S_STABATK;	  break;
+	//				case 1:	curPattern = S_SRUSH;  break;
+	//				case 2:	curPattern = HS_FLYFALLATK;	  break;
+	//				case 3:
+	//					if (curPattern != B_TRANSFORM)
+	//						curPattern = S_TRANSFORM;
+	//					else curPattern = HS_FLYFALLATK;
+	//					break;
+	//				}
+	//			}
+	//			else		// Èí¤¤
+	//			{
+	//				int i = rand() % 3;
+	//				switch (i)
+	//				{
+	//				case 0:	curPattern = S_STABATK;	  break;
+	//				case 1:	curPattern = S_SRUSH;	  break;
+	//				case 2:
+	//					if (curPattern != B_TRANSFORM)
+	//						curPattern = S_TRANSFORM;
+	//					else curPattern = S_STABATK;
+	//					break;
+	//				}
+	//			}
+	//		}
+	//		else			  // Æ÷
+	//		{
+	//			if (isHupGi)  // Èí
+	//			{
+	//				int i = rand() % 6;
+	//				switch (i)
+	//				{
+	//				case 0:	curPattern = B_DOWNBLAST;	  break;
+	//				case 1:	curPattern = FORWARDBOOM;	  break;
+	//				case 2:	curPattern = HS_FLYFALLATK;	  break;
+	//				case 3:	curPattern = FULLBURST;	break;
+	//				case 4:	curPattern = B_DUMBLING;  break;
+	//				case 5: curPattern = HS_FLYBLAST; break;
+	//				}
+	//			}
+	//			else		  // Èí ¤¤
+	//			{
+	//				int i = rand() % 5;
+	//				switch (i)
+	//				{
+	//				case 0:	curPattern = B_SWINGATK;	  break;
+	//				case 1:	curPattern = FORWARDBOOM;	  break;
+	//				case 2:	curPattern = B_ENERGYBLAST;  break;
+	//				case 3:	curPattern = B_DUMBLING;  break;
+	//				case 4:
+	//					if (curPattern != S_TRANSFORM)
+	//						curPattern = B_TRANSFORM;
+	//					else curPattern = B_SWINGATK;
+	//					break;
+	//				}
+	//			}
+	//		}
+	//
+	//	}
+	//
+	//	else if (distance > 2000)   // ¿ø
+	//	{
+	//		if (isSlashMode)        // Âü
+	//		{
+	//			if (isHupGi)        // Èí
+	//			{
+	//				int i = rand() % 2;
+	//				switch (i)
+	//				{
+	//				case 0:	curPattern = S_JETRUSH;	  break;
+	//				case 1:	curPattern = HS_FLYFALLATK;	  break;
+	//				}
+	//			}
+	//			else                // Èí¤¤
+	//			{
+	//				int i = rand() % 3;
+	//				switch (i)
+	//				{
+	//				case 0:	curPattern = S_JETRUSH;	  break;
+	//				case 1:	curPattern = S_RUNANDBITE;	  break;
+	//					//case 2:	curPattern = S_RUNTOTRGT;  break; //TODO
+	//				case 2:
+	//					if (curPattern != B_TRANSFORM)
+	//						curPattern = S_TRANSFORM;
+	//					else curPattern = S_STABATK;
+	//					break;
+	//				}
+	//			}
+	//		}
+	//		else                   //Æ÷
+	//		{
+	//			if (isHupGi)       // Èí
+	//			{
+	//				int i = rand() % 3;
+	//				switch (i)
+	//				{
+	//				case 0:	curPattern = FULLBURST;		break;
+	//				case 1:	curPattern = HS_FLYFALLATK;  break; // Æ®·£½ºÆû ÇÏ°í ³¯°Ô ¼öÁ¤
+	//				case 2: curPattern = HS_FLYBLAST; break;
+	//					//case 1:	curPattern = B_DUMBLING;  break;
+	//				}
+	//			}
+	//			else              // Èí¤¤
+	//			{
+	//				int i = rand() % 2;
+	//				switch (i)
+	//				{
+	//				case 0:	curPattern = B_ENERGYBLAST;		break;
+	//				case 1:
+	//					if (curPattern != S_TRANSFORM)
+	//						curPattern = B_TRANSFORM;
+	//					else curPattern = B_SWINGATK;
+	//					//case 1:	curPattern = B_DUMBLING;		break;
+	//					break;
+	//				}
+	//			}
+	//		}
+	//
+	//	}
+	//}
 
 }
 
@@ -3270,14 +3266,29 @@ void Valphalk::B_Trnasform()
 
 void Valphalk::HS_FlyBlast()
 {
-	OtherPlay2 = true;
 	static int whichPattern = 0;
-	FOR(6) fireParticle[i]->SetVortex(bullets[i]->Pos());
-
-	if (sequence == 0)
+	//FOR(6) fireParticle[i]->SetVortex(bullets[i]->Pos());
+	FOR(fireParticle.size())
 	{
-		SetState(E_2265);
+		if (fireParticle[i]->IsActive())
+		{
+			fireParticle[i]->SetVortex(bullets[i]->Pos());
+		}
+		if (bullets[i]->Active())
+		{
+			bullets[i]->Pos().x = Lerp(bullets[i]->Pos().x, randX[i], 0.0124f);
+			bullets[i]->Pos().z = Lerp(bullets[i]->Pos().z, randZ[i], 0.0124f);
+
+			bullets[i]->Pos().y -= 1500 * DELTA;
+		}
+	}
+									 
+	if (sequence == 0)				 
+	{								 
+		SetState(E_2265);			 
 		EX2265();
+		if (!renderJet)
+			renderJet = true;
 	}
 
 	if (sequence == 1)
@@ -3306,45 +3317,24 @@ void Valphalk::HS_FlyBlast()
 	}
 
 	if (sequence == 3 &&
-		GetClip(E_2280)->GetPlaytime() > 0.723f ||
-		GetClip(E_2281)->GetPlaytime() > 0.723f ||
-		GetClip(E_2282)->GetPlaytime() > 0.723f)
+		GetClip(E_2280)->GetPlaytime() > 0.942f ||
+		GetClip(E_2281)->GetPlaytime() > 0.942f ||
+		GetClip(E_2282)->GetPlaytime() > 0.942f)
 	{
-		for (int i = 0; i < bullets.size(); ++i)
+		bullets[0]->Pos() = GetTranslationByNode(61);
+		bullets[1]->Pos() = GetTranslationByNode(64);
+		bullets[2]->Pos() = GetTranslationByNode(67);
+		bullets[3]->Pos() = GetTranslationByNode(81);
+		bullets[4]->Pos() = GetTranslationByNode(84);
+		bullets[5]->Pos() = GetTranslationByNode(87);
+		if (!playOncePerPattern)
 		{
-			Sounds::Get()->Play("em086_05_fx_media_32", .3f);
-			bullets[0]->Pos() = GetTranslationByNode(61);
-			bullets[1]->Pos() = GetTranslationByNode(64);
-			bullets[2]->Pos() = GetTranslationByNode(67);
-			bullets[3]->Pos() = GetTranslationByNode(81);
-			bullets[4]->Pos() = GetTranslationByNode(84);
-			bullets[5]->Pos() = GetTranslationByNode(87);
-
-			fireParticle[i]->Play(bullets[i]->Pos(), bullets[i]->Rot());
-			fireParticle[i]->PlaySpark(bullets[i]->Pos());
-
-			bullets[i]->SetActive(true);
-
-			randX[i] = Random(target->Pos().x - 450, target->Pos().x + 450);
-			randZ[i] = Random(target->Pos().z - 450, target->Pos().z + 450);
-		}
-		//sequence++;
-		LookatPlayer = true;
-
-		if (LookatPlayer)
-		{
-			timer += DELTA;
-		}
-	}
-
-	if (LookatPlayer)
-	{
-		for (int i = 0; i < bullets.size(); ++i)
-		{
-			bullets[i]->Pos().x = Lerp(bullets[i]->Pos().x, randX[i], 0.0124f);
-			bullets[i]->Pos().z = Lerp(bullets[i]->Pos().z, randZ[i], 0.0124f);
-
-			bullets[i]->Pos().y -= 1500 * DELTA;
+			for (int i = 0; i < bullets.size(); ++i)
+			{
+				randZ[i] = Random(target->Pos().z - 450, target->Pos().z + 450);
+				randX[i] = Random(target->Pos().x - 450, target->Pos().x + 450);
+			}
+			playOncePerPattern = true;
 		}
 	}
 
@@ -3352,6 +3342,17 @@ void Valphalk::HS_FlyBlast()
 	{
 		if (whichPattern == 4 || whichPattern == 5 || whichPattern == 6)
 			Scale().x *= -1;
+		Sounds::Get()->Play("em086_05_fx_media_32", 0.3f);
+		FOR(fireParticle.size())
+		{
+			fireParticle[i]->PlaySpark(bullets[i]->Pos());
+			if (!bullets[i]->Active())
+			{
+				fireParticle[i]->Play(bullets[i]->Pos(), bullets[i]->Rot());
+				bullets[i]->SetActive(true);
+			}
+		}
+		playOncePerPattern = false;
 		sequence++;
 	}
 
@@ -4436,8 +4437,8 @@ void Valphalk::E2079()
 	{
 		if (RATIO > 0.1 + ((DELTA + (float)i) * 0.03f))
 		{
-			bullets[i]->Pos().x = Lerp(bullets[i]->Pos().x, randX[i], 500 * DELTA);
-			bullets[i]->Pos().z = Lerp(bullets[i]->Pos().z, randZ[i], 500 * DELTA);
+			bullets[i]->Pos().x = Lerp(bullets[i]->Pos().x, randX[i], 0.016f);
+			bullets[i]->Pos().z = Lerp(bullets[i]->Pos().z, randZ[i], 0.016f);
 
 			bullets[i]->Pos().y -= 450 * DELTA;
 		}
@@ -5474,19 +5475,19 @@ void Valphalk::E2282(float degree)
 void Valphalk::E2286()
 {
 	PLAY;
-	for (int i = 0; i < bullets.size(); ++i)
-	{
-		if (bullets[i]->Pos().y <= height)
-		{
-			bullets[i]->SetActive(false);
-			LookatPlayer = false;
-		}
-	}
+	//for (int i = 0; i < bullets.size(); ++i)
+	//{
+	//	if (bullets[i]->Pos().y <= height)
+	//	{
+	//		bullets[i]->SetActive(false);
+	//		LookatPlayer = false;
+	//	}
+	//}
+
 	if (RATIO > 0.96f)
 	{
 		Pos() = GetTranslationByNode(1);
 		sequence++;
-
 	}
 }
 
@@ -5498,6 +5499,8 @@ void Valphalk::E2288()
 	{
 		Pos().y = height;
 		sequence++;
+		if (renderJet)
+			renderJet = false;
 		return;
 	}
 	if (RATIO > 0.93)

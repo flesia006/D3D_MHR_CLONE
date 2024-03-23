@@ -430,12 +430,10 @@ private:
 
 private: // 이벤트 혹은 함수에서 조건이 필요할거 같을때
 	bool LookatPlayer = false;
-	bool OtherPlay = false;
-	bool OtherPlay2 = false;
 	int Count = 0;
 	float timer = 0.0f;
 	int randX[6], randZ[6];
-	bool isStorm = true;
+	bool isStorm = false;
 
 private:
 	vector<Transform*> transforms;
@@ -568,7 +566,6 @@ private:
 
 	float questClearCountDown = 0.0f;
 	const float questClearCountLimit = 60.0f; /////////// 필요에 의하면 수정 가능
-	bool isStorming = false;
 
 	bool isFirstRender = false;
 	bool renderVal = true;
@@ -610,6 +607,5 @@ private:
 	Trail* trail;
 	RoarEffect* roarEffect;
 	float walkTime;
-
 
 };
