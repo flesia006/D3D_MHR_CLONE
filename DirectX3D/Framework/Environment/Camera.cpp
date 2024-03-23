@@ -7,7 +7,7 @@ Camera::Camera()
     viewBuffer = new ViewBuffer();
     viewBuffer->SetVS(1);
 
-    ground = new BoxCollider({ FLT_MAX, 0.1, FLT_MAX });
+    ground = new BoxCollider({ FLT_MAX, 40, FLT_MAX });
     ground->UpdateWorld();
 
     FOR(4) walls.push_back(new BoxCollider({ 10000, 5000, 1000 }));
@@ -532,7 +532,7 @@ void Camera::ThirdPresonViewMode()
         if (sightRot->Rot().x < 0)
         {
             hitGround = terrain->ComputePicking(pos, sight.pos, sight.dir);
-            if ((target->GlobalPos() - pos).Length() < distance && hitGround)
+            if ((target->GlobalPos() - pos).Length() < distance*1.6 && hitGround)
                 CAM->Pos() = target->GlobalPos() + (pos - target->GlobalPos()) * 0.8f;
         }
 
@@ -541,7 +541,7 @@ void Camera::ThirdPresonViewMode()
         {
             bool hitGround = walls[i]->IsRayCollision(sight, &contact);
 
-            if ((target->GlobalPos() - contact.hitPoint).Length() < distance && hitGround)
+            if ((target->GlobalPos() - contact.hitPoint).Length() < distance*1.6 && hitGround)
                 CAM->Pos() = contact.hitPoint;
         }
     }
@@ -550,7 +550,7 @@ void Camera::ThirdPresonViewMode()
         Contact contact;
         bool hitGround = ground->IsRayCollision(sight, &contact);
 
-        if ((target->GlobalPos() - contact.hitPoint).Length() > distance || !hitGround)
+        if ((target->GlobalPos() - contact.hitPoint).Length() > distance*1.6 || !hitGround)
             return;
 
         CAM->Pos() = contact.hitPoint - sightRot->Forward() * 65;

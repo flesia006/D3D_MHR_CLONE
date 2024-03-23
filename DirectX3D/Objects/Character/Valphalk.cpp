@@ -98,6 +98,8 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 	ReadClip("E_2151");
 	ReadClip("E_2152");
 	ReadClip("E_2153");
+	ReadClip("E_2158");
+	ReadClip("E_2166");
 	ReadClip("E_2171");
 
 	ReadClip("E_2173");
@@ -321,7 +323,7 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 	skyfallEft = new SkyFallEft();
 	skyfallEft->SetParent(transforms[HEAD]);
 	skyfallEft->Rot().x += XM_PIDIV2;
-	skyfallEft->Scale() *= 0.25f;
+	skyfallEft->Scale() *= 0.3f;
 
 	stormScale = forwardBoom->Scale();
 	roarEffect = new RoarEffect();
@@ -611,44 +613,37 @@ void Valphalk::Update()
 void Valphalk::PreRender()
 {
 
-	//	for (int i = 0; i < bullets.size(); ++i)
-	//		bullets[i]->Render();
-	//	forwardBoom->Render();
-	//	fullBurst->Render();
-	//	effectBox1->Render();
-	//	effectBox2->Render();
-	//	effectBox3->Render();
-	//	effectSphere1->Render();
-	//	effectSphere2->Render();
-	//	realPos->Render();
-	//	skyfallEft->Render();
-	//
-	//	if (renderJet)
-	//		FOR(6) valZets[i]->Render();
-	//	if (renderJetRight)
-	//		FOR(3) valZets[i + 3]->Render();
-	//
-	//	if (renderFullBurst)
-	//		fullburstParticle->Render();
-	//
-	//	fullburstParticle2->Render();
-	//
-	//	//if (isStorm)
-	//		//stormEffect->Render();
-	//	FOR(jetParticle.size()) jetParticle[i]->Render();
-	//	FOR(fireParticle.size()) fireParticle[i]->Render();
-	//	FOR(hupgiFire.size()) hupgiFire[i]->Render();
-	//	FOR(explosionParticle.size()) explosionParticle[i]->Render();
-	//
-	//	hupgiCharge->Render();
-	//	storm_Start->Render();
-	//	barrier->Render();
-	//	if (isStorm)
-	//	{
-	//		trail->Render();
-	//		stormBox->Render();
-	//	}
-	//	roarEffect->Render();
+		for (int i = 0; i < bullets.size(); ++i)
+			bullets[i]->Render();
+		forwardBoom->Render();
+		fullBurst->Render();
+		effectBox1->Render();
+		effectBox2->Render();
+		effectBox3->Render();
+		effectSphere1->Render();
+		effectSphere2->Render();
+		realPos->Render();
+	
+		if (renderJet)
+			FOR(6) valZets[i]->Render();
+		if (renderJetRight)
+			FOR(3) valZets[i + 3]->Render();
+	
+		if (renderFullBurst)
+			fullburstParticle->Render();
+	
+		fullburstParticle2->Render();
+		storm_Start->Render();
+		//if (isStorm)
+			//stormEffect->Render();
+		FOR(jetParticle.size()) jetParticle[i]->Render();
+		FOR(fireParticle.size()) fireParticle[i]->Render();
+		FOR(hupgiFire.size()) hupgiFire[i]->Render();
+		FOR(explosionParticle.size()) explosionParticle[i]->Render();
+	
+		hupgiCharge->Render();
+		barrier->Render();
+		roarEffect->Render();
 }
 
 void Valphalk::Render()
@@ -669,9 +664,12 @@ void Valphalk::Render()
 		if (boxCollider->isAttack)
 			boxCollider->Render();
 	}
+	skyfallEft->Render();
+	if (isStorm)
+		trail->Render();
 
 	isFirstRender = true;
-
+	stormBox->Render();
 	if (isSetState)
 	{
 		Pos() = realPos->Pos();
@@ -737,6 +735,7 @@ void Valphalk::GUIRender()
 
 void Valphalk::PostRender()
 {
+
 }
 
 void Valphalk::Hit()
@@ -860,8 +859,34 @@ void Valphalk::SkyFall()
 {
 	if (sequence == 0)  // 날아오르기 시작
 	{
-		SetState(E_1157);
-		EX1157();
+		SetState(E_2158);
+		PLAY;
+		if (INIT)
+		{
+			Sounds::Get()->Play("em086_05_fx_media_25", 0.5f);
+			FOR(valZets.size())
+				valZets[i]->Scale() *= 0.3f;
+			CAM->shakeCAM = true;
+		}
+
+		if (RATIO > 0.2)
+		{
+			renderJet = true;
+			FOR(valZets.size())
+				valZets[i]->Scale() = Lerp(valZets[i]->Scale(), Vector3(1, 1, 1), 1.2 * DELTA);
+		}
+
+		if (RATIO > 0.96)
+		{
+			Sounds::Get()->Play("em086_05_fx_media_22", 0.9f);
+			isJump = true;
+			initPos = Pos();
+			storm_Start->Play(CAM->GlobalPos() + CAM->Forward() * 30);
+			renderVal = false;
+			renderJet = false;
+			CAM->shakeCAM = false;
+			sequence++;
+		}
 	}
 
 	if (sequence == 1) // 날아오르기 루프 
@@ -875,7 +900,8 @@ void Valphalk::SkyFall()
 		if (realPos->Pos().y > 50000)
 		{
 			Sounds::Get()->Play("em086_05_fx_media_22", 0.05f);
-			isStorm = true;
+			isStorm = true;			
+			skyfallEft->active = true;
 			sequence++;
 		}
 
@@ -883,10 +909,6 @@ void Valphalk::SkyFall()
 		{
 			GetClip(curState)->ResetPlayTime();
 			Pos() = realPos->Pos();
-			renderVal = false;
-			skyfallEft->active = true;
-			renderJet = false;
-			CAM->shakeCAM = false;
 		}
 	}
 
@@ -903,9 +925,13 @@ void Valphalk::SkyFall()
 
 		if (flyTime > 1)
 		{
-			if (flyTime > 7 && flyTime < 7.5)
+			if (flyTime > 7 && flyTime < 9)
 			{
-				Sounds::Get()->Play("em086_05_fx_media_33", 0.5f);
+				if (!playOncePerPattern)
+				{
+					Sounds::Get()->Play("em086_05_fx_media_33", 0.5f);
+					playOncePerPattern = true;
+				}
 			}
 			if (flyTime > 9)
 			{
@@ -936,6 +962,7 @@ void Valphalk::SkyFall()
 
 		if (INIT)
 		{
+			renderJet = true;
 			Rot().y = atan2(dir.x, dir.z) + XM_PI;
 		}
 
@@ -951,20 +978,36 @@ void Valphalk::SkyFall()
 			sequence++;
 			fallSpeed = 50000.0f;
 			acceleration = 200000.0f;
-			storm_Start->Play(Pos(), 0);
+			storm_Start->Play(CAM->GlobalPos() + CAM->Forward() * 30 );
 			forwardBoom->Scale() = stormScale;
 			forwardBoom->Pos() = forwardBoomPosInit;
+			Sounds::Get()->Play("em086_05_fx_media_11", 0.9f);
 		}
 	}
 
 	if (sequence == 4) // 착지 끝
 	{
-		SetState(E_1164);
-		EX1164();
+		SetState(E_2166);
+		PLAY;
+
+		if (RATIO > 0.3)
+		{
+			FOR(valZets.size())
+				valZets[i]->Scale() = Lerp(valZets[i]->Scale(), Vector3(0.3, 0.3, 0.3), 1.2 * DELTA);
+		}
+
+		if (RATIO > 0.94)
+		{
+			renderJet = false;
+			sequence++;
+			FOR(valZets.size())				
+				valZets[i]->Scale() = { 1, 1, 1 };
+			Rot().y += XM_PI;
+		}
 	}
 
 	if (sequence == 5) // 다음 패턴
-	{
+	{		
 		ChooseNextPattern();
 	}
 }
@@ -3969,24 +4012,7 @@ void Valphalk::EX1155() // 상승 중 이동
 
 void Valphalk::EX1157() // 상승 전 몸풀기
 {
-	PLAY;
-	if (INIT)
-	{
-		Sounds::Get()->Play("em086_05_fx_media_25", 0.5f);
-		CAM->shakeCAM = true;
-	}
 
-
-
-	if (RATIO > 0.96)
-	{
-		Sounds::Get()->Play("em086_05_fx_media_22", 0.5f);
-		renderJet = true;
-		isJump = true;
-		initPos = Pos();
-		storm_Start->Play(Pos(), 0);
-		sequence++;
-	}
 }
 
 void Valphalk::EX1158() // 상승 루프 

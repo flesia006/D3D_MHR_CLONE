@@ -21,6 +21,8 @@ private :
     ValZet* val = nullptr;
     SliceEft* slice = nullptr;
     Quad* cut = nullptr;
+    ValZet* vz = nullptr;
+    SkyFallEft* sfe = nullptr;
 
     RasterizerState* rasterizerState[2];
     BlendState* blendState[2];

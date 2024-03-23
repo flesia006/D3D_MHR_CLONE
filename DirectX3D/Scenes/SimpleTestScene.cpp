@@ -13,6 +13,8 @@ SimpleTestScene::SimpleTestScene()
 	val = new ValZet();
 	cut = new Quad(L"Textures/Effect/critical.png");
 	//cut->Pos() = 
+	vz = new ValZet();
+	sfe = new SkyFallEft();
 
 	FOR(breath->GetMaterials().size())
 		breath->GetMaterials()[i]->SetShader(L"Basic/Texture.hlsl");
@@ -41,10 +43,12 @@ void SimpleTestScene::Update()
 	if(KEY_DP('4'))
 		slice->active = true;
 
-
+	vz->Update();
 	cut->UpdateWorld();
 
 	slice->Update();
+	sfe->active = true;
+	sfe->Update();
 }
 
 void SimpleTestScene::PreRender()
@@ -54,6 +58,8 @@ void SimpleTestScene::PreRender()
 void SimpleTestScene::Render()
 {
 	//val->Render();
+	//vz->Render();
+	sfe->Render();
 	rasterizerState[1]->SetState();
 	blendState[1]->SetState();
 	depthState[1]->SetState();
@@ -69,6 +75,8 @@ void SimpleTestScene::Render()
 
 void SimpleTestScene::PostRender()
 {
+
+
 }
 
 void SimpleTestScene::GUIRender()
@@ -77,5 +85,7 @@ void SimpleTestScene::GUIRender()
 	//ring->GUIRender();
 	//breath->GUIRender();
 	//val->GUIRender();
-	slice->GUIRender();
+	//slice->GUIRender();
+	//vz->GUIRender();
+	sfe->GUIRender();
 }

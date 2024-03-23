@@ -61,6 +61,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         {
             gameManager->Update();
             gameManager->Render();
+
+
         }
     }
 
@@ -116,6 +118,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    {
       return FALSE;
    }
+
    // 게임이 완성되면 아래 코드 활성화
    //ShowCursor(false);
    ShowWindow(hWnd, nCmdShow);

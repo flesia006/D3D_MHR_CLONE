@@ -15,7 +15,6 @@ TerrainEditorScene::~TerrainEditorScene()
 
 void TerrainEditorScene::Update()
 {
-    terrainEditor->Update();
 }
 
 void TerrainEditorScene::PreRender()

@@ -5,7 +5,9 @@ ParticleConfigScene::ParticleConfigScene()
 {
     // 파티클 (파일) 설정용 씬 : 쿼드를 읽은 후, 여기에 파티클 옵션을 더해서
     // 파일 쓰기/읽기 기능을 이용해서 사전설정 파일을 만들기 위한 씬
-
+    utusi = new Model("player");
+    utusi->Pos().z += 50.0f;
+    utusi->UpdateWorld();
     //쿼드 준비
     quad = new Quad(Vector2(1, 1));
     //셰이더 설정 (기본은 기본 파티클 셰이더)
@@ -65,13 +67,13 @@ void ParticleConfigScene::PreRender()
 
 void ParticleConfigScene::Render()
 {
+    utusi->Render();
     instanceBuffer->Set(1);
 
     quad->SetRender();
 
     blendState[1]->SetState();
     depthState[1]->SetState();
-
     DC->DrawIndexedInstanced(6, drawCount, 0, 0, 0);
 }
 

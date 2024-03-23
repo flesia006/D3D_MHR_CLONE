@@ -45,7 +45,6 @@ Player::Player() : ModelAnimator("Player")
 	haloCollider = new CapsuleCollider();
 	wireBugParticle = new Wire_Bug();
 	sutdol = new Sutdol();
-	usebug = new UseBug();
 
 	FOR(4)
 	{
@@ -106,6 +105,9 @@ Player::Player() : ModelAnimator("Player")
 
 	playerWireBug = new PlayerWireBug();
 	playerWireBug->SetActive(false);
+
+	FOR(3) 
+		bugEfts.push_back(new ParticleSystem("TextData/Particles/bugEft.fx"));
 
 	ReadClips();
 
@@ -241,6 +243,8 @@ void Player::PreRender()
 	slice->Render();
 	FOR(circle.size()) circle[i]->Render();
 	FOR(hitParticle.size()) hitParticle[i]->Render();
+	FOR(bugEfts.size()) bugEfts[i]->Render();
+
 }
 
 void Player::Render()
@@ -277,7 +281,6 @@ void Player::Render()
 		isSetState = false;
 	}
 	isFirstRender = true;
-	usebug->Render();
 }
 
 
@@ -422,7 +425,6 @@ void Player::UpdateWorlds()
 
 	if (KEY_DOWN('T'))
 	{
-		Sounds::Get()->Play("igonan2", 0.1f);
 		UI->curHP = UI->maxHP;
 		UI->curStamina = 100;
 		UI->curSpiritGauge = UI->maxSpiritGauge;
@@ -1036,9 +1038,9 @@ void Player::EffectUpdates()
 	sutdol->Update();
 	suwol->Update();
 	tuguAtk->Update();
-
 	slice->Rot().y = atan2(Forward().x, Forward().z);
 	slice->Update();
+	FOR(bugEfts.size()) bugEfts[i]->Update();
 	FOR(circle.size())
 	{
 
@@ -1056,40 +1058,6 @@ void Player::EffectUpdates()
 		else
 			circle[i]->Rot().y = atan2(Forward().x, Forward().z);
 		circle[i]->Update();
-	}
-	usebug->Update();
-	if (playerWireBug->Active())
-	{
-		isbugeffect = true;
-	}
-	if (isbugeffect)
-	{
-		bugtime += DELTA;
-		if (bugtime <= 0.1f && bugtime > 0.01f)
-			usebug->Play1(playerWireBug->Pos());
-		if (bugtime <= 0.2f && bugtime > 0.11f)
-			usebug->Play2(playerWireBug->Pos());
-		if (bugtime <= 0.3f && bugtime > 0.21f)
-			usebug->Play3(playerWireBug->Pos());
-		if (bugtime <= 0.4f && bugtime > 0.31f)
-			usebug->Play4(playerWireBug->Pos());
-		if (bugtime <= 0.5f && bugtime > 0.41f)
-			usebug->Play5(playerWireBug->Pos());
-		if (bugtime <= 0.6f && bugtime > 0.51f)
-			usebug->Play6(playerWireBug->Pos());
-		if (bugtime <= 0.7f && bugtime > 0.61f)
-			usebug->Play7(playerWireBug->Pos());
-		if (bugtime <= 0.8f && bugtime > 0.71f)
-			usebug->Play8(playerWireBug->Pos());
-		if (bugtime <= 0.9f && bugtime > 0.81f)
-			usebug->Play9(playerWireBug->Pos());
-		if (bugtime >= 0.8f && bugtime <= .9f)
-			usebug->Play10(playerWireBug->Pos());
-	}
-	if (bugtime > 3)
-	{
-		bugtime = 0;
-		isbugeffect = false;
 	}
 }
 void Player::Rotate(float rotateSpeed)
@@ -1872,7 +1840,8 @@ void Player::SetState(State state)
 	if (curState <R_001 || curState >R_602) // 가루크 탑승때는 필요없음
 		isSetState = true;
 
-
+	bugtime = 0.0f;
+	lastBugEftNum = 0;
 	sumRot = 0.0f;
 	preState = curState;
 	curState = state;
@@ -2409,7 +2378,7 @@ void Player::S124()
 {
 	PLAY;
 
-	if (Jump(300, 2.0f))
+	if (Jump(800, 2.8f))
 	{
 		if (RATIO > 0.96f)
 			SetState(S_126);
@@ -3342,6 +3311,19 @@ void Player::L128()	// 날라차기 시작
 		playOncePerMotion2 = true;
 	}
 
+	if (RATIO > 0.5 && playerWireBug->Active())
+	{
+		bugtime += DELTA;
+		if (bugtime > 0.07f)
+		{
+			if (lastBugEftNum < 3)
+			{
+				bugEfts[lastBugEftNum]->Play(realPos->Pos() + Vector3::Up() * 200);
+				lastBugEftNum++;
+			}
+			bugtime = 0.0f;
+		}
+	}
 
 	// 줌 정상화 (앉아 기인 회전 베기에서 넘어온 경우)
 	{
@@ -4406,6 +4388,21 @@ void Player::W005() // 사선으로 쏘는 밧줄벌레 전 동작
 		bodyCollider->SetActive(false);
 	}
 
+
+	if (playerWireBug->Active())
+	{
+		bugtime += DELTA;
+		if (bugtime > 0.07f)
+		{
+			if (lastBugEftNum < 3)
+			{
+				bugEfts[lastBugEftNum]->Play(realPos->Pos() + Vector3::Up() * 150);
+				lastBugEftNum++;
+			}
+			bugtime = 0.0f;
+		}
+	}
+
 	if (RATIO > 0.5 && !playOncePerMotion2)
 	{
 		Vector3 pos = GetTranslationByNode(leftHandNode);
@@ -4425,6 +4422,20 @@ void Player::W005() // 사선으로 쏘는 밧줄벌레 전 동작
 void Player::W006() // W005에서 이어지는 체공중 동작
 {
 	PLAY;
+
+	if (playerWireBug->Active())
+	{
+		bugtime += DELTA;
+		if (bugtime > 0.07f)
+		{
+			if (lastBugEftNum < 3)
+			{
+				bugEfts[lastBugEftNum]->Play(realPos->Pos() + Vector3::Up() * 150);
+				lastBugEftNum++;
+			}
+			bugtime = 0.0f;
+		}
+	}
 
 	if (RATIO > 0.25)
 	{

@@ -21,7 +21,7 @@ public:
 		E_2106, E_2107, E_2108, E_2118, E_2121, E_2124,
 		E_2129, E_2130, E_2131, E_2133, E_2134, E_2141,	 // 앞다리 찍으면서 날개 덮기
 		E_2144, E_2145, E_2146, E_2145a,
-		E_2151, E_2152, E_2153, E_2171,
+		E_2151, E_2152, E_2153, E_2158, E_2166, E_2171,
 		E_2173, E_2174, E_2175, E_2185,
 		E_2188, E_2189, E_2190, E_2192, E_2193, E_2200, E_2200fix,
 		E_2210, E_2211, E_2253, E_2265, E_2267,
@@ -566,7 +566,6 @@ private:
 
 	float questClearCountDown = 0.0f;
 	const float questClearCountLimit = 60.0f; /////////// 필요에 의하면 수정 가능
-	bool isStorming = false;
 
 	bool isFirstRender = false;
 	bool renderVal = true;

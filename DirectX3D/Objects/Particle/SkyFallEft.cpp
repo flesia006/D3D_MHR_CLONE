@@ -3,10 +3,15 @@
 
 SkyFallEft::SkyFallEft()
 {
-	zet1 = new Quad(L"Textures/Effect/fire.tga");
-	zet2 = new Quad(L"Textures/Effect/fire.tga");
-	zet3 = new Quad(L"Textures/Effect/fire.tga");
-	zet4 = new Quad(L"Textures/Effect/fire.tga");
+	zet1 = new Quad(L"Textures/Effect/fire2.tga");
+	zet2 = new Quad(L"Textures/Effect/fire2.tga");
+	zet3 = new Quad(L"Textures/Effect/fire2.tga");
+	zet4 = new Quad(L"Textures/Effect/fire2.tga");
+
+	zet1->GetMaterial()->SetDiffuseMapColor(Float4(1, 0.5, 0.5, 1));
+	zet2->GetMaterial()->SetDiffuseMapColor(Float4(1, 0.5, 0.5, 1));
+	zet3->GetMaterial()->SetDiffuseMapColor(Float4(1, 0.5, 0.5, 1));
+	zet4->GetMaterial()->SetDiffuseMapColor(Float4(1, 0.5, 0.5, 1));
 
 	zet1->Scale() *= 15;
 	zet1->Scale().y *= 1.7;
@@ -23,14 +28,14 @@ SkyFallEft::SkyFallEft()
 
 	zet3->Scale() *= 20;
 	zet3->Scale().y *= 1.7;
-	zet3->Pos().y += 6000;
+	zet3->Pos().y += 4000;
 	zet3->Rot().y += XM_PIDIV4;
 	zet3->SetParent(this);
 	zet3->UpdateWorld();
 
 	zet4->Scale() *= 20;
 	zet4->Scale().y *= 1.7;
-	zet4->Pos().y += 6000;
+	zet4->Pos().y += 4000;
 	zet4->Rot().y -= XM_PIDIV4;
 	zet4->SetParent(this);
 	zet4->UpdateWorld();
