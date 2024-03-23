@@ -1634,7 +1634,7 @@ void Valphalk::Patrol()
 			Scale().x = 1;
 
 		// 플레이어가 근처에 있는지 체크해
-		if ((target->GlobalPos() - realPos->Pos()).Length() < 4000)
+		if ((target->GlobalPos() - realPos->Pos()).Length() < 4000 && UI->isMapChange == true)
 		{
 			Sounds::Get()->Play("Valphalk_Thema", 0.03f);
 			sequence++; // 있으면 포효로
