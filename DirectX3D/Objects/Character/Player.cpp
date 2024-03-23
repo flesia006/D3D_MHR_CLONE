@@ -2357,7 +2357,6 @@ void Player::S118() // 탈진 시작
 	UIManager::Get()->curStamina += 2.0f * DELTA;
 	if (RATIO > 0.96f)
 	{
-		playOncePerMotion = false;
 		SetState(S_120);
 	}
 }
@@ -2575,7 +2574,6 @@ void Player::L009() // 걸으면서 납도
 
 	if (RATIO > 0.95 && (KEY_PRESS('W') || KEY_PRESS('S') || KEY_PRESS('A') || KEY_PRESS('D')))
 	{
-		playOncePerMotion = false;
 		SetState(S_011);
 	}
 
@@ -2840,8 +2838,6 @@ void Player::L104() // 찌르기
 
 	if (RATIO > 0.40 && RATIO < 0.96)
 	{
-		playOncePerMotion = false;
-
 		if (K_LMB || K_RMB)	SetState(L_105);	// 베어올리기
 		else if (K_LMBRMB)			SetState(L_103);	// 베어내리기
 		else if (K_CTRL && UI->curSpiritGauge >= 10)	SetState(L_106);	// 기인베기1		
@@ -3298,7 +3294,6 @@ void Player::L122() // 날라차기 착지
 
 	if (RATIO > 0.96)
 	{
-		playOncePerMotion = false;
 		ReturnIdle();
 	}
 }
@@ -3415,8 +3410,6 @@ void Player::L128()	// 날라차기 시작
 
 	if (RATIO > 0.96)
 	{
-		playOncePerMotion = false;
-		playOncePerMotion2 = false;
 		SetState(L_130);
 	}
 }
@@ -3547,7 +3540,6 @@ void Player::L133()	// 투구깨기
 			Pos().y = height;
 			tuguAtk->active = true;
 			jumpVelocity = originJumpVelocity;
-			playOncePerMotion = false;
 			isJump = false;
 			SetState(L_135);
 		}
@@ -4312,15 +4304,12 @@ void Player::D015() // 쳐맞고 덤블링 날라가기
 
 		if (UI->IsAbleBugSkill() && K_LBUG)
 		{
-			playOncePerMotion = false;
-
 			Rot().y = keyboardRot;
 			SetState(W_009);
 		}
 	}
 	else
 	{
-		playOncePerMotion = false;
 		SetState(D_016);
 	}
 }
@@ -4347,8 +4336,6 @@ void Player::D021() // 앞보고 앞으로 날라가기
 
 		if (UI->IsAbleBugSkill() && K_LBUG)
 		{
-			playOncePerMotion = false;
-
 			Rot().y = keyboardRot;
 			SetState(W_009);
 		}
@@ -4517,8 +4504,6 @@ void Player::W005() // 사선으로 쏘는 밧줄벌레 전 동작
 	if (RATIO > 0.96)
 	{
 		playerWireBug->SetStop();
-		playOncePerMotion = false;
-		playOncePerMotion2 = false;
 		SetState(W_006);
 	}
 }
@@ -4619,8 +4604,6 @@ void Player::W009() // 공중에서 전방으로 밧줄벌레 발사
 
 	if (RATIO > 0.96)
 	{
-		playOncePerMotion = false;
-		playOncePerMotion2 = false;
 		playerWireBug->SetStop();
 		SetState(W_020);
 	}
