@@ -10,14 +10,14 @@ ValphalkTestScene::ValphalkTestScene()
 
 	garuk = new Sample();
 	garuk->Pos() = Vector3(4000, 500, 4000);
-	//terrain = new TerrainEditor();
+	terrain = new TerrainEditor();
 
 	valphalk->SetTarget(garuk);
-	//valphalk->SetTerrain(terrain);
+	valphalk->SetTerrain(terrain);
 
 	garuk->SetEnemy(valphalk);
 	garuk->SetTarget(valphalk->GetRealPos());
-	//garuk->SetTerrain(terrain);
+	garuk->SetTerrain(terrain);
 
 	rasterizer = new RasterizerState();
 	rasterizer->CullMode(D3D11_CULL_NONE);
@@ -38,6 +38,7 @@ void ValphalkTestScene::Update()
 
 void ValphalkTestScene::PreRender()
 {
+	valphalk->PreRender();
 }
 
 void ValphalkTestScene::Render()
@@ -46,11 +47,12 @@ void ValphalkTestScene::Render()
 //	objects->Render();
 	valphalk->Render();
 	garuk->Render();
-	//	terrain->Render();
+	terrain->Render();
 }
 
 void ValphalkTestScene::PostRender()
 {
+	valphalk->PostRender();
 	garuk->PostRender();
 }
 

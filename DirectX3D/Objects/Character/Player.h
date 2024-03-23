@@ -474,8 +474,9 @@ private:
 	vector<CircleEft*> circle;
 	SliceEft* slice = nullptr;
 	headBreakAtk* tuguAtk = nullptr;
-	UseBug* usebug;
+	vector<ParticleSystem*> bugEfts;
 	bool isbugeffect = false;
 	float bugtime = 0;
+	int lastBugEftNum = 0;
 };
 

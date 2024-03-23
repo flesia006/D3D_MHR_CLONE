@@ -3,7 +3,25 @@
 #include "Objects/Character/Valphalk.h"
 
 ShadowScene::ShadowScene()
-{    
+{
+    // 마우스 락
+    RECT rc;
+    POINT p1, p2;
+    GetClientRect(hWnd, &rc);
+    p1.x = rc.left;
+    p1.y = rc.top;
+    p2.x = rc.right;
+    p2.y = rc.bottom;
+
+    ClientToScreen(hWnd, &p1);
+    ClientToScreen(hWnd, &p2);
+    rc.left = p1.x;
+    rc.top = p1.y;
+    rc.right = p2.x;
+    rc.bottom = p2.y;
+    ClipCursor(&rc);
+
+    /////////////////////////////////////////
     objects = new M41Objects();
     objects2 = new M42Objects();
     terrain = new TerrainEditor();
@@ -175,6 +193,8 @@ void ShadowScene::Update()
     if (KEY_DOWN('L'))
         UI->isMapChange = true;
 
+
+
 }
 
 void ShadowScene::PreRender()
@@ -258,6 +278,7 @@ void ShadowScene::PostRender()
 {
     //shadow->PostRender(); // 쿼드 출력용
     player->PostRender();
+    valphalk->PostRender();
     wireBug->PostRender();
     garuk->PostRender();
     UIManager::Get()->PostRender();

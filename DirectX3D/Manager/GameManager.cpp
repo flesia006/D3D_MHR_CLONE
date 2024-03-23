@@ -82,7 +82,7 @@ GameManager::GameManager()
 //
 //    SceneManager::Get()->Create("LoadingScene", new LoadingScene());
 //    SceneManager::Get()->Add("LoadingScene");
-
+//    SceneManager::Get()->Create("Terrain", new TerrainEditorScene());
 //    SceneManager::Get()->Add("Terrain");
 //    CAM->isFreeCamTrue();
 

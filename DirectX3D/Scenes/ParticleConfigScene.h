@@ -95,4 +95,6 @@ private:
     DepthStencilState* depthState[2];
 
     string projectPath;
+
+    Model* utusi;
 };

@@ -462,14 +462,13 @@ void Sample::Fire_B()
 	{
 		LimitRotateToEnemy(0, 0.3, 45);
 	}
-	if (RATIO > 0.25 && RATIO < 0.26)
-		fireParticle->Play({ Pos().x,Pos().y + 150,Pos().z }, Back() * 300);
 
 	if (RATIO > 0.291f)
 	{
 		if (!playOncePerMotion)
 		{
 			KunaiManager::Get()->Throw(bowGun->GlobalPos(), ((enemy->GetRealPos()->Pos() + Vector3::Up() * 200) - bowGun->GlobalPos()).GetNormalized());
+			fireParticle->Play({ Pos().x,Pos().y + 150,Pos().z }, Back() * 300);
 			playOncePerMotion = true;
 		}
 	}

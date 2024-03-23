@@ -68,12 +68,24 @@ void Audio::Add(string key, string file, bool bgm, bool loop, bool is3D)
     sounds[key] = info;
 }
 
+void Audio::Add(string key, wstring file, bool bgm, bool loop, bool is3D)
+{
+    if (sounds.count(key) > 0) return;
+
+    string str = ToString(file);
+
+    Audio::Get()->Add(key, str, bgm, loop, is3D);
+}
+
 void Audio::Play(string key, float valume)
 {
     if (sounds.count(key) == 0) return;
 
-    soundSystem->playSound(sounds[key]->sound,
-        nullptr, false, &sounds[key]->channel);
+    bool isPlay = false;
+    sounds[key]->channel->isPlaying(&isPlay);
+
+    if(!isPlay)
+        soundSystem->playSound(sounds[key]->sound, nullptr, false, &sounds[key]->channel);
     sounds[key]->channel->setVolume(valume);
 }
 
@@ -89,6 +101,7 @@ void Audio::Play(string key, Float3 position, float valume)
     FMOD_VECTOR vel = {};
     sounds[key]->channel->set3DAttributes(&pos, &vel);    
     sounds[key]->channel->set3DMinMaxDistance(1.0f, 10000.0f);
+    
 }
 
 void Audio::Stop(string key)

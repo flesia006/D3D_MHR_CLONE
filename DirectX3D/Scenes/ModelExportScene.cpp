@@ -21,9 +21,9 @@ ModelExportScene::ModelExportScene()
 //    ExportClip(name, "fwdStep");
 //    ExportClip(name, "FLY");
 //    ExportClip(name, "E_2145a");
-    ExportClip(name, "E_4071");
-    ExportClip(name, "E_4073");
-    ExportClip(name, "E_4074");
+//    ExportClip(name, "E_2158");
+//    ExportClip(name, "E_3016");
+    //ExportClip(name, "E_3017");
 //    ExportClip(name, "T_051");
 //    ExportClip(name, "T_052");
 //    ExportClip(name, "W_062");

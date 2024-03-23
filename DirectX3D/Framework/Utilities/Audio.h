@@ -7,7 +7,7 @@ class Audio : public Singleton<Audio>
 private:
     friend class Singleton;
 
-    const int MAX_CHANNEL = 20;
+    const int MAX_CHANNEL = 100;
 
     struct SoundInfo
     {
@@ -27,6 +27,10 @@ public:
     void Update();
 
     void Add(string key, string file,
+        bool bgm = false, bool loop = false, bool is3D = false);
+
+
+    void Add(string key, wstring file,
         bool bgm = false, bool loop = false, bool is3D = false);
 
     void Play(string key, float valume = 1.0f);
