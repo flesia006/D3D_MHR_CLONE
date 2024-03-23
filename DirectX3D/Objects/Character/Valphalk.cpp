@@ -2912,7 +2912,7 @@ void Valphalk::S_JetRush()
 	{
 		if (renderJet)
 			renderJet = false;
-		if (whichPattern == 4 && whichPattern == 5 && whichPattern == 6)
+		if (whichPattern == 4 || whichPattern == 5 || whichPattern == 6)
 			Scale().x *= -1;
 		whichPattern = 0;
 		ChooseNextPattern();
