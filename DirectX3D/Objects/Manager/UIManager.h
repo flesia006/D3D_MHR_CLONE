@@ -310,6 +310,8 @@ public:
     UINT randNum2 = rand() % 3;
     UINT randNum3 = rand() % 3;
 
+    bool playOnce = false;
+
 public:
     bool isLoading = false;
     bool isMapChange = false;

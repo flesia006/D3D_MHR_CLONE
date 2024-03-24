@@ -2102,7 +2102,7 @@ void UIManager::StateIcon()
 		}
 	}
 
-	if (valDeath)
+	if (valDeath && !playOnce)
 	{
 		stateIconTimer3 += DELTA;
 
@@ -2114,7 +2114,7 @@ void UIManager::StateIcon()
 			valphalkStateIcon3->GetMaterial()->SetDiffuseMapColor(color);
 			if (stateIconTimer3 > 5.0f)
 			{
-				valDeath = false;
+				playOnce = true;
 				stateIconTimer3 = 0.0f;
 				valphalkStateIcon3->Pos() = { 1700, 600 };
 			}
