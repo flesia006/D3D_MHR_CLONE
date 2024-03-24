@@ -439,9 +439,10 @@ void Player::UpdateWorlds()
 
 void Player::Potion()
 {
-	if ((UI->useQuickSlot1 && UI->haveGPotion > 0 && time > 6.0f)
-		|| (UI->useDragSlot && ItemManager::Get()->tag == "GreatePotion" && KEY_DOWN('E') && UI->haveGPotion > 0 && time > 6.0f)
-		|| (UI->useNumberBar && UI->haveGPotion > 0 && KEY_DOWN('2') && time > 6.0f))
+	if ((UI->useQuickSlot1 || 
+		 UI->useDragSlot && ItemManager::Get()->tag == "GreatePotion" && KEY_DOWN('E') || 
+		 UI->useNumberBar && KEY_DOWN('2')) && 
+		(UI->haveGPotion > 0 && time > 6.0f))
 	{
 		UI->haveGPotion--;
 		Lcure = true;
@@ -459,9 +460,10 @@ void Player::Potion()
 		}
 	}
 
-	if ((UI->useQuickSlot2 && UI->havePotion > 10 && time > 6.0f)
-		|| (UI->useDragSlot && ItemManager::Get()->tag == "Potion" && KEY_DOWN('E') && UI->havePotion > 10 && time > 6.0f)
-		|| (UI->useNumberBar && UI->havePotion > 10 && KEY_DOWN('1') && time > 6.0f))
+	if ((UI->useQuickSlot2 || 
+		 UI->useDragSlot && ItemManager::Get()->tag == "Potion" && KEY_DOWN('E') || 
+		 UI->useNumberBar && KEY_DOWN('1')) && 
+		(UI->havePotion > 10 && time > 6.0f))
 	{
 		UI->havePotion--;
 		cure = true;
@@ -482,9 +484,9 @@ void Player::Potion()
 
 void Player::SharpeningStone()
 {
-	if (UI->useQuickSlot3 && time > 6.0f
-		|| UI->useDragSlot && ItemManager::Get()->tag == "Whetstone" && KEY_DOWN('E') && time > 6.0f
-		|| UI->useNumberBar && KEY_DOWN('3') && time > 6.0f)
+	if ((UI->useQuickSlot3 ||
+		 UI->useDragSlot && ItemManager::Get()->tag == "Whetstone" && KEY_DOWN('E') || 
+		 UI->useNumberBar && KEY_DOWN('3')) && time > 6.0f)
 	{
 		time = 0;
 		//UI->SharpeningStone();
