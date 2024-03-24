@@ -374,7 +374,6 @@ void Valphalk::Update()
 	if (preState != curState)
 		GetClip(preState)->ResetPlayTime();
 
-	needHupGi = true;
 	GetRadBtwTrgt();
 	PlayPattern();
 	ConditionCheck();
