@@ -1569,7 +1569,7 @@ void Valphalk::Patrol()
 	walkTime += DELTA;
 	int randWalkSounds = rand() % 2;
 	float distance = (target->GlobalPos() - Pos()).Length();
-	if (distance < 8000)
+	if (distance < 8000 && !UI->isMapChange)
 	{
 		if (curState == E_0043 || curState == E_0044 || curState == E_0045 || curState == E_0055)
 		{
