@@ -1209,7 +1209,7 @@ void UIManager::GaugeBonus()
 
 void UIManager::TargetMonster()
 {
-	if (KEY_DOWN('G'))
+	if (KEY_DOWN('Q'))
 	{
 		if (iconFrame->Active() == false)
 			iconFrame->SetActive(true);

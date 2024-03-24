@@ -517,121 +517,115 @@ void Valphalk::Update()
 	skyfallEft->Update();
 	ModelAnimator::Update();
 
-		FOR(jetParticle.size()) jetParticle[i]->Update();
-		FOR(fireParticle.size()) fireParticle[i]->Update();
-		//Jet();
-	
-		jetpos->Pos() = GetTranslationByNode(61);
-		jetposend->Pos() = GetTranslationByNode(60);
-		jetpos->UpdateWorld();
-		jetpos->SetParent(jetposend);
-	
-		zetPos[0]->SetWorld(GetTransformByNode(61));
-		zetPos[1]->SetWorld(GetTransformByNode(64));
-		zetPos[2]->SetWorld(GetTransformByNode(67));
-		zetPos[3]->SetWorld(GetTransformByNode(81));
-		zetPos[4]->SetWorld(GetTransformByNode(84));
-		zetPos[5]->SetWorld(GetTransformByNode(87));
-	
-		eyes->Pos() = GetTranslationByNode(14);
-		eyes->Rot() = Rot();
-		eyes->UpdateWorld();
-	
-	
-		FOR(6)
-			valZets[i]->Update();
-		fullburstParticle->Update();
-		fullburstParticle2->Update();
-		fullburstParticle->Rot() = fullBurst->Rot();
-		fullburstParticle->Pos() = fullBurst->Pos();
-		//stormEffect->Update();
-		if (isHupGi == true)
-			FlameOn();
-		else
-			FlameOff();
-		FOR(hupgiFire.size()) hupgiFire[i]->Update();
-		FOR(explosionParticle.size()) explosionParticle[i]->Update();
-		FOR(bullets.size())
-		{
-			if (bullets[i]->Pos().y <= 100 && bullets[i]->Active() == true)
-			{
-				fireParticle[i]->PlaySpark();
-			}
-			if (bullets[i]->Pos().y <= 0 && bullets[i]->Active() == true)
-			{
-				if (i % 2 == 0)
-					Sounds::Get()->Play("em086_05_se_media_10", 0.5f);
-				if (i % 2 == 1)
-					Sounds::Get()->Play("em086_05_se_media_10_2", 0.5f);
-	
-				fireParticle[i]->PlayExplosion();
-				bullets[i]->SetActive(false);
-				fireParticle[i]->Stop();
-			}
-		}
-	
-		fullburstParticle2->SetPos(fullBurst->GlobalPos() + Forward() * 4000);
-	
-		storm_Start->Update();
-		hupgiCharge->Update();
-		barrier->SetPos(head->GlobalPos());
-		barrier->Update();
-		trail->Update();
-		roarEffect->Update();
-		if(roarEffect->IsActive())
-			roarEffect->roarCloserCam(Pos(), CAM->Pos(), 0.013f);
-		skyfallEft->Update();
-	
-		////////////////////////
-		//디버그 확인용
-		if (KEY_DOWN('4'))
-		{
-			curState = E_4013;
-			SetState(E_4013);
-			E4013();
-		}
-		if (KEY_DOWN('5'))
-			colliders[HEAD]->partHp = -100;
-	
-		if (KEY_DOWN('6'))
-			colliders[LLEG1]->partHp = -100;
-	
-		if (KEY_DOWN('8'))
-			curHP -= 1000;
-		//if (isStorm)
-		//	stormEffect->SetPos(realPos->GlobalPos());
-		//////////////////////////
-		stormBox->GlobalPos() = Pos();
-		if (stormTime > 2.f)
-		{
-			stormBox->SetActive(true);
-		}
-		else
-		{
-			stormBox->SetActive(false);
-		}
-		stormBox->UpdateWorld();
+	//	FOR(jetParticle.size()) jetParticle[i]->Update();
+	//	FOR(fireParticle.size()) fireParticle[i]->Update();
+	//	//Jet();
+	//
+	//	jetpos->Pos() = GetTranslationByNode(61);
+	//	jetposend->Pos() = GetTranslationByNode(60);
+	//	jetpos->UpdateWorld();
+	//	jetpos->SetParent(jetposend);
+	//
+	//	zetPos[0]->SetWorld(GetTransformByNode(61));
+	//	zetPos[1]->SetWorld(GetTransformByNode(64));
+	//	zetPos[2]->SetWorld(GetTransformByNode(67));
+	//	zetPos[3]->SetWorld(GetTransformByNode(81));
+	//	zetPos[4]->SetWorld(GetTransformByNode(84));
+	//	zetPos[5]->SetWorld(GetTransformByNode(87));
+	//
+	//	eyes->Pos() = GetTranslationByNode(14);
+	//	eyes->Rot() = Rot();
+	//	eyes->UpdateWorld();
+	//
+	//
+	//	FOR(6)
+	//		valZets[i]->Update();
+	//	fullburstParticle->Update();
+	//	fullburstParticle2->Update();
+	//	fullburstParticle->Rot() = fullBurst->Rot();
+	//	fullburstParticle->Pos() = fullBurst->Pos();
+	//	//stormEffect->Update();
+	//	if (isHupGi == true)
+	//		FlameOn();
+	//	else
+	//		FlameOff();
+	//	FOR(hupgiFire.size()) hupgiFire[i]->Update();
+	//	FOR(explosionParticle.size()) explosionParticle[i]->Update();
+	//	FOR(bullets.size())
+	//	{
+	//		if (bullets[i]->Pos().y <= 100 && bullets[i]->Active() == true)
+	//		{
+	//			fireParticle[i]->PlaySpark();
+	//		}
+	//		if (bullets[i]->Pos().y <= 0 && bullets[i]->Active() == true)
+	//		{
+	//			if (i % 2 == 0)
+	//				Sounds::Get()->Play("em086_05_se_media_10", 0.5f);
+	//			if (i % 2 == 1)
+	//				Sounds::Get()->Play("em086_05_se_media_10_2", 0.5f);
+	//
+	//			fireParticle[i]->PlayExplosion();
+	//			bullets[i]->SetActive(false);
+	//			fireParticle[i]->Stop();
+	//		}
+	//	}
+	//
+	//	fullburstParticle2->SetPos(fullBurst->GlobalPos() + Forward() * 4000);
+	//
+	//	storm_Start->Update();
+	//	hupgiCharge->Update();
+	//	barrier->SetPos(head->GlobalPos());
+	//	barrier->Update();
+	//	trail->Update();
+	//	roarEffect->Update();
+	//	if(roarEffect->IsActive())
+	//		roarEffect->roarCloserCam(Pos(), CAM->Pos(), 0.013f);
+	//	skyfallEft->Update();
+	//
+	//	////////////////////////
+	//	//디버그 확인용
+	//	if (KEY_DOWN('4'))
+	//	{
+	//		curState = E_4013;
+	//		SetState(E_4013);
+	//		E4013();
+	//	}
+	//	if (KEY_DOWN('5'))
+	//		colliders[HEAD]->partHp = -100;
+	//
+	//	if (KEY_DOWN('6'))
+	//		colliders[LLEG1]->partHp = -100;
+	//
+	//	if (KEY_DOWN('8'))
+	//		curHP -= 1000;
+	//	//if (isStorm)
+	//	//	stormEffect->SetPos(realPos->GlobalPos());
+	//	//////////////////////////
+	//	stormBox->GlobalPos() = Pos();
+	//	if (stormTime > 2.f)
+	//	{
+	//		stormBox->SetActive(true);
+	//	}
+	//	else
+	//	{
+	//		stormBox->SetActive(false);
+	//	}
+	//	stormBox->UpdateWorld();
 
-	//if (KEY_DOWN('6'))
-	//	colliders[LLEG1]->partHp = -100;
+	////if (KEY_DOWN('6'))
+	////	colliders[LLEG1]->partHp = -100;
 
-	if (KEY_DOWN('9'))
-		curHP -= 1000;
-	if (KEY_DOWN('0'))
-		curHP = -1000;
-	
+	//if (KEY_DOWN('9'))
+	//	curHP -= 1000;
+	//if (KEY_DOWN('0'))
+	//	curHP = -1000;
+	//
 	if (isStorm)
 		stormBox->SetActive(true);
 	//	stormEffect->SetPos(realPos->GlobalPos());
 	//////////////////////////
 	stormBox->GlobalPos() = Pos();
-	if (stormTime > 2.f)
-	{
-	}
-	else
-	{
-		//stormBox->SetActive(false);
-	}
+
 	stormBox->UpdateWorld();
 }
 
@@ -5471,8 +5465,8 @@ void Valphalk::EX2276()
 
 	if (RATIO > 0.1 && !playOncePerPattern)
 	{
-		Sounds::Get()->Play("em086_05_vo_media_14", 0.8f);
-		Sounds::Get()->Play("em086_05_fx_media_5", 0.5f);
+		Sounds::Get()->Play("em086_05_vo_media_14", 0.7f);
+		Sounds::Get()->Play("em086_05_fx_media_5", 0.3f);
 		playOncePerPattern = true;
 	}
 	if (RATIO > 0.96)
@@ -5498,8 +5492,8 @@ void Valphalk::EX2277(float y)
 
 	if (realPos->Pos().y < height)
 	{
-		Sounds::Get()->Play("em086_05_fx_media_30", 0.5f);
-		Sounds::Get()->Play("em086_05_fx_media_32", 0.5f);
+		Sounds::Get()->Play("em086_05_fx_media_30", 0.3f);
+		Sounds::Get()->Play("em086_05_fx_media_32", 0.3f);
 		preState = curState;
 		curState = E_2278;
 		isJump = false;
