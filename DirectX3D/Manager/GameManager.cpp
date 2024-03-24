@@ -80,7 +80,7 @@ GameManager::GameManager()
  //   SceneManager::Get()->Create("OpeningScene", new OpeningScene());    
 //    SceneManager::Get()->Add("OpeningScene");
 
-    SceneManager::Get()->Create("LoadingScene", new LoadingScene());
+//    SceneManager::Get()->Create("LoadingScene", new LoadingScene());
 //////////// X SceneManager::Get()->Add("LoadingScene");
 //    SceneManager::Get()->Create("Terrain", new TerrainEditorScene());
 //    SceneManager::Get()->Add("Terrain");

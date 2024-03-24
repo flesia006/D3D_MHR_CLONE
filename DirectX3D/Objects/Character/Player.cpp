@@ -1653,6 +1653,22 @@ void Player::HurtCheck()
 				}
 
 
+				// 이펙트 끄기
+				{
+					tuguAtk->active = false;
+					FOR(circle.size())
+						circle[i]->active = false;
+					suwol->effect = false;
+					slice->active = false;
+					EndEffect();
+				}
+
+				// 가루크 타고 있었다면 내려
+				{
+					if (isRiding)
+						EndRide();
+				}
+
 				evadeCheckCollider->SetActive(false);
 				evadeCheckCollider->UpdateWorld();
 
@@ -1706,8 +1722,21 @@ void Player::HurtCheck()
 					isEvaded = true;
 					return;
 				}
-				if (curState == L_127)
-					return;
+				// 이펙트 끄기
+				{
+					tuguAtk->active = false;
+					FOR(circle.size())
+						circle[i]->active = false;
+					suwol->effect = false;
+					slice->active = false;
+					EndEffect();
+				}
+
+				// 가루크 타고 있었다면 내려
+				{
+					if (isRiding)
+						EndRide();
+				}
 
 				evadeCheckCollider->SetActive(false);
 				evadeCheckCollider->UpdateWorld();
