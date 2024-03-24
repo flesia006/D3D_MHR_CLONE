@@ -883,6 +883,14 @@ void Valphalk::SkyFall()
 			FOR(valZets.size())
 				valZets[i]->Scale() *= 0.3f;
 			CAM->shakeCAM = true;
+			if (!UI->partDestruct)
+			{
+				UI->specialMove = true;
+			}
+			else if (UI->partDestruct)
+			{
+				UI->specialMove2 = true;
+			}
 		}
 
 		if (RATIO > 0.2)
@@ -4359,14 +4367,19 @@ void Valphalk::E2038() // 날개 찌르기
 		SetColliderAttack(RWING, 0.95, 35, 2);
 		if (!playOncePerPattern)
 		{
-			colliders[RWING]->Scale().y *= 2.5f;
+			colliders[RWING]->Scale().y = 625.0f;
 			playOncePerPattern = true;
 		}
 	}
 
+	if (RATIO > 0.95 && playOncePerPattern2)
+	{
+		colliders[RWING]->Scale().y = 250.0f;
+		playOncePerPattern2 = true;
+	}
+
 	if (RATIO > 0.96)
 	{
-		colliders[RWING]->Scale().y *= 0.4f;
 		sequence++;
 	}
 }
@@ -4518,14 +4531,14 @@ void Valphalk::E2056() // 찌르고 그 날개 로 한바퀴 돌기
 		SetColliderAttack(RWING, 0.617, 50, 2);
 		if (!playOncePerPattern)
 		{
-			colliders[RWING]->Scale().y *= 2.5f;
+			colliders[RWING]->Scale().y = 625.0f;
 			playOncePerPattern = true;
 		}
 	}
 
 	if (RATIO > 0.96)
 	{
-		colliders[RWING]->Scale().y *= 0.4f;
+		colliders[RWING]->Scale().y = 250.0f;
 		sequence++;
 		Rot().y += XM_PIDIV2;
 	}
@@ -6219,21 +6232,19 @@ void Valphalk::E3023() // 사망
 
 	if (INIT)
 	{
+		Sounds::Get()->Play("questClear", 0.1f);
+		UI->valDeath = true;
+		isDead = true;
 	}
 
 	if (RATIO > 0.44 && !playOncePerPattern)
 	{
-		Sounds::Get()->Play("questClear", 0.1f);
-		UI->valDeath = true;
 		Sounds::Get()->Play("em086_05_vo_media_30", 2.5f); // 미확인
 		playOncePerPattern = true;
 	}
 	
 	if (RATIO > 0.96)
-	{
-		isDead = true;
 		isPlay = false;
-	}
 }
 
 void Valphalk::E3101()

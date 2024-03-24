@@ -77,8 +77,8 @@ GameManager::GameManager()
 //    SceneManager::Get()->Create("SimpleTestScene", new SimpleTestScene());
 //    SceneManager::Get()->Add("SimpleTestScene");
 
-    SceneManager::Get()->Create("OpeningScene", new OpeningScene());    
-    SceneManager::Get()->Add("OpeningScene");
+ //   SceneManager::Get()->Create("OpeningScene", new OpeningScene());    
+//    SceneManager::Get()->Add("OpeningScene");
 
     SceneManager::Get()->Create("LoadingScene", new LoadingScene());
 //////////// X SceneManager::Get()->Add("LoadingScene");
@@ -88,8 +88,8 @@ GameManager::GameManager()
 
     // 씬만 재생하고 싶은 경우 : CAM->isFreeCamTrue() 지우고 isLoading = false;로 조정
     // 로딩씬 같이 재생이라면  : CAM->isFreeComTrue() 살리고 isLoading = true; 로 조정
-    CAM->isFreeCamTrue();
-    UIManager::Get()->isLoading = true;
+//    CAM->isFreeCamTrue();
+    UIManager::Get()->isLoading = false;
 }
 
 GameManager::~GameManager()
