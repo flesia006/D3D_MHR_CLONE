@@ -3985,7 +3985,7 @@ void Player::L155() // 앉아발도 기인베기
 
 	// 카운터 성공 시 추가 공격 프레임
 	{
-		if (isHit && (RATIO > 0.37 && RATIO < 0.39))
+		if (isHit && isEvaded && (RATIO > 0.37 && RATIO < 0.39))
 		{			
 			spSuccessParticle->Play(Pos(), 0);
 			UIManager::Get()->PlusCotingLevel();
