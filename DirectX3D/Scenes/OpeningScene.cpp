@@ -7,7 +7,7 @@ OpeningScene::OpeningScene()
     lobby->Scale() *= 2;
     //lobby->Scale().x = WIN_WIDTH;
     //lobby->Scale().z = WIN_HEIGHT;
-    Sounds::Get()->Play("lobbyBGM", 0.1f);
+    
     select = new Quad(L"Textures/UI/SelectBar.png");
     FOR(6)menuBar.push_back(new Quad(L"Textures/UI/menuBar.png"));
 
@@ -77,7 +77,7 @@ void OpeningScene::Update()
         {
             if (GetAsyncKeyState(key) & 0x8000)
             {
-                Sounds::Get()->Play("gameStart", 0.8f);
+                Sounds::Get()->Play("gameStart", 0.8f); 
                 isEnd = true;
             }
         }
@@ -124,6 +124,13 @@ void OpeningScene::PreRender()
 
 void OpeningScene::Render()
 {
+    static bool once = true;
+    if (once)
+    {
+        Sounds::Get()->Play("lobbyBGM", 0.1f);
+        once = false;
+    }
+
     blendState[1]->SetState();
     depthState[1]->SetState();
 

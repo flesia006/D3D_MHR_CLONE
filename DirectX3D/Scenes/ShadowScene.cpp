@@ -296,7 +296,7 @@ void ShadowScene::GUIRender()
     //    terrain->GUIRender();
     //    valphalk->GUIRender();
 
-    player->GUIRender(); // 디버그 조작용
+    //player->GUIRender(); // 디버그 조작용
     //    fieldFog->GUIRender();
     //    valphalk->GUIRender();
     //    CAM->GUIRender();

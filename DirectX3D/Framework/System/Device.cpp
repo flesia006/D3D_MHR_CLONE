@@ -16,7 +16,7 @@ Device::Device()
     swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
     swapChainDesc.BufferCount = 1;
     swapChainDesc.OutputWindow = hWnd;
-    swapChainDesc.Windowed = true;//창모드 유무
+    swapChainDesc.Windowed = false;//창모드 유무
 
     D3D11CreateDeviceAndSwapChain(
         nullptr,

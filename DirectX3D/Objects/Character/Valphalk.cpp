@@ -544,7 +544,6 @@ void Valphalk::PreRender()
 	effectSphere1->Render();
 	effectSphere2->Render();
 	realPos->Render();
-	skyfallEft->Render();
 	
 	if (renderJet)
 		FOR(6) valZets[i]->Render();
@@ -588,11 +587,6 @@ void Valphalk::Render()
 			capsulCollider->Render();
 	}
 
-	//for (BoxCollider* boxCollider : wings)
-	//{
-	//	if (boxCollider->isAttack)
-	//		boxCollider->Render();
-	//}
 	skyfallEft->Render();
 	if (isStorm)
 		trail->Render();
@@ -758,7 +752,6 @@ void Valphalk::SkyFall()
 			Sounds::Get()->Play("em086_05_fx_media_25", 0.5f);
 			FOR(valZets.size())
 				valZets[i]->Scale() *= 0.3f;
-			CAM->shakeCAM = true;
 			if (!UI->partDestruct)
 			{
 				UI->specialMove = true;
@@ -811,7 +804,6 @@ void Valphalk::SkyFall()
 
 		if (RATIO > 0.9)
 		{
-			sequence++;
 			GetClip(curState)->ResetPlayTime();
 			Pos() = realPos->Pos();
 		}

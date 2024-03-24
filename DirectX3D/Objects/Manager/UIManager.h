@@ -202,10 +202,10 @@ public:
     UINT cotingLevel = 0;
     UINT bugCount = 2;    
 
-    float curHP = 500;
-    float maxHP = 500;
+    const float maxHP = 250;
+    float curHP = maxHP;
 
-    float recoverHP = 500;
+    float recoverHP = maxHP;
     float maxStamina = 100;
     float recoverStamina = 100;
     float curDurability = 80;

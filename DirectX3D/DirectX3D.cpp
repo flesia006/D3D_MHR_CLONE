@@ -120,7 +120,8 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    }
 
    // 게임이 완성되면 아래 코드 활성화
-   //ShowCursor(false);
+
+   ShowCursor(false);
    ShowWindow(hWnd, nCmdShow);
    UpdateWindow(hWnd);
 

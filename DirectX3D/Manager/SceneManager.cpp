@@ -37,8 +37,8 @@ void SceneManager::PostRender()
 
 void SceneManager::GUIRender()
 {
-    for (Scene* scene : curScenes)
-        scene->GUIRender();
+//    for (Scene* scene : curScenes)
+//        scene->GUIRender();
 }
 
 void SceneManager::Create(string key, Scene* scene)

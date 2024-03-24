@@ -578,8 +578,8 @@ private:
 	bool renderVal = true;
 
 public:
-	float maxHP = 25000;
-	float curHP = 25000;
+	float maxHP = 15000;
+	float curHP = 15000;
 	float checkHp; // »Ì±‚∂ß æµ∞≈
 	float yDifference = 0.0f;
 
