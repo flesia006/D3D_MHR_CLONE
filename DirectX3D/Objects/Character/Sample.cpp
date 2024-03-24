@@ -44,8 +44,11 @@ void Sample::Update()
 {
 	UpdateWorlds();
 
-	if (enemy->IsDamaged() && !isCallDog && mode != BATTLE && mode != RIDING)
+	if (enemy->IsDamaged() && !isCallDog && mode != BATTLE && mode != RIDING && !enemy->IsDead())
 		SetFight();
+	if (enemy->IsDead() && mode != FOLLOWING)
+		SetFollow();
+
 
 	switch (mode)
 	{
