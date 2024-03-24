@@ -2809,8 +2809,7 @@ void Valphalk::S_BackWingAtk()
 		if (whichPattern == 3 || whichPattern == 4)
 			Scale().x = 1;
 		whichPattern = 0;
-		sequence = 0;
-		//ChooseNextPattern();
+		ChooseNextPattern();
 	}
 }
 
