@@ -266,7 +266,8 @@ void GameManager::Create()
     Sounds::Get()->AddSound("suwolstart", SoundPath + L"Player/suwolstart.mp3");
     Sounds::Get()->AddSound("suwolattack", SoundPath + L"Player/suwolattack.mp3");
     Sounds::Get()->AddSound("helmbreaker", SoundPath + L"Player/helmbreaker.mp3");
-
+    Sounds::Get()->AddSound("walk1", SoundPath + L"Player/walk1.mp3");
+    Sounds::Get()->AddSound("walk2", SoundPath + L"Player/walk2.mp3");
 
     /////////////////////////////////////////////////////////////
     // Weapon
