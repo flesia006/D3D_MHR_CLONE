@@ -476,9 +476,9 @@ void Valphalk::Update()
 			if (bullets[i]->Active())
 			{
 				if (i % 2 == 0)
-					Sounds::Get()->Play("em086_05_se_media_10", 0.5f); // 미확인
+					Sounds::Get()->Play("em086_05_se_media_10", 0.5f); 
 				if (i % 2 == 1)
-					Sounds::Get()->Play("em086_05_se_media_10_2", 0.5f); // 미확인
+					Sounds::Get()->Play("em086_05_se_media_10_2", 0.5f);
 				fireParticle[i]->PlayExplosion();
 				fireParticle[i]->Stop();
 				fireParticle[i]->PlaySpark();
@@ -2900,7 +2900,7 @@ void Valphalk::S_JetRush()
 		}
 		if (RATIO > 0.38 && !playOncePerPattern)
 		{
-			Sounds::Get()->Play("em086_05_vo_media_24", 0.7f); // 미확인
+			Sounds::Get()->Play("em086_05_vo_media_24", 0.7f);
 			playOncePerPattern = true;
 		}
 	}
@@ -3122,7 +3122,7 @@ void Valphalk::B_SwingAtk() /////////////////// 백스텝 이후 과정 수정 필요
 		}
 		if (RATIO > 0.80 && !playOncePerPattern)
 		{
-			Sounds::Get()->Play("em086_05_vo_media_26", 0.8f); // 미확인
+			Sounds::Get()->Play("em086_05_vo_media_26", 0.8f); 
 			playOncePerPattern = true;
 		}
 	}
@@ -4468,7 +4468,7 @@ void Valphalk::E2079()
 	{
 		if (!playOncePerPattern)
 		{
-			Sounds::Get()->Play("em086_05_fx_media_50", 0.3f); // 미확인
+			Sounds::Get()->Play("em086_05_fx_media_50", 0.3f);
 			playOncePerPattern = true;
 		}
 	}
@@ -4476,7 +4476,7 @@ void Valphalk::E2079()
 	{
 		if (playOncePerPattern)
 		{
-			Sounds::Get()->Play("em086_05_fx_media_50_2", 0.3f); // 미확인
+			Sounds::Get()->Play("em086_05_fx_media_50_2", 0.3f);
 			playOncePerPattern = false;
 		}
 	}
@@ -4484,7 +4484,7 @@ void Valphalk::E2079()
 	{
 		if (!playOncePerPattern)
 		{
-			Sounds::Get()->Play("em086_05_fx_media_50", 0.3f); // 미확인
+			Sounds::Get()->Play("em086_05_fx_media_50", 0.3f);
 			playOncePerPattern = true;
 		}
 	}
@@ -4493,7 +4493,7 @@ void Valphalk::E2079()
 	{
 		if (playOncePerPattern)
 		{
-			Sounds::Get()->Play("em086_05_fx_media_50_2", 0.3f); // 미확인
+			Sounds::Get()->Play("em086_05_fx_media_50_2", 0.3f); 
 			playOncePerPattern = false;
 		}
 	}
@@ -4615,7 +4615,7 @@ void Valphalk::E2121()//왼쪽 날개 들었다가 찍은다음 살짝 일어나서 다시 자세잡음
 	PLAY;
 	if (RATIO > 0.15f && !playOncePerPattern)
 	{
-		Sounds::Get()->Play("em086_05_vo_media_4", 0.8f); // 미확인
+		Sounds::Get()->Play("em086_05_vo_media_4", 0.8f); 
 		playOncePerPattern = true;
 	}
 
@@ -4948,7 +4948,7 @@ void Valphalk::E2151()
 	PLAY;
 	if (RATIO > 0.2 && !playOncePerPattern)
 	{
-		Sounds::Get()->Play("em086_05_vo_media_14", 0.8f); // 미확인
+		Sounds::Get()->Play("em086_05_vo_media_14", 0.8f); 
 		playOncePerPattern = true;
 	}
 	if (RATIO > 0.96)
@@ -5227,7 +5227,7 @@ void Valphalk::E2211(float degree)//왼쪽 90도 날개찍기 공격동작
 
 	if (RATIO > 0.1 && !playOncePerPattern)
 	{
-		Sounds::Get()->Play("em086_05_se_media_10", 0.8f); // 미확인
+		Sounds::Get()->Play("em086_05_se_media_10", 0.8f); 
 		playOncePerPattern = true;
 	}
 
@@ -5697,7 +5697,7 @@ void Valphalk::E2367() // 풀버스트 발사
 	PLAY;
 	if (INIT)
 	{
-		Sounds::Get()->Play("em086_05_fx_media_41", 0.5f); //미확인 (파티클 있음)
+		Sounds::Get()->Play("em086_05_fx_media_41", 0.5f);
 
 		FOR(fireParticle.size())fireParticle[i]->Stop();
 		fullburstParticle2->Play(fullBurst->GlobalPos() + Forward() * 2800, 0);
@@ -5986,7 +5986,7 @@ void Valphalk::EX2376()
 	}
 	if (RATIO > 0.05 && !playOncePerPattern)
 	{
-		Sounds::Get()->Play("em086_05_fx_media_32", 0.5f);// 미확인 (파티클 있음)
+		Sounds::Get()->Play("em086_05_fx_media_32", 0.5f);
 		explosionParticle[0]->PlaySpark(effectSphere1->GlobalPos(), 0);
 		explosionParticle[1]->PlaySpark(effectSphere2->GlobalPos(), 0);
 		playOncePerPattern = true;
@@ -5994,7 +5994,7 @@ void Valphalk::EX2376()
 
 	if (RATIO > 0.28f && !playOncePerPattern2)
 	{
-		Sounds::Get()->Play("em086_05_fx_media_35", 0.5f);// 미확인 (파티클 있음)
+		Sounds::Get()->Play("em086_05_fx_media_35", 0.5f);
 		explosionParticle[0]->Play(effectSphere1->GlobalPos(), 0);
 		explosionParticle[1]->Play(effectSphere2->GlobalPos(), 0);
 
@@ -6078,7 +6078,7 @@ void Valphalk::E2082() // 측면 폭격 파티클 포함
 		explosionParticle[1]->PlaySmall(Pos() + (Up() + height), 0);
 		explosionParticle[2]->Play3(Pos() + Right() * 800 + (Up() + height), 0);
 		//explosionParticle[3]->Play2(Pos() + Right() * 1000, 0);
-		Sounds::Get()->Play("em086_05_se_media_10_2", 0.5f); // 미확인 (파티클 있음)
+		Sounds::Get()->Play("em086_05_se_media_10_2", 0.5f);
 		playOncePerPattern2 = true;
 	}
 	if (RATIO > 0.25 && RATIO < 0.26)
@@ -6239,7 +6239,9 @@ void Valphalk::E3023() // 사망
 
 	if (RATIO > 0.44 && !playOncePerPattern)
 	{
-		Sounds::Get()->Play("em086_05_vo_media_30", 1.8f); // 미확인
+		Sounds::Get()->Play("questClear", 0.1f);
+		UI->valDeath = true;
+		Sounds::Get()->Play("em086_05_vo_media_30", 1.8f);
 		playOncePerPattern = true;
 	}
 	
@@ -6301,7 +6303,7 @@ void Valphalk::E3118()
 	{
 		Sounds::Get()->Play("questClear", 0.1f);
 		UI->valDeath = true;
-		Sounds::Get()->Play("em086_05_vo_media_30", 1.5f); // 미확인
+		Sounds::Get()->Play("em086_05_vo_media_30", 1.5f); 
 		playOncePerPattern = true;
 	}
 

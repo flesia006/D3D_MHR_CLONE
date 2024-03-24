@@ -198,6 +198,7 @@ void Player::Update()
 	NearMapChangeArea();
 	////////////////////////////////////
 	Control();
+	WalkSounds();
 	ResetPlayTime();
 
 
@@ -955,6 +956,72 @@ void Player::Move()
 	//
 	//if (!isMoveX) // 좌우이동에 적용
 	//	velocity.x = Lerp(velocity.x, 0, deceleration * DELTA);	
+}
+
+void Player::WalkSounds()
+{
+	walkTime += DELTA;
+	int randWalkSounds = rand() % 2;
+	if (curState == L_005 || curState == S_005 || curState == L_009)
+	{
+		switch (randWalkSounds)
+		{
+		case 0:
+			if (walkTime > 0.65f)
+			{
+				Sounds::Get()->Play("walk1", 0.6f);
+				walkTime = 0;
+			}
+			break;
+		case 1:
+			if (walkTime > 0.65f)
+			{
+				Sounds::Get()->Play("walk2", 0.6f);
+				walkTime = 0;
+			}
+			break;
+		}
+	}
+	else if (curState == L_004 || curState == S_011 )
+	{
+		switch (randWalkSounds)
+		{
+		case 0:
+			if (walkTime > 0.525f)
+			{
+				Sounds::Get()->Play("walk1", 0.6f);
+				walkTime = 0;
+			}
+			break;
+		case 1:
+			if (walkTime > 0.525f)
+			{
+				Sounds::Get()->Play("walk2", 0.6f);
+				walkTime = 0;
+			}
+			break;
+		}
+	}
+	else if (curState == S_122)
+	{
+		switch (randWalkSounds)
+		{
+		case 0:
+			if (walkTime > 0.4f)
+			{
+				Sounds::Get()->Play("walk1", 0.6f);
+				walkTime = 0;
+			}
+			break;
+		case 1:
+			if (walkTime > 0.4f)
+			{
+				Sounds::Get()->Play("walk2", 0.6f);
+				walkTime = 0;
+			}
+			break;
+		}
+	}
 }
 
 void Player::ReadyRide()
