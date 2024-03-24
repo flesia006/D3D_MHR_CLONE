@@ -5728,12 +5728,12 @@ void Valphalk::E2367() // 풀버스트 발사
 		if (!playOncePerPattern)
 		{
 			renderFullBurst = true;
-			fullburstParticle2->PlaySpark(fullBurst->GlobalPos() + Forward() * 3200, 0);
-			fullburstParticle2->PlaySpark2(fullBurst->GlobalPos() + Forward() * 1200, 0);
-			fullburstParticle2->PlaySpark3(fullBurst->GlobalPos() + Forward() * 200, 0);
-			fullburstParticle2->PlaySpark4(fullBurst->GlobalPos() + Forward() * -200, 0);
-			fullburstParticle2->PlaySpark5(fullBurst->GlobalPos() + Forward() * -1200, 0);
-			fullburstParticle2->PlaySpark6(fullBurst->GlobalPos() + Forward() * -2200, 0);
+			fullburstParticle2->PlaySpark(fullBurst->GlobalPos() + Forward() * 3500, 0);
+			fullburstParticle2->PlaySpark2(fullBurst->GlobalPos() + Forward() * 1500, 0);
+			fullburstParticle2->PlaySpark3(fullBurst->GlobalPos() + Forward() * 500, 0);
+			fullburstParticle2->PlaySpark4(fullBurst->GlobalPos() + Forward() * -500, 0);
+			fullburstParticle2->PlaySpark5(fullBurst->GlobalPos() + Forward() * -1500, 0);
+			fullburstParticle2->PlaySpark6(fullBurst->GlobalPos() + Forward() * -2500, 0);
 			playOncePerPattern = true;
 		}
 	}
