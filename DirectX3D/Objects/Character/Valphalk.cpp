@@ -374,6 +374,7 @@ void Valphalk::Update()
 	if (preState != curState)
 		GetClip(preState)->ResetPlayTime();
 
+	needHupGi = true;
 	GetRadBtwTrgt();
 	PlayPattern();
 	ConditionCheck();
@@ -478,6 +479,12 @@ void Valphalk::Update()
 	{
 		FOR(hupgiFire.size()) hupgiFire[i]->Stop();
 	}
+	if (curState == E_4073)
+	{
+		hupgiFire[8]->Play(GetTranslationByNode(5) + Down() * 150 + Back() * 80, 0); // 가슴
+	}
+	else
+		hupgiFire[8]->Stop();
 
 
 	FOR(hupgiFire.size()) hupgiFire[i]->Update();
@@ -1164,6 +1171,7 @@ void Valphalk::FullBurst()
 
 void Valphalk::Hupgi()
 {
+	static int whichPattern = 0;
 	if (sequence == 0)
 	{
 		if (isSlashMode == false)
@@ -1175,27 +1183,58 @@ void Valphalk::Hupgi()
 			sequence++;
 	}
 
-	if (sequence == 1)
+	if (sequence == 1) // 방향을 체크해
+	{
+		whichPattern = SetRadAndMirror(true);
+		sequence++;
+	}
+
+	if (sequence == 2) // 몸을 돌려
+	{
+		switch (whichPattern)
+		{
+		case 1:		SetState(E_0097);  E0097();				break;
+		case 2:		SetState(E_0098);  E0098(-XM_PIDIV2);	break; // 왼쪽 90
+		case 3:		SetState(E_0099);  E0099(-XM_PI);		break; // 왼쪽 180
+		case 4:		SetState(E_0097);  E0097();				break;
+		case 5:		SetState(E_0098);  E0098(XM_PIDIV2);	break;
+		case 6:		SetState(E_0099);  E0099(XM_PI);		break;
+		}
+		if (INIT)
+			Sounds::Get()->Play("em086_05_se_media_52", 0.4f);
+		if (RATIO > 0.4f && !playOncePerPattern)
+		{
+			Sounds::Get()->Play("em086_05_se_media_52", 0.4f);
+			playOncePerPattern = true;
+		}
+		if (RATIO > 0.6f && !playOncePerPattern2)
+		{
+			playOncePerPattern2 = true;
+			Sounds::Get()->Play("em086_05_se_media_52", 0.4f); // 사운드 중복 고침 (숫자로 해서 다시해도됨)
+		}
+	}
+
+	if (sequence == 3)
 	{
 		static float timer = 0.0f;
 		SetState(E_4071);
 		E4071();
 	}
 
-	if (sequence == 2)
+	if (sequence == 4)
 	{
 		timer += DELTA;
 		SetState(E_4073);
 		E4073(timer, checkHp);
 	}
 
-	if (sequence == 3)
+	if (sequence == 5)
 	{
 		SetState(E_4074);
 		E4074();
 	}
 
-	if (sequence == 4)
+	if (sequence == 6)
 	{
 		timer = 0.0f;
 		isHupGi = true;
@@ -1203,7 +1242,7 @@ void Valphalk::Hupgi()
 		ChooseNextPattern();
 	}
 
-	if (sequence == 5)
+	if (sequence == 7)
 	{
 		timer = 0.0f;
 		curPattern = S_HUGESTAGGER;
@@ -6417,8 +6456,6 @@ void Valphalk::E4073(float timer, float checkHp)
 		{
 			hupgiCharge->Play(GetTranslationByNode(3) + Back() * 300, 0);
 			hupgiCharge2->Play(GetTranslationByNode(3) + Back() * 300, 0);
-			hupgiFire[8]->Play(GetTranslationByNode(5) + Down() * 150 + Back() * 80, 0); // 가슴
-
 			playOncePerPattern2 = true;
 		}
 		
@@ -6427,14 +6464,12 @@ void Valphalk::E4073(float timer, float checkHp)
 	{
 		hupgiCharge->Stop();
 		hupgiCharge2->Stop();
-		hupgiFire[8]->Stop();
-		sequence = 5;
+		sequence = 7;
 		timer = 0;
 	}
 
 	if (timer > 3.2f)
 	{
-		hupgiFire[8]->Stop();
 		sequence++;
 	}
 }
