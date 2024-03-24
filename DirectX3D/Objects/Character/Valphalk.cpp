@@ -4623,7 +4623,7 @@ void Valphalk::E2121()//왼쪽 날개 들었다가 찍은다음 살짝 일어나서 다시 자세잡음
 	{
 		SetColliderAttack(LWING, 0.408, 40, 2);
 	}
-	if (RATIO > 0.18 && !playOncePerPattern2)
+	if (RATIO > 0.24f && !playOncePerPattern2)
 	{
 		Sounds::Get()->Play("em086_05_se_media_10", 0.6f);
 		playOncePerPattern2 = true;
@@ -6332,13 +6332,13 @@ void Valphalk::E4013() // 조우 포효
 
 	if (RATIO > 0.01f && !playOncePerPattern)
 	{
-		Sounds::Get()->Play("em086_05_se_media_52", 0.9f);
+		Sounds::Get()->Play("em086_05_se_media_52", 1.5f);
 		playOncePerPattern = true;
 	}
 
 	if (RATIO > 0.333f && !playOncePerPattern2)
 	{
-		Sounds::Get()->Play("em086_05_vo_media_10", 0.9f); // 사운드 중복 고침 (숫자로 고쳐서 불로 바꿔도 됨)
+		Sounds::Get()->Play("em086_05_vo_media_10", 1.5f); // 사운드 중복 고침 (숫자로 고쳐서 불로 바꿔도 됨)
 		roarEffect->Play(head->Pos(), 0);
 		colliders[ROAR]->SetActive(true);
 		SetColliderAttack(ROAR, 0.375f, 0, 3);
