@@ -3859,7 +3859,9 @@ void Player::L155() // 앉아발도 기인베기
 		{
 			holdingSword = false;
 			if (Attack(35))
+			{
 				isHit = true;
+			}
 		}
 		else
 			EndEffect();
@@ -3867,14 +3869,10 @@ void Player::L155() // 앉아발도 기인베기
 
 	// 카운터 성공 시 추가 공격 프레임
 	{
-		if (isEvaded && isHit && (RATIO > 0.38 && RATIO < 0.39))
-		{
+		if (isHit && (RATIO > 0.37 && RATIO < 0.39))
+		{			
 			spSuccessParticle->Play(Pos(), 0);
-			if (isHitL155 == false)
-				UIManager::Get()->PlusCotingLevel();
-
-			CAM->SetLockOnTarget(damages.back().pos);
-
+			UIManager::Get()->PlusCotingLevel();
 			isHitL155 = true;
 			Sounds::Get()->Play("pl_wp_l_swd_epv_media.bnk.2_8", .5f);
 			isEvaded = false;

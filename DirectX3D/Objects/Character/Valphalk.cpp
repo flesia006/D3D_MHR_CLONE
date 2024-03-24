@@ -455,10 +455,26 @@ void Valphalk::Update()
 	fullburstParticle->Rot() = fullBurst->Rot();
 	fullburstParticle->Pos() = fullBurst->Pos();
 	//stormEffect->Update();
-	if (isHupGi == true && isDead == false)
+	if (isHupGi == true )
 		FlameOn();
 	else
 		FlameOff();
+	if (isAnger)
+	{
+		hupgiFire[0]->Play(GetTranslationByNode(15), 0); // 왼쪽 어깨
+		hupgiFire[1]->Play(GetTranslationByNode(35), 0); // 오른쪽 어깨
+	}
+	else
+	{
+		hupgiFire[0]->Stop();
+		hupgiFire[1]->Stop();
+	}
+	if (isDead)
+	{
+		FOR(hupgiFire.size()) hupgiFire[i]->Stop();
+
+	}
+
 	FOR(hupgiFire.size()) hupgiFire[i]->Update();
 	FOR(explosionParticle.size()) explosionParticle[i]->Update();
 	FOR(bullets.size())
@@ -497,100 +513,100 @@ void Valphalk::Update()
 	skyfallEft->Update();
 	ModelAnimator::Update();
 
-	//	FOR(jetParticle.size()) jetParticle[i]->Update();
-	//	FOR(fireParticle.size()) fireParticle[i]->Update();
-	//	//Jet();
-	//
-	//	jetpos->Pos() = GetTranslationByNode(61);
-	//	jetposend->Pos() = GetTranslationByNode(60);
-	//	jetpos->UpdateWorld();
-	//	jetpos->SetParent(jetposend);
-	//
-	//	zetPos[0]->SetWorld(GetTransformByNode(61));
-	//	zetPos[1]->SetWorld(GetTransformByNode(64));
-	//	zetPos[2]->SetWorld(GetTransformByNode(67));
-	//	zetPos[3]->SetWorld(GetTransformByNode(81));
-	//	zetPos[4]->SetWorld(GetTransformByNode(84));
-	//	zetPos[5]->SetWorld(GetTransformByNode(87));
-	//
-	//	eyes->Pos() = GetTranslationByNode(14);
-	//	eyes->Rot() = Rot();
-	//	eyes->UpdateWorld();
-	//
-	//
-	//	FOR(6)
-	//		valZets[i]->Update();
-	//	fullburstParticle->Update();
-	//	fullburstParticle2->Update();
-	//	fullburstParticle->Rot() = fullBurst->Rot();
-	//	fullburstParticle->Pos() = fullBurst->Pos();
-	//	//stormEffect->Update();
-	//	if (isHupGi == true)
-	//		FlameOn();
-	//	else
-	//		FlameOff();
-	//	FOR(hupgiFire.size()) hupgiFire[i]->Update();
-	//	FOR(explosionParticle.size()) explosionParticle[i]->Update();
-	//	FOR(bullets.size())
-	//	{
-	//		if (bullets[i]->Pos().y <= 100 && bullets[i]->Active() == true)
-	//		{
-	//			fireParticle[i]->PlaySpark();
-	//		}
-	//		if (bullets[i]->Pos().y <= 0 && bullets[i]->Active() == true)
-	//		{
-	//			if (i % 2 == 0)
-	//				Sounds::Get()->Play("em086_05_se_media_10", 0.5f);
-	//			if (i % 2 == 1)
-	//				Sounds::Get()->Play("em086_05_se_media_10_2", 0.5f);
-	//
-	//			fireParticle[i]->PlayExplosion();
-	//			bullets[i]->SetActive(false);
-	//			fireParticle[i]->Stop();
-	//		}
-	//	}
-	//
-	//	fullburstParticle2->SetPos(fullBurst->GlobalPos() + Forward() * 4000);
-	//
-	//	storm_Start->Update();
-	//	hupgiCharge->Update();
-	//	barrier->SetPos(head->GlobalPos());
-	//	barrier->Update();
-	//	trail->Update();
-	//	roarEffect->Update();
-	//	if(roarEffect->IsActive())
-	//	roarEffect->roarCloserCam(Pos(), CAM->Pos(), 0.013f);
-	//	skyfallEft->Update();
-	//
-	//	////////////////////////
-	//	//디버그 확인용
-	//	if (KEY_DOWN('4'))
-	//	{
-	//		curState = E_4013;
-	//		SetState(E_4013);
-	//		E4013();
-	//	}
-	//	if (KEY_DOWN('5'))
-	//		colliders[HEAD]->partHp = -100;
-	//
-	//	if (KEY_DOWN('6'))
-	//		colliders[LLEG1]->partHp = -100;
-	//
-	//	if (KEY_DOWN('8'))
-	//		curHP -= 1000;
-	//	//if (isStorm)
-	//	//	stormEffect->SetPos(realPos->GlobalPos());
-	//	//////////////////////////
-	//	stormBox->GlobalPos() = Pos();
-	//	if (stormTime > 2.f)
-	//	{
-	//		stormBox->SetActive(true);
-	//	}
-	//	else
-	//	{
-	//		stormBox->SetActive(false);
-	//	}
-	//	stormBox->UpdateWorld();
+		FOR(jetParticle.size()) jetParticle[i]->Update();
+		FOR(fireParticle.size()) fireParticle[i]->Update();
+		//Jet();
+	
+		jetpos->Pos() = GetTranslationByNode(61);
+		jetposend->Pos() = GetTranslationByNode(60);
+		jetpos->UpdateWorld();
+		jetpos->SetParent(jetposend);
+	
+		zetPos[0]->SetWorld(GetTransformByNode(61));
+		zetPos[1]->SetWorld(GetTransformByNode(64));
+		zetPos[2]->SetWorld(GetTransformByNode(67));
+		zetPos[3]->SetWorld(GetTransformByNode(81));
+		zetPos[4]->SetWorld(GetTransformByNode(84));
+		zetPos[5]->SetWorld(GetTransformByNode(87));
+	
+		eyes->Pos() = GetTranslationByNode(14);
+		eyes->Rot() = Rot();
+		eyes->UpdateWorld();
+	
+	
+		FOR(6)
+			valZets[i]->Update();
+		fullburstParticle->Update();
+		fullburstParticle2->Update();
+		fullburstParticle->Rot() = fullBurst->Rot();
+		fullburstParticle->Pos() = fullBurst->Pos();
+		//stormEffect->Update();
+		if (isHupGi == true)
+			FlameOn();
+		else
+			FlameOff();
+		FOR(hupgiFire.size()) hupgiFire[i]->Update();
+		FOR(explosionParticle.size()) explosionParticle[i]->Update();
+		FOR(bullets.size())
+		{
+			if (bullets[i]->Pos().y <= 100 && bullets[i]->Active() == true)
+			{
+				fireParticle[i]->PlaySpark();
+			}
+			if (bullets[i]->Pos().y <= 0 && bullets[i]->Active() == true)
+			{
+				if (i % 2 == 0)
+					Sounds::Get()->Play("em086_05_se_media_10", 0.5f);
+				if (i % 2 == 1)
+					Sounds::Get()->Play("em086_05_se_media_10_2", 0.5f);
+	
+				fireParticle[i]->PlayExplosion();
+				bullets[i]->SetActive(false);
+				fireParticle[i]->Stop();
+			}
+		}
+	
+		fullburstParticle2->SetPos(fullBurst->GlobalPos() + Forward() * 4000);
+	
+		storm_Start->Update();
+		hupgiCharge->Update();
+		barrier->SetPos(head->GlobalPos());
+		barrier->Update();
+		trail->Update();
+		roarEffect->Update();
+		if(roarEffect->IsActive())
+			roarEffect->roarCloserCam(Pos(), CAM->Pos(), 0.013f);
+		skyfallEft->Update();
+	
+		////////////////////////
+		//디버그 확인용
+		if (KEY_DOWN('4'))
+		{
+			curState = E_4013;
+			SetState(E_4013);
+			E4013();
+		}
+		if (KEY_DOWN('5'))
+			colliders[HEAD]->partHp = -100;
+	
+		if (KEY_DOWN('6'))
+			colliders[LLEG1]->partHp = -100;
+	
+		if (KEY_DOWN('8'))
+			curHP -= 1000;
+		//if (isStorm)
+		//	stormEffect->SetPos(realPos->GlobalPos());
+		//////////////////////////
+		stormBox->GlobalPos() = Pos();
+		if (stormTime > 2.f)
+		{
+			stormBox->SetActive(true);
+		}
+		else
+		{
+			stormBox->SetActive(false);
+		}
+		stormBox->UpdateWorld();
 
 	if (KEY_DOWN('6'))
 		colliders[LLEG1]->partHp = -100;
@@ -766,43 +782,6 @@ Vector3 Valphalk::GetPlayerPos() // 플레이어 위치 추적 함수
 
 void Valphalk::Jet()
 {
-	timer2 += DELTA;
-
-	jetpos1_1 = GetTranslationByNode(60);
-	jetpos1_2 = GetTranslationByNode(61);
-	jetpos1 = jetpos1_2 - jetpos1_1;
-	jetpos1.GetNormalized();
-	jetpos2_1 = GetTranslationByNode(63);
-	jetpos2_2 = GetTranslationByNode(64);
-	jetpos2 = jetpos1_2 - jetpos1_1;
-	jetpos2.GetNormalized();
-	jetpos3_1 = GetTranslationByNode(66);
-	jetpos3_2 = GetTranslationByNode(67);
-	jetpos3 = jetpos1_2 - jetpos1_1;
-	jetpos3.GetNormalized();
-	jetpos4_1 = GetTranslationByNode(80);
-	jetpos4_2 = GetTranslationByNode(81);
-	jetpos4 = jetpos1_2 - jetpos1_1;
-	jetpos4.GetNormalized();
-	jetpos5_1 = GetTranslationByNode(83);
-	jetpos5_2 = GetTranslationByNode(84);
-	jetpos5 = jetpos1_2 - jetpos1_1;
-	jetpos5.GetNormalized();
-	jetpos6_1 = GetTranslationByNode(86);
-	jetpos6_2 = GetTranslationByNode(87);
-	jetpos6 = jetpos1_2 - jetpos1_1;
-	jetpos6.GetNormalized();
-
-	if (timer2 >= 2)
-	{
-		jetParticle[0]->Play(GetTranslationByNode(61), jetpos1);
-		jetParticle[1]->Play(GetTranslationByNode(64), jetpos2);
-		jetParticle[2]->Play(GetTranslationByNode(67), jetpos3);
-		jetParticle[3]->Play(GetTranslationByNode(81), jetpos4);
-		jetParticle[4]->Play(GetTranslationByNode(84), jetpos5);
-		jetParticle[5]->Play(GetTranslationByNode(87), jetpos6);
-		timer2 = 0;
-	}
 }
 
 void Valphalk::Storm()
@@ -1306,7 +1285,7 @@ void Valphalk::Sidestep()
 	{
 		Vector3 dir = (realPos->Back() + realPos->Right()).GetNormalized();
 		vecToTagt = target->GlobalPos() - dir * 1000 + realPos->Right() * 1106 + realPos->Forward() * 120;
-		vecToTagt.y = 0;
+		vecToTagt.y = height;
 
 		sequence++;
 	}
@@ -1331,7 +1310,7 @@ void Valphalk::B_Sidestep()
 	{
 		Vector3 dir = (realPos->Back() + realPos->Right()).GetNormalized();
 		vecToTagt = target->GlobalPos() - dir * 1000 + realPos->Right() * 1106 + realPos->Forward() * 120;
-		vecToTagt.y = 0;
+		vecToTagt.y = height;
 
 		sequence++;
 	}
@@ -1554,29 +1533,18 @@ void Valphalk::Patrol()
 	static int whichPattern = 0;
 	static int loopCount = 0;
 	walkTime += DELTA;
-	int randWalkSounds = rand() % 2;
+	static int walkNum;
 	float distance = (target->GlobalPos() - Pos()).Length();
-	if (distance < 8000)
+	if (curState == E_0043 || curState == E_0044 || curState == E_0045 || curState == E_0055)
 	{
-		if (curState == E_0043 || curState == E_0044 || curState == E_0045 || curState == E_0055)
+		if (walkTime > 0.85f)
 		{
-			switch (randWalkSounds)
-			{
-			case 0:
-				if (walkTime > 0.85f)
-				{
-					Sounds::Get()->Play("em086_05_se_media_52", 0.4f);
-					walkTime = 0;
-				}
-				break;
-			case 1:
-				if (walkTime > 0.85f)
-				{
-					Sounds::Get()->Play("em086_05_se_media_62", 0.4f);
-					walkTime = 0;
-				}
-				break;
-			}
+			walkNum++;
+			if (walkNum % 2 == 0)
+				Sounds::Get()->Play("em086_05_se_media_52", 0.4f);
+			else
+				Sounds::Get()->Play("em086_05_se_media_62", 0.4f);
+			walkTime = 0.0f;
 		}
 	}
 	if (sequence == 0) // 방향을 정해
@@ -1647,8 +1615,6 @@ void Valphalk::Patrol()
 
 	if (sequence == 2) // 루프해
 	{
-
-
 		SetState(E_0055);
 
 		// E_0055
@@ -1677,7 +1643,7 @@ void Valphalk::Patrol()
 			Scale().x = 1;
 
 		// 플레이어가 근처에 있는지 체크해
-		if ((target->GlobalPos() - realPos->Pos()).Length() < 4000)
+		if ((target->GlobalPos() - realPos->Pos()).Length() < 4000 && UI->isMapChange)
 		{
 			Sounds::Get()->Play("Valphalk_Thema", 0.03f);
 			sequence++; // 있으면 포효로
@@ -1800,6 +1766,8 @@ void Valphalk::PartDestroyCheck()
 	if (colliders[HEAD]->partHp < 0)
 	{
 		sequence = 0;
+		colliders[ROAR]->SetActive(false);
+
 		radDifference = 0;
 		initialRad = Rot().y;
 		isStagger = true;
@@ -1826,6 +1794,8 @@ void Valphalk::PartDestroyCheck()
 	{
 		sequence = 0;
 		radDifference = 0;
+		colliders[ROAR]->SetActive(false);
+
 		initialRad = Rot().y;
 		isStagger = true;
 		if (UI->partDestruct)
@@ -1851,6 +1821,8 @@ void Valphalk::PartDestroyCheck()
 	{
 		sequence = 0;
 		radDifference = 0;
+		colliders[ROAR]->SetActive(false);
+
 		initialRad = Rot().y;
 		isStagger = true;
 		if (UI->partDestruct)
@@ -1877,6 +1849,8 @@ void Valphalk::PartDestroyCheck()
 		sequence = 0;
 		radDifference = 0;
 		initialRad = Rot().y;
+		colliders[ROAR]->SetActive(false);
+
 		isStagger = true;
 		if (UI->partDestruct)
 		{
@@ -1902,6 +1876,8 @@ void Valphalk::PartDestroyCheck()
 		sequence = 0;
 		radDifference = 0;
 		initialRad = Rot().y;
+		colliders[ROAR]->SetActive(false);
+
 		isStagger = true;
 		if (UI->partDestruct)
 		{
@@ -1954,6 +1930,7 @@ void Valphalk::ChooseNextPattern()
 	sequence = 0;
 	radDifference = 0;
 	initialRad = Rot().y;
+	vecToTagt = { 0, 0, 0 };
 	float distance = (target->GlobalPos() - Pos()).Length();
 
 	// 흡기 : 인식 포효로부터  1분 후
@@ -2250,18 +2227,17 @@ void Valphalk::PushPlayer()
 	else if (SceneManager::Get()->Add("ShadowScene") != nullptr)
 		player = dynamic_cast<ShadowScene*>
 		(SceneManager::Get()->Add("ShadowScene"))->GetPlayer();
-
 	else
 		return;
 
 	Collider* playerCollider = player->getCollider();
 
 
-	for (auto collider : colliders)
+	FOR(colliders.size() - 1)
 	{
-		if (collider->IsCollision(playerCollider))
+		if (colliders[i]->IsCollision(playerCollider))
 		{
-			Vector3 dir = (playerCollider->GlobalPos() - collider->GlobalPos()).GetNormalized();
+			Vector3 dir = (playerCollider->GlobalPos() - colliders[i]->GlobalPos()).GetNormalized();
 
 			player->Pos().x += dir.x * 500 * DELTA;
 			player->Pos().z += dir.z * 500 * DELTA;
@@ -2436,8 +2412,7 @@ void Valphalk::GroundCheck()
 void Valphalk::FlameOn()
 {
 	// 흡기상태 몸에 불번짐
-	hupgiFire[0]->Play(GetTranslationByNode(15), 0); // 왼쪽 어깨
-	hupgiFire[1]->Play(GetTranslationByNode(35), 0); // 오른쪽 어깨
+
 	hupgiFire[2]->Play(GetTranslationByNode(61), 0); // 날개
 	hupgiFire[3]->Play(GetTranslationByNode(64), 0); // 날개
 	hupgiFire[4]->Play(GetTranslationByNode(67), 0); // 날개
@@ -2448,7 +2423,7 @@ void Valphalk::FlameOn()
 
 void Valphalk::FlameOff()
 {
-	FOR(hupgiFire.size()) hupgiFire[i]->Stop();
+	FOR(hupgiFire.size() - 2) hupgiFire[i + 2]->Stop();
 }
 
 void Valphalk::QuestClearCount()
@@ -2510,7 +2485,7 @@ void Valphalk::S_LegAtk()
 	{
 		Vector3 dir = (realPos->Back() + realPos->Right()).GetNormalized();
 		vecToTagt = target->GlobalPos() - dir * 300 + realPos->Right() * 606 + realPos->Forward() * 120;
-		vecToTagt.y = 0;
+		vecToTagt.y = height;
 
 		sequence++;
 	}
@@ -2663,7 +2638,7 @@ void Valphalk::S_StabAtk()
 	{
 		Vector3 dir = (realPos->Back() + realPos->Right()).GetNormalized();
 		vecToTagt = target->GlobalPos() - dir * 2500 + realPos->Right() * 1106 + realPos->Forward() * 120;
-		vecToTagt.y = 0;
+		vecToTagt.y = height;
 
 		sequence++;
 	}
@@ -2761,26 +2736,26 @@ void Valphalk::S_BackWingAtk()
 	if (sequence == 0) //각도 정하기
 	{
 		GetRadBtwTrgt();
-		if (radBtwTarget > -rot45 && radBtwTarget <= 0) // 전방 왼쪽 45도
+		if (radBtwTarget > -XM_PIDIV2 && radBtwTarget <= 0) // 전방 왼쪽 90도
 		{
 			whichPattern = 1;
 			radDifference = radBtwTarget;
 		}
-		else if (radBtwTarget > -XM_PI && radBtwTarget <= -rot45) // 왼쪽 90도 && 왼뒤쪽 45도
+		else if (radBtwTarget > -XM_PI && radBtwTarget <= -XM_PIDIV2) // 왼쪽 뒤 90도
 		{
 			whichPattern = 2;
-			radDifference = radBtwTarget + XM_PIDIV2;
+			radDifference = radBtwTarget + XM_PIDIV2 - 15 * unitRad;
 		}
-		else if (radBtwTarget > 0 && radBtwTarget <= rot45) // 전방 오른쪽 45도
+		else if (radBtwTarget > 0 && radBtwTarget <= XM_PIDIV2) // 전방 오른쪽 45도
 		{
 			whichPattern = 3;
 			radDifference = radBtwTarget;
 			Scale().x *= -1;
 		}
-		else if (radBtwTarget > rot45 && radBtwTarget <= XM_PI) // 오른쪽 90도 && 오른뒤쪽 45도
+		else if (radBtwTarget > XM_PIDIV2 && radBtwTarget <= XM_PI) // 오른 뒤쪽 90도
 		{
 			whichPattern = 4;
-			radDifference = radBtwTarget - XM_PIDIV2;
+			radDifference = radBtwTarget - XM_PIDIV2 + 15 * unitRad;
 			Scale().x *= -1;
 		}
 		else
@@ -2790,34 +2765,52 @@ void Valphalk::S_BackWingAtk()
 		sequence++;
 	}
 
+
 	if (sequence == 1) // 각도 정했으면 방향 전환함수
 	{
 		switch (whichPattern)
 		{
-		case 1:		sequence = 3;
+		case 1:		sequence = 4;
 		case 2:		SetState(E_2210);	E2210();  break;
-		case 3:		sequence = 3;
+		case 3:		sequence = 4;
 		case 4:		SetState(E_2210);	E2210();  break;
 		}
 	}
 
-	if (sequence == 2) // 공격모션
+	if (sequence == 2)
+	{
+		float dist = (realPos->Pos() - target->GlobalPos()).Length() - 1100;
+
+		if(whichPattern == 2)
+			Rot().y += radBtwTarget - 15 * unitRad;
+		else
+			Rot().y += radBtwTarget + 15 * unitRad;
+		UpdateWorld();
+		vecToTagt = realPos->Pos() + Back() * dist;
+		Rot().y -= radBtwTarget;
+		UpdateWorld();
+
+		sequence++;
+	}
+
+	if (sequence == 3) // 공격모션
 	{
 		switch (whichPattern)
 		{
-		case 1:		sequence = 3;
+		case 1:		sequence = 4;
 		case 2:		SetState(E_2211);	E2211(-XM_PIDIV2);  break;
-		case 3:		sequence = 3;
+		case 3:		sequence = 4;
 		case 4:		SetState(E_2211);	E2211(XM_PIDIV2);  break;
 		}
 	}
 
-	if (sequence == 3)
+	if (sequence == 4)
 	{
 		if (whichPattern == 3 || whichPattern == 4)
-			Scale().x *= -1;
+			Scale().x = 1;
 		whichPattern = 0;
-		ChooseNextPattern();
+		sequence = 0;
+		//ChooseNextPattern();
 	}
 }
 
@@ -2958,7 +2951,7 @@ void Valphalk::S_Bite()
 	{
 		Vector3 dir = (realPos->Back() + realPos->Right()).GetNormalized();
 		vecToTagt = target->GlobalPos() - dir * 200 + realPos->Right() * 606 + realPos->Forward() * 120;
-		vecToTagt.y = 0;
+		vecToTagt.y = height;
 
 		sequence++;
 	}
@@ -3078,7 +3071,7 @@ void Valphalk::B_SwingAtk() /////////////////// 백스텝 이후 과정 수정 필요
 	if (sequence == 0) // 각도 정하기
 	{
 		if ((realPos->Pos() - target->GlobalPos()).Length() < 900) // 지나치게 가까운 경우
-			sequence = 5;
+			sequence = 4;
 		else
 		{
 			whichPattern = SetRadAndMirror(true);
@@ -3124,7 +3117,7 @@ void Valphalk::B_SwingAtk() /////////////////// 백스텝 이후 과정 수정 필요
 	{
 		Vector3 dir = (realPos->Back() + realPos->Right()).GetNormalized();
 		vecToTagt = target->GlobalPos() - dir * 1600 + realPos->Right() * 1106 + realPos->Forward() * 120;
-		vecToTagt.y = 0;
+		vecToTagt.y = height;
 
 		sequence++;
 	}
@@ -3135,10 +3128,40 @@ void Valphalk::B_SwingAtk() /////////////////// 백스텝 이후 과정 수정 필요
 		E2253(vecToTagt);
 	}
 
-	if (sequence == 6) // 백스탭마무리
+	if (sequence == 6) // 각도 정했으면 방향 전환함수
 	{
-		sequence = 0;
+		switch (whichPattern)
+		{
+		case 1:		SetState(E_2091);  E2091();				break;
+		case 2:		SetState(E_2092);  E2092(-XM_PIDIV2);	break; // 왼쪽 90
+		case 3:		SetState(E_2093);  E2093(-XM_PI);		break; // 왼쪽 180
+		case 4:		SetState(E_2091);  E2091();				break;
+		case 5:		SetState(E_2092);  E2092(XM_PIDIV2);	break;
+		case 6:		SetState(E_2093);  E2093(XM_PI);		break;
+		}
+		if (RATIO > 0.80 && !playOncePerPattern)
+		{
+			Sounds::Get()->Play("em086_05_vo_media_26", 0.4f); // 미확인
+			playOncePerPattern = true;
+		}
 	}
+
+	if (sequence == 7) // 공격 모션
+	{
+		SetState(E_2103);
+		if (whichPattern == 4 || whichPattern == 5 || whichPattern == 6)
+			E2103(XM_PIDIV2);
+		else
+			E2103(-XM_PIDIV2);
+	}
+
+	if (sequence == 8) // 마무리
+	{
+
+		whichPattern = 0;
+		ChooseNextPattern();
+	}
+
 }
 
 void Valphalk::B_WingAtk()
@@ -3182,7 +3205,7 @@ void Valphalk::B_WingAtk()
 	{
 		Vector3 dir = (realPos->Back() + realPos->Right()).GetNormalized();
 		vecToTagt = target->GlobalPos() - dir * 900 + realPos->Right() * 1106 + realPos->Forward() * 120;
-		vecToTagt.y = 0;
+		vecToTagt.y = height;
 
 		sequence++;
 	}
@@ -4343,14 +4366,14 @@ void Valphalk::E2038() // 날개 찌르기
 		SetColliderAttack(RWING, 0.95, 35, 2);
 		if (!playOncePerPattern)
 		{
-			colliders[RWING]->Scale().y *= 2.5f;
+			colliders[RWING]->Scale().y = 2.5f;
 			playOncePerPattern = true;
 		}
 	}
 
 	if (RATIO > 0.96)
 	{
-		colliders[RWING]->Scale().y *= 0.4f;
+		colliders[RWING]->Scale().y = 1;
 		sequence++;
 	}
 }
@@ -5172,10 +5195,10 @@ void Valphalk::E2210()//왼쪽 90도 날개찍기 준비동작
 {
 	PLAY;
 
-	if (RATIO > 0.700f && RATIO < 0.96f)
-	{
-		RotateToTarget(0.700f, 0.96f);
-	}
+//	if (RATIO > 0.700f && RATIO < 0.96f)
+//	{
+//		RotateToTarget(0.700f, 0.96f);
+//	}
 	if (RATIO > 0.81 && !playOncePerPattern)
 	{
 		Sounds::Get()->Play("em086_05_vo_media_23", 0.5f);
@@ -5193,8 +5216,11 @@ void Valphalk::E2211(float degree)//왼쪽 90도 날개찍기 공격동작
 {
 	PLAY;
 
-	if (RATIO < 0.105f)
-		RotateToTarget(0.000f, 0.105f);
+	if (RATIO < 0.15f)
+	{
+		RotateToTarget(0.000f, 0.16f);
+		Pos() = Lerp(Pos(), vecToTagt, 25 * DELTA);
+	}
 
 	if (RATIO > 0.1 && !playOncePerPattern)
 	{

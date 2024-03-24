@@ -160,6 +160,7 @@ public:
 	bool GetIsDead() { return isDead; }
 
 	bool IsDamaged() { return curHP != maxHP; }
+	bool IsDead() { return curHP <= 0; }
 
 	//ColliderName GetName() { return colliderName; }
 	float damage = 0.1f;
@@ -466,7 +467,7 @@ private:
 
 	Vector3 velocity; //속력 : 실제 움직임
 
-	Pattern curPattern = PATROL;
+	Pattern curPattern = S_BACKWINGATK;
 	State curState = E_0043; //= 기본 스테이트;
 	State preState = curState;
 
@@ -555,6 +556,8 @@ private:
 
 	const float rot135 = 2.36f;
 	const float rot45 = 0.785f;
+	const float unitRad = 0.01744444f;
+
 
 	float radDifference = 0.0f;
 	float playRatioForE0071 = 0.0f;
