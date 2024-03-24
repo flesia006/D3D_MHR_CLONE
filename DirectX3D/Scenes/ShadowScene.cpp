@@ -12,7 +12,7 @@ ShadowScene::ShadowScene()
     p1.y = rc.top;
     p2.x = rc.right;
     p2.y = rc.bottom;
-
+    
     ClientToScreen(hWnd, &p1);
     ClientToScreen(hWnd, &p2);
     rc.left = p1.x;
@@ -162,8 +162,8 @@ void ShadowScene::Update()
             CAM->SetTerrain(terrain);
             once = true;
         }
-        valphalk->Update();
     }
+    valphalk->Update();
     player->Update();
     garuk->Update();
 

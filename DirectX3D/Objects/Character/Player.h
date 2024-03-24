@@ -95,6 +95,7 @@ public:
 private:
 	void Control();
 	void Move();
+	void WalkSounds();
 	void ReadyRide(); // 가루크 답승 대기
 	void Ride();
 	void EndRide();
@@ -456,6 +457,8 @@ private:
 	bool mapChanged = false;
 	bool inBattleMap = false;
 	bool isFirstRender = false;
+
+	float walkTime = 0.0f;
 	///////////////////////////////////////////
 	// Particle
 	vector<HitParticle*> hitParticle;

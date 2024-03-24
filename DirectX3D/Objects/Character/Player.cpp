@@ -198,6 +198,7 @@ void Player::Update()
 	NearMapChangeArea();
 	////////////////////////////////////
 	Control();
+	WalkSounds();
 	ResetPlayTime();
 
 
@@ -212,12 +213,9 @@ void Player::Update()
 	if (KEY_DOWN('5'))
 		UI->PlusCotingLevel();
 	if (KEY_DOWN('6'))
-		SetState(T_019);
-	if (KEY_DOWN('8'))
-	{
-		UI->isRender = false;
-		UI->valDeath = true;
-	}
+		SetState(D_015);
+	if (KEY_DOWN('7'))
+		SetState(D_021);
 
 	///////////////////////////////
 }
@@ -960,6 +958,72 @@ void Player::Move()
 	//	velocity.x = Lerp(velocity.x, 0, deceleration * DELTA);	
 }
 
+void Player::WalkSounds()
+{
+	walkTime += DELTA;
+	int randWalkSounds = rand() % 2;
+	if (curState == L_005 || curState == S_005 || curState == L_009)
+	{
+		switch (randWalkSounds)
+		{
+		case 0:
+			if (walkTime > 0.65f)
+			{
+				Sounds::Get()->Play("walk1", 0.6f);
+				walkTime = 0;
+			}
+			break;
+		case 1:
+			if (walkTime > 0.65f)
+			{
+				Sounds::Get()->Play("walk2", 0.6f);
+				walkTime = 0;
+			}
+			break;
+		}
+	}
+	else if (curState == L_004 || curState == S_011 )
+	{
+		switch (randWalkSounds)
+		{
+		case 0:
+			if (walkTime > 0.525f)
+			{
+				Sounds::Get()->Play("walk1", 0.6f);
+				walkTime = 0;
+			}
+			break;
+		case 1:
+			if (walkTime > 0.525f)
+			{
+				Sounds::Get()->Play("walk2", 0.6f);
+				walkTime = 0;
+			}
+			break;
+		}
+	}
+	else if (curState == S_122)
+	{
+		switch (randWalkSounds)
+		{
+		case 0:
+			if (walkTime > 0.4f)
+			{
+				Sounds::Get()->Play("walk1", 0.6f);
+				walkTime = 0;
+			}
+			break;
+		case 1:
+			if (walkTime > 0.4f)
+			{
+				Sounds::Get()->Play("walk2", 0.6f);
+				walkTime = 0;
+			}
+			break;
+		}
+	}
+}
+
 void Player::ReadyRide()
 {
 	// 가루크를 불러
@@ -1472,7 +1536,7 @@ void Player::HurtCheck()
 				holdingSword = false;
 
 				if(str == 1 && (curState == L_128 || curState == L_130 || curState == L_131
-					|| curState == 133 || curState == 136))
+					|| curState == L_133 || curState == L_135 || curState == L_136 || curState == L_138))
 					return; // 작은 경직 일으키는 공격만 무시
 
 				if (rad.x > XM_PIDIV2)
@@ -1680,7 +1744,7 @@ void Player::TermAttackUpdate()
 			if (!playOncePerTerm)
 			{
 				RandHitSounds();
-				AttackWOCollision(17);
+				AttackWOCollision(34);
 				circle[0]->active = true;
 				playOncePerTerm = true;
 			}
@@ -1690,7 +1754,7 @@ void Player::TermAttackUpdate()
 			if (playOncePerTerm)
 			{
 				RandHitSounds();
-				AttackWOCollision(17);
+				AttackWOCollision(34);
 				circle[1]->active = true;
 				playOncePerTerm = false;
 			}
@@ -1700,7 +1764,7 @@ void Player::TermAttackUpdate()
 			if (!playOncePerTerm)
 			{
 				RandHitSounds();
-				AttackWOCollision(17);
+				AttackWOCollision(34);
 				circle[2]->active = true;
 				playOncePerTerm = true;
 			}
@@ -1719,9 +1783,9 @@ void Player::TermAttackUpdate()
 	{
 		TermAttackTimer2 += DELTA;
 		int dmg = 0;
-		if (UI->cotingLevel == 2) dmg = 28;
-		else if (UI->cotingLevel == 1) dmg = 17.5f;
-		else if (UI->cotingLevel == 0) dmg = 10.5f;
+		if (UI->cotingLevel == 2) dmg = 56.0;
+		else if (UI->cotingLevel == 1) dmg = 35.0f;
+		else if (UI->cotingLevel == 0) dmg = 21.0f;
 
 
 		if (TermAttackTimer2 > 0.6 && TermAttackTimer2 < 0.65)
@@ -2690,7 +2754,7 @@ void Player::L102() // 세로베기
 {
 	if (INIT)
 	{
-		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_5", .5f);
+		//Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_5", .5f); 이미 검에서 나온 상태라 빼봄
 		PlayClip(L_102);
 		initRotY = Rot().y;
 	}
@@ -2736,7 +2800,7 @@ void Player::L103() // 베어내리기
 {
 	if (INIT)
 	{
-		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_5", .5f);
+		//Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_5", .5f); 이미 검에서 나온 상태라 빼봄
 		UIManager::Get()->staminaActive = false;
 		PlayClip(L_103);
 		initRotY = Rot().y;
@@ -2782,7 +2846,7 @@ void Player::L104() // 찌르기
 	PLAY;
 	if (INIT)
 	{
-		Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_5", .5f);
+		//Sounds::Get()->Play("pl_wp_l_swd_com_media.bnk.2_5", .5f); 이미 검에서 나온 상태라 빼봄
 		isEvaded = false;
 	}
 
@@ -3674,11 +3738,13 @@ void Player::L147() // 간파베기
 		else if (K_RMB)			SetState(L_104);	// 찌르기		
 		else if (K_LMBRMB)		SetState(L_103);	// 베어내리기		
 		else if (K_CTRLSPACE)	SetState(L_151);	// 특수 납도
-		else if (K_CTRL && isEvaded)	SetState(L_109);	// 기인큰회전베기
 		else if (UI->IsAbleBugSkill() && K_LBUG)		SetState(L_128);	// 날라차기
 		else if (UI->IsAbleBugSkill() && K_RBUG)		SetState(L_126);	// 수월의자세
 		else if (K_SPACE)		Roll();				// 구르기
 	}
+
+	if (RATIO > 0.47)
+		if (K_CTRL && isEvaded)	SetState(L_109);	// 기인큰회전베기
 
 	if (RATIO > 0.96)
 	{
@@ -4271,6 +4337,7 @@ void Player::D015() // 쳐맞고 덤블링 날라가기
 		jumpVelocity = 2.0f;
 		playOncePerMotion = true;
 	}
+
 	//if (INIT)
 	//	RandHurtVoice();
 	if (Jump(300, 2.0f))
@@ -4303,6 +4370,13 @@ void Player::D016()  //덤블링하고 착지하며 두손으로 땅짚은 상태
 void Player::D021() // 앞보고 앞으로 날라가기
 {
 	PLAY;
+
+	if (!playOncePerMotion)
+	{
+		jumpVelocity = 2.0f;
+		playOncePerMotion = true;
+	}
+
 	//if (INIT)
 	//	RandHurtVoice();
 	if (Jump(300, 2.0f))

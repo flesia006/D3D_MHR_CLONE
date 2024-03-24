@@ -480,7 +480,7 @@ void Camera::ThirdPresonViewMode()
         return;
     }
     if (freeCam == false)
-    {
+    {        
         //Vector3 delta = mousePos - prevMousePos;
         //prevMousePos = mousePos;
         if (lockOnTarget == Vector3(0, 0, 0))
