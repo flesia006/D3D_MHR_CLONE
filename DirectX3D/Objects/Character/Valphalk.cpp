@@ -5451,8 +5451,8 @@ void Valphalk::EX2276()
 
 	if (RATIO > 0.1 && !playOncePerPattern)
 	{
-		Sounds::Get()->Play("em086_05_vo_media_14", 0.8f);
-		Sounds::Get()->Play("em086_05_fx_media_5", 0.5f);
+		Sounds::Get()->Play("em086_05_vo_media_14", 0.7f);
+		Sounds::Get()->Play("em086_05_fx_media_5", 0.3f);
 		playOncePerPattern = true;
 	}
 	if (RATIO > 0.96)
@@ -5478,8 +5478,8 @@ void Valphalk::EX2277(float y)
 
 	if (realPos->Pos().y < height)
 	{
-		Sounds::Get()->Play("em086_05_fx_media_30", 0.5f);
-		Sounds::Get()->Play("em086_05_fx_media_32", 0.5f);
+		Sounds::Get()->Play("em086_05_fx_media_30", 0.3f);
+		Sounds::Get()->Play("em086_05_fx_media_32", 0.3f);
 		preState = curState;
 		curState = E_2278;
 		isJump = false;
