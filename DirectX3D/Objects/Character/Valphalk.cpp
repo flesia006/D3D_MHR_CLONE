@@ -314,7 +314,7 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 	fullburstParticle->SetParent(fullBurst->GetParent());
 	FOR(6) jetParticle.push_back(new Val_Jet_Particle());
 	FOR(6) fireParticle.push_back(new Val_fire());
-	FOR(8) hupgiFire.push_back(new HupgiFire());
+	FOR(9) hupgiFire.push_back(new HupgiFire());
 	FOR(6) explosionParticle.push_back(new Explosion());
 	barrier = new ParticleSystem("TextData/Particles/val_energy.fx");
 	trail = new Trail(L"Textures/Effect/val.png", head, realPos, 100, 150);
@@ -459,6 +459,7 @@ void Valphalk::Update()
 	fullburstParticle->Rot() = fullBurst->Rot();
 	fullburstParticle->Pos() = fullBurst->Pos();
 	//stormEffect->Update();
+
 	if (isHupGi == true )
 		FlameOn();
 	else
@@ -476,8 +477,8 @@ void Valphalk::Update()
 	if (isDead)
 	{
 		FOR(hupgiFire.size()) hupgiFire[i]->Stop();
-
 	}
+
 
 	FOR(hupgiFire.size()) hupgiFire[i]->Update();
 	FOR(explosionParticle.size()) explosionParticle[i]->Update();
@@ -517,121 +518,11 @@ void Valphalk::Update()
 	skyfallEft->Update();
 	ModelAnimator::Update();
 
-		FOR(jetParticle.size()) jetParticle[i]->Update();
-		FOR(fireParticle.size()) fireParticle[i]->Update();
-		//Jet();
-	
-		jetpos->Pos() = GetTranslationByNode(61);
-		jetposend->Pos() = GetTranslationByNode(60);
-		jetpos->UpdateWorld();
-		jetpos->SetParent(jetposend);
-	
-		zetPos[0]->SetWorld(GetTransformByNode(61));
-		zetPos[1]->SetWorld(GetTransformByNode(64));
-		zetPos[2]->SetWorld(GetTransformByNode(67));
-		zetPos[3]->SetWorld(GetTransformByNode(81));
-		zetPos[4]->SetWorld(GetTransformByNode(84));
-		zetPos[5]->SetWorld(GetTransformByNode(87));
-	
-		eyes->Pos() = GetTranslationByNode(14);
-		eyes->Rot() = Rot();
-		eyes->UpdateWorld();
-	
-	
-		FOR(6)
-			valZets[i]->Update();
-		fullburstParticle->Update();
-		fullburstParticle2->Update();
-		fullburstParticle->Rot() = fullBurst->Rot();
-		fullburstParticle->Pos() = fullBurst->Pos();
-		//stormEffect->Update();
-		if (isHupGi == true)
-			FlameOn();
-		else
-			FlameOff();
-		FOR(hupgiFire.size()) hupgiFire[i]->Update();
-		FOR(explosionParticle.size()) explosionParticle[i]->Update();
-		FOR(bullets.size())
-		{
-			if (bullets[i]->Pos().y <= 100 && bullets[i]->Active() == true)
-			{
-				fireParticle[i]->PlaySpark();
-			}
-			if (bullets[i]->Pos().y <= 0 && bullets[i]->Active() == true)
-			{
-				if (i % 2 == 0)
-					Sounds::Get()->Play("em086_05_se_media_10", 0.5f);
-				if (i % 2 == 1)
-					Sounds::Get()->Play("em086_05_se_media_10_2", 0.5f);
-	
-				fireParticle[i]->PlayExplosion();
-				bullets[i]->SetActive(false);
-				fireParticle[i]->Stop();
-			}
-		}
-	
-		fullburstParticle2->SetPos(fullBurst->GlobalPos() + Forward() * 4000);
-	
-		storm_Start->Update();
-		hupgiCharge->Update();
-		barrier->SetPos(head->GlobalPos());
-		barrier->Update();
-		trail->Update();
-		roarEffect->Update();
-		if(roarEffect->IsActive())
-			roarEffect->roarCloserCam(Pos(), CAM->Pos(), 0.013f);
-		skyfallEft->Update();
-	
-		////////////////////////
-		//디버그 확인용
-		if (KEY_DOWN('4'))
-		{
-			curState = E_4013;
-			SetState(E_4013);
-			E4013();
-		}
-		if (KEY_DOWN('5'))
-			colliders[HEAD]->partHp = -100;
-	
-		if (KEY_DOWN('6'))
-			colliders[LLEG1]->partHp = -100;
-	
-		if (KEY_DOWN('8'))
-			curHP -= 1000;
-		//if (isStorm)
-		//	stormEffect->SetPos(realPos->GlobalPos());
-		//////////////////////////
-		stormBox->GlobalPos() = Pos();
-		if (stormTime > 2.f)
-		{
-			stormBox->SetActive(true);
-		}
-		else
-		{
-			stormBox->SetActive(false);
-		}
-		stormBox->UpdateWorld();
-
-	//if (KEY_DOWN('6'))
-	//	colliders[LLEG1]->partHp = -100;
-
-	if (KEY_DOWN('9'))
-		curHP -= 1000;
-	if (KEY_DOWN('0'))
-		curHP = -1000;
-	
 	if (isStorm)
 		stormBox->SetActive(true);
 	//	stormEffect->SetPos(realPos->GlobalPos());
 	//////////////////////////
 	stormBox->GlobalPos() = Pos();
-	if (stormTime > 2.f)
-	{
-	}
-	else
-	{
-		//stormBox->SetActive(false);
-	}
 	stormBox->UpdateWorld();
 }
 
@@ -1263,32 +1154,52 @@ void Valphalk::Hupgi()
 {
 	if (sequence == 0)
 	{
+		if (isSlashMode == false)
+		{
+			SetState(E_0147);
+			E0147();
+		}
+		else
+			sequence++;
+	}
+
+	if (sequence == 1)
+	{
 		static float timer = 0.0f;
 		SetState(E_4071);
 		E4071();
-		checkHp = curHP;
 	}
-	if (sequence == 1)
+
+	if (sequence == 2)
 	{
 		timer += DELTA;
 		SetState(E_4073);
 		E4073(timer, checkHp);
 	}
-	if (sequence == 2)
+
+	if (sequence == 3)
 	{
 		SetState(E_4074);
 		E4074();
 	}
-	if (sequence == 3)
+
+	if (sequence == 4)
 	{
+		timer = 0.0f;
 		isHupGi = true;
 		isSlashMode = true;
 		ChooseNextPattern();
 	}
-	if (sequence == 4)
+
+	if (sequence == 5)
 	{
+		timer = 0.0f;
 		curPattern = S_HUGESTAGGER;
+		fireParticle[0]->SetPos(GetTranslationByNode(5));
+		fireParticle[0]->PlayExplosion();
+		Sounds::Get()->Play("em086_05_se_media_10", 0.5f);
 		sequence = 0;
+		hupgiFail = true;
 	}
 }
 
@@ -1372,6 +1283,7 @@ void Valphalk::S_HugeStagger()
 	if (sequence == 0)// 대경직 시작
 	{
 		SetState(E_3015);	E3015();
+		fireParticle[0]->SetPos(GetTranslationByNode(5));
 	}
 
 	if (sequence == 1)// 대경직 루프
@@ -1382,7 +1294,7 @@ void Valphalk::S_HugeStagger()
 
 		if (RATIO > 0.20 && !playOncePerPattern)
 		{
-			Sounds::Get()->Play("em086_05_vo_media_25", 4.5f);
+			Sounds::Get()->Play("em086_05_vo_media_13", 1.5f);
 			playOncePerPattern = true;
 		}
 
@@ -1445,6 +1357,8 @@ void Valphalk::B_SmallStagger()
 
 void Valphalk::B_HugeStagger()
 {
+	static int loopCount2 = 3;
+
 	if (sequence == 0)// 대경직 시작
 	{
 		SetState(E_3114);	E3114();
@@ -1452,7 +1366,27 @@ void Valphalk::B_HugeStagger()
 
 	if (sequence == 1)// 대경직 루프
 	{
-		SetState(E_3016);	E3016();
+		SetState(E_3016);	
+		PLAY;
+
+		if (RATIO > 0.20 && !playOncePerPattern)
+		{
+			Sounds::Get()->Play("em086_05_vo_media_13", 4.5f);
+			playOncePerPattern = true;
+		}
+
+		if (RATIO > 0.96)
+		{
+			Loop();
+			loopCount2 -= 1;
+			playOncePerPattern = false;
+
+			if (loopCount2 == 0)
+			{
+				loopCount2 = 2;
+				sequence++;
+			}
+		}
 	}
 
 	if (sequence == 2)// 대경직 회복
@@ -3152,6 +3086,12 @@ void Valphalk::B_SwingAtk() /////////////////// 백스텝 이후 과정 수정 필요
 
 	if (sequence == 6) // 각도 정했으면 방향 전환함수
 	{
+		whichPattern = SetRadAndMirror(true);
+		sequence++;
+	}
+
+	if (sequence == 7) // 각도 정했으면 방향 전환함수
+	{
 		switch (whichPattern)
 		{
 		case 1:		SetState(E_2091);  E2091();				break;
@@ -3168,7 +3108,7 @@ void Valphalk::B_SwingAtk() /////////////////// 백스텝 이후 과정 수정 필요
 		}
 	}
 
-	if (sequence == 7) // 공격 모션
+	if (sequence == 8) // 공격 모션
 	{
 		SetState(E_2103);
 		if (whichPattern == 4 || whichPattern == 5 || whichPattern == 6)
@@ -3177,7 +3117,7 @@ void Valphalk::B_SwingAtk() /////////////////// 백스텝 이후 과정 수정 필요
 			E2103(-XM_PIDIV2);
 	}
 
-	if (sequence == 8) // 마무리
+	if (sequence == 9) // 마무리
 	{
 
 		whichPattern = 0;
@@ -3371,7 +3311,6 @@ void Valphalk::B_Trnasform()
 
 	if (sequence == 1)
 	{
-		isSlashMode = true;
 		ChooseNextPattern();
 	}
 }
@@ -3939,7 +3878,10 @@ void Valphalk::E0147()//포격형 -> 참격형 변환
 	PLAY;
 
 	if (RATIO > 0.96)
+	{
 		sequence++;
+		isSlashMode = true;
+	}
 }
 
 void Valphalk::E0151()//포격상태 Idle
@@ -6383,6 +6325,9 @@ void Valphalk::E4013() // 조우 포효
 void Valphalk::E4071()
 {
 	PLAY;
+	if(INIT)
+		checkHp = colliders[CHEST]->partHp;
+
 	if (RATIO > 0.75f && !playOncePerPattern)
 	{
 		Sounds::Get()->Play("em086_05_vo_media_20", 0.5f); // 흡기 시작 voice
@@ -6404,20 +6349,24 @@ void Valphalk::E4073(float timer, float checkHp)
 		{
 			hupgiCharge->Play(GetTranslationByNode(3) + Back() * 300, 0);
 			hupgiCharge2->Play(GetTranslationByNode(3) + Back() * 300, 0);
+			hupgiFire[8]->Play(GetTranslationByNode(5) + Down() * 150 + Back() * 80, 0); // 가슴
+
 			playOncePerPattern2 = true;
 		}
 		
 	}
-	if (timer <= 3.2f && curHP <= checkHp - 300.0f)
+	if (timer <= 3.2f && colliders[CHEST]->partHp <= checkHp - 400.0f)
 	{
 		hupgiCharge->Stop();
 		hupgiCharge2->Stop();
-		sequence = 4;
+		hupgiFire[8]->Stop();
+		sequence = 5;
 		timer = 0;
 	}
 
 	if (timer > 3.2f)
 	{
+		hupgiFire[8]->Stop();
 		sequence++;
 	}
 }
@@ -6519,7 +6468,7 @@ void Valphalk::ColliderAdd()
 		colliders[CHEST]->Scale().z = 150.0f;
 		colliders[CHEST]->Rot().x = 0.02;
 		colliders[CHEST]->part = CHEST;
-		colliders[CHEST]->partHp = 1500;
+		colliders[CHEST]->partHp = 10000;
 		colliders[CHEST]->SetTag("CHEST");
 	}
 

@@ -113,7 +113,7 @@ private:
 
 	bool Attack(float power, bool push = true, UINT useOtherCollider = 0); // TODO : 데미지 계산 넣어야함
 	bool AttackDummy(float power, bool push = true, UINT useOtherCollider = 0); // TODO : 데미지 계산 넣어야함
-	void AttackWOCollision(float power = 0); // 충돌검사를 안하는 공격
+	void AttackWOCollision(float power = 0, bool cancelHupgi = false); // 충돌검사를 안하는 공격
 
 	void HurtCheck();
 	void EvadeCheck();

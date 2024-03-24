@@ -15,7 +15,7 @@ public:
     bool IsSphereCollision(SphereCollider* collider, Contact* contact);
     bool IsCapsuleCollision(CapsuleCollider* collider, Contact* contact);
 
-    float Radius() { return radius * max(GlobalScale().x, max(GlobalScale().y, GlobalScale().z)); }
+    float Radius() { return radius * max(GlobalScale().x, GlobalScale().z); }
     float Height() { return height * GlobalScale().y; }
 
     Vector3 GetHitPointPos() { return  hitPoint->GlobalPos(); }

@@ -313,6 +313,8 @@ void GameManager::Create()
     sound->AddSound("em086_05_vo_media_5", SoundPath + L"Valphalk/em086_05_vo_media_5.mp3");
     // 공격 사운드 6 ("앞발찍기")
     sound->AddSound("em086_05_vo_media_12", SoundPath + L"Valphalk/em086_05_vo_media_12.mp3");
+    // 신음 소리
+    sound->AddSound("em086_05_vo_media_13", SoundPath + L"Valphalk/em086_05_vo_media_13.mp3");
     // 앞발찍기 후 "날개찍기"
     sound->AddSound("em086_05_vo_media_16", SoundPath + L"Valphalk/em086_05_vo_media_16.mp3");
     // 급강하 전방폭발

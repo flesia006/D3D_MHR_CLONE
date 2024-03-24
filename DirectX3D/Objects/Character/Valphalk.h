@@ -161,9 +161,11 @@ public:
 
 	bool IsDamaged() { return curHP != maxHP; }
 	bool IsDead() { return curHP <= 0; }
+	bool IsHupGi() { return curPattern == HUPGI; }
 
 	//ColliderName GetName() { return colliderName; }
 	float damage = 0.1f;
+	bool hupgiFail = false;
 
 private:
 	// 패턴 함수

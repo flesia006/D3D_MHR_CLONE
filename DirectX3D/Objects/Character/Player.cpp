@@ -187,6 +187,13 @@ void Player::Update()
 		ReadyRide();
 
 	TermAttackUpdate();
+
+	if (val->hupgiFail)
+	{
+		AttackWOCollision(50, true);
+		val->hupgiFail = false;
+	}
+
 	HurtCheck();
 	time += DELTA;
 	if (isRiding)
@@ -1194,8 +1201,6 @@ bool Player::Attack(float power, bool push, UINT useOtherCollider) // Ãæµ¹ÆÇÁ¤ Ç
 		}
 	}
 
-
-
 	for (auto collider : colliders)
 	{
 		if (playerCollider->IsCapsuleCollision(collider, &contact) && !attackOnlyOncePerMotion)
@@ -1238,8 +1243,14 @@ bool Player::Attack(float power, bool push, UINT useOtherCollider) // Ãæµ¹ÆÇÁ¤ Ç
 			{
 			case Valphalk::HEAD: hardness = 55; break;
 			case Valphalk::NECK: hardness = 55; break;
-			case Valphalk::CHEST: hardness = 30; break;
-			case Valphalk::BODY: hardness = 30; break;
+			case Valphalk::CHEST:	
+				if(val->IsHupGi())		hardness = 60;
+				else					hardness = 30;			
+				break;
+			case Valphalk::BODY: 
+				if (val->IsHupGi())		hardness = 60;
+				else					hardness = 30;
+				break;
 			case Valphalk::LWING: hardness = 22; break;
 			case Valphalk::LWING_RADIUS: hardness = 22; break;
 			case Valphalk::RWING: hardness = 22; break;
@@ -1278,7 +1289,7 @@ bool Player::Attack(float power, bool push, UINT useOtherCollider) // Ãæµ¹ÆÇÁ¤ Ç
 				val->minusHeadHP(deal);
 
 			if ((collider->part == Valphalk::CHEST
-				|| collider->part == Valphalk::BODY) && val->GetIsHupgi())
+				|| collider->part == Valphalk::BODY) && val->IsHupGi())
 				val->minusChestHP(deal);
 
 			if (collider->part == Valphalk::LLEG1
@@ -1403,7 +1414,7 @@ bool Player::AttackDummy(float power, bool push, UINT useOtherCollider)
 	return false;
 }
 
-void Player::AttackWOCollision(float power)
+void Player::AttackWOCollision(float power, bool cancelHupgi)
 {
 	vector<CapsuleCollider*> colliders;
 
@@ -1414,9 +1425,19 @@ void Player::AttackWOCollision(float power)
 	else
 		return;
 
-	int hitPart = lastHitPart;
+	int hitPart;
+	Vector3 hitPos;
+	if (cancelHupgi)
+	{
+		hitPart = (int)colliders[Valphalk::CHEST];
+		hitPos = val->GetCollider()[Valphalk::CHEST]->GlobalPos();
+	}
+	else
+	{
+		hitPart = lastHitPart;
+		hitPos = colliders[hitPart]->GetHitPointPos();
+	}
 
-	Vector3 hitPos = colliders[hitPart]->GetHitPointPos();
 	Vector3 MinHitPos = hitPos + Vector3::Down() * 30;
 	Vector3 MaxHitPos = hitPos + Vector3::Up() * 30;
 	Vector3 RandomPos = Random(MinHitPos, MaxHitPos);
@@ -1468,6 +1489,35 @@ void Player::AttackWOCollision(float power)
 		damage.isWeakness = true;
 	else
 		damage.isWeakness = false;
+
+	RandHitSounds();
+	val->minusCurHP(deal);
+
+	if (isHitL155 || isHitL133)
+		deal *= 2;
+
+	if (lastHitPart == Valphalk::HEAD
+		|| lastHitPart == Valphalk::NECK)
+		val->minusHeadHP(deal);
+
+	if ((lastHitPart == Valphalk::CHEST
+		|| lastHitPart == Valphalk::BODY) && val->IsHupGi())
+		val->minusChestHP(deal);
+
+	if (lastHitPart == Valphalk::LLEG1
+		|| lastHitPart == Valphalk::LLEG1_FOOT)
+		val->minusLLegHP(deal);
+
+	if (lastHitPart == Valphalk::RLEG1
+		|| lastHitPart == Valphalk::RLEG1_FOOT)
+		val->minusRLegHP(deal);
+
+	if (lastHitPart == Valphalk::TAIL_START
+		|| lastHitPart == Valphalk::TAIL_1
+		|| lastHitPart == Valphalk::TAIL_2
+		|| lastHitPart == Valphalk::TAIL)
+		val->minusTailHP(deal);
+
 
 	damages.push_back(damage);
 }
@@ -1744,7 +1794,7 @@ void Player::TermAttackUpdate()
 			if (!playOncePerTerm)
 			{
 				RandHitSounds();
-				AttackWOCollision(34);
+				AttackWOCollision(17);
 				circle[0]->active = true;
 				playOncePerTerm = true;
 			}
@@ -1754,7 +1804,7 @@ void Player::TermAttackUpdate()
 			if (playOncePerTerm)
 			{
 				RandHitSounds();
-				AttackWOCollision(34);
+				AttackWOCollision(17);
 				circle[1]->active = true;
 				playOncePerTerm = false;
 			}
@@ -1764,7 +1814,7 @@ void Player::TermAttackUpdate()
 			if (!playOncePerTerm)
 			{
 				RandHitSounds();
-				AttackWOCollision(34);
+				AttackWOCollision(17);
 				circle[2]->active = true;
 				playOncePerTerm = true;
 			}
@@ -1783,9 +1833,9 @@ void Player::TermAttackUpdate()
 	{
 		TermAttackTimer2 += DELTA;
 		int dmg = 0;
-		if (UI->cotingLevel == 2) dmg = 56.0;
-		else if (UI->cotingLevel == 1) dmg = 35.0f;
-		else if (UI->cotingLevel == 0) dmg = 21.0f;
+		if (UI->cotingLevel == 2) dmg = 28;
+		else if (UI->cotingLevel == 1) dmg = 17.5f;
+		else if (UI->cotingLevel == 0) dmg = 10.5f;
 
 
 		if (TermAttackTimer2 > 0.6 && TermAttackTimer2 < 0.65)
