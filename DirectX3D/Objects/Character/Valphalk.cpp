@@ -1045,10 +1045,16 @@ void Valphalk::EnergyBullets()
 		case 5:		SetState(E_0152);  E0152(+XM_PIDIV2);	break;
 		case 6:		SetState(E_0153);  E0153(+XM_PI);		break;
 		}
+		if (RATIO > 0.1f && !playOncePerPattern3)
+		{
+			Sounds::Get()->Play("em086_05_vo_media_2", 0.5f);
+			playOncePerPattern3 = true;
+		}
 	}
 
 	if (sequence == 2)
 	{
+		playOncePerPattern3 = false;
 		if (whichPattern == 4 || whichPattern == 5 || whichPattern == 6)
 			Scale().x *= -1;
 		sequence++;
@@ -1140,9 +1146,15 @@ void Valphalk::ForwardBoom()
 		case 5:		SetState(E_0152);  E0152(XM_PIDIV2);	break;
 		case 6:		SetState(E_0153);  E0153(XM_PI);		break;
 		}
+		if (RATIO > 0.1f && !playOncePerPattern3)
+		{
+			Sounds::Get()->Play("em086_05_vo_media_2", 0.5f);
+			playOncePerPattern3 = true;
+		}
 	}
 	if (sequence == 2)
 	{
+		playOncePerPattern3 = false;
 		if (whichPattern == 4 || whichPattern == 5 || whichPattern == 6)
 			Scale().x *= -1;
 		sequence++;
@@ -1548,16 +1560,19 @@ void Valphalk::Patrol()
 	walkTime += DELTA;
 	static int walkNum;
 	float distance = (target->GlobalPos() - Pos()).Length();
-	if (curState == E_0043 || curState == E_0044 || curState == E_0045 || curState == E_0055)
+	if (UI->isMapChange)
 	{
-		if (walkTime > 0.85f)
+		if (curState == E_0043 || curState == E_0044 || curState == E_0045 || curState == E_0055)
 		{
-			walkNum++;
-			if (walkNum % 2 == 0)
-				Sounds::Get()->Play("em086_05_se_media_52", 0.4f);
-			else
-				Sounds::Get()->Play("em086_05_se_media_62", 0.4f);
-			walkTime = 0.0f;
+			if (walkTime > 0.85f)
+			{
+				walkNum++;
+				if (walkNum % 2 == 0)
+					Sounds::Get()->Play("em086_05_se_media_52", 0.4f);
+				else
+					Sounds::Get()->Play("em086_05_se_media_62", 0.4f);
+				walkTime = 0.0f;
+			}
 		}
 	}
 	if (sequence == 0) // 방향을 정해
@@ -2481,11 +2496,17 @@ void Valphalk::S_LegAtk()
 		case 5:		SetState(E_2107);  E2107(XM_PIDIV2);  break;
 		case 6:		SetState(E_2108);  E2108(XM_PI);	break;
 		}
+		if (RATIO > 0.1f && !playOncePerPattern3)
+		{
+			Sounds::Get()->Play("em086_05_vo_media_1", 0.5f);
+			playOncePerPattern3 = true;
+		}
 	}
 
 	if (sequence == 3) // 공격 모션
 	{
 		SetState(E_2118);	E2118();
+		playOncePerPattern3 = false;
 	}
 
 	if (sequence == 4) // 앞다리 찍기 마무리 + 왼날개 찍기
@@ -2540,11 +2561,17 @@ void Valphalk::S_LegAtk()
 		case 5:		SetState(E_2107);  E2107(XM_PIDIV2);  break;
 		case 6:		SetState(E_2108);  E2108(XM_PI);	break;
 		}
+		if (RATIO > 0.1f && !playOncePerPattern3)
+		{
+			Sounds::Get()->Play("em086_05_vo_media_1", 0.5f);
+			playOncePerPattern3 = true;
+		}
 	}
 
 	if (sequence == 11) // 공격 모션
 	{
 		SetState(E_2118);	E2118();
+		playOncePerPattern3 = false;
 	}
 
 	if (sequence == 12) // 앞다리 찍기 마무리 + 왼날개 찍기
@@ -2793,6 +2820,11 @@ void Valphalk::S_BackWingAtk()
 		case 3:		sequence = 4;
 		case 4:		SetState(E_2210);	E2210();  break;
 		}
+		if (RATIO > 0.1f && !playOncePerPattern3)
+		{
+			Sounds::Get()->Play("em086_05_vo_media_2", 0.5f);
+			playOncePerPattern3 = true;
+		}
 	}
 
 	if (sequence == 2)
@@ -2807,7 +2839,7 @@ void Valphalk::S_BackWingAtk()
 		vecToTagt = realPos->Pos() + Back() * dist;
 		Rot().y -= radBtwTarget;
 		UpdateWorld();
-
+		playOncePerPattern3 = false;
 		sequence++;
 	}
 
@@ -2852,10 +2884,16 @@ void Valphalk::S_SRush()
 		case 5:	SetState(E_2192); E2192();  break; // 오 90
 		case 6:	SetState(E_2193); E2193();  break; // 오 180
 		}
+		if (RATIO > 0.1f && !playOncePerPattern3)
+		{
+			Sounds::Get()->Play("em086_05_vo_media_1", 0.5f);
+			playOncePerPattern3 = true;
+		}
 	}
 
 	if (sequence == 2) // 공격 모션
 	{
+		playOncePerPattern3 = false;
 		SetState(E_2200);
 		E2200();
 	}
@@ -2954,10 +2992,16 @@ void Valphalk::S_Bite()
 		case 5:		SetState(E_2174);  E2174(XM_PIDIV2);  break;
 		case 6:		SetState(E_2175);  E2175(XM_PI);	break;
 		}
+		if (RATIO > 0.1f && !playOncePerPattern3)
+		{
+			Sounds::Get()->Play("em086_05_vo_media_1", 0.5f);
+			playOncePerPattern3 = true;
+		}
 	}
 
 	if (sequence == 3) // 공격 모션
 	{
+		playOncePerPattern3 = false;
 		SetState(E_2185);	E2185();
 	}
 
@@ -3010,10 +3054,16 @@ void Valphalk::S_Bite()
 		case 5:		SetState(E_2174);  E2174(XM_PIDIV2);  break;
 		case 6:		SetState(E_2175);  E2175(XM_PI);	break;
 		}
+		if (RATIO > 0.1f && !playOncePerPattern3)
+		{
+			Sounds::Get()->Play("em086_05_vo_media_1", 0.5f);
+			playOncePerPattern3 = true;
+		}
 	}
 
 	if (sequence == 10) // 공격 모션
 	{
+		playOncePerPattern3 = false;
 		SetState(E_2185);	E2185();
 	}
 
@@ -3061,10 +3111,16 @@ void Valphalk::S_RunAndBite()
 		case 5:		SetState(E_0060);  E0060(XM_PIDIV2);	break;
 		case 6:		SetState(E_0061);  E0061(XM_PI);		break;
 		}
+		if (RATIO > 0.1f && !playOncePerPattern3)
+		{
+			Sounds::Get()->Play("em086_05_vo_media_1", 0.5f);
+			playOncePerPattern3 = true;
+		}
 	}
 
 	if (sequence == 2) // 달리기 모션
 	{
+		playOncePerPattern3 = false;
 		SetState(E_0071);
 		E0071();
 	}
@@ -3209,10 +3265,16 @@ void Valphalk::B_WingAtk()
 		case 5:	SetState(E_2133); E2133();  break;
 		case 6:	SetState(E_2134); E2134();  break;
 		}
+		if (RATIO > 0.1f && !playOncePerPattern3)
+		{
+			Sounds::Get()->Play("em086_05_vo_media_1", 0.5f);
+			playOncePerPattern3 = true;
+		}
 	}
 
 	if (sequence == 2) // 공격 모션
 	{
+		playOncePerPattern3 = false;
 		SetState(E_2141);
 		E2141();
 	}
@@ -3323,10 +3385,16 @@ void Valphalk::B_Dumbling()
 		case 5:		SetState(E_0152);  E0152(XM_PIDIV2);	break;
 		case 6:		SetState(E_0153);  E0153(XM_PI);		break;
 		}
+		if (RATIO > 0.1f && !playOncePerPattern3)
+		{
+			Sounds::Get()->Play("em086_05_vo_media_1", 0.5f);
+			playOncePerPattern3 = true;
+		}
 	}
 
 	if (sequence == 2) // 공격 모션
 	{
+		playOncePerPattern3 = false;
 		if (whichPattern == 4 || whichPattern == 5 || whichPattern == 6)
 			Scale().x *= -1;
 		sequence++;

@@ -294,6 +294,8 @@ void GameManager::Create()
     /////////////////////////////////////////////////////////////
     // Valphalk
     // = Voice = 
+    sound->AddSound("em086_05_vo_media_1", SoundPath + L"Valphalk/em086_05_vo_media_1.mp3");
+    sound->AddSound("em086_05_vo_media_2", SoundPath + L"Valphalk/em086_05_vo_media_2.mp3");
     // ¹°±â
     sound->AddSound("em086_05_vo_media_7", SoundPath + L"Valphalk/em086_05_vo_media_7.mp3");
     // 
