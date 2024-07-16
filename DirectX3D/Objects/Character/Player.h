@@ -426,7 +426,7 @@ private:
 
 	bool isSetState = false;
 
-	vector<Damage> damages;
+	list<Damage> damages;
 
 	bool isEvaded = false; // 회피했는지 여부
 	bool isRiding = false;

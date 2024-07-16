@@ -1408,7 +1408,7 @@ bool Player::AttackDummy(float power, bool push, UINT useOtherCollider)
 
 			if (push)
 				damages.push_back(damage);
-
+			
 			return true;;
 		}
 	}
