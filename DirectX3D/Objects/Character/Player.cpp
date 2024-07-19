@@ -8,106 +8,10 @@
 
 Player::Player() : ModelAnimator("Player")
 {
-	head = new Transform();
-	center = new Transform();
-	realPos = new Transform();
-	backPos = new Transform();
-	forwardPos = new Transform();
-	swordStart = new Transform();
-	swordEnd = new Transform();
-	mainHand = new Transform();
-	backSwd = new Transform();
-	playerWireBugHead = new Transform();
-	playerWireBugTail = new Transform();
-
-	swordCollider = new CapsuleCollider(2.0f, 100.0f);
-	swordCollider->Rot().x += XM_PIDIV2;
-	swordCollider->SetParent(mainHand);
-	swordCollider->Pos().z -= 100.0f;
-	swordCollider->Scale() *= 3.0f;
-
-	trail = new Trail(L"Textures/Effect/Snow.png", swordStart, swordEnd, 20, 85);
-	wireBugTrail = new Trail(L"Textures/Effect/bluelight.png", playerWireBugHead, playerWireBugTail, 20, 45);
-
-	/////////////////////////////////////////////////////////////
-	// Particles
-
-	FOR(7)
-		hitParticle.push_back(new HitParticle());
-	hitBoomParticle = new HitBoomParticle();
-	criticalParticle = new CriticalParticle();
-	spAtkParticle = new Sp_atk_ready_Particle();
-	spStartParticle = new Sp_atk_start();
-	spSuccessParticle = new Sp_atk_success();
-	spiritParticle = new SpiritFlame();
-	potionParticle = new PotionParticle();
-	haloTransform = new Transform();
-	haloCollider = new CapsuleCollider();
-	wireBugParticle = new Wire_Bug();
-	sutdol = new Sutdol();
-
-	FOR(4)
-	{
-		CircleEft* cir = new CircleEft();
-		cir->SetParent(realPos);
-		if (i == 1) cir->Rot().z += unitRad * 50;
-		if (i == 2) cir->Rot().z -= unitRad * 50;
-		if (i == 3)
-		{
-			cir->Rot().z += XM_PIDIV2;
-			cir->Scale() *= 0.9f;
-		}
-		cir->Pos().y += 70;
-		circle.push_back(cir);
-	}
-
-	haloCollider->SetParent(swordStart);
-
-	suwol = new Suwol();
-	suwol->SetParent(realPos);
-
-	slice = new SliceEft();
-	slice->SetParent(realPos);
-
-	tuguAtk = new headBreakAtk();
-
-	/////////////////////////////////////////////////////////////
-	longSword = new Model("kal");
-	longSword->SetParent(mainHand);
-
-	kalzip = new Model("kalzip");
-	kalzip->SetParent(backSwd);
-
-	//	longSword->Rot().x -= XM_PIDIV2;	
-
-	tmpCollider = new CapsuleCollider(1, 0.1);
-	tmpCollider->Scale().x *= 6.0f;
-
-	tmpCollider2 = new CapsuleCollider(1, 0.1);
-	tmpCollider2->Scale() *= 6.0f;
-	tmpCollider2->SetParent(backPos);
-
-	tmpCollider3 = new CapsuleCollider(1, 0.1);
-	tmpCollider3->Scale() *= 24.0f;
-	tmpCollider3->SetParent(forwardPos);
-
-	bodyCollider = new CapsuleCollider(35, 100);
-	bodyCollider->SetParent(realPos);
-	bodyCollider->Pos().y += 75.0f;
-	bodyCollider->UpdateWorld();
-
-	evadeCheckCollider = new CapsuleCollider(35, 100);
-	evadeCheckCollider->Pos().y += 75.0f;
-	evadeCheckCollider->SetActive(false);
-	evadeCheckCollider->UpdateWorld();
-	//	tmpCollider->SetParent(head);
-	//	tmpCollider->SetParent(back);
-
-	playerWireBug = new PlayerWireBug();
-	playerWireBug->SetActive(false);
-
-	FOR(3) 
-		bugEfts.push_back(new ParticleSystem("TextData/Particles/bugEft.fx"));
+	TransformsReady();
+	CollidersReady();
+	ParticlesReady();
+	ModelsReady();
 
 	ReadClips();
 
@@ -174,19 +78,17 @@ void Player::Update()
 		CAM->SetLockOnTarget(Vector3::Zero());
 
 
-	//if (!DeathCheck())
-	//{
-	//	TermAttackUpdate();
-	//	HurtCheck();
-	//	Potion();
-	//	SharpeningStone();
-	//}
-	///////////////////////////////////
-	//디버깅을 위해서 DeathCheck() 밖으로 빼둔것.
+	if (!DeathCheck())
+	{
+		TermAttackUpdate();
+		HurtCheck();
+		SharpeningStone();
+		if (isRiding)
+			Potion();
+	}
+
 	if (callGaruk)
 		ReadyRide();
-
-	TermAttackUpdate();
 
 	if (val->hupgiFail)
 	{
@@ -194,11 +96,8 @@ void Player::Update()
 		val->hupgiFail = false;
 	}
 
-	HurtCheck();
 	time += DELTA;
-	if (isRiding)
-		Potion();
-	SharpeningStone();
+
 	UseBlueBox();
 	GetWireBug();
 	Capture();
@@ -208,23 +107,11 @@ void Player::Update()
 	WalkSounds();
 	ResetPlayTime();
 
-
 	UpdateWorlds();
 	EffectUpdates();
 
 	ModelAnimator::Update();
 	GroundCheck();
-
-	///////////////////////////////
-	//디버그용
-	if (KEY_DOWN('5'))
-		UI->PlusCotingLevel();
-	if (KEY_DOWN('6'))
-		SetState(D_015);
-	if (KEY_DOWN('7'))
-		SetState(D_021);
-
-	///////////////////////////////
 }
 
 void Player::PreRender()
@@ -291,67 +178,9 @@ void Player::Render()
 
 void Player::UpdateWorlds()
 {
-	if (!State_S())
-	{
-		mainHand->SetWorld(GetTransformByNode(rightHandNode));
-		longSword->Pos() = {};
-		longSword->Rot() = {};
-	}
-	else if (State_S())
-	{
-		mainHand->SetWorld(GetTransformByNode(backSwdNode));
-		longSword->Pos() = { -32,32,23 };
-		longSword->Rot() = { -0.86f,-1.2f,+1.46f };
-	}
-
-	if (holdingSword)
-	{
-		backSwd->SetWorld(GetTransformByNode(leftHandNode));
-		kalzip->Pos() = { };
-		kalzip->Rot() = { };
-	}
-	else
-	{
-		backSwd->SetWorld(GetTransformByNode(backSwdNode));
-		kalzip->Pos() = { -32,32,23 };
-		kalzip->Rot() = { -0.86f,-1.2f,+1.46f };
-	}
-
-	if (Rot().y < -3.14)
-		Rot().y += XM_2PI;
-
-	if (Rot().y > 3.14)
-		Rot().y -= XM_2PI;
-
-	if (isRiding)
-	{
-		if (curState == R_031)
-		{
-			Pos().x = garuk->GlobalPos().x + Forward().x * 50;
-			Pos().z = garuk->GlobalPos().z + Forward().z * 50;
-		}
-		else
-		{
-			if ((garuk->GlobalPos() - Pos()).Length() < 300)
-			{
-				Pos().x = garuk->GlobalPos().x + Forward().x * 50;
-				Pos().z = garuk->GlobalPos().z + Forward().z * 50;
-			}
-		}
-		Rot().y = garuk->Rot().y;
-		if (curState == R_600 || curState == R_601 || curState == R_602)
-		{
-			mainHand->SetWorld(GetTransformByNode(leftHandNode));
-			longSword->Pos() = {};
-			longSword->Rot() = {};
-		}
-		else
-		{
-			mainHand->SetWorld(GetTransformByNode(backSwdNode));
-			longSword->Pos() = { -32,32,23 };
-			longSword->Rot() = { -0.86f,-1.2f,+1.46f };
-		}
-	}
+	TransformsUpdate();
+	CollidersUpdate();
+	ParticlesUpdate();
 
 	Vector3 camRot = CAM->Rot();
 	camRot.y += XM_PI;
@@ -368,80 +197,6 @@ void Player::UpdateWorlds()
 
 	if (keyboardRot < -3.14)		keyboardRot += XM_2PI;
 	if (keyboardRot > 3.14)			keyboardRot -= XM_2PI;
-
-
-	realPos->Pos() = GetTranslationByNode(1);
-	realPos->UpdateWorld();
-
-	backPos->Pos() = GetTranslationByNode(1) + Forward() * 100;
-	forwardPos->Pos() = GetTranslationByNode(1) + Back() * 50 + Vector3::Up() * 80;
-
-	head->Pos().x = realPos->Pos().x;
-	if (isRiding && curState != R_031)
-		head->Pos().y = realPos->Pos().y + 100;
-	else
-		head->Pos().y = realPos->Pos().y + 200;
-
-	head->Pos().z = realPos->Pos().z;
-	center->Pos().x = realPos->Pos().x;
-	center->Pos().y = realPos->Pos().y + 100;
-	center->Pos().z = realPos->Pos().z;
-	center->Rot() = Rot();
-
-	lastSwordEnd = swordStart->Pos();
-
-	swordStart->Pos() = longSword->GlobalPos() + longSword->Back() * 271.0f; // 20.0f : 10% 크기 반영
-	swordEnd->Pos() = longSword->GlobalPos() + longSword->Back() * 260.0f;
-
-	swordStart->UpdateWorld();
-	swordEnd->UpdateWorld();
-
-	playerWireBugHead->Pos() = playerWireBug->GlobalPos() + playerWireBug->Forward() * 2.0f + playerWireBug->Right() * 2.0f;
-	playerWireBugTail->Pos() = playerWireBug->GlobalPos() + playerWireBug->Back() * 2.0f + playerWireBug->Left() * 2.0f;
-
-	playerWireBugHead->UpdateWorld();
-	playerWireBugTail->UpdateWorld();
-
-	if (!playerWireBug->GetisMoving())
-		playerWireBug->Pos() = GetTranslationByNode(leftHandNode);
-
-	swordSwingDir = lastSwordEnd - swordStart->GlobalPos();
-	tmpCollider->Pos() = GetTranslationByNode(node);
-	tmpCollider->Rot() = GetRotationByNode(node);
-
-	backPos->UpdateWorld();
-	forwardPos->UpdateWorld();
-
-	longSword->UpdateWorld();
-	kalzip->UpdateWorld();
-	head->UpdateWorld();
-	center->UpdateWorld();
-	tmpCollider->UpdateWorld();
-	tmpCollider2->UpdateWorld();
-	tmpCollider3->UpdateWorld();
-	bodyCollider->Update();
-	swordCollider->Update();
-
-	playerWireBug->Rot() = Rot();
-	playerWireBug->Update();
-
-	haloTransform->Pos() = longSword->GlobalPos() + longSword->Back() * 55.f;
-	haloCollider->Pos() = haloTransform->Pos();
-
-	if (KEY_DOWN('T'))
-	{
-		UI->curHP = UI->maxHP;
-		UI->curStamina = 100;
-		UI->curSpiritGauge = UI->maxSpiritGauge;
-		UI->cotingLevel = 3;
-		UI->curCoting = UI->maxCoting;
-		UI->bugCount = 0;
-	}
-	if (KEY_DOWN('Y'))
-	{
-		UI->curHP -= 10;
-		UI->recoverHP -= 5;
-	}
 }
 
 void Player::Potion()
@@ -2166,6 +1921,242 @@ void Player::ReadClips()
 	ReadClip("T_052");
 
 	ReadClip("E_092");
+}
+
+void Player::TransformsReady()
+{
+	head = new Transform();
+	center = new Transform();
+	realPos = new Transform();
+	backPos = new Transform();
+	forwardPos = new Transform();
+	swordStart = new Transform();
+	swordEnd = new Transform();
+	mainHand = new Transform();
+	backSwd = new Transform();
+	playerWireBugHead = new Transform();
+	playerWireBugTail = new Transform();
+}
+
+void Player::CollidersReady()
+{
+	swordCollider = new CapsuleCollider(2.0f, 100.0f);
+	swordCollider->Rot().x += XM_PIDIV2;
+	swordCollider->SetParent(mainHand);
+	swordCollider->Pos().z -= 100.0f;
+	swordCollider->Scale() *= 3.0f;
+
+	tmpCollider = new CapsuleCollider(1, 0.1);
+	tmpCollider->Scale().x *= 6.0f;
+
+	tmpCollider2 = new CapsuleCollider(1, 0.1);
+	tmpCollider2->Scale() *= 6.0f;
+	tmpCollider2->SetParent(backPos);
+
+	tmpCollider3 = new CapsuleCollider(1, 0.1);
+	tmpCollider3->Scale() *= 24.0f;
+	tmpCollider3->SetParent(forwardPos);
+
+	bodyCollider = new CapsuleCollider(35, 100);
+	bodyCollider->SetParent(realPos);
+	bodyCollider->Pos().y += 75.0f;
+	bodyCollider->UpdateWorld();
+
+	evadeCheckCollider = new CapsuleCollider(35, 100);
+	evadeCheckCollider->Pos().y += 75.0f;
+	evadeCheckCollider->SetActive(false);
+	evadeCheckCollider->UpdateWorld();
+}
+
+void Player::ParticlesReady()
+{
+	trail = new Trail(L"Textures/Effect/Snow.png", swordStart, swordEnd, 20, 85);
+	wireBugTrail = new Trail(L"Textures/Effect/bluelight.png", playerWireBugHead, playerWireBugTail, 20, 45);
+
+	FOR(7)
+		hitParticle.push_back(new HitParticle());
+	hitBoomParticle = new HitBoomParticle();
+	criticalParticle = new CriticalParticle();
+	spAtkParticle = new Sp_atk_ready_Particle();
+	spStartParticle = new Sp_atk_start();
+	spSuccessParticle = new Sp_atk_success();
+	spiritParticle = new SpiritFlame();
+	potionParticle = new PotionParticle();
+	haloTransform = new Transform();
+	haloCollider = new CapsuleCollider();
+	wireBugParticle = new Wire_Bug();
+	sutdol = new Sutdol();
+
+	FOR(4)
+	{
+		CircleEft* cir = new CircleEft();
+		cir->SetParent(realPos);
+		if (i == 1) cir->Rot().z += unitRad * 50;
+		if (i == 2) cir->Rot().z -= unitRad * 50;
+		if (i == 3)
+		{
+			cir->Rot().z += XM_PIDIV2;
+			cir->Scale() *= 0.9f;
+		}
+		cir->Pos().y += 70;
+		circle.push_back(cir);
+	}
+
+	haloCollider->SetParent(swordStart);
+
+	suwol = new Suwol();
+	suwol->SetParent(realPos);
+
+	slice = new SliceEft();
+	slice->SetParent(realPos);
+
+	tuguAtk = new headBreakAtk();
+
+	FOR(3)
+		bugEfts.push_back(new ParticleSystem("TextData/Particles/bugEft.fx"));
+}
+
+void Player::ModelsReady()
+{
+	longSword = new Model("kal");
+	longSword->SetParent(mainHand);
+
+	kalzip = new Model("kalzip");
+	kalzip->SetParent(backSwd);
+
+	playerWireBug = new PlayerWireBug();
+	playerWireBug->SetActive(false);
+}
+
+void Player::TransformsUpdate()
+{
+	if (Rot().y < -3.14)
+		Rot().y += XM_2PI;
+
+	if (Rot().y > 3.14)
+		Rot().y -= XM_2PI;
+
+	if (!State_S())
+	{
+		mainHand->SetWorld(GetTransformByNode(rightHandNode));
+		longSword->Pos() = {};
+		longSword->Rot() = {};
+	}
+	else if (State_S())
+	{
+		mainHand->SetWorld(GetTransformByNode(backSwdNode));
+		longSword->Pos() = { -32,32,23 };
+		longSword->Rot() = { -0.86f,-1.2f,+1.46f };
+	}
+
+	if (holdingSword)
+	{
+		backSwd->SetWorld(GetTransformByNode(leftHandNode));
+		kalzip->Pos() = { };
+		kalzip->Rot() = { };
+	}
+	else
+	{
+		backSwd->SetWorld(GetTransformByNode(backSwdNode));
+		kalzip->Pos() = { -32,32,23 };
+		kalzip->Rot() = { -0.86f,-1.2f,+1.46f };
+	}
+
+	if (isRiding)
+	{
+		if (curState == R_031)
+		{
+			Pos().x = garuk->GlobalPos().x + Forward().x * 50;
+			Pos().z = garuk->GlobalPos().z + Forward().z * 50;
+		}
+		else
+		{
+			if ((garuk->GlobalPos() - Pos()).Length() < 300)
+			{
+				Pos().x = garuk->GlobalPos().x + Forward().x * 50;
+				Pos().z = garuk->GlobalPos().z + Forward().z * 50;
+			}
+		}
+		Rot().y = garuk->Rot().y;
+		if (curState == R_600 || curState == R_601 || curState == R_602)
+		{
+			mainHand->SetWorld(GetTransformByNode(leftHandNode));
+			longSword->Pos() = {};
+			longSword->Rot() = {};
+		}
+		else
+		{
+			mainHand->SetWorld(GetTransformByNode(backSwdNode));
+			longSword->Pos() = { -32,32,23 };
+			longSword->Rot() = { -0.86f,-1.2f,+1.46f };
+		}
+	}
+
+	realPos->Pos() = GetTranslationByNode(1);
+	realPos->UpdateWorld();
+
+	backPos->Pos() = GetTranslationByNode(1) + Forward() * 100;
+	forwardPos->Pos() = GetTranslationByNode(1) + Back() * 50 + Vector3::Up() * 80;
+
+	head->Pos().x = realPos->Pos().x;
+	if (isRiding && curState != R_031)
+		head->Pos().y = realPos->Pos().y + 100;
+	else
+		head->Pos().y = realPos->Pos().y + 200;
+
+	head->Pos().z = realPos->Pos().z;
+	center->Pos().x = realPos->Pos().x;
+	center->Pos().y = realPos->Pos().y + 100;
+	center->Pos().z = realPos->Pos().z;
+	center->Rot() = Rot();
+
+	lastSwordEnd = swordStart->Pos();
+
+	swordStart->Pos() = longSword->GlobalPos() + longSword->Back() * 271.0f; // 20.0f : 10% 크기 반영
+	swordEnd->Pos() = longSword->GlobalPos() + longSword->Back() * 260.0f;
+
+	swordStart->UpdateWorld();
+	swordEnd->UpdateWorld();
+
+	playerWireBugHead->Pos() = playerWireBug->GlobalPos() + playerWireBug->Forward() * 2.0f + playerWireBug->Right() * 2.0f;
+	playerWireBugTail->Pos() = playerWireBug->GlobalPos() + playerWireBug->Back() * 2.0f + playerWireBug->Left() * 2.0f;
+
+	playerWireBugHead->UpdateWorld();
+	playerWireBugTail->UpdateWorld();
+
+	if (!playerWireBug->GetisMoving())
+		playerWireBug->Pos() = GetTranslationByNode(leftHandNode);
+
+	swordSwingDir = lastSwordEnd - swordStart->GlobalPos();
+
+	backPos->UpdateWorld();
+	forwardPos->UpdateWorld();
+
+	longSword->UpdateWorld();
+	kalzip->UpdateWorld();
+	head->UpdateWorld();
+	center->UpdateWorld();
+}
+
+void Player::CollidersUpdate()
+{
+	tmpCollider->Pos() = GetTranslationByNode(node);
+	tmpCollider->Rot() = GetRotationByNode(node);
+
+	tmpCollider->UpdateWorld();
+	tmpCollider2->UpdateWorld();
+	tmpCollider3->UpdateWorld();
+	bodyCollider->Update();
+	swordCollider->Update();
+}
+
+void Player::ParticlesUpdate()
+{
+	playerWireBug->Rot() = Rot();
+	playerWireBug->Update();
+
+	haloTransform->Pos() = longSword->GlobalPos() + longSword->Back() * 55.f;
+	haloCollider->Pos() = haloTransform->Pos();
 }
 
 void Player::RecordLastPos()

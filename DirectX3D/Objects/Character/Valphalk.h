@@ -237,12 +237,12 @@ private:
 	///////////////// 생성자쪽 함수 ////////////////
 	void ReadClips();
 	void TransformsReady();
-	void CollisionsReady();
+	void CollidersReady();
 	void ParticlesReady();
 
 	///////////////// Update쪽 함수 ////////////////
 	void TransformsUpdate();
-	void CollisionsUpdate();
+	void CollidersUpdate();
 	void ParticlesUpdate();
 	///////////////////////////////////////////////
 

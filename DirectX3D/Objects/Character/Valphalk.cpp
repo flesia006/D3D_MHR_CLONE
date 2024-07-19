@@ -12,7 +12,7 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 	ColliderAdd();
 
 	TransformsReady();
-	CollisionsReady();
+	CollidersReady();
 	ParticlesReady();
 
 	FOR(2) rasterizerState[i] = new RasterizerState();
@@ -73,7 +73,7 @@ void Valphalk::Update()
 	ColliderNodePos();
 
 	TransformsUpdate(); // 트랜스폼 업데이트 모음
-	CollisionsUpdate(); // 충돌체 업데이트 모음
+	CollidersUpdate(); // 충돌체 업데이트 모음
 	ParticlesUpdate(); // 이펙트 업데이트 모음
 
 	ModelAnimator::Update();
@@ -2128,7 +2128,7 @@ void Valphalk::TransformsReady()
 	realPosition->UpdateWorld();
 }
 
-void Valphalk::CollisionsReady()
+void Valphalk::CollidersReady()
 {
 	/////////////////////////////////////////////
 // 공격 콜라이더 (투사체, 폭발 등)	
@@ -2300,7 +2300,7 @@ void Valphalk::TransformsUpdate()
 	velocity = target->GlobalPos() - GlobalPos();
 }
 
-void Valphalk::CollisionsUpdate()
+void Valphalk::CollidersUpdate()
 {
 	for (CapsuleCollider* capsulCollider : colliders)
 		capsulCollider->Update();

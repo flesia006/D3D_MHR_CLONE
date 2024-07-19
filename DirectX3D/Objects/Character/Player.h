@@ -150,7 +150,19 @@ private:
 
 
 private:
+	//////////////////// 생성자쪽 함수 ////////////////////
 	void ReadClips();
+	void TransformsReady();
+	void CollidersReady();
+	void ParticlesReady();
+	void ModelsReady();
+
+	//////////////////// Update쪽 함수 ////////////////////
+	void TransformsUpdate();
+	void CollidersUpdate();
+	void ParticlesUpdate();
+
+	//////////////////////////////////////////////////////
 	void RecordLastPos();
 	void ReturnIdle()
 	{
