@@ -7,329 +7,16 @@ Valphalk::Valphalk() : ModelAnimator("Valphalk")
 {
 	srand(static_cast<unsigned int>(time(NULL)));
 
-	head = new Transform();
-	jetpos = new Transform();
-	jetposend = new Transform();
-	ReadClip("E_0003");
-	ReadClip("E_0007");
-	// 플레이어 발견 전
-	ReadClip("E_0043");
-	ReadClip("E_0044");
-	ReadClip("E_0045");
-	ReadClip("E_0055");
-	// 플레이어 발견 후
-	ReadClip("E_0059");
-	ReadClip("E_0060");
-	ReadClip("E_0061");
-	ReadClip("E_0071");
-	ReadClip("E_0097");
-	ReadClip("E_0098");
-	ReadClip("E_0099");
-	ReadClip("E_0146");
-	ReadClip("E_0147");
-	ReadClip("E_0151");
-	ReadClip("E_0152");
-	ReadClip("E_0153");
-	ReadClip("E_0164");
-	ReadClip("E_0165");
-	ReadClip("E_0166");
-	ReadClip("E_0171");
-	ReadClip("E_0172");
-	ReadClip("E_0173");
-	ReadClip("E_0178");
-	ReadClip("E_0179");
-	ReadClip("E_0180");
-	ReadClip("E_0186");
-	ReadClip("E_0187");
-	ReadClip("E_0188");
-	ReadClip("E_1151");
-	ReadClip("E_1155");
-	ReadClip("E_1157");
-	ReadClip("E_1158");
-	ReadClip("E_1160");
+	ReadClips();
 
-	ReadClip("E_1163");
-	ReadClip("E_1164");
-	ReadClip("E_2001");
-	ReadClip("E_2002");
-	ReadClip("E_2003");
-	ReadClip("E_2013");
-	ReadClip("E_2015");
-	ReadClip("E_2017");
-	ReadClip("E_2019");
-	ReadClip("E_2020");
-	ReadClip("E_2022");
-	ReadClip("E_2027");
-	ReadClip("E_2032");
-	ReadClip("E_2033");
-	ReadClip("E_2038");
-	ReadClip("E_2040");
-	ReadClip("E_2041");
-	ReadClip("E_2042");
-	ReadClip("E_2044");
-	ReadClip("E_2045");
-	ReadClip("E_2054");
-	ReadClip("E_2056");
-	ReadClip("E_2079");
-	ReadClip("E_2082");
-	ReadClip("E_2091");
-	ReadClip("E_2092");
-	ReadClip("E_2093");
-	ReadClip("E_2103");
-
-	ReadClip("E_2106");
-	ReadClip("E_2107");
-	ReadClip("E_2108");
-	ReadClip("E_2118");
-	ReadClip("E_2121");
-	ReadClip("E_2124");
-
-	ReadClip("E_2129");
-	ReadClip("E_2130");
-	ReadClip("E_2131");
-	ReadClip("E_2133");
-	ReadClip("E_2134");
-	ReadClip("E_2141");
-
-	ReadClip("E_2144");
-	ReadClip("E_2145");
-	ReadClip("E_2146");
-	ReadClip("E_2145a");
-	ReadClip("E_2151");
-	ReadClip("E_2152");
-	ReadClip("E_2153");
-	ReadClip("E_2158");
-	ReadClip("E_2166");
-	ReadClip("E_2171");
-
-	ReadClip("E_2173");
-	ReadClip("E_2174");
-	ReadClip("E_2175");
-	ReadClip("E_2185");
-	ReadClip("E_2188");
-	ReadClip("E_2189");
-	ReadClip("E_2190");
-	ReadClip("E_2192");
-	ReadClip("E_2193");
-	ReadClip("E_2200");
-	ReadClip("E_2200fix");
-
-	ReadClip("E_2210");
-	ReadClip("E_2211");
-	ReadClip("E_2253");
-	ReadClip("E_2265");
-	ReadClip("E_2267");
-	ReadClip("E_2270");
-	ReadClip("E_2271");
-	ReadClip("E_2272");
-	ReadClip("E_2274");
-	ReadClip("E_2275");
-	ReadClip("E_2276");
-	ReadClip("E_2277");
-	ReadClip("E_2278");
-	ReadClip("E_2280");
-	ReadClip("E_2281");
-	ReadClip("E_2282");
-	ReadClip("E_2286");
-	ReadClip("E_2288");
-	ReadClip("E_2290");
-	ReadClip("E_2354");
-	ReadClip("E_2356");
-	ReadClip("E_2359");
-	ReadClip("E_2361");
-	ReadClip("E_2367");
-	ReadClip("E_2368");
-	ReadClip("E_2371");
-	ReadClip("E_2372");
-	ReadClip("E_2373");
-	ReadClip("E_2374");
-	ReadClip("E_2375");
-	ReadClip("E_2376");
-
-	ReadClip("E_2381");
-	ReadClip("E_2382");
-	ReadClip("E_2383");
-	ReadClip("E_2403");
-
-	ReadClip("E_3001");
-	ReadClip("E_3006");
-	ReadClip("E_3015");
-	ReadClip("E_3016");
-	ReadClip("E_3017");
-	ReadClip("E_3023");
-	ReadClip("E_3101");
-	ReadClip("E_3106");
-	ReadClip("E_3114");
-	ReadClip("E_3118");
-	// 아래 있는게 첫 포효
-	ReadClip("E_4001");
-	ReadClip("E_4013");
-	ReadClip("E_4071");
-	ReadClip("E_4073");
-	ReadClip("E_4074");
-	//	ReadClip("E_22005");
-	//Sounds::Get()->Play("env_114", 0.5f); // 바람소리 게임 메니저 에서 로딩씬이랑 오프닝씬 띄우면 나옴
 	ColliderAdd();
-	realPos = new CapsuleCollider(1, 0.1);
-	realPos->Pos() = Vector3(4000, 0, 4000); // TODO : 발파루크 시작위치 4000 500 4000
-	realPos->Scale() *= 6.0f;
-	realPos->UpdateWorld();
 
-	eyes = new Transform();
-
-	tempCollider = new CapsuleCollider(6, 0.1);
-	tempCollider->UpdateWorld();
-
-	realPosition = new Transform();
-	realPosition->UpdateWorld();
+	TransformsReady();
+	CollisionsReady();
+	ParticlesReady();
 
 	FOR(2) rasterizerState[i] = new RasterizerState();
 	rasterizerState[1]->CullMode(D3D11_CULL_NONE);
-
-	/////////////////////////////////////////////
-	// 공격 콜라이더 (투사체, 폭발 등)	
-	bullets.resize(6);
-	FOR(6)
-	{
-		bullets[i] = new SphereCollider();
-		bullets[i]->Scale() *= 100;
-		bullets[i]->SetColor(1, 0, 0);
-		bullets[i]->SetActive(false);
-		bullets[i]->atkDmg = 30;
-		sphereColliders.push_back(bullets[i]);
-	}
-
-	forwardBoom = new BoxCollider();
-	forwardBoom->Scale() *= 1000;
-	forwardBoom->SetColor(1, 0, 0);
-	forwardBoom->Pos() = forwardBoomPosInit;
-	forwardBoom->SetParent(head);
-	forwardBoom->SetActive(false);
-	forwardBoom->atkDmg = 35;
-
-	stormBox = new SphereCollider();
-	stormBox->Scale() *= 1;
-	stormBox->Pos() = Pos();
-	stormBox->SetColor(1, 0, 0);
-	stormBox->atkDmg = 50;
-	stormBox->SetParent(head);
-	sphereColliders.push_back(stormBox);
-
-	{//fullBurst
-		fullBurst = new BoxCollider();
-		fullBurst->Scale() *= 500;
-		fullBurst->Scale().z *= 20;
-		fullBurst->SetParent(head);
-		fullBurst->Pos().z -= 5000;
-		fullBurst->SetColor(1, 0, 0);
-		fullBurst->SetActive(false);
-		fullBurst->atkDmg = 55;
-		fullBurstScale = fullBurst->Scale();
-		fullBurstPos = fullBurst->Pos();
-		fullBurstRot = fullBurst->Rot();
-	}
-
-	effectBox1 = new BoxCollider();
-	effectBox2 = new BoxCollider();
-	effectBox3 = new BoxCollider();
-	effectBox1->Scale().x = 1500;
-	effectBox1->Scale().y = 450;
-	effectBox1->Scale().z = 400;
-	effectBox1->SetParent(transforms[RWING]);
-	effectBox1->Pos().x -= 1500;
-	effectBox1->Pos().z -= 250;
-	effectBox1->Rot().x = 0.1f;
-	effectBox1->Rot().y -= 0.25f;
-	effectBox1->SetColor(1, 0, 0);
-	effectBox1->UpdateWorld();
-	effectBox1->atkDmg = 40;
-	effectBox1->SetActive(false);
-	effectBox2->Scale().x = 1500;
-	effectBox2->Scale().y = 450;
-	effectBox2->Scale().z = 400;
-	effectBox2->SetParent(transforms[RWING]);
-	effectBox2->Pos().x -= 1230;
-	effectBox2->Pos().y -= 830;
-	effectBox2->Pos().z -= 265;
-	effectBox2->Rot().x = 0.1f;
-	effectBox2->Rot().y -= 0.25f;
-	effectBox2->Rot().z = 0.6f;
-	effectBox2->SetColor(1, 0, 0);
-	effectBox2->UpdateWorld();
-	effectBox2->atkDmg = 40;
-	effectBox2->SetActive(false);
-	effectBox3->Scale().x = 1500;
-	effectBox3->Scale().y = 450;
-	effectBox3->Scale().z = 400;
-	effectBox3->SetParent(transforms[RWING]);
-	effectBox3->Pos().x -= 1270;
-	effectBox3->Pos().y -= 830;
-	effectBox3->Pos().z -= 110;
-	effectBox3->Rot().x = 0.1f;
-	effectBox3->Rot().y -= 0.25f;
-	effectBox3->Rot().z -= 0.6f;
-	effectBox3->SetColor(1, 0, 0);
-	effectBox3->UpdateWorld();
-	effectBox3->atkDmg = 40;
-	effectBox3->SetActive(false);
-	boxColliders.push_back(forwardBoom);
-	boxColliders.push_back(fullBurst);
-	boxColliders.push_back(effectBox1);
-	boxColliders.push_back(effectBox2);
-	boxColliders.push_back(effectBox3);
-
-	effectSphere1 = new SphereCollider();
-	effectSphere2 = new SphereCollider();
-	effectSphere1->UpdateWorld();
-	effectSphere1->atkDmg = 40;
-	effectSphere1->SetActive(false);
-	effectSphere2->UpdateWorld();
-	effectSphere2->atkDmg = 40;
-	effectSphere2->SetActive(false);
-	sphereColliders.push_back(effectSphere1);
-	sphereColliders.push_back(effectSphere2);
-
-	// 파티클
-	FOR(6)
-	{
-		zetPos.push_back(new Transform());
-		ValZet* valzet = new ValZet();
-		if (i < 3)
-			valzet->Rot().z -= XM_PIDIV2;
-		else
-			valzet->Rot().z += XM_PIDIV2;
-		valZets.push_back(valzet);
-		valZets[i]->SetParent(zetPos[i]);
-	}
-	hupgiCharge = new ParticleSystem2("TextData/Particles/hupgi_charge.fx");
-	hupgiCharge2 = new ParticleSystem2("TextData/Particles/hupgi_charge.fx");
-	hupgiCharge2->SetRot({ 0,XM_PIDIV4,0 });
-	storm_Start = new ParticleSystem("TextData/Particles/storm_Start.fx");
-	//stormEffect = new StormEffect();
-	//stormEffect->SetParent(realPos);//realposition
-
-	//FOR(6) jetParticle.push_back(new Val_Jet_Particle());
-	fullburstParticle = new FullBurstParticle();
-	fullburstParticle2 = new FullBurstParticle2();
-	fullburstParticle->SetParent(fullBurst->GetParent());
-	FOR(6) jetParticle.push_back(new Val_Jet_Particle());
-	FOR(6) fireParticle.push_back(new Val_fire());
-	FOR(9) hupgiFire.push_back(new HupgiFire());
-	FOR(6) explosionParticle.push_back(new Explosion());
-	barrier = new ParticleSystem("TextData/Particles/val_energy.fx");
-	trail = new Trail(L"Textures/Effect/val.png", head, realPos, 100, 150);
-	trail->Scale() *= 20;
-
-	barrier->SetScale(10);
-	tempScale = Scale();
-
-	skyfallEft = new SkyFallEft();
-	skyfallEft->SetParent(transforms[HEAD]);
-	skyfallEft->Rot().x += XM_PIDIV2;
-	skyfallEft->Scale() *= 0.3f;
-
-	stormScale = forwardBoom->Scale();
-	roarEffect = new RoarEffect();
 }
 
 Valphalk::~Valphalk()
@@ -382,154 +69,14 @@ void Valphalk::Update()
 	PartDestroyCheck();
 	PushPlayer();
 	QuestClearCount();
-	head->Pos() = realPos->Pos() + Vector3::Up() * 200;
-	head->UpdateWorld();
-
-	realPos->Pos() = GetTranslationByNode(1);
-	Vector3 fwd = (GetTranslationByNode(3) - GetTranslationByNode(5)).GetNormalized();
-	realPos->Rot().y = atan2(fwd.x, fwd.z);
-	realPos->UpdateWorld();
-
-	head->Pos() = realPos->Pos() + Vector3::Up() * 200;
-	head->UpdateWorld();
-
-	realPosition->Pos() = GetTranslationByNode(1);
-	realPosition->UpdateWorld();
-
-	tempCollider->Pos() = realPos->Pos() + (realPos->Back() + realPos->Right()).GetNormalized() * 1000;
-	tempCollider->UpdateWorld();
-
-	velocity = target->GlobalPos() - GlobalPos();
-
-	for (CapsuleCollider* capsulCollider : colliders)
-		capsulCollider->Update();
-
-	//for (BoxCollider* boxCollider : wings)
-	//	boxCollider->Update();
-
-	for (SphereCollider* bullet : bullets)
-		bullet->Update();
-
-	for (SphereCollider* sphereCollider : sphereColliders)
-		sphereCollider->Update();
-
-	for (BoxCollider* boxCollider : boxColliders)
-		boxCollider->Update();
-
-	forwardBoom->Update();
-	fullBurst->Update();
-	stormBox->Update();
-
-	effectBox1->Update();
-	effectBox2->Update();
-	effectBox3->Update();
-
-	effectSphere1->Update();
-	effectSphere2->Update();
-
-	head->Rot().y = Rot().y;
 
 	ColliderNodePos();
 
-	FOR(jetParticle.size()) jetParticle[i]->Update();
-	FOR(fireParticle.size()) fireParticle[i]->Update();
-	//Jet();
+	TransformsUpdate(); // 트랜스폼 업데이트 모음
+	CollisionsUpdate(); // 충돌체 업데이트 모음
+	ParticlesUpdate(); // 이펙트 업데이트 모음
 
-	jetpos->Pos() = GetTranslationByNode(61);
-	jetposend->Pos() = GetTranslationByNode(60);
-	jetpos->UpdateWorld();
-	jetpos->SetParent(jetposend);
-
-	zetPos[0]->SetWorld(GetTransformByNode(61));
-	zetPos[1]->SetWorld(GetTransformByNode(64));
-	zetPos[2]->SetWorld(GetTransformByNode(67));
-	zetPos[3]->SetWorld(GetTransformByNode(81));
-	zetPos[4]->SetWorld(GetTransformByNode(84));
-	zetPos[5]->SetWorld(GetTransformByNode(87));
-
-	eyes->Pos() = GetTranslationByNode(14);
-	eyes->Rot() = Rot();
-	eyes->UpdateWorld();
-
-
-	FOR(6)
-		valZets[i]->Update();
-	fullburstParticle->Update();
-	fullburstParticle2->Update();
-	fullburstParticle->Rot() = fullBurst->Rot();
-	fullburstParticle->Pos() = fullBurst->Pos();
-	//stormEffect->Update();
-
-	if (isHupGi == true )
-		FlameOn();
-	else
-		FlameOff();
-	if (isAnger)
-	{
-		hupgiFire[0]->Play(GetTranslationByNode(15), 0); // 왼쪽 어깨
-		hupgiFire[1]->Play(GetTranslationByNode(35), 0); // 오른쪽 어깨
-	}
-	else
-	{
-		hupgiFire[0]->Stop();
-		hupgiFire[1]->Stop();
-	}
-	if (isDead)
-	{
-		FOR(hupgiFire.size()) hupgiFire[i]->Stop();
-	}
-	if (curState == E_4073)
-	{
-		hupgiFire[8]->Play(GetTranslationByNode(5) + Down() * 150 + Back() * 80, 0); // 가슴
-	}
-	else
-		hupgiFire[8]->Stop();
-
-
-	FOR(hupgiFire.size()) hupgiFire[i]->Update();
-	FOR(explosionParticle.size()) explosionParticle[i]->Update();
-	FOR(bullets.size())
-	{
-		//if (bullets[i]->Pos().y <= height + 100 && bullets[i]->Active())
-		//{
-		//	fireParticle[i]->PlaySpark();
-		//}
-		if (bullets[i]->Pos().y <= height + 10 && bullets[i]->Active())
-		{
-			if (bullets[i]->Active())
-			{
-				if (i % 2 == 0)
-					Sounds::Get()->Play("em086_05_se_media_10", 0.5f); 
-				if (i % 2 == 1)
-					Sounds::Get()->Play("em086_05_se_media_10_2", 0.5f);
-				fireParticle[i]->PlayExplosion();
-				fireParticle[i]->Stop();
-				fireParticle[i]->PlaySpark();
-				bullets[i]->SetActive(false);
-			}
-		}
-	}
-
-	fullburstParticle2->SetPos(fullBurst->GlobalPos() + Forward() * 4000);
-
-	storm_Start->Update();
-	hupgiCharge->Update();
-	hupgiCharge2->Update();
-	barrier->SetPos(head->GlobalPos());
-	barrier->Update();
-	trail->Update();
-	roarEffect->Update();
-	if(roarEffect->IsActive())
-		roarEffect->roarCloserCam(Pos(), CAM->Pos(), 0.013f);
-	skyfallEft->Update();
 	ModelAnimator::Update();
-
-	if (isStorm)
-		stormBox->SetActive(true);
-	//	stormEffect->SetPos(realPos->GlobalPos());
-	//////////////////////////
-	stormBox->GlobalPos() = Pos();
-	stormBox->UpdateWorld();
 }
 
 void Valphalk::PreRender()
@@ -2398,6 +1945,473 @@ void Valphalk::GroundCheck()
 
 	if (!isJump)
 		Pos().y = height;
+}
+
+void Valphalk::ReadClips()
+{
+	ReadClip("E_0003");
+	ReadClip("E_0007");
+	// 플레이어 발견 전
+	ReadClip("E_0043");
+	ReadClip("E_0044");
+	ReadClip("E_0045");
+	ReadClip("E_0055");
+	// 플레이어 발견 후
+	ReadClip("E_0059");
+	ReadClip("E_0060");
+	ReadClip("E_0061");
+	ReadClip("E_0071");
+	ReadClip("E_0097");
+	ReadClip("E_0098");
+	ReadClip("E_0099");
+	ReadClip("E_0146");
+	ReadClip("E_0147");
+	ReadClip("E_0151");
+	ReadClip("E_0152");
+	ReadClip("E_0153");
+	ReadClip("E_0164");
+	ReadClip("E_0165");
+	ReadClip("E_0166");
+	ReadClip("E_0171");
+	ReadClip("E_0172");
+	ReadClip("E_0173");
+	ReadClip("E_0178");
+	ReadClip("E_0179");
+	ReadClip("E_0180");
+	ReadClip("E_0186");
+	ReadClip("E_0187");
+	ReadClip("E_0188");
+	ReadClip("E_1151");
+	ReadClip("E_1155");
+	ReadClip("E_1157");
+	ReadClip("E_1158");
+	ReadClip("E_1160");
+
+	ReadClip("E_1163");
+	ReadClip("E_1164");
+	ReadClip("E_2001");
+	ReadClip("E_2002");
+	ReadClip("E_2003");
+	ReadClip("E_2013");
+	ReadClip("E_2015");
+	ReadClip("E_2017");
+	ReadClip("E_2019");
+	ReadClip("E_2020");
+	ReadClip("E_2022");
+	ReadClip("E_2027");
+	ReadClip("E_2032");
+	ReadClip("E_2033");
+	ReadClip("E_2038");
+	ReadClip("E_2040");
+	ReadClip("E_2041");
+	ReadClip("E_2042");
+	ReadClip("E_2044");
+	ReadClip("E_2045");
+	ReadClip("E_2054");
+	ReadClip("E_2056");
+	ReadClip("E_2079");
+	ReadClip("E_2082");
+	ReadClip("E_2091");
+	ReadClip("E_2092");
+	ReadClip("E_2093");
+	ReadClip("E_2103");
+
+	ReadClip("E_2106");
+	ReadClip("E_2107");
+	ReadClip("E_2108");
+	ReadClip("E_2118");
+	ReadClip("E_2121");
+	ReadClip("E_2124");
+
+	ReadClip("E_2129");
+	ReadClip("E_2130");
+	ReadClip("E_2131");
+	ReadClip("E_2133");
+	ReadClip("E_2134");
+	ReadClip("E_2141");
+
+	ReadClip("E_2144");
+	ReadClip("E_2145");
+	ReadClip("E_2146");
+	ReadClip("E_2145a");
+	ReadClip("E_2151");
+	ReadClip("E_2152");
+	ReadClip("E_2153");
+	ReadClip("E_2158");
+	ReadClip("E_2166");
+	ReadClip("E_2171");
+
+	ReadClip("E_2173");
+	ReadClip("E_2174");
+	ReadClip("E_2175");
+	ReadClip("E_2185");
+	ReadClip("E_2188");
+	ReadClip("E_2189");
+	ReadClip("E_2190");
+	ReadClip("E_2192");
+	ReadClip("E_2193");
+	ReadClip("E_2200");
+	ReadClip("E_2200fix");
+
+	ReadClip("E_2210");
+	ReadClip("E_2211");
+	ReadClip("E_2253");
+	ReadClip("E_2265");
+	ReadClip("E_2267");
+	ReadClip("E_2270");
+	ReadClip("E_2271");
+	ReadClip("E_2272");
+	ReadClip("E_2274");
+	ReadClip("E_2275");
+	ReadClip("E_2276");
+	ReadClip("E_2277");
+	ReadClip("E_2278");
+	ReadClip("E_2280");
+	ReadClip("E_2281");
+	ReadClip("E_2282");
+	ReadClip("E_2286");
+	ReadClip("E_2288");
+	ReadClip("E_2290");
+	ReadClip("E_2354");
+	ReadClip("E_2356");
+	ReadClip("E_2359");
+	ReadClip("E_2361");
+	ReadClip("E_2367");
+	ReadClip("E_2368");
+	ReadClip("E_2371");
+	ReadClip("E_2372");
+	ReadClip("E_2373");
+	ReadClip("E_2374");
+	ReadClip("E_2375");
+	ReadClip("E_2376");
+
+	ReadClip("E_2381");
+	ReadClip("E_2382");
+	ReadClip("E_2383");
+	ReadClip("E_2403");
+
+	ReadClip("E_3001");
+	ReadClip("E_3006");
+	ReadClip("E_3015");
+	ReadClip("E_3016");
+	ReadClip("E_3017");
+	ReadClip("E_3023");
+	ReadClip("E_3101");
+	ReadClip("E_3106");
+	ReadClip("E_3114");
+	ReadClip("E_3118");
+	// 아래 있는게 첫 포효
+	ReadClip("E_4001");
+	ReadClip("E_4013");
+	ReadClip("E_4071");
+	ReadClip("E_4073");
+	ReadClip("E_4074");
+}
+
+void Valphalk::TransformsReady()
+{
+	head = new Transform();
+	jetpos = new Transform();
+	jetposend = new Transform();
+
+	realPos = new CapsuleCollider(1, 0.1);
+	realPos->Pos() = Vector3(4000, 0, 4000);
+	realPos->Scale() *= 6.0f;
+	realPos->UpdateWorld();
+
+	eyes = new Transform();
+
+	tempCollider = new CapsuleCollider(6, 0.1);
+	tempCollider->UpdateWorld();
+
+	realPosition = new Transform();
+	realPosition->UpdateWorld();
+}
+
+void Valphalk::CollisionsReady()
+{
+	/////////////////////////////////////////////
+// 공격 콜라이더 (투사체, 폭발 등)	
+	bullets.resize(6);
+	FOR(6)
+	{
+		bullets[i] = new SphereCollider();
+		bullets[i]->Scale() *= 100;
+		bullets[i]->SetColor(1, 0, 0);
+		bullets[i]->SetActive(false);
+		bullets[i]->atkDmg = 30;
+		sphereColliders.push_back(bullets[i]);
+	}
+
+	forwardBoom = new BoxCollider();
+	forwardBoom->Scale() *= 1000;
+	forwardBoom->SetColor(1, 0, 0);
+	forwardBoom->Pos() = forwardBoomPosInit;
+	forwardBoom->SetParent(head);
+	forwardBoom->SetActive(false);
+	forwardBoom->atkDmg = 35;
+
+	stormBox = new SphereCollider();
+	stormBox->Scale() *= 1;
+	stormBox->Pos() = Pos();
+	stormBox->SetColor(1, 0, 0);
+	stormBox->atkDmg = 50;
+	stormBox->SetParent(head);
+	sphereColliders.push_back(stormBox);
+
+	{//fullBurst
+		fullBurst = new BoxCollider();
+		fullBurst->Scale() *= 500;
+		fullBurst->Scale().z *= 20;
+		fullBurst->SetParent(head);
+		fullBurst->Pos().z -= 5000;
+		fullBurst->SetColor(1, 0, 0);
+		fullBurst->SetActive(false);
+		fullBurst->atkDmg = 55;
+		fullBurstScale = fullBurst->Scale();
+		fullBurstPos = fullBurst->Pos();
+		fullBurstRot = fullBurst->Rot();
+	}
+}
+
+void Valphalk::ParticlesReady()
+{
+	effectBox1 = new BoxCollider();
+	effectBox2 = new BoxCollider();
+	effectBox3 = new BoxCollider();
+	effectBox1->Scale().x = 1500;
+	effectBox1->Scale().y = 450;
+	effectBox1->Scale().z = 400;
+	effectBox1->SetParent(transforms[RWING]);
+	effectBox1->Pos().x -= 1500;
+	effectBox1->Pos().z -= 250;
+	effectBox1->Rot().x = 0.1f;
+	effectBox1->Rot().y -= 0.25f;
+	effectBox1->SetColor(1, 0, 0);
+	effectBox1->UpdateWorld();
+	effectBox1->atkDmg = 40;
+	effectBox1->SetActive(false);
+	effectBox2->Scale().x = 1500;
+	effectBox2->Scale().y = 450;
+	effectBox2->Scale().z = 400;
+	effectBox2->SetParent(transforms[RWING]);
+	effectBox2->Pos().x -= 1230;
+	effectBox2->Pos().y -= 830;
+	effectBox2->Pos().z -= 265;
+	effectBox2->Rot().x = 0.1f;
+	effectBox2->Rot().y -= 0.25f;
+	effectBox2->Rot().z = 0.6f;
+	effectBox2->SetColor(1, 0, 0);
+	effectBox2->UpdateWorld();
+	effectBox2->atkDmg = 40;
+	effectBox2->SetActive(false);
+	effectBox3->Scale().x = 1500;
+	effectBox3->Scale().y = 450;
+	effectBox3->Scale().z = 400;
+	effectBox3->SetParent(transforms[RWING]);
+	effectBox3->Pos().x -= 1270;
+	effectBox3->Pos().y -= 830;
+	effectBox3->Pos().z -= 110;
+	effectBox3->Rot().x = 0.1f;
+	effectBox3->Rot().y -= 0.25f;
+	effectBox3->Rot().z -= 0.6f;
+	effectBox3->SetColor(1, 0, 0);
+	effectBox3->UpdateWorld();
+	effectBox3->atkDmg = 40;
+	effectBox3->SetActive(false);
+	boxColliders.push_back(forwardBoom);
+	boxColliders.push_back(fullBurst);
+	boxColliders.push_back(effectBox1);
+	boxColliders.push_back(effectBox2);
+	boxColliders.push_back(effectBox3);
+
+	effectSphere1 = new SphereCollider();
+	effectSphere2 = new SphereCollider();
+	effectSphere1->UpdateWorld();
+	effectSphere1->atkDmg = 40;
+	effectSphere1->SetActive(false);
+	effectSphere2->UpdateWorld();
+	effectSphere2->atkDmg = 40;
+	effectSphere2->SetActive(false);
+	sphereColliders.push_back(effectSphere1);
+	sphereColliders.push_back(effectSphere2);
+
+	// 파티클
+	FOR(6)
+	{
+		zetPos.push_back(new Transform());
+		ValZet* valzet = new ValZet();
+		if (i < 3)
+			valzet->Rot().z -= XM_PIDIV2;
+		else
+			valzet->Rot().z += XM_PIDIV2;
+		valZets.push_back(valzet);
+		valZets[i]->SetParent(zetPos[i]);
+	}
+	hupgiCharge = new ParticleSystem2("TextData/Particles/hupgi_charge.fx");
+	hupgiCharge2 = new ParticleSystem2("TextData/Particles/hupgi_charge.fx");
+	hupgiCharge2->SetRot({ 0,XM_PIDIV4,0 });
+	storm_Start = new ParticleSystem("TextData/Particles/storm_Start.fx");
+
+	fullburstParticle = new FullBurstParticle();
+	fullburstParticle2 = new FullBurstParticle2();
+	fullburstParticle->SetParent(fullBurst->GetParent());
+	FOR(6) jetParticle.push_back(new Val_Jet_Particle());
+	FOR(6) fireParticle.push_back(new Val_fire());
+	FOR(9) hupgiFire.push_back(new HupgiFire());
+	FOR(6) explosionParticle.push_back(new Explosion());
+	barrier = new ParticleSystem("TextData/Particles/val_energy.fx");
+	trail = new Trail(L"Textures/Effect/val.png", head, realPos, 100, 150);
+	trail->Scale() *= 20;
+
+	barrier->SetScale(10);
+	tempScale = Scale();
+
+	skyfallEft = new SkyFallEft();
+	skyfallEft->SetParent(transforms[HEAD]);
+	skyfallEft->Rot().x += XM_PIDIV2;
+	skyfallEft->Scale() *= 0.3f;
+
+	stormScale = forwardBoom->Scale();
+	roarEffect = new RoarEffect();
+}
+
+void Valphalk::TransformsUpdate()
+{
+	realPos->Pos() = GetTranslationByNode(1);
+	Vector3 fwd = (GetTranslationByNode(3) - GetTranslationByNode(5)).GetNormalized();
+	realPos->Rot().y = atan2(fwd.x, fwd.z);
+	realPos->UpdateWorld();
+
+	head->Pos() = realPos->Pos() + Vector3::Up() * 200;
+	head->Rot().y = Rot().y;
+	head->UpdateWorld();
+
+	eyes->Pos() = GetTranslationByNode(14);
+	eyes->Rot() = Rot();
+	eyes->UpdateWorld();
+
+	realPosition->Pos() = GetTranslationByNode(1);
+	realPosition->UpdateWorld();
+
+	tempCollider->Pos() = realPos->Pos() + (realPos->Back() + realPos->Right()).GetNormalized() * 1000;
+	tempCollider->UpdateWorld();
+
+	velocity = target->GlobalPos() - GlobalPos();
+}
+
+void Valphalk::CollisionsUpdate()
+{
+	for (CapsuleCollider* capsulCollider : colliders)
+		capsulCollider->Update();
+
+	for (SphereCollider* bullet : bullets)
+		bullet->Update();
+
+	for (SphereCollider* sphereCollider : sphereColliders)
+		sphereCollider->Update();
+
+	for (BoxCollider* boxCollider : boxColliders)
+		boxCollider->Update();
+
+	forwardBoom->Update();
+	fullBurst->Update();
+	stormBox->Update();
+
+	if (isStorm)
+		stormBox->SetActive(true);
+	stormBox->GlobalPos() = Pos();
+	stormBox->UpdateWorld();
+}
+
+void Valphalk::ParticlesUpdate()
+{
+	effectBox1->Update();
+	effectBox2->Update();
+	effectBox3->Update();
+
+	effectSphere1->Update();
+	effectSphere2->Update();
+
+	FOR(jetParticle.size()) jetParticle[i]->Update();
+	FOR(fireParticle.size()) fireParticle[i]->Update();
+
+	jetpos->Pos() = GetTranslationByNode(61);
+	jetposend->Pos() = GetTranslationByNode(60);
+	jetpos->UpdateWorld();
+	jetpos->SetParent(jetposend);
+
+	zetPos[0]->SetWorld(GetTransformByNode(61));
+	zetPos[1]->SetWorld(GetTransformByNode(64));
+	zetPos[2]->SetWorld(GetTransformByNode(67));
+	zetPos[3]->SetWorld(GetTransformByNode(81));
+	zetPos[4]->SetWorld(GetTransformByNode(84));
+	zetPos[5]->SetWorld(GetTransformByNode(87));
+
+	FOR(6)
+		valZets[i]->Update();
+	fullburstParticle->Update();
+	fullburstParticle2->Update();
+	fullburstParticle->Rot() = fullBurst->Rot();
+	fullburstParticle->Pos() = fullBurst->Pos();
+
+	if (isHupGi == true)
+		FlameOn();
+	else
+		FlameOff();
+	if (isAnger)
+	{
+		hupgiFire[0]->Play(GetTranslationByNode(15), 0); // 왼쪽 어깨
+		hupgiFire[1]->Play(GetTranslationByNode(35), 0); // 오른쪽 어깨
+	}
+	else
+	{
+		hupgiFire[0]->Stop();
+		hupgiFire[1]->Stop();
+	}
+	if (isDead)
+	{
+		FOR(hupgiFire.size()) hupgiFire[i]->Stop();
+	}
+	if (curState == E_4073)
+	{
+		hupgiFire[8]->Play(GetTranslationByNode(5) + Down() * 150 + Back() * 80, 0); // 가슴
+	}
+	else
+		hupgiFire[8]->Stop();
+
+	FOR(hupgiFire.size()) hupgiFire[i]->Update();
+	FOR(explosionParticle.size()) explosionParticle[i]->Update();
+	FOR(bullets.size())
+	{
+		if (bullets[i]->Pos().y <= height + 10 && bullets[i]->Active())
+		{
+			if (bullets[i]->Active())
+			{
+				if (i % 2 == 0)
+					Sounds::Get()->Play("em086_05_se_media_10", 0.5f);
+				if (i % 2 == 1)
+					Sounds::Get()->Play("em086_05_se_media_10_2", 0.5f);
+				fireParticle[i]->PlayExplosion();
+				fireParticle[i]->Stop();
+				fireParticle[i]->PlaySpark();
+				bullets[i]->SetActive(false);
+			}
+		}
+	}
+
+	fullburstParticle2->SetPos(fullBurst->GlobalPos() + Forward() * 4000);
+
+	storm_Start->Update();
+	hupgiCharge->Update();
+	hupgiCharge2->Update();
+	barrier->SetPos(head->GlobalPos());
+	barrier->Update();
+	trail->Update();
+	roarEffect->Update();
+	if (roarEffect->IsActive())
+		roarEffect->roarCloserCam(Pos(), CAM->Pos(), 0.013f);
+	skyfallEft->Update();
 }
 
 void Valphalk::FlameOn()

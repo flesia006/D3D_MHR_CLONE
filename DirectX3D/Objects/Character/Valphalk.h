@@ -234,6 +234,17 @@ private:
 
 	void GroundCheck();
 
+	///////////////// 생성자쪽 함수 ////////////////
+	void ReadClips();
+	void TransformsReady();
+	void CollisionsReady();
+	void ParticlesReady();
+
+	///////////////// Update쪽 함수 ////////////////
+	void TransformsUpdate();
+	void CollisionsUpdate();
+	void ParticlesUpdate();
+	///////////////////////////////////////////////
 
 	void FlameOn();
 	void FlameOff();
