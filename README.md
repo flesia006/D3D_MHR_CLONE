@@ -12,4 +12,4 @@ DirectX11 3D 포트폴리오 - 몬스터헌터 라이즈 모작
 
 이정헌 - 몬스터, HUD, 지형
 
-기술문서 : 
+기술문서 : https://docs.google.com/presentation/d/e/2PACX-1vSUhJ-IPmUNi5yvwYjNJJiIiYwBYeD3J91c7iA5cratAZfhOTMhjnc0HPq-aXSNWmSPgS6418ECLX1c/pub?start=false&loop=false&delayms=3000
